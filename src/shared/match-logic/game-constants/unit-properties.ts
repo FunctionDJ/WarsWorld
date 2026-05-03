@@ -10,7 +10,7 @@ export type MovementType =
 
 export type Facility = "base" | "airport" | "port";
 
-export interface UnitPropertiesWithoutWeapon {
+interface UnitPropertiesWithoutWeapon {
   displayName: string;
   cost: number;
   facility: Facility;
@@ -31,11 +31,6 @@ type UnitPropertiesWithoutAmmo = UnitPropertiesWithoutWeapon & {
 type UnitPropertiesWithAmmo = UnitPropertiesWithoutAmmo & {
   initialAmmo: number;
 };
-
-export type UnitProperties =
-  | UnitPropertiesWithAmmo
-  | UnitPropertiesWithoutAmmo
-  | UnitPropertiesWithoutWeapon;
 
 const infantry: UnitPropertiesWithoutAmmo = {
   displayName: "Infantry",

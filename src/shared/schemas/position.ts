@@ -56,7 +56,7 @@ export type Path = z.infer<typeof pathSchema>;
 
 export const directionSchema = z.enum(["up", "down", "left", "right"]);
 
-export type Direction = z.infer<typeof directionSchema>;
+type Direction = z.infer<typeof directionSchema>;
 
 export const allDirections: Direction[] = ["up", "down", "left", "right"];
 

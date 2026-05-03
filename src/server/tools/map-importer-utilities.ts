@@ -2,7 +2,7 @@ import type { WWMap } from "@prisma/client";
 import type { Tile } from "shared/schemas/tile";
 import { prisma } from "../prisma/prisma-client";
 
-export interface AWBWMapImportSchema {
+interface AWBWMapImportSchema {
   name: string;
   tileDataString: string;
   numberOfPlayers: 2;

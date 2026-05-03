@@ -14,6 +14,3 @@ export const loginSchema = z.object({
 export const signUpSchema = loginSchema.extend({
   email: z.email(),
 });
-
-export type Login = z.infer<typeof loginSchema>;
-export type SignUp = z.infer<typeof signUpSchema>;

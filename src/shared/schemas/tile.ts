@@ -20,13 +20,13 @@ export const propertyTileSchema = z.object({
   type: z.enum(["base", "airport", "port", "hq", "lab", "commtower", "city"]),
   playerSlot: playerSlotForPropertiesSchema,
 });
-export type PropertyTile = z.infer<typeof propertyTileSchema>;
+type PropertyTile = z.infer<typeof propertyTileSchema>;
 export type PropertyTileType = z.infer<typeof propertyTileSchema>["type"];
 
 export const unusedSiloTileSchema = z.object({
   type: z.literal("unusedSilo"),
 });
-export type UnusedSiloTile = z.infer<typeof unusedSiloTileSchema>;
+type UnusedSiloTile = z.infer<typeof unusedSiloTileSchema>;
 export type UnusedSiloTileType = z.infer<typeof unusedSiloTileSchema>["type"];
 
 export const invariableTileSchema = z

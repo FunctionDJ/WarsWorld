@@ -1,4 +1,3 @@
-import { ProtectPage } from "frontend/components/auth/ProtectPage";
 import ArticleContent from "frontend/components/layout/article/ArticleContent";
 import CreateArticleForm from "frontend/components/layout/article/CreateArticleForm";
 import PageTitle from "frontend/components/layout/PageTitle";
@@ -16,7 +15,7 @@ export default function Create() {
   });
 
   return (
-    <ProtectPage>
+    <>
       <Head>
         <title>Create Article | Wars World</title>
       </Head>
@@ -39,6 +38,6 @@ export default function Create() {
           <ArticleContent contentHTML={markdownToHTML(articleData.body)} />
         </div>
       </div>
-    </ProtectPage>
+    </>
   );
 }

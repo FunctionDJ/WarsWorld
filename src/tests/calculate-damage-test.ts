@@ -17,7 +17,7 @@ import { UnitWrapper } from "shared/wrappers/unit";
 /**
  * this is a test scenario to fully simulate an attack event
  * and output the previous and resulting HP values to the console.
- * it's a standalone script that can be run with `npx tsx file.ts`.
+ * it's a standalone script that can be run with `bun file.ts`.
  * this scenario is a full HP andy infantry attacking
  * another infantry on roads with worst luck.
  *

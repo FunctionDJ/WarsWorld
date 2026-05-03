@@ -1,4 +1,3 @@
-import { ProtectPage } from "frontend/components/auth/ProtectPage";
 import SquareButton from "frontend/components/layout/SquareButton";
 import CreateMatch from "frontend/components/match/card/CreateMatch";
 import MatchSection from "frontend/components/match/card/MatchSection";
@@ -34,7 +33,7 @@ export default function YourMatches() {
   );
 
   return (
-    <ProtectPage>
+    <>
       <Head>
         <title>Game Lobby | Wars World</title>
       </Head>
@@ -71,6 +70,6 @@ export default function YourMatches() {
           description="Work is progress..."
         />
       </div>
-    </ProtectPage>
+    </>
   );
 }

@@ -1,6 +1,5 @@
 import { z } from "zod";
-import { directionSchema } from "./position";
-import { pathSchema, positionSchema } from "./position";
+import { directionSchema, pathSchema, positionSchema } from "./position";
 import { unitTypeSchema } from "./unit";
 
 const buildActionSchema = z.object({
@@ -104,8 +103,6 @@ export const mainActionSchema = z.discriminatedUnion("type", [
 
 export type MainAction = z.infer<typeof mainActionSchema>;
 export type SubAction = z.infer<typeof subActionSchema>;
-
-export type Action = MainAction | SubAction;
 
 export type BuildAction = z.infer<typeof buildActionSchema>;
 export type DeleteAction = z.infer<typeof deleteActionSchema>;

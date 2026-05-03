@@ -3,7 +3,7 @@ import type { PlayerMMR } from "pages/players/[playerName]";
 
 const columnHelper = createColumnHelper<PlayerMMR>();
 
-export const columns = [
+const columns = [
   columnHelper.accessor("wins", {
     id: "W",
     header: () => "W",

@@ -28,7 +28,7 @@ export interface MatchStartEvent {
   weather: Weather;
 }
 
-export interface MatchEndEvent {
+interface MatchEndEvent {
   type: "matchEnd";
   winningTeamPlayerIds: string[] | null; // null = draw
   // TODO this type can probably be made a lot more fine-grained later on
@@ -67,7 +67,7 @@ interface WithPlayer {
   playerId: Player["id"];
 }
 
-export type PlayerEliminatedEvent = WithPlayer & {
+type PlayerEliminatedEvent = WithPlayer & {
   type: "player-eliminated";
 } & (
     | { eliminationReason: Exclude<Turn["eliminationReason"], undefined> }
@@ -98,7 +98,7 @@ export type DeleteEvent = DeleteAction & WithElimination<`all-units-destroyed`>;
 export type BuildEvent = BuildAction;
 export type LaunchMissileEvent = LaunchMissileAction;
 export type RepairEvent = RepairAction;
-export type WaitEvent = WaitAction;
+type WaitEvent = WaitAction;
 export type UnloadNoWaitEvent = UnloadNoWaitAction;
 export type UnloadWaitEvent = UnloadWaitAction;
 
@@ -177,7 +177,7 @@ export type EmittableEvent = (
 ) &
   WithDiscoveries & { teamIndex: number };
 
-export type NonStoredEvent = WithPlayer &
+type NonStoredEvent = WithPlayer &
   WithMatchId &
   (
     | {

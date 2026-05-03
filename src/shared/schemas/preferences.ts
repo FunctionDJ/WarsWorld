@@ -12,8 +12,6 @@ const favouriteGamesSchema = z.enum([
   "wargroove",
 ]);
 
-export type FavouriteGames = z.infer<typeof favouriteGamesSchema>;
-
 export const preferencesSchema = z.object({
   favouriteCOs: z.optional(z.array(coSchema)),
   favouriteUnits: z.optional(z.array(unitTypeSchema)),

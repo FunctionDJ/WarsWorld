@@ -1,8 +1,7 @@
+import { createWSClient, wsLink } from "@trpc/client";
 import { httpBatchLink } from "@trpc/client/links/httpBatchLink";
 import { loggerLink } from "@trpc/client/links/loggerLink";
-import { createWSClient, wsLink } from "@trpc/client/links/wsLink";
 import { createTRPCNext } from "@trpc/next";
-import type { inferProcedureOutput } from "@trpc/server";
 import type { NextPageContext } from "next";
 import type { AppRouter } from "server/routers/app";
 import superjson from "superjson";
@@ -39,6 +38,7 @@ const getEndingLink = (ctx: NextPageContext | undefined) => {
 
   return wsLink<AppRouter>({
     client: createWSClient({ url: WS_URL }),
+    transformer: superjson,
   });
 };
 
@@ -84,11 +84,3 @@ export const trpc = createTRPCNext<AppRouter>({
    */
   ssr: true,
 });
-
-export type inferTRPCOutput<
-  TopLevelProcedureKeys extends keyof AppRouter["_def"]["procedures"],
-  SecondLevelProcedureKeys extends
-    keyof AppRouter["_def"]["procedures"][TopLevelProcedureKeys]["_def"]["procedures"],
-> = inferProcedureOutput<
-  AppRouter["_def"]["procedures"][TopLevelProcedureKeys]["_def"]["procedures"][SecondLevelProcedureKeys]
->;

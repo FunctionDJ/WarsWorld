@@ -22,4 +22,3 @@ export const armySchema = z.enum([
 export const armyWithNeutralSchema = armySchema.or(z.literal("neutral"));
 
 export type Army = z.infer<typeof armySchema>;
-export type ArmyWithNeutral = z.infer<typeof armyWithNeutralSchema>;
