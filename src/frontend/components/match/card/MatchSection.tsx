@@ -54,7 +54,7 @@ export default function MatchSection({
               // <div className="tw:flex tw:flex-col tw:items-center" key={match.id}>
               //   <MatchCard match={match} inMatch={inMatch} />
               // </div>
-              <MatchCard match={match} inMatch={inMatch} key={match.id} />
+              (<MatchCard match={match} inMatch={inMatch} key={match.id} />)
             ))}
       </div>
     </>

@@ -6,10 +6,10 @@ import { usePlayers } from "frontend/context/players";
 import { trpc } from "frontend/utils/trpc-client";
 import { useEffect, useState } from "react";
 
-type Props = {
+interface Props {
   currentPlayer: Player | undefined;
   setCurrentPlayer: (player: Player) => void;
-};
+}
 
 export default function CreateMatch({ currentPlayer, setCurrentPlayer }: Props) {
   const { ownedPlayers } = usePlayers();

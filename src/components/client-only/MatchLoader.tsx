@@ -65,7 +65,7 @@ export function MatchLoader({ matchId, playerId, spritesheetDataByArmy }: Props)
     return <p>error {":("}</p>;
   }
 
-  if (fullMatchQuery.isLoading || spriteSheetQuery.isLoading) {
+  if (fullMatchQuery.isPending || spriteSheetQuery.isPending) {
     return <p>Loading match data...</p>;
   }
 

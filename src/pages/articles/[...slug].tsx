@@ -61,10 +61,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }) 
 };
 
 export default function NewsArticle({ articleId }: Props) {
-  const { data: articleData } = trpc.article.getMarkdownById.useQuery(
-    { id: articleId },
-    { enabled: articleId != undefined },
-  );
+  const { data: articleData } = trpc.article.getMarkdownById.useQuery({ id: articleId });
 
   return (
     <>

@@ -1,15 +1,11 @@
 import type { Dispatch, SetStateAction } from "react";
 import NavButton from "./NavButton";
 import { NavItem } from "./NavItem";
-import NavLoginLogout from "./NavLoginLogout";
 import { NavMenuMatches } from "./NavMenuMatches";
 
 interface Props {
   showMatchLinks: boolean;
   setShowMatchLinks: Dispatch<SetStateAction<boolean>>;
-  setShowLinks: Dispatch<SetStateAction<boolean>>;
-  setIsOpen: (value: boolean, callbackUrl?: string) => Promise<void>;
-  isOpen: boolean;
 }
 
 const navItemObject = [
@@ -43,7 +39,7 @@ const navItemObject = [
   },
 ];
 
-export function NavGroup({ showMatchLinks, setShowMatchLinks, setIsOpen, isOpen }: Props) {
+export function NavGroup({ showMatchLinks, setShowMatchLinks }: Props) {
   return (
     <>
       <div className="tw:flex tw:items-center tw:justify-center tw:gap-10 tw:monitor:gap-16 tw:h-full tw:w-[70vw]">
@@ -68,7 +64,7 @@ export function NavGroup({ showMatchLinks, setShowMatchLinks, setIsOpen, isOpen 
         ))}
       </div>
       <div className="tw:flex tw:h-12 tw:w-[15%] tw:justify-end tw:items-center tw:relative">
-        <NavLoginLogout isOpen={isOpen} setIsOpen={setIsOpen} />
+        {/* <NavLoginLogout isOpen={isOpen} setIsOpen={setIsOpen} /> */}
       </div>
     </>
   );

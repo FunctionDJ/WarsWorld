@@ -6,10 +6,10 @@ export default {
   content: ["./src/**/*.{ts,tsx}"],
   theme: {
     extend: {
-      sans: [
-        "Proxima Nova",
-        // ...fontFamily.sans
-      ],
+      // sans: [
+      //   "Proxima Nova",
+      //   // ...fontFamily.sans
+      // ],
       fontFamily: {
         russoOne: ["RussoOne", "sans-serif"],
       },
@@ -53,13 +53,13 @@ export default {
       medium: { raw: "(min-height: 700px)" },
     },
   },
-  safelist: [
-    {
-      pattern: /(bg|border|text)-(orange-star|blue-moon|green-earth|yellow-comet|black-hole)/,
-    },
-    {
-      pattern: /(bg|border|text)-(github|discord|white|black)/,
-    },
-  ],
+  // safelist: [
+  //   {
+  //     pattern: /(bg|border|text)-(orange-star|blue-moon|green-earth|yellow-comet|black-hole)/,
+  //   },
+  //   {
+  //     pattern: /(bg|border|text)-(github|discord|white|black)/,
+  //   },
+  // ],
   plugins: [],
 } satisfies Config;
