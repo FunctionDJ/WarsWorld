@@ -1,4 +1,4 @@
-import { Dialog } from "@headlessui/react";
+import { DialogPanel } from "@headlessui/react";
 import type { ReactNode } from "react";
 import PageTitle from "../PageTitle";
 import OrangeGradientLine from "../decorations/OrangeGradientLine";
@@ -17,11 +17,11 @@ export default function DefaultDialogDesign({ children, width, title }: Props) {
         <div className="tw:flex tw:flex-col tw:min-h-full tw:items-center tw:justify-center tw:w-full">
           <div className="tw:py-16" style={{ width: width ?? "75vw" }}>
             <div className="tw:w-full tw:h-full tw:rounded-xl tw:overflow-hidden tw:shadow-xl tw:shadow-black">
-              <Dialog.Panel className="tw:bg-bg-secondary">
+              <DialogPanel className="tw:bg-bg-secondary">
                 <PageTitle>{title}</PageTitle>
                 {children}
                 <OrangeGradientLine />
-              </Dialog.Panel>
+              </DialogPanel>
             </div>
           </div>
         </div>
