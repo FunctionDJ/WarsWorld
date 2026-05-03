@@ -1,3 +1,0 @@
-[phases.setup]
-runtime = "nodejs"
-version = "21.5"

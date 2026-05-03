@@ -1,8 +1,5 @@
 {
   "compilerOptions": {
-    "paths": {
-      "shared/*": ["shared/*"]
-    },
     "target": "esnext",
 
     "outDir": "dist",
@@ -16,14 +13,12 @@
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "node",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "baseUrl": "./src",
-    "incremental": true,
-    "downlevelIteration": true
+    "incremental": true
   },
 
   "include": [".", ".eslintrc.cjs"], // .eslintrc.json is extra because the leading period makes it excluded otherwise
