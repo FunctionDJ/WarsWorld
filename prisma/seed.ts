@@ -3,15 +3,17 @@
  *
  * @link https://www.prisma.io/docs/guides/database/seed-database
  */
-import { PrismaClient } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
 import * as fs from "fs/promises";
 import matter from "gray-matter";
 import { hashPassword } from "server/hashPassword";
 import { importAWBWMap } from "server/tools/map-importer-utilities";
 import { developmentPlayerNamePrefix as Prefix } from "server/trpc/middleware/player";
 import { articleSchema } from "shared/schemas/article";
+import { PrismaClient } from "../src/generated/client";
 
-const prisma = new PrismaClient();
+const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
+const prisma = new PrismaClient({ adapter });
 
 const developmentPlayerNames = ["Grimm Guy", "Incuggarch", "Master Chief Z", "Dev Player 4"].map(
   (name) => `${Prefix} ${name}`,
