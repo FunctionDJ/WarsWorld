@@ -63,10 +63,10 @@ type DamageValues = Partial<Record<UnitType, number>>;
 
 //secondary = machine gun, infinite ammo.
 //some units don't have primary weapon (like infantry, recon)
-type Weaponry = {
+interface Weaponry {
   primary?: DamageValues;
   secondary?: DamageValues;
-};
+}
 
 export type DamageChart = Partial<Record<UnitType, Weaponry>>;
 

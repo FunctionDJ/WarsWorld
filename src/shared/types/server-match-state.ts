@@ -7,28 +7,28 @@ import type { Position } from "shared/schemas/position";
 import type { PropertyTileType, UnusedSiloTileType } from "shared/schemas/tile";
 import type { PipeSeamTileType } from "../schemas/variable-tiles";
 
-export type CapturableTile = {
+export interface CapturableTile {
   type: PropertyTileType;
   playerSlot: PlayerSlot;
   position: Position;
   // capture points are stored in unit
-};
+}
 
-type LaunchableSiloTile = {
+interface LaunchableSiloTile {
   type: UnusedSiloTileType;
   fired: boolean;
   position: Position;
-};
+}
 
-type PipeSeamTile = {
+interface PipeSeamTile {
   type: PipeSeamTileType;
   hp: number;
   position: Position;
-};
+}
 
 export type ChangeableTile = CapturableTile | LaunchableSiloTile | PipeSeamTile;
 
-export type PlayerInMatch = {
+export interface PlayerInMatch {
   slot: PlayerSlot;
   hasCurrentTurn?: boolean;
   id: Player["id"];
@@ -41,7 +41,7 @@ export type PlayerInMatch = {
   timesPowerUsed: number;
   army: Army;
   COPowerState: COPowerState;
-};
+}
 
 export const createNeutralPlayerInMatch: () => PlayerInMatch = () => {
   return {

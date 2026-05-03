@@ -6,7 +6,7 @@ import { armySchema } from "shared/schemas/army";
 import type { COID } from "shared/schemas/co";
 import { coSchema } from "shared/schemas/co";
 
-type matchData = {
+interface matchData {
   playerID: Player["id"];
   matchID: Match["id"];
   setCurrentPlayerOptions: React.Dispatch<
@@ -30,7 +30,7 @@ type matchData = {
     }>
   >;
   maxNumberOfPlayers: number;
-};
+}
 
 export default function MatchCardSetup({
   playerID,

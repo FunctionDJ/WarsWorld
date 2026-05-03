@@ -13,7 +13,7 @@ export const createEmitter = <WithMatchId extends { matchId: MatchId }>() => {
   //New update
   const listenerMap = new Map<MatchId, Map<string, Listener[]>>();
 
-  const unsubscribe = (matchId: MatchId, playerId: string, _listenerToUnsub: Listener) => {
+  const unsubscribe = (matchId: MatchId, playerId: string) => {
     listenerMap.get(matchId)?.delete(playerId);
   };
 
@@ -33,7 +33,9 @@ export const createEmitter = <WithMatchId extends { matchId: MatchId }>() => {
         matchMap.set(playerID, [listenerToSubscribe]);
       }
 
-      return () => unsubscribe(matchId, playerID, listenerToSubscribe);
+      return () => {
+        unsubscribe(matchId, playerID);
+      };
     },
     unsubscribe,
 
@@ -45,7 +47,9 @@ export const createEmitter = <WithMatchId extends { matchId: MatchId }>() => {
       listenerMap
         .get(dispatched.matchId)
         ?.get(playerId)
-        ?.forEach((listener) => listener(dispatched));
+        ?.forEach((listener) => {
+          listener(dispatched);
+        });
     },
   };
 };

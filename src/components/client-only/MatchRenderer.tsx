@@ -15,13 +15,13 @@ import type { FrontendUnit } from "../../frontend/components/match/FrontendUnit"
 import type { ChangeableTileWithSprite } from "../../frontend/components/match/types";
 import { usePixi } from "./use-pixi";
 
-type Props = {
+interface Props {
   match: MatchWrapper<ChangeableTileWithSprite, FrontendUnit>;
   player: PlayerInMatchWrapper;
   spriteSheets: LoadedSpriteSheet;
   turn: boolean;
   setTurn: React.Dispatch<React.SetStateAction<boolean>>;
-};
+}
 
 export const baseTileSize = 16;
 export const renderMultiplier = 2;

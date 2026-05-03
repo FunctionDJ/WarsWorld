@@ -1,5 +1,5 @@
 import { BitmapText, Container, Sprite, Texture } from "pixi.js";
-import type { MutableRefObject } from "react";
+import type { RefObject } from "react";
 import {
   AvailableSubActions,
   getAvailableSubActions,
@@ -40,7 +40,7 @@ export const createSubActionMenuElement = (subActionName: string, numberInList: 
   actionBG.alpha = 0.5;
   menuElement.addChild(actionBG);
 
-  const actionText = new BitmapText(`${subActionName}`, {
+  const actionText = new BitmapText(subActionName, {
     fontName: "awFont",
     fontSize: 10,
   });
@@ -68,8 +68,8 @@ export default function subActionMenu(
   player: PlayerInMatchWrapper,
   newPosition: Position,
   unit: UnitWrapper,
-  currentUnitClickedRef: React.MutableRefObject<UnitWrapper | null>,
-  pathRef: MutableRefObject<Position[] | null>,
+  currentUnitClickedRef: RefObject<UnitWrapper | null>,
+  pathRef: RefObject<Position[] | null>,
   mapContainer: Container,
   interactiveContainer: Container,
   spriteSheets: LoadedSpriteSheet,
@@ -124,15 +124,13 @@ export default function subActionMenu(
 
             const unitToRepair = match.getUnit(addDirection(unit.data.position, dir));
 
-            if (unitToRepair && unitToRepair.player.data.slot === unit.player.data.slot) {
+            if (unitToRepair?.player.data.slot === unit.player.data.slot) {
               const repairTile = tileConstructor(addDirection(unit.data.position, dir), "#43d9e4");
               repairTile.eventMode = "static";
 
               repairTile.on("pointerdown", () => {
                 if (currentUnitClickedRef.current !== null) {
-                  const path = pathRef.current
-                    ? pathRef.current
-                    : [currentUnitClickedRef.current.data.position];
+                  const path = pathRef.current ?? [currentUnitClickedRef.current.data.position];
 
                   void sendAction({
                     type: "move",
@@ -170,9 +168,7 @@ export default function subActionMenu(
               });
               hoverableTile.on("pointerdown", () => {
                 if (currentUnitClickedRef.current !== null) {
-                  const path = pathRef.current
-                    ? pathRef.current
-                    : [currentUnitClickedRef.current.data.position];
+                  const path = pathRef.current ?? [currentUnitClickedRef.current.data.position];
 
                   void sendAction({
                     type: "move",
@@ -228,7 +224,7 @@ export default function subActionMenu(
           if (subAction === undefined) {
             throw new Error(
               "Received undefined subAction from menu option that doesn't require further interaction: " +
-                name,
+                String(name),
             );
           }
 

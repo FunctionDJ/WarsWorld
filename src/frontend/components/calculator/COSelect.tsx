@@ -1,8 +1,8 @@
 import type { CO } from "../../../shared/schemas/co";
 
-type Props = {
+interface Props {
   CO: CO;
-};
+}
 
 export default function COSelect({ CO }: Props) {
   return (

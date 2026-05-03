@@ -1,9 +1,9 @@
 import type { PlayerMMR } from "pages/players/[playerName]";
 import { PlayerMMRCard } from "../PlayerMMRCard";
 
-type Props = {
+interface Props {
   playerLeaguesMMR: PlayerMMR[] | undefined;
-};
+}
 
 export function PLayerLeagueGeneralSection({ playerLeaguesMMR }: Props) {
   return (

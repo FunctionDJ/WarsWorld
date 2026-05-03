@@ -1,10 +1,10 @@
 import type { ReactNode } from "react";
 import OrangeGradientLine from "./decorations/OrangeGradientLine";
 
-type Props = {
+interface Props {
   children: ReactNode;
   svgPathD?: string;
-};
+}
 
 export default function PageTitle({ children, svgPathD }: Props) {
   return (

@@ -1,6 +1,5 @@
-import type { DisplayObject } from "pixi.js";
 import { BitmapText, Container, Sprite, Texture } from "pixi.js";
-import { type MutableRefObject } from "react";
+import { type RefObject } from "react";
 import type { MainAction } from "shared/schemas/action";
 import { /*baseTileSize,*/ renderedTileSize } from "../components/client-only/MatchRenderer";
 import type { Position } from "../shared/schemas/position";
@@ -14,11 +13,11 @@ import { getAttackTargetTiles } from "./show-pathing";
 import { tileConstructor } from "./sprite-constructor";
 
 export function renderAttackTiles(
-  interactiveContainer: Container<DisplayObject>,
+  interactiveContainer: Container,
   match: MatchWrapper,
-  currentUnitClickedRef: MutableRefObject<UnitWrapper | null>,
+  currentUnitClickedRef: RefObject<UnitWrapper | null>,
   spriteSheets: LoadedSpriteSheet,
-  pathRef: MutableRefObject<Position[] | null>,
+  pathRef: RefObject<Position[] | null>,
   mapContainer: Container,
   sendAction: (action: MainAction) => Promise<void>,
   attackingPosition?: Position,
@@ -53,7 +52,7 @@ export function renderAttackTiles(
             : unit1.data.position;
         attackTileContainer.addChild(renderProbabilities(unit1, unit2, attackingPos));
 
-        if (unit1?.isIndirect() === true) {
+        if (unit1.isIndirect()) {
           pathRef.current = null;
           mapContainer.getChildByName("pathArrows")?.destroy();
         }
@@ -124,18 +123,24 @@ export function renderAttackTiles(
     background.tint = "#eaeaea";
     probabilitiesContainer.addChild(background);
 
-    const attackerText = new BitmapText(`${attackerDamage.min}% - ${attackerDamage.max}%`, {
-      fontName: "awFont",
-      fontSize: 12,
-    });
+    const attackerText = new BitmapText(
+      `${String(attackerDamage.min)}% - ${String(attackerDamage.max)}%`,
+      {
+        fontName: "awFont",
+        fontSize: 12,
+      },
+    );
     attackerText.x = -renderedTileSize * 1.25 - 1;
     attackerText.y = -renderedTileSize * 1.25 + 8;
     probabilitiesContainer.addChild(attackerText);
 
-    const defenderText = new BitmapText(`${defenderDamage.min}% - ${defenderDamage.max}%`, {
-      fontName: "awFont",
-      fontSize: 12,
-    });
+    const defenderText = new BitmapText(
+      `${String(defenderDamage.min)}% - ${String(defenderDamage.max)}%`,
+      {
+        fontName: "awFont",
+        fontSize: 12,
+      },
+    );
     defenderText.x = -renderedTileSize * 2 + 4;
     defenderText.y = -renderedTileSize / 2 + 2;
     probabilitiesContainer.addChild(defenderText);

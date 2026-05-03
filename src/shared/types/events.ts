@@ -23,16 +23,16 @@ import type { Weather } from "shared/schemas/weather";
 import type { CapturableTile, PlayerInMatch } from "./server-match-state";
 
 /** player slot 0 implicity starts */
-export type MatchStartEvent = {
+export interface MatchStartEvent {
   type: "matchStart";
   weather: Weather;
-};
+}
 
-export type MatchEndEvent = {
+export interface MatchEndEvent {
   type: "matchEnd";
   winningTeamPlayerIds: string[] | null; // null = draw
   // TODO this type can probably be made a lot more fine-grained later on
-};
+}
 
 export type MoveEventWithoutSubEvent = {
   trap: boolean;
@@ -63,9 +63,9 @@ export type COPowerEvent = COPowerAction & {
   positions?: Position[];
 };
 
-type WithPlayer = {
+interface WithPlayer {
   playerId: Player["id"];
-};
+}
 
 export type PlayerEliminatedEvent = WithPlayer & {
   type: "player-eliminated";
@@ -79,9 +79,9 @@ export type PlayerEliminatedEvent = WithPlayer & {
     | { eliminationReason: "timer-ran-out" }
   );
 
-type WithElimination<Reason extends string> = {
+interface WithElimination<Reason extends string> {
   eliminationReason?: Reason;
-};
+}
 
 /** TODO maybe add the turn/day number */
 export type Turn = WithElimination<"all-units-crashed"> & {
@@ -124,12 +124,12 @@ export type SubEvent =
   | UnloadWaitEvent
   | AttackEvent;
 
-type WithDiscoveries = {
+interface WithDiscoveries {
   discoveredUnits?: WWUnit[];
   discoveredProperties?: CapturableTile[];
-};
+}
 
-type EmittableAttackParticipantInfo = {
+interface EmittableAttackParticipantInfo {
   playerSlot: PlayerSlot;
   powerChargeGained?: number;
   position?: Position;
@@ -139,13 +139,13 @@ type EmittableAttackParticipantInfo = {
    * Only used for Sasha SCOP
    */
   damageTakenInFunds?: number;
-};
-export type EmittableAttackEvent = {
+}
+export interface EmittableAttackEvent {
   type: "attack";
   attacker?: EmittableAttackParticipantInfo;
   defender?: EmittableAttackParticipantInfo;
   playerUpdate: PlayerInMatch[];
-};
+}
 
 export type EmittableSubEvent =
   | AbilityEvent

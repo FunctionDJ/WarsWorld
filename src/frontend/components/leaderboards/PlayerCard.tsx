@@ -1,14 +1,14 @@
 import Link from "next/link";
 import type { Army } from "shared/schemas/army";
 
-type Props = {
+interface Props {
   rank: number;
   name: string;
   mmr: number;
   co: string;
   country: Army;
   profileLink: string;
-};
+}
 
 export default function PlayerCard({ rank, name, mmr, co, country, profileLink }: Props) {
   return (

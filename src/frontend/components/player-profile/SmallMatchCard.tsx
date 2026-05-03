@@ -1,16 +1,16 @@
 import Link from "next/link";
 import type { CO } from "shared/schemas/co";
 
-type SmallMatchCardPlayer = {
+interface SmallMatchCardPlayer {
   co: CO;
   name: string;
-};
-type Props = {
+}
+interface Props {
   matchResult: "W" | "L" | "D";
   player1: SmallMatchCardPlayer;
   player2: SmallMatchCardPlayer;
   matchLink: string;
-};
+}
 
 const resultColors = {
   W: "@bg-green-earth",

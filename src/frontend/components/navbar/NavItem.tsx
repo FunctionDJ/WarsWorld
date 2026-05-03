@@ -1,11 +1,11 @@
 import Link from "next/link";
 import NavButton from "./NavButton";
 
-type Props = {
+interface Props {
   text: string;
   location: string;
   handleBurgerMenu?: () => void;
-};
+}
 
 export function NavItem({ text, location, handleBurgerMenu }: Props) {
   return (

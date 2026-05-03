@@ -1,7 +1,7 @@
-type Props = {
+interface Props {
   icon: string;
   text?: number;
-};
+}
 
 export default function IconText({ icon, text }: Props) {
   return (

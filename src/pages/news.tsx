@@ -26,16 +26,16 @@ export default function NewsPage() {
           {articleNews && (
             <FeaturedNewsCard
               cardInfo={{
-                subdirectory: `articles/${articleNews?.[1].id}/${stringToSlug(
-                  articleNews?.[1].title,
+                subdirectory: `articles/${String(articleNews[1].id)}/${stringToSlug(
+                  articleNews[1].title,
                 )}`,
-                title: articleNews?.[1].title,
-                description: articleNews?.[1].description,
-                thumbnail: articleNews?.[1].thumbnail ?? "",
-                thumbnailAlt: articleNews?.[1].title,
-                date: articleNews?.[1].createdAt.toDateString(),
+                title: articleNews[1].title,
+                description: articleNews[1].description,
+                thumbnail: articleNews[1].thumbnail ?? "",
+                thumbnailAlt: articleNews[1].title,
+                date: articleNews[1].createdAt.toDateString(),
                 category:
-                  articleNews?.[1].category[0].toUpperCase() + articleNews?.[1].category.slice(1),
+                  articleNews[1].category[0].toUpperCase() + articleNews[1].category.slice(1),
               }}
             />
           )}
@@ -47,7 +47,7 @@ export default function NewsPage() {
               <LinkCard
                 key={index}
                 cardInfo={{
-                  subdirectory: `articles/${article.id}/${stringToSlug(article.title)}`,
+                  subdirectory: `articles/${String(article.id)}/${stringToSlug(article.title)}`,
                   title: article.title,
                   description: article.description,
                   thumbnail: article.thumbnail ?? "",

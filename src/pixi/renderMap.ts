@@ -2,7 +2,6 @@ import { baseTileSize, mapBorder } from "components/client-only/MatchRenderer";
 import type { FrontendUnit } from "frontend/components/match/FrontendUnit";
 import type { SpriteAnimationKeys } from "frontend/components/match/getSpritesheetData";
 import type { ChangeableTileWithSprite } from "frontend/components/match/types";
-import type { Resource } from "pixi.js";
 import { AnimatedSprite, Container, Sprite, Texture } from "pixi.js";
 import type { Position } from "shared/schemas/position";
 import type { Tile } from "shared/schemas/tile";
@@ -10,7 +9,7 @@ import type { ChangeableTile } from "shared/types/server-match-state";
 import type { MatchWrapper } from "shared/wrappers/match";
 import type { LoadedSpriteSheet } from "./load-spritesheet";
 
-type AnimationsProperty = Record<SpriteAnimationKeys, Texture<Resource>[]>;
+type AnimationsProperty = Record<SpriteAnimationKeys, Texture[]>;
 
 function getTileSprite(
   match: MatchWrapper,

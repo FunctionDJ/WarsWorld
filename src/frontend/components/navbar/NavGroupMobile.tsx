@@ -1,9 +1,9 @@
 import { NavItem } from "./NavItem";
 
-type Props = {
+interface Props {
   showLinks: boolean;
   handleBurgerMenu: () => void;
-};
+}
 
 const navItemObject = [
   { text: "YOUR GAMES", location: "/your-matches" },
@@ -41,25 +41,23 @@ const navItemObject = [
 
 export function NavGroupMobile({ showLinks, handleBurgerMenu }: Props) {
   return (
-    <>
-      <ul
-        className={`@absolute @m-0 @p-0 @list-none @overflow-y-hidden @shadow-black @shadow-lg @right-0 @w-full smallscreen:@w-[45vw] @top-[calc(100%_+_0.3em)]
+    <ul
+      className={`@absolute @m-0 @p-0 @list-none @overflow-y-hidden @shadow-black @shadow-lg @right-0 @w-full smallscreen:@w-[45vw] @top-[calc(100%_+_0.3em)]
       @bg-gradient-to-r @from-bg-primary @from-30% @to-bg-secondary @z-50 @duration-[750ms]
           ${showLinks ? "@max-h-[100vh]" : "@max-h-0"}`}
-      >
-        {navItemObject.map((option) => (
-          <li
-            key={option.text}
-            className={`@py-3 @px-4 large_monitor:@py-4 @cursor-pointer @border-primary-dark @border-b-[1px]`}
-          >
-            <NavItem
-              text={option.text}
-              location={option.location}
-              handleBurgerMenu={handleBurgerMenu}
-            />
-          </li>
-        ))}
-      </ul>
-    </>
+    >
+      {navItemObject.map((option) => (
+        <li
+          key={option.text}
+          className={`@py-3 @px-4 large_monitor:@py-4 @cursor-pointer @border-primary-dark @border-b-[1px]`}
+        >
+          <NavItem
+            text={option.text}
+            location={option.location}
+            handleBurgerMenu={handleBurgerMenu}
+          />
+        </li>
+      ))}
+    </ul>
   );
 }

@@ -4,10 +4,10 @@ import { trpc } from "frontend/utils/trpc-client";
 import type { GetServerSideProps } from "next";
 import { prisma } from "server/prisma/prisma-client";
 
-type Props = {
+interface Props {
   articleId: string;
   title: string;
-};
+}
 
 export const getServerSideProps: GetServerSideProps<Props> = async ({ params }) => {
   // These params are the ones you put on the url

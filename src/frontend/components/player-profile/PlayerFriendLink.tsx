@@ -2,11 +2,11 @@ import Link from "next/link";
 import type { Army } from "shared/schemas/army";
 import type { CO } from "shared/schemas/co";
 
-type Props = {
+interface Props {
   friendName: string;
   friendFavCO: CO;
   friendFavArmy: Army;
-};
+}
 
 export function PlayerFriendLink({ friendName, friendFavArmy, friendFavCO }: Props) {
   return (

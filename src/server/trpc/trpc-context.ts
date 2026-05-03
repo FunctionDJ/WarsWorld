@@ -1,8 +1,8 @@
+import type { CreateHTTPContextOptions } from "@trpc/server/adapters/standalone";
 import type { CreateWSSContextFnOptions } from "@trpc/server/adapters/ws";
-import type { CreateNextContextOptions } from "@trpc/server/src/adapters/next";
 import { getSession } from "next-auth/react";
 
-export async function createContext(opts: CreateNextContextOptions | CreateWSSContextFnOptions) {
+export async function createContext(opts: CreateHTTPContextOptions | CreateWSSContextFnOptions) {
   const req = "req" in opts ? opts.req : undefined;
   const session = await getSession({ req });
 

@@ -129,7 +129,7 @@ const eliminatePlayerByCapture = (match: MatchWrapper, capturingUnit: UnitWrappe
 
   if (playerToEliminate === undefined) {
     throw new Error(
-      `Could not eliminate player by slot ${capturedTile.playerSlot} because they could not be found`,
+      `Could not eliminate player by slot ${String(capturedTile.playerSlot)} because they could not be found`,
     );
   }
 
@@ -179,9 +179,7 @@ export const applyAbilityEvent: ApplySubEvent<AbilityEvent> = (match, event, fro
         break;
       }
 
-      if (unit.data.currentCapturePoints === undefined) {
-        unit.data.currentCapturePoints = 20;
-      }
+      unit.data.currentCapturePoints ??= 20;
 
       if (unit.player.data.coId.name === "sami") {
         if (unit.player.data.COPowerState === "super-co-power") {

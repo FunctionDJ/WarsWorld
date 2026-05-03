@@ -1,10 +1,10 @@
-import SquareButton from "./SquareButton";
 import { useRouter } from "next/router";
+import SquareButton from "./SquareButton";
 
-type buttonData = {
+interface buttonData {
   text: string;
   link: string;
-};
+}
 
 export default function ThreeLinesText(props: {
   subtitle: string;

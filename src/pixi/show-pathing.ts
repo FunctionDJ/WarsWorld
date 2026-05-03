@@ -16,12 +16,12 @@ import { baseTileSize } from "../components/client-only/MatchRenderer";
 import { DispatchableError } from "../shared/DispatchedError";
 import type { UnitWrapper } from "../shared/wrappers/unit";
 import type { LoadedSpriteSheet } from "./load-spritesheet";
-export type PathNode = {
+export interface PathNode {
   //saves distance from origin and parent (to retrieve the shortest path)
   pos: Position;
   dist: number;
   parent: Position | null;
-};
+}
 
 const makeVisitedMatrix = (map: MapWrapper) =>
   Array.from({ length: map.width })
@@ -123,11 +123,9 @@ export const getAttackableTiles = (
     }
   } else {
     // Melee unit
-    if (accessibleNodes === undefined) {
-      accessibleNodes = fromPosition
-        ? new Map([[fromPosition, { pos: fromPosition, dist: 0, parent: null }]]) // Create a minimal node if specific position given
-        : getAccessibleNodes(match, unit);
-    }
+    accessibleNodes ??= fromPosition
+      ? new Map([[fromPosition, { pos: fromPosition, dist: 0, parent: null }]]) // Create a minimal node if specific position given
+      : getAccessibleNodes(match, unit);
 
     const visited = makeVisitedMatrix(match.map);
 
@@ -158,10 +156,7 @@ export const getAttackTargetTiles = (
   attackableTiles?: Position[],
 ) => {
   const attackTargetPositions: Position[] = [];
-
-  if (attackableTiles === undefined) {
-    attackableTiles = getAttackableTiles(match, unit, fromPosition);
-  }
+  attackableTiles ??= getAttackableTiles(match, unit, fromPosition);
 
   const canAttackPipeseams =
     getBaseDamage(unit, createPipeSeamUnitEquivalent(match, unit)) !== null;
@@ -359,7 +354,7 @@ export const showPath = (spriteSheet: LoadedSpriteSheet, path: Position[]) => {
       spriteName = getSpriteName(path2[i - 1], path2[i], path2[i + 1]);
     }
 
-    const nodeSprite = new Sprite(spriteSheet.arrow?.textures[spriteName + ".png"]);
+    const nodeSprite = new Sprite(spriteSheet.arrow.textures[spriteName + ".png"]);
     nodeSprite.anchor.set(1, 1);
     nodeSprite.x = (path2[i][0] + 1) * baseTileSize;
     nodeSprite.y = (path2[i][1] + 1) * baseTileSize;

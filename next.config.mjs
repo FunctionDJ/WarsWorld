@@ -9,7 +9,6 @@ const nextConfig = {
   sassOptions: {
     includePaths: [path.join(__dirname, "src/frontend/styles")],
   },
-  eslint: { ignoreDuringBuilds: process.env.CI !== undefined },
   reactStrictMode: true,
   images: {
     remotePatterns: [

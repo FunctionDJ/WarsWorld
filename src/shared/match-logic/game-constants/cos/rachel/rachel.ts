@@ -26,7 +26,7 @@ export const rachelAWDS: COProperties = {
       stars: 6,
       calculatePositions: (player) => getMissilePositions(player),
       instantEffect(player, positions) {
-        if (positions === undefined || positions.length !== 3) {
+        if (positions?.length !== 3) {
           throw new Error("Did not get missile positions");
         }
 

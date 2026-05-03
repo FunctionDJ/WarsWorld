@@ -2,11 +2,11 @@ import type { Army } from "shared/schemas/army";
 import type { CO } from "shared/schemas/co";
 import { PlayerFriendLink } from "../PlayerFriendLink";
 
-type Player = {
+interface Player {
   name: string;
   favArmy: Army;
   favCO: CO;
-};
+}
 
 const friends: Player[] = [
   {

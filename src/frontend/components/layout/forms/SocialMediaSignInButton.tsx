@@ -1,9 +1,9 @@
 import { signIn } from "next-auth/react";
 
-type Props = {
+interface Props {
   disabled?: boolean;
   name: string;
-};
+}
 
 const SocialMedia = [
   {

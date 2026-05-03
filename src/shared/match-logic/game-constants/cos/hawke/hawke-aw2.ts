@@ -22,7 +22,9 @@ export const hawkeAW2: COProperties = {
             unit.data.stats.hp = Math.min(unit.data.stats.hp + 10, 100);
           }
         });
-        player.team.getEnemyUnits().forEach((unit) => unit.damageUntil1HP(1));
+        player.team.getEnemyUnits().forEach((unit) => {
+          unit.damageUntil1HP(1);
+        });
       },
     },
     superCOPower: {
@@ -36,7 +38,9 @@ export const hawkeAW2: COProperties = {
             unit.data.stats.hp = Math.min(unit.data.stats.hp + 20, 100);
           }
         });
-        player.team.getEnemyUnits().forEach((unit) => unit.damageUntil1HP(2));
+        player.team.getEnemyUnits().forEach((unit) => {
+          unit.damageUntil1HP(2);
+        });
       },
     },
   },

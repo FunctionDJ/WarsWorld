@@ -5,7 +5,7 @@ import type { ArticleCommentsWithPlayer } from "shared/schemas/article";
 import ArticleCommentSection from "./ArticleCommentSection";
 import ArticleContent from "./ArticleContent";
 
-type Props = {
+interface Props {
   articleData: {
     type: ArticleType;
     contentHtml: string;
@@ -19,7 +19,7 @@ type Props = {
     };
     comments: ArticleCommentsWithPlayer;
   };
-};
+}
 
 export default function Article({ articleData }: Props) {
   // Lets make sure we have our parameters/data

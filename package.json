@@ -45,6 +45,7 @@
   },
   "dependencies": {
     "@auth/core": "^0.24.0",
+    "@eslint/js": "^10.0.1",
     "@headlessui/react": "^1.7.18",
     "@prisma/client": "^5.8.1",
     "@react-hook/window-size": "^3.1.1",
@@ -57,12 +58,12 @@
     "esbuild": "^0.28.0",
     "fix-esm-import-path": "^1.10.3",
     "gray-matter": "^4.0.3",
-    "next": "^14.1.0",
+    "next": "16.2.4",
     "next-auth": "^4.24.5",
     "pixi.js": "^7.4.0",
     "prisma-json-types-generator": "^3.0.3",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "react": "19.2.5",
+    "react-dom": "19.2.5",
     "remark": "^15.0.1",
     "remark-html": "^16.0.1",
     "sass": "^1.99.0",
@@ -73,27 +74,26 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@eslint-react/eslint-plugin": "^5.7.1",
     "@faker-js/faker": "^8.4.0",
-    "@stylistic/eslint-plugin-ts": "^1.5.4",
+    "@stylistic/eslint-plugin-ts": "^4.4.1",
     "@types/bcrypt": "^5.0.2",
     "@types/eslint": "^9.6.1",
     "@types/node": "^20.11.10",
-    "@types/react": "^19.2.14",
+    "@types/react": "19.2.14",
     "@types/uuid": "^9.0.8",
     "@types/ws": "^8.5.10",
     "@types/yargs": "^17.0.33",
-    "@typescript-eslint/eslint-plugin": "^6.20.0",
-    "@typescript-eslint/parser": "^6.20.0",
+    "@typescript-eslint/eslint-plugin": "^8.59.1",
+    "@typescript-eslint/parser": "^8.59.1",
     "autoprefixer": "^10.5.0",
     "concurrently": "^9.2.1",
     "cross-env": "^10.1.0",
-    "eslint": "^8.56.0",
-    "eslint-config-next": "^14.1.0",
-    "eslint-config-prettier": "^9.1.0",
+    "eslint": "^10.3.0",
+    "eslint-config-next": "16.2.4",
     "eslint-plugin-next": "^0.0.0",
     "eslint-plugin-prettier": "^5.5.5",
     "eslint-plugin-react": "^7.37.5",
-    "eslint-plugin-react-hooks": "^4.6.0",
     "npm-run-all": "^4.1.5",
     "postcss": "^8.5.13",
     "prisma": "^5.8.1",
@@ -101,10 +101,14 @@
     "tailwindcss": "^3.4.1",
     "tsc-alias": "^1.8.10",
     "tsx": "^4.21.0",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.59.1"
   },
   "utilsDependencies": {
     "sharp": "^0.33.2",
     "yargs": "^17.7.2"
+  },
+  "overrides": {
+    "@types/react": "19.2.14"
   }
 }

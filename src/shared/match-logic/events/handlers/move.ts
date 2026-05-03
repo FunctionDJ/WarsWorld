@@ -70,7 +70,7 @@ export const moveActionToEvent = (
 
     const unitInPosition = match.getUnit(position);
 
-    if (unitInPosition !== undefined && unitInPosition?.data.playerSlot !== unit.data.playerSlot) {
+    if (unitInPosition !== undefined && unitInPosition.data.playerSlot !== unit.data.playerSlot) {
       result.trap = true;
       break;
     }
@@ -83,8 +83,7 @@ export const moveActionToEvent = (
 
     if (
       pathIndex === action.path.length - 1 &&
-      unitInPosition !== undefined &&
-      unitInPosition.data.playerSlot === unit.data.playerSlot
+      unitInPosition?.data.playerSlot === unit.data.playerSlot
     ) {
       throwIfCantMoveIntoUnit(unit, unitInPosition);
 

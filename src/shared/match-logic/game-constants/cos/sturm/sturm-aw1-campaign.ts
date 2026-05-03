@@ -25,7 +25,7 @@ export const sturmAW1Campaign: COProperties = {
       stars: 5,
       calculatePositions: (player) => [getRandomMeteorPosition(player, 8, true)],
       instantEffect(player, positions) {
-        if (positions === undefined || positions.length !== 1) {
+        if (positions?.length !== 1) {
           throw new Error("Did not get a meteor position");
         }
 

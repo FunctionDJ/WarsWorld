@@ -4,7 +4,7 @@
   "[prisma]": {
     "editor.defaultFormatter": "Prisma.prisma"
   },
-  "js/ts.tsserver.experimental.enableProjectDiagnostics": true,
+  // "js/ts.tsserver.experimental.enableProjectDiagnostics": true,
   "js/ts.referencesCodeLens.enabled": true,
   "editor.rulers": [100],
   "editor.codeActionsOnSave": [

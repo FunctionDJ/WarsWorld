@@ -1,9 +1,9 @@
 import Image from "next/image";
 
-type Props = {
+interface Props {
   ingameStatIconPath: string;
   ingameStat: string | number;
-};
+}
 
 export function IngameInfo({ ingameStatIconPath, ingameStat }: Props) {
   return (

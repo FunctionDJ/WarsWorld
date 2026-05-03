@@ -6,7 +6,10 @@ import type { UnitWrapper } from "../shared/wrappers/unit";
 import type { LoadedSpriteSheet } from "./load-spritesheet";
 
 type UnitType = FrontendUnit | UnitWrapper;
-type SpritePosition = { x: number; y: number };
+interface SpritePosition {
+  x: number;
+  y: number;
+}
 
 function calculatePosition(position: Position, offset = 8): SpritePosition {
   return {
@@ -16,7 +19,7 @@ function calculatePosition(position: Position, offset = 8): SpritePosition {
 }
 
 function createIcon(spriteSheet: LoadedSpriteSheet, pos: Position, texture: string): Sprite {
-  const icon = new Sprite(spriteSheet.icons?.textures[texture]);
+  const icon = new Sprite(spriteSheet.icons.textures[texture]);
   icon.x = pos[0];
   icon.y = pos[1];
   icon.width = 8;
@@ -36,7 +39,7 @@ export function renderUnitSprite(
 
   // Create unit container and sprite
   const unitContainer = new Container();
-  const armySpriteSheet = spriteSheets[`${unit.player.data.army}`];
+  const armySpriteSheet = spriteSheets[unit.player.data.army];
   const unitSprite = new AnimatedSprite(armySpriteSheet.animations[unit.data.type]);
 
   // Configure unit sprite
@@ -49,7 +52,7 @@ export function renderUnitSprite(
   }
 
   unitSprite.play();
-  unitContainer.name = `unit-${position[0]}-${position[1]}`;
+  unitContainer.name = `unit-${String(position[0])}-${String(position[1])}`;
   unitContainer.addChild(unitSprite);
 
   // Add capture points icon if applicable
@@ -69,7 +72,7 @@ export function renderUnitSprite(
     const healthIcon = createIcon(
       spriteSheets,
       [spritePosition.x + 8, spritePosition.y + 8],
-      `health-${visualHP}.png`,
+      `health-${String(visualHP)}.png`,
     );
     unitContainer.addChild(healthIcon);
   }

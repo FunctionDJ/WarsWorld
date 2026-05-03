@@ -8,11 +8,11 @@ import { useEffect, useState } from "react";
 import { MatchWrapper } from "shared/wrappers/match";
 import { MatchRenderer } from "./MatchRenderer";
 
-type Props = {
+interface Props {
   matchId: string;
   playerId: string;
   spritesheetDataByArmy: SpritesheetDataByArmy;
-};
+}
 
 export function MatchLoader({ matchId, playerId, spritesheetDataByArmy }: Props) {
   const spriteSheetQuery = useQuery({

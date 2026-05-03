@@ -55,16 +55,16 @@ export default function HowToPlay() {
                     description={section.description}
                     tailwind_color={section.color}
                     articles={articleGuides
-                      ?.map((guide) => {
+                      .map<ICardInfo>((guide) => {
                         return {
-                          subdirectory: `articles/${guide.id}/${stringToSlug(guide.title)}`,
+                          subdirectory: `articles/${String(guide.id)}/${stringToSlug(guide.title)}`,
                           title: guide.title,
                           description: guide.description,
                           thumbnail: guide.thumbnail ?? "",
                           thumbnailAlt: guide.title,
                           date: guide.createdAt.toDateString(),
                           category: guide.category[0].toUpperCase() + guide.category.slice(1),
-                        } as ICardInfo;
+                        };
                       })
                       .filter(
                         (article) =>

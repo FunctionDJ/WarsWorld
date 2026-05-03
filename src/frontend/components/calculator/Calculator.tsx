@@ -2,9 +2,9 @@ import COCalculator from "./COCalculator";
 // import { CO } from "../../../shared/schemas/co"; // TODO: unused import
 import type { PlayerInMatch } from "shared/types/server-match-state";
 
-type Props = {
+interface Props {
   player: PlayerInMatch;
-};
+}
 
 export default function Calculator({ player }: Props) {
   return (

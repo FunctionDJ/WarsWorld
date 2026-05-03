@@ -1,5 +1,5 @@
-import type { COProperties } from "../../../co";
 import { getDistance } from "shared/schemas/position";
+import type { COProperties } from "../../../co";
 import { getMissilePositions } from "../rachel/get-missile-positions";
 
 export const vonBoltAWDS: COProperties = {
@@ -24,7 +24,7 @@ export const vonBoltAWDS: COProperties = {
         return [missilePositions[Math.floor(Math.random() * 2) + 1]];
       },
       instantEffect(player, positions) {
-        if (positions === undefined || positions.length !== 1) {
+        if (positions?.length !== 1) {
           throw new Error("Did not get a bolt position");
         }
 

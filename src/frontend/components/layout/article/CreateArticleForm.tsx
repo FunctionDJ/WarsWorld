@@ -1,18 +1,18 @@
-import { type FormEvent, useState, type Dispatch, type SetStateAction } from "react";
+import type { ArticleCategory } from "@prisma/client";
+import { TRPCClientError } from "@trpc/client";
+import { usePlayers } from "frontend/context/players";
+import { stringToSlug } from "frontend/utils/articleUtils";
+import { trpc } from "frontend/utils/trpc-client";
+import Link from "next/link";
+import { useState, type Dispatch, type SetStateAction, type SubmitEvent } from "react";
+import { articleSchema, type ArticleCategories } from "shared/schemas/article";
+import { ZodError } from "zod";
 import Select, { type SelectOption } from "../Select";
 import SquareButton from "../SquareButton";
 import OrangeGradientLine from "../decorations/OrangeGradientLine";
 import ErrorSuccessBlock from "../forms/ErrorSuccessBlock";
 import FormInput from "../forms/FormInput";
-import type { ArticleCategory } from "@prisma/client";
-import { usePlayers } from "frontend/context/players";
-import { trpc } from "frontend/utils/trpc-client";
-import { articleSchema, type ArticleCategories } from "shared/schemas/article";
-import Link from "next/link";
 import TextAreaInput from "../forms/TextAreaInput";
-import { ZodError } from "zod";
-import { TRPCClientError } from "@trpc/client";
-import { stringToSlug } from "frontend/utils/articleUtils";
 
 const CATEGORIES = [
   { label: "News", value: "news" },
@@ -24,18 +24,18 @@ const CATEGORIES = [
   { label: "Advance", value: "advance" },
 ] satisfies { label: string; value: ArticleCategories }[];
 
-type ArticleData = {
+interface ArticleData {
   title: string;
   description: string;
   thumbnail: string;
   body: string;
   category: string;
-};
+}
 
-type Props = {
+interface Props {
   articleData: ArticleData;
   setArticleData: Dispatch<SetStateAction<ArticleData>>;
-};
+}
 
 export default function CreateArticleForm({ articleData, setArticleData }: Props) {
   const { currentPlayer } = usePlayers();
@@ -62,7 +62,7 @@ export default function CreateArticleForm({ articleData, setArticleData }: Props
     setError("");
   };
 
-  const onSubmitArticleForm = async (event: FormEvent) => {
+  const onSubmitArticleForm = async (event: SubmitEvent) => {
     event.preventDefault();
 
     try {
@@ -79,7 +79,7 @@ export default function CreateArticleForm({ articleData, setArticleData }: Props
         playerId: currentPlayer?.id ?? "",
       });
 
-      setNewestCreatedArticleLink(`${newArticle.id}/${stringToSlug(newArticle.title)}`);
+      setNewestCreatedArticleLink(`${String(newArticle.id)}/${stringToSlug(newArticle.title)}`);
       setFormErrors(undefined);
       clearForm();
     } catch (err) {
@@ -102,17 +102,17 @@ export default function CreateArticleForm({ articleData, setArticleData }: Props
     }));
   };
 
-  const titleError = formErrors?.issues?.find((error) => error.path[0] == "title");
-  const descriptionError = formErrors?.issues?.find((error) => error.path[0] == "description");
-  const thumbnailError = formErrors?.issues?.find((error) => error.path[0] == "thumbnail");
-  const bodyError = formErrors?.issues?.find((error) => error.path[0] == "body");
+  const titleError = formErrors?.issues.find((error) => error.path[0] == "title");
+  const descriptionError = formErrors?.issues.find((error) => error.path[0] == "description");
+  const thumbnailError = formErrors?.issues.find((error) => error.path[0] == "thumbnail");
+  const bodyError = formErrors?.issues.find((error) => error.path[0] == "body");
 
   return (
     <>
       <OrangeGradientLine />
       <form
         className="@px-4 smallscreen:@px-32 @py-10 @bg-black/70"
-        onSubmit={(event: FormEvent) => {
+        onSubmit={(event) => {
           void onSubmitArticleForm(event);
         }}
       >
@@ -129,7 +129,9 @@ export default function CreateArticleForm({ articleData, setArticleData }: Props
         <div className="@grid @grid-flow-row @grid-cols-4">
           <FormInput
             value={articleData.title}
-            onChange={(event) => onChangeGenericHandler("title", event.target.value)}
+            onChange={(event) => {
+              onChangeGenericHandler("title", event.target.value);
+            }}
             className="@my-4 @w-full @mb-8 @col-span-4 smallscreen:@col-span-3"
             text="Title"
             type="text"
@@ -152,7 +154,9 @@ export default function CreateArticleForm({ articleData, setArticleData }: Props
           </div>
           <TextAreaInput
             value={articleData.description}
-            onChange={(event) => onChangeGenericHandler("description", event.target.value)}
+            onChange={(event) => {
+              onChangeGenericHandler("description", event.target.value);
+            }}
             className="@col-span-4"
             text="Description"
             height="20rem"
@@ -161,7 +165,9 @@ export default function CreateArticleForm({ articleData, setArticleData }: Props
           />
           <FormInput
             value={articleData.thumbnail}
-            onChange={(event) => onChangeGenericHandler("thumbnail", event.target.value)}
+            onChange={(event) => {
+              onChangeGenericHandler("thumbnail", event.target.value);
+            }}
             className="@mt-8 @col-span-4"
             type="text"
             text="Thumbnail"
@@ -171,7 +177,9 @@ export default function CreateArticleForm({ articleData, setArticleData }: Props
 
           <TextAreaInput
             value={articleData.body}
-            onChange={(event) => onChangeGenericHandler("body", event.target.value)}
+            onChange={(event) => {
+              onChangeGenericHandler("body", event.target.value);
+            }}
             className="@col-span-4 @mt-12"
             text="Content"
             height="50rem"

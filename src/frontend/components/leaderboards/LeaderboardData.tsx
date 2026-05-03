@@ -2,7 +2,7 @@ import { faker } from "@faker-js/faker";
 import { type Army, armySchema } from "shared/schemas/army";
 import { type CO, coSchema } from "shared/schemas/co";
 
-export type Player = {
+export interface Player {
   id: string;
   name: string;
   games: number;
@@ -12,9 +12,9 @@ export type Player = {
   co: CO;
   army: Army;
   profileLink: string;
-};
+}
 
-export type PlayerLeaderboard = {
+export interface PlayerLeaderboard {
   id: string;
   rank: number;
   name: string;
@@ -25,7 +25,7 @@ export type PlayerLeaderboard = {
   co: CO;
   army: Army;
   profileLink: string;
-};
+}
 
 const newPlayer = (): Player => {
   const id = faker.string.uuid();

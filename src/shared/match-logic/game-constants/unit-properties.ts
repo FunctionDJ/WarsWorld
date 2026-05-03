@@ -10,7 +10,7 @@ export type MovementType =
 
 export type Facility = "base" | "airport" | "port";
 
-export type UnitPropertiesWithoutWeapon = {
+export interface UnitPropertiesWithoutWeapon {
   displayName: string;
   cost: number;
   facility: Facility;
@@ -18,7 +18,7 @@ export type UnitPropertiesWithoutWeapon = {
   movementPoints: number;
   initialFuel: number;
   vision: number;
-};
+}
 
 type Range = [number, number];
 

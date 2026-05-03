@@ -5,12 +5,12 @@
 import { compare } from "bcrypt";
 import type { NextAuthOptions } from "next-auth";
 import type { Adapter } from "next-auth/adapters";
-import type { Provider } from "next-auth/providers";
 import CredentialsProvider from "next-auth/providers/credentials";
 import type { DiscordProfile } from "next-auth/providers/discord";
 import DiscordProvider from "next-auth/providers/discord";
 import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
+import type { Provider } from "next-auth/providers/index";
 import { prisma } from "server/prisma/prisma-client";
 import { loginSchema } from "shared/schemas/auth";
 import { z } from "zod";
@@ -151,10 +151,7 @@ export const authOptions: NextAuthOptions = {
       return baseUrl; // redirect callback
     },
     jwt({ token, user }) {
-      if (user != undefined) {
-        token.id = user.id;
-      }
-
+      token.id = user.id;
       token.userRole = "admin";
       return token;
     },

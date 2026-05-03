@@ -1,7 +1,7 @@
-type Props = {
+interface Props {
   onClick?: React.MouseEventHandler;
   children: React.ReactNode;
-};
+}
 
 export default function PlayButton({ onClick, children }: Props) {
   return (

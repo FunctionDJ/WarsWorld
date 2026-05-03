@@ -7,14 +7,14 @@ import type { TileType } from "shared/schemas/tile";
  */
 type TileMovementCosts = Record<MovementType, number | null>;
 
-type TileProperties = {
+interface TileProperties {
   movementCosts: TileMovementCosts;
   /**
    * An integer from 0 to 4 which modifies the amount of damage
    * a unit on this tile takes from attacks.
    */
   defenseStars: number;
-};
+}
 
 /** All ocean tiles are impassible for land units. */
 const commonOceanMovementCosts = {

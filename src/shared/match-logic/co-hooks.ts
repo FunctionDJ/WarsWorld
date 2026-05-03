@@ -2,11 +2,14 @@ import type { UnitType } from "shared/schemas/unit";
 import type { MatchWrapper } from "shared/wrappers/match";
 import type { UnitWrapper } from "shared/wrappers/unit";
 
-export type CombatProps = { attacker: UnitWrapper; defender: UnitWrapper };
+export interface CombatProps {
+  attacker: UnitWrapper;
+  defender: UnitWrapper;
+}
 
 type ReturnValue = number | undefined;
 
-export type Hooks = {
+export interface Hooks {
   buildCost: (baseBuildCost: number, match: MatchWrapper) => ReturnValue;
   movementCost: <T extends UnitType>(baseMovementCost: number, unit: UnitWrapper<T>) => ReturnValue;
   movementPoints: <T extends UnitType>(
@@ -24,4 +27,4 @@ export type Hooks = {
 
   maxGoodLuck: (combatProps: CombatProps) => ReturnValue;
   maxBadLuck: (combatProps: CombatProps) => ReturnValue;
-};
+}

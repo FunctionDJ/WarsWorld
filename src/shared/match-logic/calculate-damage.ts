@@ -140,9 +140,7 @@ export const calculateEngagementOutcome = (
     false,
   );
 
-  if (damageByAttacker === null) {
-    damageByAttacker = 0; // this is necessary cause sonja scop reverses attacker and defender
-  }
+  damageByAttacker ??= 0; // this is necessary cause sonja scop reverses attacker and defender
 
   //check if ded
   if (damageByAttacker >= defender.getHP()) {

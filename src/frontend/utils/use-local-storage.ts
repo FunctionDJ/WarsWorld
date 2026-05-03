@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 export const useLocalStorage = (key: string, initialValue: string | null) => {
-  const [value, setValueInternal] = useState<string | null>(() => {
+  const [valueInternal, setValueInternal] = useState<string | null>(() => {
     //check to see if this has a window (client side rendering) or not (server-side-rendering)
     if (typeof window === "undefined") {
       return initialValue;
@@ -23,5 +23,5 @@ export const useLocalStorage = (key: string, initialValue: string | null) => {
     }
   };
 
-  return [value, setValueExternal] as const;
+  return [valueInternal, setValueExternal] as const;
 };

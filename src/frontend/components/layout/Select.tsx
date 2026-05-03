@@ -1,16 +1,16 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
-export type SelectOption = {
+export interface SelectOption {
   label: string;
   value: string | number;
-};
+}
 
-type Props = {
+interface Props {
   options: SelectOption[];
   value?: SelectOption;
   onChange: (value: SelectOption | undefined) => void;
   className?: string;
-};
+}
 
 export default function Select({ value, onChange, options, className }: Props) {
   const [isOpen, setIsOpen] = useState(false);
@@ -30,8 +30,12 @@ export default function Select({ value, onChange, options, className }: Props) {
   return (
     <div className={className}>
       <div
-        onBlur={() => setIsOpen(false)}
-        onClick={() => setIsOpen((prev) => !prev)}
+        onBlur={() => {
+          setIsOpen(false);
+        }}
+        onClick={() => {
+          setIsOpen((prev) => !prev);
+        }}
         tabIndex={0}
         className="@relative @cursor-pointer @w-full @h-full @border @border-bg-tertiary @flex @items-center @gap-2 @p-2 @rounded @outline-none @bg-bg-tertiary @shadow-black/70 @shadow-md"
       >
@@ -52,7 +56,9 @@ export default function Select({ value, onChange, options, className }: Props) {
                 selectOption(option);
                 setIsOpen(false);
               }}
-              onMouseEnter={() => setHighlightedIndex(index)}
+              onMouseEnter={() => {
+                setHighlightedIndex(index);
+              }}
               key={option.value}
               className={`@py-2 @px-4 @cursor-pointer 
                 ${isOptionSelected(option) && "@bg-blue-500 hover:@bg-blue-900"}

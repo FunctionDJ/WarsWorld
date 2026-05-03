@@ -3,7 +3,7 @@ import PageTitle from "frontend/components/layout/PageTitle";
 import type { PlayerInMatch } from "shared/types/server-match-state";
 import MatchCard from "./MatchCard";
 
-type Props = {
+interface Props {
   jump?: string;
   matches:
     | {
@@ -22,7 +22,7 @@ type Props = {
   inMatch?: boolean;
   description?: string;
   isLoading?: boolean;
-};
+}
 
 export default function MatchSection({
   jump,

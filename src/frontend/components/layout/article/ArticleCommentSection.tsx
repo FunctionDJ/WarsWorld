@@ -2,15 +2,15 @@ import { TRPCClientError } from "@trpc/client";
 import { usePlayers } from "frontend/context/players";
 import { trpc } from "frontend/utils/trpc-client";
 import { useParams } from "next/navigation";
-import { type FormEvent, type TextareaHTMLAttributes, useState } from "react";
+import { type SubmitEvent, type TextareaHTMLAttributes, useState } from "react";
 import { articleCommentSchema, type ArticleCommentsWithPlayer } from "shared/schemas/article";
 import { ZodError } from "zod";
 import TextAreaInput from "../forms/TextAreaInput";
 import SquareButton from "../SquareButton";
 
-type Props = {
+interface Props {
   comments: ArticleCommentsWithPlayer;
-};
+}
 
 const getFormattedTime = (createdAt: Date) => {
   const dateDiff = Date.now() - createdAt.getTime();
@@ -39,7 +39,7 @@ export default function ArticleCommentSection({ comments }: Props) {
   const { currentPlayer } = usePlayers();
   const [errorMessage, setErrorMessage] = useState("");
 
-  const handleSubmitComment = async (event: FormEvent) => {
+  const handleSubmitComment = async (event: SubmitEvent) => {
     event.preventDefault();
     const target = event.target as typeof event.target &
       HTMLFormElement & {
@@ -110,7 +110,7 @@ export default function ArticleCommentSection({ comments }: Props) {
           return (
             <div
               role="comment"
-              key={articleId + playerId + createdAt.toJSON()}
+              key={String(articleId) + playerId + createdAt.toJSON()}
               className="@bg-bg-tertiary smallscreen:@p-10 @p-2 @rounded-2xl @shadow-xl @shadow-black"
             >
               <div className="@flex @gap-2">

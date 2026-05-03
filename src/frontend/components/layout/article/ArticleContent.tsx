@@ -1,8 +1,8 @@
 import styles from "frontend/styles/pages/articles.module.scss";
 
-type Props = {
+interface Props {
   contentHTML: string;
-};
+}
 
 export default function ArticleContent({ contentHTML }: Props) {
   const headers = [...contentHTML.matchAll(/<h1+>(.*?)<\/h1*>/gm)];

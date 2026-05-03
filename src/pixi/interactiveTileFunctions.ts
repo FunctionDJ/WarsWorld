@@ -6,10 +6,10 @@ import type { MatchWrapper } from "shared/wrappers/match";
 import type { UnitWrapper } from "shared/wrappers/unit";
 import { tileConstructor } from "./sprite-constructor";
 
-export type BattleForecast = {
+export interface BattleForecast {
   attackerDamage: { max: number; min: number };
   defenderDamage: { max: number; min: number };
-};
+}
 
 export const getBattleForecast = (
   match: MatchWrapper,
@@ -79,7 +79,7 @@ export const getBattleForecast = (
   const minDamageTaken = attacker.getHP() - (bestAttackerOutcome.attackerHP ?? attacker.getHP());
 
   //Enemy unit is dead or can't attack
-  if (minDamageDealt >= defender?.getHP() || maxDamageTaken === attacker.getHP()) {
+  if (minDamageDealt >= defender.getHP() || maxDamageTaken === attacker.getHP()) {
     return {
       attackerDamage: { max: maxDamageDealt, min: minDamageDealt },
       defenderDamage: { min: 0, max: 0 },

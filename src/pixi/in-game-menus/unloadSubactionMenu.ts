@@ -1,6 +1,6 @@
 import { baseTileSize } from "components/client-only/MatchRenderer";
 import { Container } from "pixi.js";
-import type { MutableRefObject } from "react";
+import type { RefObject } from "react";
 import { getUnloadablePositions } from "shared/match-logic/events/handlers/unload/checkUnloadTiles";
 import { getDirection, isSamePosition, type Position } from "shared/schemas/position";
 import type { UnitWrapper } from "shared/wrappers/unit";
@@ -18,8 +18,8 @@ export const createUnloadMenu = (
   player: PlayerInMatchWrapper,
   newPosition: Position,
   unit: UnitWrapper,
-  currentUnitClickedRef: React.MutableRefObject<UnitWrapper | null>,
-  pathRef: MutableRefObject<Position[] | null>,
+  currentUnitClickedRef: RefObject<UnitWrapper | null>,
+  pathRef: RefObject<Position[] | null>,
   interactiveContainer: Container,
   spriteSheets: LoadedSpriteSheet,
   sendAction: (action: MainAction) => Promise<void>,
@@ -38,7 +38,7 @@ export const createUnloadMenu = (
   let menuInfo2 = undefined;
   const infosForMenu = [];
 
-  if (firstUnloadInfo === undefined || !firstUnloadInfo.isFirstUnit) {
+  if (!firstUnloadInfo?.isFirstUnit) {
     unloadPositions1 = getUnloadablePositions(unit, unit.data.loadedUnit, newPosition);
 
     if (firstUnloadInfo !== undefined) {
@@ -89,9 +89,7 @@ export const createUnloadMenu = (
     if (canOtherUnitBeUnloaded) {
       //there were no other options (or the only unloadable position for the other unit was this one), commit the unload action
       if (currentUnitClickedRef.current !== null) {
-        const path = pathRef.current
-          ? pathRef.current
-          : [currentUnitClickedRef.current.data.position];
+        const path = pathRef.current ?? [currentUnitClickedRef.current.data.position];
 
         const unloads = [
           { isSecondUnit: !isFirstUnit, direction: getDirection(newPosition, unloadPos) },

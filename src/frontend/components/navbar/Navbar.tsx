@@ -83,15 +83,13 @@ export function Navbar() {
             <NavGroupMobile showLinks={showLinks} handleBurgerMenu={handleBurgerMenu} />
           </>
         ) : (
-          <>
-            <NavGroup
-              showMatchLinks={showMatchLinks}
-              setShowMatchLinks={setShowMatchLinks}
-              setShowLinks={setShowLinks}
-              setIsOpen={setIsOpen}
-              isOpen={isOpen}
-            />
-          </>
+          <NavGroup
+            showMatchLinks={showMatchLinks}
+            setShowMatchLinks={setShowMatchLinks}
+            setShowLinks={setShowLinks}
+            setIsOpen={setIsOpen}
+            isOpen={isOpen}
+          />
         )}
       </nav>
     </header>

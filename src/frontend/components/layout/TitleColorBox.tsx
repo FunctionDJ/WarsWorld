@@ -1,7 +1,7 @@
-type Props = {
+interface Props {
   title: string;
   tailwind_color?: string;
-};
+}
 
 export default function TitleColorBox({ title, tailwind_color }: Props) {
   return (

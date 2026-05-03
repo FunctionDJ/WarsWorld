@@ -1,14 +1,14 @@
+import TitleColorBox from "../TitleColorBox";
 import type { ICardInfo } from "./LinkCard";
 import LinkCard from "./LinkCard";
 import LinkCardContainer from "./LinkCardContainer";
-import TitleColorBox from "../TitleColorBox";
 
-type Props = {
+interface Props {
   title: string;
   description: string;
   tailwind_color?: string;
   articles: ICardInfo[];
-};
+}
 
 export default function ArticleGroup({ title, description, tailwind_color, articles }: Props) {
   return (
@@ -21,7 +21,7 @@ export default function ArticleGroup({ title, description, tailwind_color, artic
       </div>
       <LinkCardContainer>
         {articles.map((item, index) => (
-          <LinkCard key={`${title}-${index}`} cardInfo={item} />
+          <LinkCard key={`${title}-${String(index)}`} cardInfo={item} />
         ))}
       </LinkCardContainer>
     </section>

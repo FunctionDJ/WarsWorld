@@ -1,5 +1,5 @@
 "use client";
-import type { Container, DisplayObject } from "pixi.js";
+import type { Container } from "pixi.js";
 import { Application } from "pixi.js";
 import type { LoadedSpriteSheet } from "pixi/load-spritesheet";
 import { setupApp } from "pixi/setupApp";
@@ -23,9 +23,9 @@ export const usePixi = (
 ) => {
   //containers holding pixi elements
   const pixiCanvasRef = useRef<HTMLCanvasElement | null>(null);
-  const mapContainerRef = useRef<Container<DisplayObject> | null>(null);
-  const unitContainerRef = useRef<Container<DisplayObject> | null>(null);
-  const interactiveContainerRef = useRef<Container<DisplayObject> | null>(null);
+  const mapContainerRef = useRef<Container | null>(null);
+  const unitContainerRef = useRef<Container | null>(null);
+  const interactiveContainerRef = useRef<Container | null>(null);
 
   // the unit we've clicked (the one that will be seeing sub action menu), we keep it here to reference it later on
   const currentUnitClickedRef = useRef<UnitWrapper | null>(null);

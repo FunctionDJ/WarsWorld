@@ -1,15 +1,15 @@
-import SquareButton from "../layout/SquareButton";
-import FormInput from "../layout/forms/FormInput";
-import { useEffect, useState } from "react";
-import type { FormEvent } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/router";
-import ErrorSuccessBlock from "../layout/forms/ErrorSuccessBlock";
 import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/router";
+import type { SubmitEvent } from "react";
+import { useEffect, useState } from "react";
+import SquareButton from "../layout/SquareButton";
+import ErrorSuccessBlock from "../layout/forms/ErrorSuccessBlock";
+import FormInput from "../layout/forms/FormInput";
 
-type Props = {
+interface Props {
   onLoginSuccess: () => Promise<void>;
-};
+}
 
 export default function LoginForm({ onLoginSuccess }: Props) {
   const router = useRouter();
@@ -57,7 +57,7 @@ export default function LoginForm({ onLoginSuccess }: Props) {
     }));
   };
 
-  const onSubmitLoginForm = async (event: FormEvent) => {
+  const onSubmitLoginForm = async (event: SubmitEvent) => {
     event.preventDefault();
 
     try {
@@ -72,7 +72,7 @@ export default function LoginForm({ onLoginSuccess }: Props) {
           isError: true,
           message: "Couldn't connect to the server.",
         });
-        throw "Couldn't connect to the server.";
+        throw new Error("Couldn't connect to the server.");
       }
 
       if (loginResponse.status === 401) {
@@ -80,7 +80,7 @@ export default function LoginForm({ onLoginSuccess }: Props) {
           isError: true,
           message: "User or password are incorrect",
         });
-        throw "User or password are incorrect";
+        throw new Error("User or password are incorrect");
       }
 
       if (loginResponse.ok) {
@@ -93,7 +93,7 @@ export default function LoginForm({ onLoginSuccess }: Props) {
           router.reload();
         });
       }
-    } catch (e: unknown) {}
+    } catch {}
   };
 
   return (
@@ -101,7 +101,7 @@ export default function LoginForm({ onLoginSuccess }: Props) {
       {error.isError && <ErrorSuccessBlock isError title={error.message} />}
 
       <form
-        onSubmit={(event: FormEvent) => {
+        onSubmit={(event) => {
           void onSubmitLoginForm(event);
         }}
         className="@flex @flex-col @gap-2 smallscreen:@gap-6"
@@ -112,9 +112,9 @@ export default function LoginForm({ onLoginSuccess }: Props) {
           id="username"
           type="text"
           value={loginData.user}
-          onChange={(event) =>
-            onChangeGenericHandler("user", (event.target as HTMLInputElement).value)
-          }
+          onChange={(event) => {
+            onChangeGenericHandler("user", event.target.value);
+          }}
         />
         <FormInput
           key="li_password"
@@ -122,9 +122,9 @@ export default function LoginForm({ onLoginSuccess }: Props) {
           id="password"
           type="password"
           value={loginData.password}
-          onChange={(event) =>
-            onChangeGenericHandler("password", (event.target as HTMLInputElement).value)
-          }
+          onChange={(event) => {
+            onChangeGenericHandler("password", event.target.value);
+          }}
         />
         <div className="@flex @flex-col @items-center @justify-center @pt-4 @px-10">
           <div className="@w-[80vw] smallscreen:@w-96 @h-16 @text-3xl @my-2">

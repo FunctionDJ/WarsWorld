@@ -9,7 +9,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { z } from "zod";
 
-export type PlayerMMR = {
+export interface PlayerMMR {
   rank: number;
   leagueType: string;
   topMmr: number;
@@ -17,7 +17,7 @@ export type PlayerMMR = {
   wins: number;
   losses: number;
   draws: number;
-};
+}
 
 const playerMMRArray: PlayerMMR[] = [
   {
@@ -79,7 +79,7 @@ const playerMMRArray: PlayerMMR[] = [
 export default function UserProfile() {
   const { query } = useRouter();
 
-  const playerNameParse = z.string().safeParse(query?.playerName);
+  const playerNameParse = z.string().safeParse(query.playerName);
 
   if (!playerNameParse.success) {
     return <p>Error!</p>;
@@ -97,7 +97,7 @@ export default function UserProfile() {
         <div className="@w-[95%] tablet:@w-[80%] @m-4 smallscreen:@px-4">
           {/* Each Section calls the info? */}
           <PlayerProfileMainSection
-            playerName={playerName ?? ""}
+            playerName={playerName}
             description="Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quaerat, sed recusandae,
                 perspiciatis libero minima porro ut quisquam alias vero ratione reiciendis optio
                 voluptates totam dolor soluta enim repellendus asperiores voluptatum. Lorem ipsum

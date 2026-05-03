@@ -2,7 +2,7 @@ import type { Player } from "@prisma/client";
 import { trpc } from "frontend/utils/trpc-client";
 import { useLocalStorage } from "frontend/utils/use-local-storage";
 import type { ReactNode } from "react";
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, use, useEffect, useMemo, useState } from "react";
 
 type UserContext =
   | {
@@ -12,7 +12,7 @@ type UserContext =
     }
   | undefined;
 
-const playersContext = createContext<UserContext>(undefined);
+const PlayersContext = createContext<UserContext>(undefined);
 
 export const ProvidePlayers = ({ children }: { children: ReactNode }) => {
   const [currentPlayerId, setCurrentPlayerId] = useLocalStorage("currentPlayerId", null);
@@ -46,11 +46,11 @@ export const ProvidePlayers = ({ children }: { children: ReactNode }) => {
     [user?.ownedPlayers, currentPlayerId, setCurrentPlayerId],
   );
 
-  return <playersContext.Provider value={userContextValue}>{children}</playersContext.Provider>;
+  return <PlayersContext value={userContextValue}>{children}</PlayersContext>;
 };
 
 export const usePlayers = () => {
-  const user = useContext(playersContext);
+  const user = use(PlayersContext);
   const ownedPlayers = user?.ownedPlayers;
   const currentPlayerId = user?.currentPlayerId;
   const setCurrentPlayerId = user?.setCurrentPlayerId;

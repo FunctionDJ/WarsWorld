@@ -1,7 +1,7 @@
 import type { Army } from "shared/schemas/army";
 import type { COID } from "shared/schemas/co";
 
-type matchData = {
+interface matchData {
   name: string;
   co: COID;
   country: Army;
@@ -9,7 +9,7 @@ type matchData = {
   opponent?: boolean;
   playerReady?: boolean;
   slot?: number;
-};
+}
 
 export default function MatchPlayer({
   name,
@@ -45,7 +45,7 @@ export default function MatchPlayer({
             alt="opponent chosen CO"
           />
           <p className="@truncate @px-0.5 @text-sm">
-            {slot !== undefined ? `${name} slot: ${slot}` : name}
+            {slot !== undefined ? `${name} slot: ${String(slot)}` : name}
           </p>
         </div>
       </div>
@@ -70,7 +70,7 @@ export default function MatchPlayer({
             alt="opponent chosen CO"
           />
           <p className="@truncate @px-0.5 @text-sm">
-            {slot !== undefined ? `${name} slot: ${slot}` : name}
+            {slot !== undefined ? `${name} slot: ${String(slot)}` : name}
           </p>
         </div>
       </div>

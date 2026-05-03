@@ -1,5 +1,5 @@
 import { Container } from "pixi.js";
-import type { MutableRefObject } from "react";
+import type { RefObject } from "react";
 import type { MatchWrapper } from "../shared/wrappers/match";
 import type { UnitWrapper } from "../shared/wrappers/unit";
 import { createTilesContainer } from "./interactiveTileFunctions";
@@ -8,7 +8,7 @@ import { getAccessibleNodes, getAttackableTiles } from "./show-pathing";
 export function displayEnemyRange(
   match: MatchWrapper,
   unitClicked: UnitWrapper,
-  unitRangeShowRef: MutableRefObject<"attack" | "vision" | "movement">,
+  unitRangeShowRef: RefObject<"attack" | "vision" | "movement">,
 ) {
   if (unitRangeShowRef.current === "movement") {
     const passablePositions = getAccessibleNodes(match, unitClicked);

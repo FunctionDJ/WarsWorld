@@ -4,7 +4,7 @@ import type { UnitWrapper } from "../../wrappers/unit";
 import type { DamageChart } from "./base-damage";
 import { damageChartAW1, damageChartAW2, damageChartAWDS } from "./base-damage";
 
-type VersionProperties = {
+interface VersionProperties {
   gameVersion: GameVersion;
   /**
    * Max good luck possible (usually 10 or 15)
@@ -62,7 +62,7 @@ type VersionProperties = {
    * Additional defense gained when using CO Power/Super
    */
   powerDefenseMod: (baseDefense: number) => number;
-};
+}
 
 const AW1Properties: VersionProperties = {
   gameVersion: "AW1",

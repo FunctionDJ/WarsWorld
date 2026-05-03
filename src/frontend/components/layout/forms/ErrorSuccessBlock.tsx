@@ -1,9 +1,9 @@
-type Props = {
+interface Props {
   isError?: boolean;
   title: string;
   message?: string;
   className?: string;
-};
+}
 
 export default function ErrorSuccessBlock({ isError, message, title, className }: Props) {
   const color = isError == true ? "@bg-orange-star" : "@bg-green-earth";

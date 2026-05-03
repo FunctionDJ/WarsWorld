@@ -1,8 +1,8 @@
 import type { WWMap } from "@prisma/client";
-import { attackActionToEvent } from "../shared/match-logic/events/handlers/attack/attackActionToEvent.js";
-import type { PlayerInMatch } from "../shared/types/server-match-state.js";
-import { MatchWrapper } from "../shared/wrappers/match.js";
-import { UnitWrapper } from "../shared/wrappers/unit.js";
+import { attackActionToEvent } from "shared/match-logic/events/handlers/attack/attackActionToEvent";
+import type { PlayerInMatch } from "shared/types/server-match-state";
+import { MatchWrapper } from "shared/wrappers/match";
+import { UnitWrapper } from "shared/wrappers/unit";
 
 /**
  * TODO add memory usage readouts by reading memory used by process
@@ -153,5 +153,5 @@ const { attackerHP, defenderHP } = attackActionToEvent(
   },
 );
 
-console.log("attacker HP:", u1.getHP(), "=>", attackerHP === null ? "(no counter)" : attackerHP);
+console.log("attacker HP:", u1.getHP(), "=>", attackerHP ?? "(no counter)");
 console.log("defender HP:", u2.getHP(), "=>", defenderHP);

@@ -3,11 +3,11 @@ import type { ReactNode } from "react";
 import PageTitle from "../PageTitle";
 import OrangeGradientLine from "../decorations/OrangeGradientLine";
 
-type Props = {
+interface Props {
   width?: string;
   title?: string;
   children: ReactNode;
-};
+}
 
 export default function DefaultDialogDesign({ children, width, title }: Props) {
   return (

@@ -23,10 +23,7 @@ export class TeamWrapper {
 
   isPositionVisible(position: Position) {
     if (this.match.isFogOfWar()) {
-      if (this.vision === null) {
-        this.vision = new Vision(this); // that should not happen, but whatever
-      }
-
+      this.vision ??= new Vision(this); // vision being nullish here should never happen, but whatever
       return this.vision.isPositionVisible(position);
     }
 
@@ -40,7 +37,6 @@ export class TeamWrapper {
 
   getEnemyUnits() {
     const playerSlotsOfTeam = this.players.map((p) => p.data.slot);
-
     return this.match.units.filter((unit) => !playerSlotsOfTeam.includes(unit.data.playerSlot));
   }
 

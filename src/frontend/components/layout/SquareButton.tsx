@@ -1,9 +1,9 @@
-type Props = {
+interface Props {
   disabled?: boolean;
   onClick?: React.MouseEventHandler;
   children: React.ReactNode;
   type?: "button" | "submit" | "reset" | undefined;
-};
+}
 
 export default function SquareButton({ disabled, onClick, children, type }: Props) {
   return (

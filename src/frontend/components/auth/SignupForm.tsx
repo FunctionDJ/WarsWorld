@@ -1,6 +1,6 @@
 import { TRPCClientError } from "@trpc/client";
 import { trpc } from "frontend/utils/trpc-client";
-import type { Dispatch, FormEvent, SetStateAction } from "react";
+import type { Dispatch, MouseEvent, SetStateAction } from "react";
 import { useState } from "react";
 import { passwordSchema, signUpSchema } from "shared/schemas/auth";
 import { ZodError } from "zod";
@@ -8,11 +8,11 @@ import SquareButton from "../layout/SquareButton";
 import ErrorSuccessBlock from "../layout/forms/ErrorSuccessBlock";
 import FormInput from "../layout/forms/FormInput";
 
-type Props = {
+interface Props {
   setIsSignupForm: (value: boolean, callbackUrl: string | null) => Promise<void>;
   setDidSignUp: Dispatch<SetStateAction<boolean>>;
   callbackUrl: string | null;
-};
+}
 
 export default function SignupForm({ setIsSignupForm, setDidSignUp, callbackUrl }: Props) {
   const [signupData, setSignupData] = useState({
@@ -33,7 +33,7 @@ export default function SignupForm({ setIsSignupForm, setDidSignUp, callbackUrl 
     }));
   };
 
-  const onSubmitSignupForm = async (event: FormEvent) => {
+  const onSubmitSignupForm = async (event: MouseEvent) => {
     event.preventDefault();
 
     try {
@@ -78,10 +78,10 @@ export default function SignupForm({ setIsSignupForm, setDidSignUp, callbackUrl 
     setDidSignUp(true);
   };
 
-  const nameError = formErrors?.issues?.find((error) => error.path[0] === "name");
-  const emailError = formErrors?.issues?.find((error) => error.path[0] === "email");
-  const passwordError = formErrors?.issues?.find((error) => error.path[0] === "password");
-  const confirmPasswordError = formErrors?.issues?.find(
+  const nameError = formErrors?.issues.find((error) => error.path[0] === "name");
+  const emailError = formErrors?.issues.find((error) => error.path[0] === "email");
+  const passwordError = formErrors?.issues.find((error) => error.path[0] === "password");
+  const confirmPasswordError = formErrors?.issues.find(
     (error) => error.path[0] === "confirmPassword",
   );
 
@@ -97,9 +97,9 @@ export default function SignupForm({ setIsSignupForm, setDidSignUp, callbackUrl 
           value={signupData.email}
           isError={emailError !== undefined}
           errorMessage={emailError?.message}
-          onChange={(event) =>
-            onChangeGenericHandler("email", (event.target as HTMLInputElement).value)
-          }
+          onChange={(event) => {
+            onChangeGenericHandler("email", event.target.value);
+          }}
         />
         <FormInput
           key="su_user"
@@ -109,9 +109,9 @@ export default function SignupForm({ setIsSignupForm, setDidSignUp, callbackUrl 
           value={signupData.user}
           isError={nameError !== undefined}
           errorMessage={nameError?.message}
-          onChange={(event) =>
-            onChangeGenericHandler("user", (event.target as HTMLInputElement).value)
-          }
+          onChange={(event) => {
+            onChangeGenericHandler("user", event.target.value);
+          }}
         />
         <FormInput
           key="su_password"
@@ -121,9 +121,9 @@ export default function SignupForm({ setIsSignupForm, setDidSignUp, callbackUrl 
           value={signupData.password}
           isError={passwordError !== undefined}
           errorMessage={passwordError?.message}
-          onChange={(event) =>
-            onChangeGenericHandler("password", (event.target as HTMLInputElement).value)
-          }
+          onChange={(event) => {
+            onChangeGenericHandler("password", event.target.value);
+          }}
         />
         <FormInput
           key="su_confirm_password"
@@ -133,14 +133,14 @@ export default function SignupForm({ setIsSignupForm, setDidSignUp, callbackUrl 
           value={signupData.confirmPassword}
           isError={confirmPasswordError !== undefined}
           errorMessage={confirmPasswordError?.message}
-          onChange={(event) =>
-            onChangeGenericHandler("confirmPassword", (event.target as HTMLInputElement).value)
-          }
+          onChange={(event) => {
+            onChangeGenericHandler("confirmPassword", event.target.value);
+          }}
         />
         <div className="@flex @flex-col @items-center @justify-center @py-4 @px-10">
           <div className="@w-[80vw] smallscreen:@w-96 @h-16 @text-3xl @my-2">
             <SquareButton
-              onClick={(event: FormEvent) => {
+              onClick={(event) => {
                 void onSubmitSignupForm(event);
               }}
             >

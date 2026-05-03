@@ -52,7 +52,7 @@ export const columns = [
         </div>
         <div
           className="@w-full @h-full @absolute @left-0 @top-0 @bg-gradient-to-r @from-red-600/80 @to-primary/80 @rounded-2xl @z-0 @shadow-lg @shadow-black"
-          style={{ width: `${info.getValue()}%` }}
+          style={{ width: `${String(info.getValue())}%` }}
         ></div>
       </div>
     ),
@@ -63,7 +63,7 @@ export const columns = [
     cell: (info) => (
       <>
         {info.getValue() > 0 ? (
-          <div>{`${info.getValue()} ${info.getValue() > 10 ? "🔥" : ""}`}</div>
+          <div>{`${String(info.getValue())} ${info.getValue() > 10 ? "🔥" : ""}`}</div>
         ) : (
           <div className="@flex @flex-column @items-center @justify-center">
             <svg

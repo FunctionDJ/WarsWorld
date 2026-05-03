@@ -9,10 +9,10 @@ import MatchCardSetup from "./MatchCardSetup";
 import MatchCardTop from "./MatchCardTop";
 import MatchPlayer from "./MatchPlayer";
 
-type matchData = {
+interface matchData {
   match: FrontendMatch;
   inMatch: boolean;
-};
+}
 
 export default function MatchCard({ match, inMatch }: matchData) {
   const { currentPlayer } = usePlayers();

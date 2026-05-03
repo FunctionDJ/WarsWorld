@@ -2,16 +2,16 @@
 // leaderboards table is generated:
 // https://tanstack.com/table/v8/docs/guide/introduction
 
-import { useState, useEffect } from "react";
+import { useWindowWidth } from "@react-hook/window-size";
 import type { Table } from "@tanstack/react-table";
 import { getCoreRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table";
-import type { PlayerLeaderboard } from "./LeaderboardData";
-import getLeaderboardData from "./LeaderboardData";
-import { columns } from "./LeaderboardColumns";
-import { useWindowWidth } from "@react-hook/window-size";
+import { useEffect, useState } from "react";
+import type { SelectOption } from "../layout/Select";
 import DataTable from "../layout/table/DataTable";
 import TablePagination from "../layout/table/TablePagination";
-import type { SelectOption } from "../layout/Select";
+import { columns } from "./LeaderboardColumns";
+import type { PlayerLeaderboard } from "./LeaderboardData";
+import getLeaderboardData from "./LeaderboardData";
 
 function hideColumns(table: Table<PlayerLeaderboard>, screenWidth: number) {
   const columnsToHide = ["Games", "Win Rate", "Streak"];
@@ -33,11 +33,11 @@ function hideColumns(table: Table<PlayerLeaderboard>, screenWidth: number) {
   }
 }
 
-type Props = {
+interface Props {
   setBestPlayers: React.Dispatch<React.SetStateAction<PlayerLeaderboard[]>>;
   gamemode: SelectOption | undefined;
   timeMode: SelectOption | undefined;
-};
+}
 
 export default function LeaderboardTable({ setBestPlayers }: Props) {
   const screenWidth = useWindowWidth();
@@ -64,10 +64,11 @@ export default function LeaderboardTable({ setBestPlayers }: Props) {
     setData(requestedData);
     // Set the amount of rows the table has for each page
     table.setPageSize(100);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   // makes the table more responsive by removing and adding columns
-  useEffect(() => hideColumns(table, screenWidth), [screenWidth, table]);
+  useEffect(() => {
+    hideColumns(table, screenWidth);
+  }, [screenWidth, table]);
 
   return (
     <div className="@flex @flex-col @w-full @items-center @justify-center @mb-12 smallscreen:@mb-20 @min-w-[90vw] tablet:@min-w-[80vw]">

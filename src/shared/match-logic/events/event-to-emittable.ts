@@ -12,11 +12,11 @@ import type { MatchWrapper } from "../../wrappers/match";
 import { TeamWrapper } from "../../wrappers/team";
 import { createEmittableAttackEvent } from "./handlers/attack/attackEventToEmittable";
 
-type EmittableSubEventWithExtraInfo = {
+interface EmittableSubEventWithExtraInfo {
   teamIndex: number;
   subEvent: EmittableSubEvent;
   requireLastMovePosition: boolean;
-};
+}
 
 const subEventToEmittables = (
   match: MatchWrapper,

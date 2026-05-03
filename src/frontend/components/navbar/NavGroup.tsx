@@ -4,13 +4,13 @@ import { NavItem } from "./NavItem";
 import NavLoginLogout from "./NavLoginLogout";
 import { NavMenuMatches } from "./NavMenuMatches";
 
-type Props = {
+interface Props {
   showMatchLinks: boolean;
   setShowMatchLinks: Dispatch<SetStateAction<boolean>>;
   setShowLinks: Dispatch<SetStateAction<boolean>>;
   setIsOpen: (value: boolean, callbackUrl?: string) => Promise<void>;
   isOpen: boolean;
-};
+}
 
 const navItemObject = [
   {
@@ -48,8 +48,12 @@ export function NavGroup({ showMatchLinks, setShowMatchLinks, setIsOpen, isOpen 
     <>
       <div className="@flex @items-center @justify-center @gap-10 monitor:@gap-16 @h-full @w-[70vw]">
         <button
-          onMouseEnter={() => setShowMatchLinks(true)}
-          onMouseLeave={() => setShowMatchLinks(false)}
+          onMouseEnter={() => {
+            setShowMatchLinks(true);
+          }}
+          onMouseLeave={() => {
+            setShowMatchLinks(false);
+          }}
           className="@text-white @flex @flex-col relative @justify-center @items-center @cursor-pointer matchLobbyToggle @h-full"
         >
           <NavButton key="GAME" hasArrow isOpen={showMatchLinks}>

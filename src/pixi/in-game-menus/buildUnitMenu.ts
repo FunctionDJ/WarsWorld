@@ -59,7 +59,7 @@ export const createMenuElementsForUnits = (
 
     //name of the unit
     //TODO display hp in unit sprite
-    const unitNameText = new BitmapText(`${unitType.toUpperCase()}`, {
+    const unitNameText = new BitmapText(unitType.toUpperCase(), {
       fontName: "awFont",
       fontSize: 10,
     });
@@ -70,7 +70,7 @@ export const createMenuElementsForUnits = (
     menuElement.addChild(unitNameText);
 
     //cost/hp/any_number displayed
-    const unitCostText = new BitmapText(`${num}`, {
+    const unitCostText = new BitmapText(String(num), {
       fontName: "awFont",
       fontSize: 10,
     });

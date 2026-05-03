@@ -29,19 +29,19 @@ const spriteSources = {
   unit: "Units",
 } as const;
 type SpriteType = keyof typeof spriteSources;
-type Sprite = {
+interface Sprite {
   type: SpriteType;
   name: string;
-};
+}
 
-// _eslint-disable-next-line @typescript-eslint/no-misused-promises
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
 nations.forEach(async (nation) => {
   // fetch sprites
   const allSprites = await getAllSprites(nation);
   // generate frames and spritesheet image
   const { frames, spriteSheetImage } = await genFramesAndSpriteSheetImage(nation, allSprites);
   // fetch animations map
-  const animations = await fetchAnimations(allSprites, frames);
+  const animations = fetchAnimations(allSprites);
 
   // write WebP files
   await spriteSheetImage
@@ -117,7 +117,7 @@ async function genFramesAndSpriteSheetImage(
    * Generates frames with appropriate dimensions for given sprites
    */
   const columnsCount = Math.round(Math.sqrt(allSprites.length));
-  const rowsCount = Math.ceil(allSprites.length / columnsCount);
+  // const rowsCount = Math.ceil(allSprites.length / columnsCount);
 
   // compute max cell width and height
   let cellWidth = 0;
@@ -129,8 +129,8 @@ async function genFramesAndSpriteSheetImage(
       getTexturePath(sprite.type, nation, sprite.name),
     ).metadata();
 
-    cellWidth = Math.max(cellWidth, width!);
-    cellHeight = Math.max(cellHeight, height!);
+    cellWidth = Math.max(cellWidth, width);
+    cellHeight = Math.max(cellHeight, height);
   }
 
   // start building the spritesheet image
@@ -153,8 +153,8 @@ async function genFramesAndSpriteSheetImage(
     const frameData = {
       x: (i % columnsCount) * cellWidth,
       y: Math.floor(i / columnsCount) * cellHeight,
-      w: metadata.width!,
-      h: metadata.height!,
+      w: metadata.width,
+      h: metadata.height,
     };
     frames[sprite.type + "." + sprite.name] = { frame: frameData };
   }
@@ -162,10 +162,7 @@ async function genFramesAndSpriteSheetImage(
   return { spriteSheetImage, frames };
 }
 
-async function fetchAnimations(
-  allSprites: Sprite[],
-  frames: Record<string, ISpritesheetFrameData>,
-): Promise<Record<string, string[]>> {
+function fetchAnimations(allSprites: Sprite[]): Record<string, string[]> {
   const animationFrameRegex = /^(.*)-\d+\.png$/i; // capture pattern "Airport-1.png"
   const animationKeys = new Set(
     allSprites

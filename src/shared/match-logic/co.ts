@@ -62,17 +62,17 @@ import { vonBoltAWDS } from "./game-constants/cos/von-bolt/von-bolt-awds";
 
 export type COPowerState = "no-power" | "co-power" | "super-co-power";
 
-type COPower = {
+interface COPower {
   name: string;
   description: string;
   stars: number; //Stars are 9k value for AW2 and AWDS, 10k value for AW1
   instantEffect?: (player: PlayerInMatchWrapper, positions?: Position[]) => void;
   calculatePositions?: (player: PlayerInMatchWrapper) => Position[];
   hooks?: Partial<Hooks>;
-};
+}
 
 // TODO general CO description, likes, dislikes, etc.
-export type COProperties = {
+export interface COProperties {
   displayName: string;
   gameVersion: GameVersion;
   dayToDay?: {
@@ -83,7 +83,7 @@ export type COProperties = {
     COPower?: COPower;
     superCOPower?: COPower;
   };
-};
+}
 
 // we're using these indexes / maps instead of just using a big array
 // and calling .find on it every time getCOProperties is called,

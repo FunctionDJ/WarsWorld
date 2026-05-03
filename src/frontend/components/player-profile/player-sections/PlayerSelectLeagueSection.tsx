@@ -13,9 +13,9 @@ const gamemodes: SelectOption[] = [
   { label: "High Funds Live", value: 5 },
 ];
 
-type Props = {
+interface Props {
   playerMMRArray: PlayerMMR[] | undefined;
-};
+}
 
 export function PlayerSelectLeagueSection({ playerMMRArray }: Props) {
   const [gamemode, setGamemode] = useState<SelectOption | undefined>({
@@ -31,7 +31,9 @@ export function PlayerSelectLeagueSection({ playerMMRArray }: Props) {
         <Select
           className="smallscreen:@col-span-2 laptop:@col-span-1 @self-center @h-10 monitor:@h-12 @order-2 smallscreen:@order-1"
           options={gamemodes}
-          onChange={(o) => setGamemode(o)}
+          onChange={(o) => {
+            setGamemode(o);
+          }}
           value={gamemode}
         />
         <h1 className="smallscreen:@col-span-2 laptop:@col-span-3 @font-russoOne smallscreen:@px-16 @uppercase @order-1 smallscreen:@order-2">

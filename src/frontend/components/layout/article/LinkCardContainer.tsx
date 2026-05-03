@@ -1,6 +1,6 @@
-type Props = {
+interface Props {
   children: React.ReactNode;
-};
+}
 
 export default function LinkCardContainer({ children }: Props) {
   return (

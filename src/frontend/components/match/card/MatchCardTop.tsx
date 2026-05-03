@@ -1,6 +1,6 @@
 import type { MatchStatus } from "@prisma/client";
 
-type matchData = {
+interface matchData {
   //players: PlayerInMatch[];
   mapName: string;
   day: number;
@@ -8,7 +8,7 @@ type matchData = {
   favorites: number;
   spectators: number;
   time: number;
-};
+}
 
 export default function MatchCardTop({ mapName, day, state }: matchData) {
   return (

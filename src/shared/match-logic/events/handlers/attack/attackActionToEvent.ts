@@ -104,11 +104,9 @@ export const attackActionToEvent: (...params: Params) => AttackEvent = (
     // "defender" is sonja unit with scop, "attacker" is unit that attacked sonja unit
     const result = calculateEngagementOutcome(defender, attacker, defenderLuck, attackerLuck);
 
-    if (result.attackerHP === undefined) {
-      // that means sonja scop unit killed attacker, so they couldn't "counterattack" the sonja unit
-      // therefore, sonja unit (defender) remains untouched
-      result.attackerHP = defender.getHP();
-    }
+    // that means sonja scop unit killed attacker, so they couldn't "counterattack" the sonja unit
+    // therefore, sonja unit (defender) remains untouched
+    result.attackerHP ??= defender.getHP();
 
     return {
       ...action,

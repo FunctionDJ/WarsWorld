@@ -30,7 +30,7 @@ export class UnitWrapper<
     const player = match.getPlayerBySlot(data.playerSlot);
 
     if (player === undefined) {
-      throw new Error(`Could not find player by slot ${data.playerSlot}`);
+      throw new Error(`Could not find player by slot ${String(data.playerSlot)}`);
     }
 
     this.player = player;
@@ -90,6 +90,7 @@ export class UnitWrapper<
     this.data.stats.ammo = clamp(0, newAmmo, this.properties.initialAmmo);
   }
 
+  // eslint-disable-next-line @eslint-react/no-unnecessary-use-prefix
   useOneAmmo() {
     this.setAmmo((this.getAmmo() ?? 1) - 1);
   }
@@ -159,13 +160,7 @@ export class UnitWrapper<
 
   // TILE AND MOVEMENT *********************************************************
   getTile() {
-    const tile = this.match.getTile(this.data.position);
-
-    if (tile === undefined) {
-      throw new Error(`Could not get tile at ${JSON.stringify(this.data.position)}`);
-    }
-
-    return tile;
+    return this.match.getTile(this.data.position);
   }
   getNeighbouringUnits() {
     const neighbourPositions = getNeighbourPositions(this.data.position);

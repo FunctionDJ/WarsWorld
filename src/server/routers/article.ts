@@ -1,12 +1,12 @@
-import { z } from "zod";
-import { playerBaseProcedure, publicBaseProcedure, router } from "../trpc/trpc-setup";
 import { TRPCError } from "@trpc/server";
 import { prisma } from "server/prisma/prisma-client";
 import {
   type ArticleCategories,
-  articleSchema,
   articleCommentSchema,
+  articleSchema,
 } from "shared/schemas/article";
+import { z } from "zod";
+import { playerBaseProcedure, publicBaseProcedure, router } from "../trpc/trpc-setup";
 
 const bannedWords = ["heck", "frick", "oof", "swag", "amongus"];
 
@@ -99,7 +99,7 @@ export const articleRouter = router({
       });
     }
 
-    const containsBannedCharacters = /[^\w\.!\?\-\_\n ]/.test(input.comment);
+    const containsBannedCharacters = /[^\w.!?\-_\n ]/.test(input.comment);
 
     if (containsBannedCharacters) {
       throw new TRPCError({

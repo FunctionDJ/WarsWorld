@@ -1,9 +1,9 @@
-import PlayerCard from "./PlayerCard";
 import type { PlayerLeaderboard } from "./LeaderboardData";
+import PlayerCard from "./PlayerCard";
 
-type Props = {
+interface Props {
   bestPlayers: PlayerLeaderboard[];
-};
+}
 
 export default function BestPlayersSection({ bestPlayers }: Props) {
   return (

@@ -196,6 +196,8 @@ export class MatchWrapper<
   }) {
     this.units
       .filter((unit) => getDistance(unit.data.position, epicenter) <= radius)
-      .forEach((unit) => unit.damageUntil1HP(visualHpAmount));
+      .forEach((unit) => {
+        unit.damageUntil1HP(visualHpAmount);
+      });
   }
 }

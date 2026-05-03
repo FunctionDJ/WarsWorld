@@ -44,12 +44,7 @@ export class PlayerInMatchWrapper {
   }
 
   getUnits() {
-    //If match.units is undefined, this throws an error. The error kills usePlayers() which stops FrontEnd work.
-    if (this.match.units !== undefined) {
-      return this.match.units.filter((u) => u.data.playerSlot === this.data.slot);
-    } else {
-      return [];
-    }
+    return this.match.units.filter((u) => u.data.playerSlot === this.data.slot);
   }
 
   getHook<HookType extends keyof Hooks>(hookType: HookType) {

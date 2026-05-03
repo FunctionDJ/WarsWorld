@@ -1,7 +1,7 @@
 // pixiEventHandlers.ts
 import type { Container } from "pixi.js";
 import { Assets } from "pixi.js";
-import type { MutableRefObject } from "react";
+import type { RefObject } from "react";
 import { throwIfCantMoveIntoUnit } from "shared/match-logic/events/handlers/move";
 import type { MainAction } from "shared/schemas/action";
 import type { Position } from "shared/schemas/position";
@@ -28,10 +28,10 @@ export const handleClick = async (
   mapContainer: Container,
   unitContainer: Container,
   interactiveContainer: Container,
-  currentUnitClickedRef: MutableRefObject<UnitWrapper | null>,
-  moveTilesRef: MutableRefObject<Map<Position, PathNode> | null>,
-  unitRangeShowRef: MutableRefObject<"attack" | "movement" | "vision">,
-  pathRef: MutableRefObject<Position[] | null>,
+  currentUnitClickedRef: RefObject<UnitWrapper | null>,
+  moveTilesRef: RefObject<Map<Position, PathNode> | null>,
+  unitRangeShowRef: RefObject<"attack" | "movement" | "vision">,
+  pathRef: RefObject<Position[] | null>,
   spriteSheets: LoadedSpriteSheet,
   sendAction: (action: MainAction) => Promise<void>,
 ) => {
@@ -88,13 +88,13 @@ export const handleClick = async (
           try {
             throwIfCantMoveIntoUnit(currentUnit, unitInTile);
             canUnitMoveIntoOther = true;
-          } catch (_e) {}
+          } catch {}
         }
 
         const canMoveToTile =
           unitInTile === undefined || //empty tile
           isSamePosition(currentUnit.data.position, pos) || //same position
-          (unitInTile?.player.data.slot === currentUnit.player.data.slot && canUnitMoveIntoOther); //join or load
+          (unitInTile.player.data.slot === currentUnit.player.data.slot && canUnitMoveIntoOther); //join or load
 
         if (canMoveToTile) {
           // display subaction menu next to unit in new position
@@ -209,7 +209,7 @@ export const handleClick = async (
       if (
         match.getUnit(currentUnitClickedRef.current.data.position) &&
         !unitContainer.getChildByName(
-          `unit-${currentUnitClickedRef.current.data.position[0]}-${currentUnitClickedRef.current.data.position[1]}`,
+          `unit-${String(currentUnitClickedRef.current.data.position[0])}-${String(currentUnitClickedRef.current.data.position[1])}`,
         )
       ) {
         unitContainer.addChild(renderUnitSprite(currentUnitClickedRef.current, spriteSheets));
@@ -229,10 +229,10 @@ export const handleHover = async (
   mapContainer: Container,
   unitContainer: Container,
   interactiveContainer: Container,
-  currentUnitClickedRef: MutableRefObject<UnitWrapper | null>,
-  moveTilesRef: MutableRefObject<Map<Position, PathNode> | null>,
-  unitRangeShowRef: MutableRefObject<"attack" | "movement" | "vision">,
-  pathRef: MutableRefObject<Position[] | null>,
+  currentUnitClickedRef: RefObject<UnitWrapper | null>,
+  moveTilesRef: RefObject<Map<Position, PathNode> | null>,
+  unitRangeShowRef: RefObject<"attack" | "movement" | "vision">,
+  pathRef: RefObject<Position[] | null>,
   spriteSheets: LoadedSpriteSheet,
   _sendAction: (action: MainAction) => Promise<void>, // TODO: unused yet
 ) => {
@@ -244,7 +244,7 @@ export const handleHover = async (
   let hoveredMoveTile = false;
 
   if (moveTiles !== null) {
-    for (const [key, _] of moveTiles) {
+    for (const [key] of moveTiles) {
       if (isSamePosition(hoverPosition, key)) {
         hoveredMoveTile = true;
       }
