@@ -1,4 +1,4 @@
-import type { Match } from "@prisma/client";
+import type { Match } from "generated/client";
 
 type MatchId = Match["id"];
 

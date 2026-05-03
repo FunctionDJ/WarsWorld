@@ -1,4 +1,5 @@
-import type { Match, MatchStatus, WWMap } from "@prisma/client";
+import type { Match, WWMap } from "generated/browser";
+import type { MatchStatus } from "generated/enums";
 import type { PlayerInMatch } from "./server-match-state";
 
 export interface FrontendMatch {

@@ -1,5 +1,4 @@
-import type { ZodDiscriminatedUnionOption } from "zod";
-import { z } from "zod";
+import { z, type core } from "zod";
 import { playerSlotForPropertiesSchema } from "./player-slot";
 import { positionSchema } from "./position";
 
@@ -37,8 +36,8 @@ export const withTypeSchema = <T extends string>(input: T) =>
     type: z.literal(input),
   });
 
-export const getLoadedSchema = <
-  T extends [ZodDiscriminatedUnionOption<"type">, ...ZodDiscriminatedUnionOption<"type">[]],
->(
-  things: T,
-) => z.nullable(z.discriminatedUnion("type", things));
+export function getLoadedSchema<
+  T extends readonly [core.$ZodTypeDiscriminable<"type">, ...core.$ZodTypeDiscriminable<"type">[]],
+>(things: T) {
+  return z.nullable(z.discriminatedUnion("type", things));
+}

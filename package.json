@@ -1,11 +1,8 @@
 {
-  "name": "warsworld",
-  "version": "0.0.0",
-  "private": true,
+  "type": "module",
   "engines": {
     "node": "^25.0.0"
   },
-  "type": "module",
   "scripts": {
     "db:up": "docker compose up -d",
     "db:destroy": "docker compose down --volumes --remove-orphans",
@@ -18,9 +15,7 @@
     "dev:wss": "cross-env PORT=3001 bun --watch src/server/main-wss-development.ts --tsconfig tsconfig.server.json",
     "dev:next": "next dev",
     "dev": "npm run prisma:push && concurrently \"npm:dev:*\"",
-    "lint:eslint": "eslint .",
     "build:next": "cross-env NODE_ENV=production next build",
-    "build:server": "node bundleServer.mjs",
     "build": "concurrently \"npm:build:*\"",
     "start:next": "next start",
     "start:server": "cross-env NODE_ENV=production \"npm run prisma:push &&  node dist/server/main-production.mjs\"",
@@ -28,7 +23,6 @@
   },
   "prettier": {
     "singleQuote": false,
-    "endOfLine": "auto",
     "printWidth": 100
   },
   "knip": {
@@ -48,6 +42,7 @@
     "@trpc/client": "^11.17.0",
     "@trpc/next": "^11.17.0",
     "@trpc/server": "^11.17.0",
+    "@types/yargs": "^17.0.35",
     "bcrypt": "^6.0.0",
     "gray-matter": "^4.0.3",
     "next": "16.2.4",

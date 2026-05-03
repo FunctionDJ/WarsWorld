@@ -91,7 +91,7 @@ export const matchRouter = router({
       }
 
       const armiesOccupied = match.getAllPlayers().map((player) => player.data.army as string);
-      const availableArmies = Object.keys(armySchema.Values).filter(
+      const availableArmies = Object.keys(armySchema.enum).filter(
         (army) => !armiesOccupied.includes(army),
       );
 
@@ -218,6 +218,7 @@ export const matchRouter = router({
         const matchStartEvent = createMatchStartEvent(match);
 
         let eventIndex: number | undefined = undefined;
+
         await prisma.$transaction(async (tx) => {
           const eventOnDB = await tx.event.create({
             data: {

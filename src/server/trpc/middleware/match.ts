@@ -1,10 +1,9 @@
 import { TRPCError } from "@trpc/server";
+import { matchStore } from "server/match-store";
 import { z } from "zod";
 import { t } from "../trpc-init";
-import { matchStore } from "server/match-store";
-import type { Match } from "@prisma/client";
 
-export const withMatchIdSchema = z.object<{ matchId: z.ZodType<Match["id"]> }>({
+export const withMatchIdSchema = z.object({
   matchId: z.string(),
 });
 

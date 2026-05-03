@@ -2,12 +2,10 @@ import { createWSClient, wsLink } from "@trpc/client";
 import { httpBatchLink } from "@trpc/client/links/httpBatchLink";
 import { loggerLink } from "@trpc/client/links/loggerLink";
 import { createTRPCNext } from "@trpc/next";
+import { ssrPrepass } from "@trpc/next/ssrPrepass";
 import type { NextPageContext } from "next";
 import type { AppRouter } from "server/routers/app";
 import superjson from "superjson";
-
-// ℹ️ Type-only import:
-// https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html#type-only-imports-and-export
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL;
 const WS_URL = process.env.NEXT_PUBLIC_WS_URL;
@@ -22,6 +20,7 @@ const getEndingLink = (ctx: NextPageContext | undefined) => {
   if (typeof window === "undefined") {
     return httpBatchLink({
       url: `${APP_URL}/api/trpc`,
+      transformer: superjson,
       headers() {
         if (!ctx?.req?.headers) {
           return {};
@@ -42,25 +41,10 @@ const getEndingLink = (ctx: NextPageContext | undefined) => {
   });
 };
 
-/**
- * A set of strongly-typed React hooks
- * from your `AppRouter` type signature with `createReactQueryHooks`.
- * @link https://trpc.io/docs/react#3-create-trpc-hooks
- */
 export const trpc = createTRPCNext<AppRouter>({
   config({ ctx }) {
-    /**
-     * If you want to use SSR, you need to use the server's full URL
-     * @link https://trpc.io/docs/ssr
-     */
-
     return {
-      /**
-       * @link https://trpc.io/docs/links
-       */
       links: [
-        // adds pretty logs to your console in development
-        // and logs errors in production
         loggerLink({
           // enabled: () => false,
           enabled: (opts) =>
@@ -69,18 +53,10 @@ export const trpc = createTRPCNext<AppRouter>({
         }),
         getEndingLink(ctx),
       ],
-      /**
-       * @link https://trpc.io/docs/data-transformers
-       */
-      transformer: superjson,
-      /**
-       * @link https://tanstack.com/query/v4/docs/react/reference/QueryClient
-       */
       queryClientConfig: { defaultOptions: { queries: { staleTime: 60 } } },
     };
   },
-  /**
-   * @link https://trpc.io/docs/ssr
-   */
+  transformer: superjson,
   ssr: true,
+  ssrPrepass: ssrPrepass,
 });

@@ -1,4 +1,4 @@
-import { ZodFirstPartyTypeKind, z } from "zod";
+import { z } from "zod";
 import {
   getLoadedSchema,
   unitInMapSharedProperties as shared,
@@ -140,16 +140,20 @@ export type UnitWithVisibleStats = z.infer<typeof unitSchema>;
 export type UnitType = UnitWithVisibleStats["type"];
 
 /** not nice to read but the only way to get the type strings as values */
-export const unitTypes = unitSchema.options.flatMap((option) => {
-  const {
-    _zod: { def },
-  } = option._zod.def.shape.type;
+const unitTypes = unitSchema.options.flatMap((option) => {
+  // there are also potentially other paths:
+  // infantrySchema.shape.type.def.values
+  // otherLandUnitsWithAmmo.shape.type.options
+  // but i couldn't get this method sort-of-type-safe like the current code.
 
-  if (def.typeName === ZodFirstPartyTypeKind.ZodLiteral) {
-    return def.value;
+  const typeDef = option._zod.def.shape.type.def;
+
+  switch (typeDef.type) {
+    case "literal":
+      return typeDef.values;
+    case "enum":
+      return Object.values(typeDef.entries);
   }
-
-  return def.values;
 });
 
 export const unitTypeSchema = z.enum(unitTypes as [UnitType, ...UnitType[]]);

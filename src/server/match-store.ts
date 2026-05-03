@@ -1,15 +1,15 @@
-import type { Match, WWMap } from "@prisma/client";
+import type { Match, WWMap } from "generated/client";
 import { prisma } from "server/prisma/prisma-client";
 import { MatchWrapper } from "shared/wrappers/match";
-import { pageMatchIndex } from "./page-match-index";
-import { playerMatchIndex } from "./player-match-index";
-import type { ChangeableTile } from "../shared/types/server-match-state";
-import { willBeChangeableTile } from "../shared/schemas/tile";
+import { UnitWrapper } from "shared/wrappers/unit";
 import {
   applyMainEventToMatch,
   applySubEventToMatch,
 } from "../shared/match-logic/events/apply-event-to-match";
-import { UnitWrapper } from "shared/wrappers/unit";
+import { willBeChangeableTile } from "../shared/schemas/tile";
+import type { ChangeableTile } from "../shared/types/server-match-state";
+import { pageMatchIndex } from "./page-match-index";
+import { playerMatchIndex } from "./player-match-index";
 
 const getChangeableTilesFromMap = (map: WWMap): ChangeableTile[] => {
   const changeableTiles: ChangeableTile[] = [];

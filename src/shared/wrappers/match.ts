@@ -1,6 +1,6 @@
-import type { LeagueType, Match, MatchStatus, Player, WWMap } from "@prisma/client";
+import type { LeagueType, Match, MatchStatus, Player, WWMap } from "generated/browser";
 import { DispatchableError } from "shared/DispatchedError";
-import type { MatchRules } from "shared/schemas/match-rules";
+import { type MatchRules } from "shared/schemas/match-rules";
 import type { PlayerSlot } from "shared/schemas/player-slot";
 import type { Position } from "shared/schemas/position";
 import { getDistance, isSamePosition } from "shared/schemas/position";

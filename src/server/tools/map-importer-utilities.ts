@@ -1,4 +1,4 @@
-import type { WWMap } from "@prisma/client";
+import type { WWMap } from "generated/client";
 import type { Tile } from "shared/schemas/tile";
 import { prisma } from "../prisma/prisma-client";
 

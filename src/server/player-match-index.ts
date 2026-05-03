@@ -1,4 +1,4 @@
-import type { Player } from "@prisma/client";
+import type { Player } from "generated/client";
 import type { MatchWrapper } from "shared/wrappers/match";
 import type { PlayerInMatchWrapper } from "shared/wrappers/player-in-match";
 

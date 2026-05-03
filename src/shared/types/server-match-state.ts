@@ -1,4 +1,4 @@
-import type { Player } from "@prisma/client";
+import type { Player } from "generated/browser";
 import type { COPowerState } from "shared/match-logic/co";
 import type { Army } from "shared/schemas/army";
 import type { COID } from "shared/schemas/co";

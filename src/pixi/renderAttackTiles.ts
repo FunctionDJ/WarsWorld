@@ -126,7 +126,7 @@ export function renderAttackTiles(
     const attackerText = new BitmapText(
       `${String(attackerDamage.min)}% - ${String(attackerDamage.max)}%`,
       {
-        fontName: "awFont",
+        fontFamily: "awFont",
         fontSize: 12,
       },
     );
@@ -137,7 +137,7 @@ export function renderAttackTiles(
     const defenderText = new BitmapText(
       `${String(defenderDamage.min)}% - ${String(defenderDamage.max)}%`,
       {
-        fontName: "awFont",
+        fontFamily: "awFont",
         fontSize: 12,
       },
     );

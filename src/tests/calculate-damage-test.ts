@@ -1,4 +1,4 @@
-import type { WWMap } from "@prisma/client";
+import type { WWMap } from "generated/browser";
 import { attackActionToEvent } from "shared/match-logic/events/handlers/attack/attackActionToEvent";
 import type { PlayerInMatch } from "shared/types/server-match-state";
 import { MatchWrapper } from "shared/wrappers/match";

@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import type { ISpritesheetData, ISpritesheetFrameData } from "pixi.js";
+import type { SpritesheetData, SpritesheetFrameData } from "pixi.js";
 import sharp from "sharp";
 import yargs from "yargs";
 
@@ -63,7 +63,7 @@ nations.forEach(async (nation) => {
     .toFile(path.resolve(__dirname, outputPath, `${nation}.webp`));
 
   // write JSON files
-  const spriteSheetData: ISpritesheetData = {
+  const spriteSheetData: SpritesheetData = {
     meta: { scale: 1 },
     frames,
     animations,
@@ -84,7 +84,7 @@ function getTexturePath(
     texturesBasePath, // e.g. AWBW-Replay-Player/AWBWApp.Resources/Textures
     spriteSources[spriteType], // e.g. Units
     spriteNation, // e.g. OrangeStar
-    spriteName || "", // e.g. APC_MSide-2.png
+    spriteName ?? "", // e.g. APC_MSide-2.png
   );
 }
 
@@ -112,7 +112,7 @@ async function getAllSprites(nation: string): Promise<Sprite[]> {
 async function genFramesAndSpriteSheetImage(
   nation: string,
   allSprites: Sprite[],
-): Promise<{ frames: Record<string, ISpritesheetFrameData>; spriteSheetImage: sharp.Sharp }> {
+): Promise<{ frames: Record<string, SpritesheetFrameData>; spriteSheetImage: sharp.Sharp }> {
   /**
    * Generates frames with appropriate dimensions for given sprites
    */
@@ -144,7 +144,7 @@ async function genFramesAndSpriteSheetImage(
   });
 
   // build the frames
-  const frames: Record<string, ISpritesheetFrameData> = {};
+  const frames: Record<string, SpritesheetFrameData> = {};
 
   for (let i = 0; i < allSprites.toSorted((a, b) => (a.name < b.name ? -1 : 1)).length; i++) {
     const sprite = allSprites[i];

@@ -1,4 +1,4 @@
-import type { Player } from "@prisma/client";
+import type { Player } from "generated/browser";
 import type { WithMatchId } from "server/trpc/middleware/match";
 import type {
   AbilityAction,
