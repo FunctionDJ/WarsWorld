@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export const passwordSchema = z
   .string()
@@ -12,7 +12,7 @@ export const loginSchema = z.object({
 });
 
 export const signUpSchema = loginSchema.extend({
-  email: z.string().min(1, "Email is empty.").email("Invalid email."),
+  email: z.email(),
 });
 
 export type Login = z.infer<typeof loginSchema>;

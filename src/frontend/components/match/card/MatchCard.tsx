@@ -98,11 +98,15 @@ export default function MatchCard({ match, inMatch }: matchData) {
           <MatchPlayer
             name={"Opponent"}
             co={{
-              name: coSchema._def.values[Math.floor(Math.random() * coSchema._def.values.length)],
+              name: coSchema._zod.def.values[
+                Math.floor(Math.random() * coSchema._zod.def.values.length)
+              ],
               version: "AW2",
             }}
             country={
-              armySchema._def.values[Math.floor(Math.random() * armySchema._def.values.length)]
+              armySchema._zod.def.values[
+                Math.floor(Math.random() * armySchema._zod.def.values.length)
+              ]
             }
             flipCO={true}
             opponent={true}

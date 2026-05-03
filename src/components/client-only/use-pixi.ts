@@ -41,81 +41,85 @@ export const usePixi = (
   const { actionMutation } = trpcActions();
 
   useEffect(() => {
-    const app = new Application({
-      view: pixiCanvasRef.current ?? undefined,
-      autoDensity: true,
-      resolution: window.devicePixelRatio,
-      backgroundColor: "#000b2c",
-      width: match.map.width * renderedTileSize + renderedTileSize,
-      height: match.map.height * renderedTileSize + renderedTileSize,
-    });
+    const app = new Application();
 
-    const sendAction = async (action: MainAction) => {
-      await actionMutation.mutateAsync({
-        playerId: player.data.id,
-        matchId: match.id,
-        ...action,
+    app
+      .init({
+        view: pixiCanvasRef.current ?? undefined,
+        autoDensity: true,
+        resolution: window.devicePixelRatio,
+        backgroundColor: "#000b2c",
+        width: match.map.width * renderedTileSize + renderedTileSize,
+        height: match.map.height * renderedTileSize + renderedTileSize,
+      })
+      .then(() => {
+        const sendAction = async (action: MainAction) => {
+          await actionMutation.mutateAsync({
+            playerId: player.data.id,
+            matchId: match.id,
+            ...action,
+          });
+        };
+
+        const onTileClick = async (pos: Position) => {
+          if (
+            mapContainerRef.current !== null &&
+            unitContainerRef.current !== null &&
+            interactiveContainerRef.current !== null
+          ) {
+            await handleClick(
+              pos,
+              match,
+              player,
+              mapContainerRef.current,
+              unitContainerRef.current,
+              interactiveContainerRef.current,
+              currentUnitClickedRef,
+              moveTilesRef,
+              unitRangeShowRef,
+              pathRef,
+              spriteSheets,
+              sendAction,
+            );
+          }
+        };
+
+        const onTileHover = async (pos: Position) => {
+          if (
+            mapContainerRef.current !== null &&
+            unitContainerRef.current !== null &&
+            interactiveContainerRef.current !== null
+          ) {
+            await handleHover(
+              pos,
+              match,
+              player,
+              mapContainerRef.current,
+              unitContainerRef.current,
+              interactiveContainerRef.current,
+              currentUnitClickedRef,
+              moveTilesRef,
+              unitRangeShowRef,
+              pathRef,
+              spriteSheets,
+              sendAction,
+            );
+          }
+        };
+
+        const { mapContainer, unitContainer, interactiveContainer } = setupApp(
+          app,
+          match,
+          renderMultiplier,
+          spriteSheets,
+          onTileClick,
+          onTileHover,
+        );
+        mapContainerRef.current = mapContainer;
+        unitContainerRef.current = unitContainer;
+        interactiveContainerRef.current = interactiveContainer;
+        mapContainerRef.current.eventMode = "static";
       });
-    };
-
-    const onTileClick = async (pos: Position) => {
-      if (
-        mapContainerRef.current !== null &&
-        unitContainerRef.current !== null &&
-        interactiveContainerRef.current !== null
-      ) {
-        await handleClick(
-          pos,
-          match,
-          player,
-          mapContainerRef.current,
-          unitContainerRef.current,
-          interactiveContainerRef.current,
-          currentUnitClickedRef,
-          moveTilesRef,
-          unitRangeShowRef,
-          pathRef,
-          spriteSheets,
-          sendAction,
-        );
-      }
-    };
-
-    const onTileHover = async (pos: Position) => {
-      if (
-        mapContainerRef.current !== null &&
-        unitContainerRef.current !== null &&
-        interactiveContainerRef.current !== null
-      ) {
-        await handleHover(
-          pos,
-          match,
-          player,
-          mapContainerRef.current,
-          unitContainerRef.current,
-          interactiveContainerRef.current,
-          currentUnitClickedRef,
-          moveTilesRef,
-          unitRangeShowRef,
-          pathRef,
-          spriteSheets,
-          sendAction,
-        );
-      }
-    };
-
-    const { mapContainer, unitContainer, interactiveContainer } = setupApp(
-      app,
-      match,
-      renderMultiplier,
-      spriteSheets,
-      onTileClick,
-      onTileHover,
-    );
-    mapContainerRef.current = mapContainer;
-    unitContainerRef.current = unitContainer;
-    interactiveContainerRef.current = interactiveContainer;
-    mapContainerRef.current.eventMode = "static";
 
     return () => {
       app.stop();

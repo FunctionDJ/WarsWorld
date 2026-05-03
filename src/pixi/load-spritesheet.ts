@@ -3,7 +3,7 @@ import type {
   SheetNames,
   SpritesheetDataByArmy,
 } from "frontend/components/match/getSpritesheetData";
-import { BaseTexture, SCALE_MODES, Spritesheet, utils } from "pixi.js";
+import { Spritesheet, Texture } from "pixi.js";
 
 export type LoadedSpriteSheet = Record<SheetNames, Spritesheet<ArmySpritesheetData>>;
 
@@ -21,15 +21,18 @@ export async function loadSpritesFromSpriteMap(
         throw new Error(`No spritesheet image found for ${sheetName}`);
       }
 
+      const imageSource = new ImageSource(`/img/spriteSheet/${rawSpriteSheet.meta.image}`);
+
       const pixiSheet = new Spritesheet<ArmySpritesheetData>(
-        BaseTexture.from(`/img/spriteSheet/${rawSpriteSheet.meta.image}`, {
-          scaleMode: SCALE_MODES.NEAREST,
+        Texture.from(imageSource, {
+          scaleMode: "nearest",
         }),
         rawSpriteSheet,
       );
+
       await pixiSheet.parse();
       pixiSpriteSheets[sheetName as SheetNames] = pixiSheet;
-      utils.clearTextureCache();
+      // clearTextureCache(); https://github.com/pixijs/pixijs/issues/10288
     }
   }
 

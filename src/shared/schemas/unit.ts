@@ -141,13 +141,15 @@ export type UnitType = UnitWithVisibleStats["type"];
 
 /** not nice to read but the only way to get the type strings as values */
 export const unitTypes = unitSchema.options.flatMap((option) => {
-  const { _def } = option._def.shape().type;
+  const {
+    _zod: { def },
+  } = option._zod.def.shape.type;
 
-  if (_def.typeName === ZodFirstPartyTypeKind.ZodLiteral) {
-    return _def.value;
+  if (def.typeName === ZodFirstPartyTypeKind.ZodLiteral) {
+    return def.value;
   }
 
-  return _def.values;
+  return def.values;
 });
 
 export const unitTypeSchema = z.enum(unitTypes as [UnitType, ...UnitType[]]);

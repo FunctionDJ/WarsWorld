@@ -20,8 +20,8 @@ const frameSchema = z.strictObject({
 }) satisfies z.ZodType<ISpritesheetFrameData>;
 
 export const spritesheetDataSchema = z.strictObject({
-  frames: z.record(frameSchema),
-  animations: z.record(z.array(z.string())).optional(),
+  frames: z.record(z.string(), frameSchema),
+  animations: z.record(z.string(), z.array(z.string())).optional(),
   meta: z.object({
     scale: z.string().or(z.number()),
     image: z.string(),
