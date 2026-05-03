@@ -1,12 +1,15 @@
 import type { Config } from "tailwindcss";
-import { fontFamily } from "tailwindcss/defaultTheme";
+// import { fontFamily } from "tailwindcss/defaultTheme";
 
 export default {
   prefix: "@",
   content: ["./src/**/*.{ts,tsx}"],
   theme: {
     extend: {
-      sans: ["Proxima Nova", ...fontFamily.sans],
+      sans: [
+        "Proxima Nova",
+        // ...fontFamily.sans
+      ],
       fontFamily: {
         russoOne: ["RussoOne", "sans-serif"],
       },

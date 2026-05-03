@@ -23,7 +23,7 @@ export default function FormInput({
 }: Props) {
   return (
     <div className={className}>
-      <label htmlFor={id ?? ""} className="@text-xl smallscreen:@text-2xl @text-white">
+      <label htmlFor={id ?? ""} className="tw:text-xl tw:smallscreen:text-2xl tw:text-white">
         {text}
       </label>
       <input
@@ -33,11 +33,11 @@ export default function FormInput({
         onChange={onChange}
         value={value}
         className={`@text-white @border-[2.5px] @text-xl smallscreen:@text-2xl @w-full @p-3 @mt-2 @rounded-xl @bg-black/50 ${
-          isError == true ? "@border-orange-star" : "@border-primary"
+          isError == true ? "tw:border-orange-star" : "tw:border-primary"
         }`}
       />
       {isError == true && errorMessage != "" && (
-        <p className="@text-white @bg-orange-star/80 @my-2 @px-2 @rounded-lg">{errorMessage}</p>
+        <p className="tw:text-white tw:bg-orange-star/80 tw:my-2 tw:px-2 tw:rounded-lg">{errorMessage}</p>
       )}
     </div>
   );

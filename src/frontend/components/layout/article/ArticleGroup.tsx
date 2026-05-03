@@ -13,11 +13,11 @@ interface Props {
 export default function ArticleGroup({ title, description, tailwind_color, articles }: Props) {
   return (
     <section>
-      <div className="@flex @flex-col @py-2 monitor:@flex-row @items-center monitor:@space-x-8">
-        <div className="@min-w-[75vw] monitor:@min-w-[20vw]">
+      <div className="tw:flex tw:flex-col tw:py-2 tw:monitor:flex-row tw:items-center tw:monitor:space-x-8">
+        <div className="tw:min-w-[75vw] tw:monitor:min-w-[20vw]">
           <TitleColorBox title={title} tailwind_color={tailwind_color} />
         </div>
-        <p className="@text-center @tablet:@text-start">{description}</p>
+        <p className="tw:text-center @tablet:@text-start">{description}</p>
       </div>
       <LinkCardContainer>
         {articles.map((item, index) => (

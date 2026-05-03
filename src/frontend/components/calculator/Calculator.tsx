@@ -10,8 +10,8 @@ export default function Calculator({ player }: Props) {
   return (
     <>
       <h1>Calculator</h1>
-      <div className="@grid @grid-cols-12 @gap-2 @bg-bg-primary">
-        <div className="@col-span-12 @flex @bg-bg-tertiary @align-middle @justify-between @p-2">
+      <div className="tw:grid tw:grid-cols-12 tw:gap-2 tw:bg-bg-primary">
+        <div className="tw:col-span-12 tw:flex tw:bg-bg-tertiary tw:align-middle tw:justify-between tw:p-2">
           <p>Attacker</p>
           <button className="btn ">Swap</button>
           <p>Defender</p>
@@ -31,24 +31,24 @@ export default function Calculator({ player }: Props) {
           commtower={1}
           coPower={false}
         />
-        <div className="@col-span-6 @flex-row @bg-bg-secondary">
-          <div className="@flex">UNIT ATTACKER #1</div>
+        <div className="tw:col-span-6 tw:flex-row tw:bg-bg-secondary">
+          <div className="tw:flex">UNIT ATTACKER #1</div>
 
-          <div className="@flex">UNIT ATTACKER #2</div>
+          <div className="tw:flex">UNIT ATTACKER #2</div>
         </div>
 
-        <div className="@col-span-6 @flex @bg-bg-secondary">
-          <div className="@flex">CounterAttack</div>
-          <div className="@flex">UNIT Defender</div>
+        <div className="tw:col-span-6 tw:flex tw:bg-bg-secondary">
+          <div className="tw:flex">CounterAttack</div>
+          <div className="tw:flex">UNIT Defender</div>
         </div>
 
-        <div className="@col-span-6 @flex @bg-bg-tertiary">TOTAL UNIT</div>
+        <div className="tw:col-span-6 tw:flex tw:bg-bg-tertiary">TOTAL UNIT</div>
 
-        <div className="@col-span-6 @flex @bg-bg-tertiary">KO Chance</div>
+        <div className="tw:col-span-6 tw:flex tw:bg-bg-tertiary">KO Chance</div>
 
-        <div className="@col-span-6 @flex @bg-bg-secondary">TOTAL Gold/Bar made #1</div>
+        <div className="tw:col-span-6 tw:flex tw:bg-bg-secondary">TOTAL Gold/Bar made #1</div>
 
-        <div className="@col-span-6 @flex @bg-bg-secondary">TOTAL Gold/Bar made #2</div>
+        <div className="tw:col-span-6 tw:flex tw:bg-bg-secondary">TOTAL Gold/Bar made #2</div>
       </div>
     </>
   );

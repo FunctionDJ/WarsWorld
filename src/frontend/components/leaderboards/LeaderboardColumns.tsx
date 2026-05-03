@@ -17,14 +17,14 @@ export const columns = [
   }),
   columnHelper.accessor(
     (row) => (
-      <div className="@flex @space-x-2 smallscreen:@space-x-4">
+      <div className="tw:flex tw:space-x-2 tw:smallscreen:space-x-4">
         <img
-          className="@w-auto @h-4 smallscreen:@h-6 monitor:@h-8 [image-rendering:pixelated]"
+          className="tw:w-auto tw:h-4 tw:smallscreen:h-6 tw:monitor:h-8 tw:[image-rendering:pixelated]"
           src={`img/nations/${row.army}.gif`}
           alt={row.army}
         />
         <Link
-          className="@p-0 @m-0 @text-white hover:@text-primary @text-[1em]"
+          className="tw:p-0 tw:m-0 tw:text-white tw:hover:text-primary tw:text-[1em]"
           href={row.profileLink}
         >
           {row.name}
@@ -46,12 +46,12 @@ export const columns = [
     id: "Win Rate",
     header: () => "Win rate",
     cell: (info) => (
-      <div className="@relative">
-        <div className="@text-left @pl-4 @relative @w-full @h-full @z-10">
+      <div className="tw:relative">
+        <div className="tw:text-left tw:pl-4 tw:relative tw:w-full tw:h-full tw:z-10">
           {info.getValue().toFixed(2)} %
         </div>
         <div
-          className="@w-full @h-full @absolute @left-0 @top-0 @bg-gradient-to-r @from-red-600/80 @to-primary/80 @rounded-2xl @z-0 @shadow-lg @shadow-black"
+          className="tw:w-full tw:h-full tw:absolute tw:left-0 tw:top-0 tw:bg-linear-to-r tw:from-red-600/80 tw:to-primary/80 tw:rounded-2xl tw:z-0 tw:shadow-lg tw:shadow-black"
           style={{ width: `${String(info.getValue())}%` }}
         ></div>
       </div>
@@ -65,7 +65,7 @@ export const columns = [
         {info.getValue() > 0 ? (
           <div>{`${String(info.getValue())} ${info.getValue() > 10 ? "🔥" : ""}`}</div>
         ) : (
-          <div className="@flex @flex-column @items-center @justify-center">
+          <div className="tw:flex @flex-column tw:items-center tw:justify-center">
             <svg
               width="20"
               height="20"

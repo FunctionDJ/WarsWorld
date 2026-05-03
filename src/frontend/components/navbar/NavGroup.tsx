@@ -46,7 +46,7 @@ const navItemObject = [
 export function NavGroup({ showMatchLinks, setShowMatchLinks, setIsOpen, isOpen }: Props) {
   return (
     <>
-      <div className="@flex @items-center @justify-center @gap-10 monitor:@gap-16 @h-full @w-[70vw]">
+      <div className="tw:flex tw:items-center tw:justify-center tw:gap-10 tw:monitor:gap-16 tw:h-full tw:w-[70vw]">
         <button
           onMouseEnter={() => {
             setShowMatchLinks(true);
@@ -54,12 +54,12 @@ export function NavGroup({ showMatchLinks, setShowMatchLinks, setIsOpen, isOpen 
           onMouseLeave={() => {
             setShowMatchLinks(false);
           }}
-          className="@text-white @flex @flex-col relative @justify-center @items-center @cursor-pointer matchLobbyToggle @h-full"
+          className="tw:text-white tw:flex tw:flex-col relative tw:justify-center tw:items-center tw:cursor-pointer matchLobbyToggle tw:h-full"
         >
           <NavButton key="GAME" hasArrow isOpen={showMatchLinks}>
             GAME
           </NavButton>
-          <div className="@flex @justify-center @relative @w-full ">
+          <div className="tw:flex tw:justify-center tw:relative tw:w-full ">
             <NavMenuMatches showMatchLinks={showMatchLinks} />
           </div>
         </button>
@@ -67,7 +67,7 @@ export function NavGroup({ showMatchLinks, setShowMatchLinks, setIsOpen, isOpen 
           <NavItem key={item.text} text={item.text} location={item.location} />
         ))}
       </div>
-      <div className="@flex @h-12 @w-[15%] @justify-end @items-center @relative">
+      <div className="tw:flex tw:h-12 tw:w-[15%] tw:justify-end tw:items-center tw:relative">
         <NavLoginLogout isOpen={isOpen} setIsOpen={setIsOpen} />
       </div>
     </>

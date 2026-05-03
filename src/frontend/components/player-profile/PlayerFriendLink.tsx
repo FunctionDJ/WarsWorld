@@ -11,19 +11,19 @@ interface Props {
 export function PlayerFriendLink({ friendName, friendFavArmy, friendFavCO }: Props) {
   return (
     <Link
-      className="@grid @grid-cols-6 smallscreen:@grid-cols-10 laptop:@grid-cols-6 @w-full @space-x-4 @justify-start @items-center @align-middle @text-white  @border-4 @border-transparent @bg-transparent hover:@text-white hover:@bg-white/10"
+      className="tw:grid tw:grid-cols-6 tw:smallscreen:grid-cols-10 tw:laptop:grid-cols-6 tw:w-full tw:space-x-4 tw:justify-start tw:items-center tw:align-middle tw:text-white  tw:border-4 tw:border-transparent tw:bg-transparent tw:hover:text-white tw:hover:bg-white/10"
       href={`/players/${friendName}`}
     >
       <div
-        className={`@bg-black @border-${friendFavArmy} @border-[3px] @min-h-4 @min-w-4 monitor:@min-h-12 monitor:@min-w-12`}
+        className={`tw:bg-black @border-${friendFavArmy} tw:border-[3px] tw:min-h-4 tw:min-w-4 tw:monitor:min-h-12 tw:monitor:min-w-12`}
       >
         <img
-          className="@min-w-full [image-rendering:pixelated]"
+          className="tw:min-w-full tw:[image-rendering:pixelated]"
           src={`/img/CO/pixelated/${friendFavCO}-small.png`}
           alt={friendFavCO}
         />
       </div>
-      <h3 className="@col-span-5 @font-medium @text-lg smallscreen:@text-xl">{friendName}</h3>
+      <h3 className="tw:col-span-5 tw:font-medium tw:text-lg tw:smallscreen:text-xl">{friendName}</h3>
     </Link>
   );
 }

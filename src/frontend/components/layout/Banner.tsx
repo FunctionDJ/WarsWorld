@@ -5,18 +5,18 @@ export default function Banner2(props: {
   backgroundURL: string;
 }) {
   return (
-    <div className="@relative @h-[65vh] @w-full tablet:@h-[90vh] @overflow-hidden @shadow-black @shadow-2xl">
+    <div className="tw:relative tw:h-[65vh] tw:w-full tw:tablet:h-[90vh] tw:overflow-hidden tw:shadow-black tw:shadow-2xl">
       <Image
-        className="@object-cover @object-top @w-full @absolute @h-full @z-0"
+        className="tw:object-cover tw:object-top tw:w-full tw:absolute tw:h-full tw:z-0"
         alt=""
         src={props.backgroundURL}
         width={0}
         height={0}
         sizes="100vw"
       />
-      <div className="@absolute @flex @items-start @gap-10 @h-full @w-full @backdrop-brightness-[0.15] @z-10"></div>
-      <div className="@flex @items-start @gap-10 @h-full @w-full @absolute @z-20">
-        <div className="@h-full @w-full">{props.title}</div>
+      <div className="tw:absolute tw:flex tw:items-start tw:gap-10 tw:h-full tw:w-full tw:backdrop-brightness-[0.15] tw:z-10"></div>
+      <div className="tw:flex tw:items-start tw:gap-10 tw:h-full tw:w-full tw:absolute tw:z-20">
+        <div className="tw:h-full tw:w-full">{props.title}</div>
       </div>
     </div>
   );

@@ -111,39 +111,39 @@ export default function CreateArticleForm({ articleData, setArticleData }: Props
     <>
       <OrangeGradientLine />
       <form
-        className="@px-4 smallscreen:@px-32 @py-10 @bg-black/70"
+        className="tw:px-4 tw:smallscreen:px-32 tw:py-10 tw:bg-black/70"
         onSubmit={(event) => {
           void onSubmitArticleForm(event);
         }}
       >
         {isSuccess && (
-          <Link className="@text-white hover:@text-white" href={newstCreatedArticleLink}>
+          <Link className="tw:text-white tw:hover:text-white" href={newstCreatedArticleLink}>
             <ErrorSuccessBlock
-              className="@h-28 @mb-8 hover:@translate-y-1 @duration-300"
+              className="tw:h-28 tw:mb-8 tw:hover:translate-y-1 tw:duration-300"
               title="Article successfully created"
               message="Click this box to see the newest article."
             />
           </Link>
         )}
-        {error && <ErrorSuccessBlock className="@h-20 @mb-8" title={error} isError />}
-        <div className="@grid @grid-flow-row @grid-cols-4">
+        {error && <ErrorSuccessBlock className="tw:h-20 tw:mb-8" title={error} isError />}
+        <div className="tw:grid tw:grid-flow-row tw:grid-cols-4">
           <FormInput
             value={articleData.title}
             onChange={(event) => {
               onChangeGenericHandler("title", event.target.value);
             }}
-            className="@my-4 @w-full @mb-8 @col-span-4 smallscreen:@col-span-3"
+            className="tw:my-4 tw:w-full tw:mb-8 tw:col-span-4 tw:smallscreen:col-span-3"
             text="Title"
             type="text"
             isError={titleError != undefined}
             errorMessage={titleError?.message}
           />
-          <div className="@my-4 smallscreen:@my-0 smallscreen:@ml-12 @col-span-4 smallscreen:@col-span-1">
-            <label htmlFor="" className={`@text-xl smallscreen:@text-2xl @text-white`}>
+          <div className="tw:my-4 tw:smallscreen:my-0 tw:smallscreen:ml-12 tw:col-span-4 tw:smallscreen:col-span-1">
+            <label htmlFor="" className={`tw:text-xl tw:smallscreen:text-2xl tw:text-white`}>
               Category
             </label>
             <Select
-              className="@my-5 @w-full @h-16 @text-2xl"
+              className="tw:my-5 tw:w-full tw:h-16 tw:text-2xl"
               options={CATEGORIES}
               value={categoryOption}
               onChange={(o) => {
@@ -157,7 +157,7 @@ export default function CreateArticleForm({ articleData, setArticleData }: Props
             onChange={(event) => {
               onChangeGenericHandler("description", event.target.value);
             }}
-            className="@col-span-4"
+            className="tw:col-span-4"
             text="Description"
             height="20rem"
             isError={descriptionError != undefined}
@@ -168,7 +168,7 @@ export default function CreateArticleForm({ articleData, setArticleData }: Props
             onChange={(event) => {
               onChangeGenericHandler("thumbnail", event.target.value);
             }}
-            className="@mt-8 @col-span-4"
+            className="tw:mt-8 tw:col-span-4"
             type="text"
             text="Thumbnail"
             isError={thumbnailError != undefined}
@@ -180,7 +180,7 @@ export default function CreateArticleForm({ articleData, setArticleData }: Props
             onChange={(event) => {
               onChangeGenericHandler("body", event.target.value);
             }}
-            className="@col-span-4 @mt-12"
+            className="tw:col-span-4 tw:mt-12"
             text="Content"
             height="50rem"
             isError={bodyError != undefined}
@@ -188,8 +188,8 @@ export default function CreateArticleForm({ articleData, setArticleData }: Props
           />
         </div>
 
-        <div className="@flex @flex-col @items-center @justify-center @pt-4 @px-10">
-          <div className="@w-[80vw] smallscreen:@w-96 @h-20 @text-5xl @my-2">
+        <div className="tw:flex tw:flex-col tw:items-center tw:justify-center tw:pt-4 tw:px-10">
+          <div className="tw:w-[80vw] tw:smallscreen:w-96 tw:h-20 tw:text-5xl tw:my-2">
             <SquareButton>Submit</SquareButton>
           </div>
         </div>

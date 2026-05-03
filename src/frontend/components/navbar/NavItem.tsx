@@ -9,9 +9,9 @@ interface Props {
 
 export function NavItem({ text, location, handleBurgerMenu }: Props) {
   return (
-    <div className="@h-full">
+    <div className="tw:h-full">
       <Link href={location} onClick={handleBurgerMenu}>
-        <div className="@flex @justify-center @items-center @gap-2 @h-full hover:@scale-[1.025]">
+        <div className="tw:flex tw:justify-center tw:items-center tw:gap-2 tw:h-full tw:hover:scale-[1.025]">
           <NavButton>{text}</NavButton>
         </div>
       </Link>

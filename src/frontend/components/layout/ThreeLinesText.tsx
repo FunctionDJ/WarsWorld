@@ -28,13 +28,13 @@ export default function ThreeLinesText(props: {
   }
 
   return (
-    <div className="@text-center @pt-10 @pb-6">
-      <h2 className="@font-light">{props.subtitle}</h2>
+    <div className="tw:text-center tw:pt-10 tw:pb-6">
+      <h2 className="tw:font-light">{props.subtitle}</h2>
       <h1>
         <strong>{props.title}</strong>
       </h1>
       <p>{props.text}</p>
-      <div className="@flex @justify-center @mt-4 @gap-2">{buttonArray}</div>
+      <div className="tw:flex tw:justify-center tw:mt-4 tw:gap-2">{buttonArray}</div>
     </div>
   );
 }

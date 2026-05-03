@@ -65,7 +65,7 @@ export default function MatchCardSetup({
 
   if (inMatch) {
     return (
-      <div className="@flex">
+      <div className="tw:flex">
         {/* **** CO Button and Menu **** */}
         <div>
           <button
@@ -77,7 +77,7 @@ export default function MatchCardSetup({
             Switch CO
           </button>
           {showDropdown == "co" ? (
-            <div className="@overflow-visible @grid @grid-cols-4 @absolute  @z-10  @bg-bg-tertiary @outline-black @outline-2 @gap-2">
+            <div className="tw:overflow-visible tw:grid tw:grid-cols-4 tw:absolute  tw:z-10  tw:bg-bg-tertiary tw:outline-black tw:outline-2 tw:gap-2">
               {coSchema._def.values.map((co) => {
                 return (
                   <div
@@ -102,10 +102,10 @@ export default function MatchCardSetup({
                   >
                     <img
                       src={`/img/CO/pixelated/${co}-small.png`}
-                      className="[image-rendering:pixelated]"
+                      className="tw:[image-rendering:pixelated]"
                       alt=""
                     />
-                    <p className="@capitalize @text-xs @px-1">{co}</p>
+                    <p className="tw:capitalize tw:text-xs tw:px-1">{co}</p>
                   </div>
                 );
               })}
@@ -126,7 +126,7 @@ export default function MatchCardSetup({
             Switch Army
           </button>
           {showDropdown == "army" ? (
-            <div className="@grid @grid-cols-2 @absolute  @z-10  @bg-bg-tertiary @outline-black @outline-2 @gap-2">
+            <div className="tw:grid tw:grid-cols-2 tw:absolute  tw:z-10  tw:bg-bg-tertiary tw:outline-black tw:outline-2 tw:gap-2">
               {armySchema._def.values.map((army) => {
                 return (
                   <div
@@ -161,16 +161,16 @@ export default function MatchCardSetup({
                     className={`@flex @items-center @p-1 @bg-bg-primary 
                     ${
                       selectedOptions.selectedArmies.includes(army)
-                        ? "@brightness-50"
-                        : "hover:@bg-primary @cursor-pointer @duration-300"
+                        ? "tw:brightness-50"
+                        : "tw:hover:bg-primary tw:cursor-pointer tw:duration-300"
                     }`}
                   >
                     <img
                       src={`/img/nations/${army}.gif`}
-                      className="[image-rendering:pixelated]"
+                      className="tw:[image-rendering:pixelated]"
                       alt=""
                     />
-                    <p className="@capitalize @text-xs @px-1">{army}</p>
+                    <p className="tw:capitalize tw:text-xs tw:px-1">{army}</p>
                   </div>
                 );
               })}
@@ -191,7 +191,7 @@ export default function MatchCardSetup({
             Switch Slot
           </button>
           {showDropdown == "slot" ? (
-            <div className="@absolute @z-10 @bg-bg-tertiary @outline-black @outline-2">
+            <div className="tw:absolute tw:z-10 tw:bg-bg-tertiary tw:outline-black tw:outline-2">
               {[...Array(maxNumberOfPlayers).keys()].map((slot) => {
                 return (
                   <div
@@ -226,12 +226,12 @@ export default function MatchCardSetup({
                     className={`@flex @items-center @p-1 @bg-bg-primary
                       ${
                         selectedOptions.selectedSlots.includes(slot)
-                          ? "@brightness-50"
-                          : "hover:@bg-primary @cursor-pointer @duration-300"
+                          ? "tw:brightness-50"
+                          : "tw:hover:bg-primary tw:cursor-pointer tw:duration-300"
                       }
                     `}
                   >
-                    <p className="@capitalize @text-xs @px-1">{slot}</p>
+                    <p className="tw:capitalize tw:text-xs tw:px-1">{slot}</p>
                   </div>
                 );
               })}
@@ -284,7 +284,7 @@ export default function MatchCardSetup({
   // Not part of the game, can't change CO or Army or Ready
   else {
     return (
-      <div className="@flex  ">
+      <div className="tw:flex  ">
         <div>
           <button
             className=" btnMenu"

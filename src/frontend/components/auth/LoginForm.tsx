@@ -104,7 +104,7 @@ export default function LoginForm({ onLoginSuccess }: Props) {
         onSubmit={(event) => {
           void onSubmitLoginForm(event);
         }}
-        className="@flex @flex-col @gap-2 smallscreen:@gap-6"
+        className="tw:flex tw:flex-col tw:gap-2 tw:smallscreen:gap-6"
       >
         <FormInput
           key="li_user"
@@ -126,8 +126,8 @@ export default function LoginForm({ onLoginSuccess }: Props) {
             onChangeGenericHandler("password", event.target.value);
           }}
         />
-        <div className="@flex @flex-col @items-center @justify-center @pt-4 @px-10">
-          <div className="@w-[80vw] smallscreen:@w-96 @h-16 @text-3xl @my-2">
+        <div className="tw:flex tw:flex-col tw:items-center tw:justify-center tw:pt-4 tw:px-10">
+          <div className="tw:w-[80vw] tw:smallscreen:w-96 tw:h-16 tw:text-3xl tw:my-2">
             <SquareButton>Login</SquareButton>
           </div>
         </div>

@@ -48,9 +48,9 @@ const friends: Player[] = [
 
 export function PlayerFriendSection() {
   return (
-    <section className="@w-full @min-h-full @bg-black/60 @pb-8 @p-6 @my-4">
-      <h3 className="@font-russoOne @uppercase @text-2xl smallscreen:@text-3xl">Friends</h3>
-      <div className="@flex @flex-col @w-full @py-6 @space-y-1">
+    <section className="tw:w-full tw:min-h-full tw:bg-black/60 tw:pb-8 tw:p-6 tw:my-4">
+      <h3 className="@font-russoOne tw:uppercase tw:text-2xl tw:smallscreen:text-3xl">Friends</h3>
+      <div className="tw:flex tw:flex-col tw:w-full tw:py-6 tw:space-y-1">
         {friends.map((friend) => {
           return (
             <PlayerFriendLink

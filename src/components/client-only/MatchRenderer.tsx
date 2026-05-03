@@ -94,7 +94,7 @@ export function MatchRenderer({ match, player, spriteSheets, turn, setTurn }: Pr
     <>
       <p>Your Funds: {player.data.funds}</p>
       <button
-        className="btn @select-none"
+        className="btn tw:select-none"
         onClick={() => {
           passTurnMutation
             .mutateAsync({
@@ -110,7 +110,7 @@ export function MatchRenderer({ match, player, spriteSheets, turn, setTurn }: Pr
         {turn ? "Pass Turn" : "Not your Turn"}
       </button>
       <canvas
-        className="@inline"
+        className="tw:inline"
         style={{
           imageRendering: "pixelated",
         }}

@@ -68,7 +68,7 @@ export default function MatchCard({ match, inMatch }: matchData) {
   }, [firstPlayer]);
 
   return (
-    <div className="@grid @bg-bg-primary @relative">
+    <div className="tw:grid tw:bg-bg-primary tw:relative">
       <MatchCardTop
         mapName={match.map.name}
         day={match.turn}
@@ -77,7 +77,7 @@ export default function MatchCard({ match, inMatch }: matchData) {
         spectators={0}
         time={0.15}
       />
-      <div className="@grid @grid-cols-2 @gap-3">
+      <div className="tw:grid tw:grid-cols-2 tw:gap-3">
         <MatchPlayer
           name={firstPlayer.name}
           co={currentPlayerOptions.CO}
@@ -130,7 +130,7 @@ export default function MatchCard({ match, inMatch }: matchData) {
       }
 
       {match.state != "setup" && match.players.length == 2 ? (
-        <Link href={`/match2/${match.id}`} className="btnMenu @inline-block">
+        <Link href={`/match2/${match.id}`} className="btnMenu tw:inline-block">
           {" "}
           Enter Match
         </Link>

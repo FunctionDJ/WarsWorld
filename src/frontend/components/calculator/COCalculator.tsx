@@ -12,8 +12,8 @@ interface Props {
 
 export default function COCalculator({ co, capture, commtower, gold }: Props) {
   return (
-    <div className="@col-span-6 @flex @bg-bg-tertiary @justify-between @align-middle @items-center ">
-      <div className="@flex">
+    <div className="tw:col-span-6 tw:flex tw:bg-bg-tertiary tw:justify-between tw:align-middle tw:items-center ">
+      <div className="tw:flex">
         <COSelect CO={co} />
         <IconText icon={"redstar"} />
         <IconText icon={"bluestar"} />

@@ -40,17 +40,17 @@ export default function Article({ articleData }: Props) {
 
         <Banner
           title={
-            <div className="@mx-[5vw] @my-[7.5vh]">
-              <h2 className="@bg-bg-secondary @inline-block @py-2 @px-4 smallscreen:@py-4 smallscreen:@px-6 @text-xl smallscreen:@text-5xl @text-white @font-medium">
+            <div className="tw:mx-[5vw] tw:my-[7.5vh]">
+              <h2 className="tw:bg-bg-secondary tw:inline-block tw:py-2 tw:px-4 tw:smallscreen:py-4 tw:smallscreen:px-6 tw:text-xl tw:smallscreen:text-5xl tw:text-white tw:font-medium">
                 {articleData.type.toUpperCase()}
               </h2>
-              <h2 className="@bg-white @inline-block @py-2 @px-4 smallscreen:@py-4 smallscreen:@px-6 @text-xl smallscreen:@text-5xl @text-black @font-medium">
+              <h2 className="tw:bg-white tw:inline-block tw:py-2 tw:px-4 tw:smallscreen:py-4 tw:smallscreen:px-6 tw:text-xl tw:smallscreen:text-5xl tw:text-black tw:font-medium">
                 {articleData.metaData.category.toUpperCase()}
               </h2>
-              <h1 className="@text-2xl smallscreen:@text-6xl large_monitor:@text-8xl @font-semibold @my-6 smallscreen:@pr-12">
+              <h1 className="tw:text-2xl tw:smallscreen:text-6xl tw:large_monitor:text-8xl tw:font-semibold tw:my-6 tw:smallscreen:pr-12">
                 {articleData.metaData.title}
               </h1>
-              <h1 className="@text-lg smallscreen:@text-3xl large_monitor:@text-6xl smallscreen:@pr-12">
+              <h1 className="tw:text-lg tw:smallscreen:text-3xl tw:large_monitor:text-6xl tw:smallscreen:pr-12">
                 {articleData.metaData.description}
               </h1>
             </div>

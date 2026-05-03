@@ -7,11 +7,11 @@ export default function TitleColorBox({ title, tailwind_color }: Props) {
   return (
     <div
       className={
-        "@px-4 @rounded-md @w-full @text-center @my-2 @shadow-black/50 @shadow-md " +
-        (tailwind_color ?? "@bg-blue-500")
+        "tw:px-4 tw:rounded-md tw:w-full tw:text-center tw:my-2 tw:shadow-black/50 tw:shadow-md " +
+        (tailwind_color ?? "tw:bg-blue-500")
       }
     >
-      <h1 className="@py-0 @font-semibold @uppercase">{title}</h1>
+      <h1 className="tw:py-0 tw:font-semibold tw:uppercase">{title}</h1>
     </div>
   );
 }

@@ -12,12 +12,12 @@ interface Props {
 export default function DefaultDialogDesign({ children, width, title }: Props) {
   return (
     <>
-      <div className="@fixed @inset-0 @bg-black/80" aria-hidden="true" />
-      <div className="@fixed @inset-0 @w-screen @overflow-y-scroll">
-        <div className="@flex @flex-col @min-h-full @items-center @justify-center @w-full">
-          <div className="@py-16" style={{ width: width ?? "75vw" }}>
-            <div className="@w-full @h-full @rounded-xl @overflow-hidden @shadow-xl @shadow-black">
-              <Dialog.Panel className="@bg-bg-secondary">
+      <div className="tw:fixed tw:inset-0 tw:bg-black/80" aria-hidden="true" />
+      <div className="tw:fixed tw:inset-0 tw:w-screen tw:overflow-y-scroll">
+        <div className="tw:flex tw:flex-col tw:min-h-full tw:items-center tw:justify-center tw:w-full">
+          <div className="tw:py-16" style={{ width: width ?? "75vw" }}>
+            <div className="tw:w-full tw:h-full tw:rounded-xl tw:overflow-hidden tw:shadow-xl tw:shadow-black">
+              <Dialog.Panel className="tw:bg-bg-secondary">
                 <PageTitle>{title}</PageTitle>
                 {children}
                 <OrangeGradientLine />

@@ -71,7 +71,7 @@ export default function LeaderboardTable({ setBestPlayers }: Props) {
   }, [screenWidth, table]);
 
   return (
-    <div className="@flex @flex-col @w-full @items-center @justify-center @mb-12 smallscreen:@mb-20 @min-w-[90vw] tablet:@min-w-[80vw]">
+    <div className="tw:flex tw:flex-col tw:w-full tw:items-center tw:justify-center tw:mb-12 tw:smallscreen:mb-20 tw:min-w-[90vw] tw:tablet:min-w-[80vw]">
       <DataTable table={table} />
       <TablePagination table={table} />
     </div>

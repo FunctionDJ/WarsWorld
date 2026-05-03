@@ -10,7 +10,7 @@ const data = [
     title: "Basics",
     description:
       "If you are a new player, these guides will help you establish the basic fundamentals of the game",
-    color: "@bg-green-500",
+    color: "tw:bg-green-500",
   },
   {
     title: "Matches",
@@ -20,7 +20,7 @@ const data = [
     title: "Advance",
     description:
       "These guides will cover more advanced techniques with specific uses that can give you the edge on the battlefield.",
-    color: "@bg-orange-500",
+    color: "tw:bg-orange-500",
   },
 ];
 
@@ -37,15 +37,15 @@ export default function HowToPlay() {
         <title>Guides | Wars World</title>
       </Head>
 
-      <div className="@flex @flex-col @justify-center @items-center @align-middle">
-        <div className="@w-full @mt-8">
+      <div className="tw:flex tw:flex-col tw:justify-center tw:items-center tw:align-middle">
+        <div className="tw:w-full tw:mt-8">
           <PageTitle svgPathD="M480-120 200-272v-240L40-600l440-240 440 240v320h-80v-276l-80 44v240L480-120Zm0-332 274-148-274-148-274 148 274 148Zm0 241 200-108v-151L480-360 280-470v151l200 108Zm0-241Zm0 90Zm0 0Z">
             How to Play
           </PageTitle>
         </div>
 
-        <div className="@flex @flex-col @max-w-[95vw] @px-4 @py-8 laptop:@pb-12">
-          <div className="@flex @flex-col @gap-8">
+        <div className="tw:flex tw:flex-col tw:max-w-[95vw] tw:px-4 tw:py-8 tw:laptop:pb-12">
+          <div className="tw:flex tw:flex-col tw:gap-8">
             {articleGuides &&
               data.map((section, index) => {
                 return (

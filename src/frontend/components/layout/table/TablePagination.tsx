@@ -10,7 +10,7 @@ interface Props {
 
 export default function TablePagination({ table }: Props) {
   return (
-    <div className="@flex @items-center @gap-2 tablet:@gap-3 @mt-8 @text-xl">
+    <div className="tw:flex tw:items-center tw:gap-2 tw:tablet:gap-3 tw:mt-8 tw:text-xl">
       <SquareButton
         onClick={() => {
           table.setPageIndex(0);

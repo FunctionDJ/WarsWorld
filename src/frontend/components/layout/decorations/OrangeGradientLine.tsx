@@ -5,7 +5,7 @@ interface Props {
 export default function OrangeGradientLine({ className }: Props) {
   return (
     <div
-      className={`@h-1 @w-full @bg-gradient-to-r @from-primary-dark @from-10% @via-primary @to-primary-dark @to-90% ${className ?? ""}`}
+      className={`tw:h-1 tw:w-full tw:bg-linear-to-r tw:from-primary-dark tw:from-10% tw:via-primary tw:to-primary-dark tw:to-90% ${className ?? ""}`}
     />
   );
 }

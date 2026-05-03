@@ -7,11 +7,11 @@ interface Props {
 
 export function IngameInfo({ ingameStatIconPath, ingameStat }: Props) {
   return (
-    <div className="@flex @justify-between @items-center @grow @bg-gray-800 @outline @outline-black @outline-2 ingameInfo">
+    <div className="tw:flex tw:justify-between tw:items-center tw:grow tw:bg-gray-800 tw:outline tw:outline-black tw:outline-2 ingameInfo">
       {ingameStatIconPath ? (
         <Image src={ingameStatIconPath} alt="stat icon" />
       ) : (
-        <div className="@h-3 @w-3 @bg-white @rounded-full" />
+        <div className="tw:h-3 tw:w-3 tw:bg-white tw:rounded-full" />
       )}
       <div>{ingameStat}</div>
     </div>

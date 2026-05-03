@@ -11,8 +11,8 @@ export function Layout({ footer, children }: Props) {
   return (
     <>
       <Navbar />
-      <div className="@relative mainContainer">
-        <main className="@w-full mainHeight">{children}</main>
+      <div className="tw:relative mainContainer">
+        <main className="tw:w-full mainHeight">{children}</main>
       </div>
       {footer != undefined && footer && <Footer />}
     </>

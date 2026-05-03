@@ -88,7 +88,7 @@ export default function SignupForm({ setIsSignupForm, setDidSignUp, callbackUrl 
   return (
     <>
       {error && <ErrorSuccessBlock isError title="Warning" message={error} />}
-      <form className="@flex @flex-col @gap-6">
+      <form className="tw:flex tw:flex-col tw:gap-6">
         <FormInput
           key="su_email"
           text="Email:"
@@ -137,8 +137,8 @@ export default function SignupForm({ setIsSignupForm, setDidSignUp, callbackUrl 
             onChangeGenericHandler("confirmPassword", event.target.value);
           }}
         />
-        <div className="@flex @flex-col @items-center @justify-center @py-4 @px-10">
-          <div className="@w-[80vw] smallscreen:@w-96 @h-16 @text-3xl @my-2">
+        <div className="tw:flex tw:flex-col tw:items-center tw:justify-center tw:py-4 tw:px-10">
+          <div className="tw:w-[80vw] tw:smallscreen:w-96 tw:h-16 tw:text-3xl tw:my-2">
             <SquareButton
               onClick={(event) => {
                 void onSubmitSignupForm(event);

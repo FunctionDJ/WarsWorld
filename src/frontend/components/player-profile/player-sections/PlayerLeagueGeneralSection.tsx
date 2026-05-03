@@ -7,7 +7,7 @@ interface Props {
 
 export function PLayerLeagueGeneralSection({ playerLeaguesMMR }: Props) {
   return (
-    <section className="@grid smallscreen:@grid-cols-2 laptop:@grid-cols-3 @gap-4 @p-8 @h-full @bg-black/60 @my-4">
+    <section className="tw:grid tw:smallscreen:grid-cols-2 tw:laptop:grid-cols-3 tw:gap-4 tw:p-8 tw:h-full tw:bg-black/60 tw:my-4">
       {playerLeaguesMMR?.map((league) => {
         return (
           <PlayerMMRCard

@@ -74,17 +74,17 @@ export default function ArticleCommentSection({ comments }: Props) {
   };
 
   return (
-    <section className="@w-full @p-12 @px-32 @relative @leading-10">
-      <h2 className="@font-bold">Comments</h2>
+    <section className="tw:w-full tw:p-12 tw:px-32 tw:relative tw:leading-10">
+      <h2 className="tw:font-bold">Comments</h2>
 
       {currentPlayer ? (
-        <div className="@w-full">
+        <div className="tw:w-full">
           <form
             onSubmit={(event) => {
               void handleSubmitComment(event);
             }}
             method="post"
-            className="@flex @flex-col"
+            className="tw:flex tw:flex-col"
           >
             <TextAreaInput
               name="comment"
@@ -93,7 +93,7 @@ export default function ArticleCommentSection({ comments }: Props) {
               isError={errorMessage != ""}
               errorMessage={errorMessage}
             />
-            <div className="@self-end @my-4">
+            <div className="tw:self-end tw:my-4">
               <SquareButton type="submit">Add comment</SquareButton>
             </div>
           </form>
@@ -102,7 +102,7 @@ export default function ArticleCommentSection({ comments }: Props) {
         <div>Please login to write a comment.</div>
       )}
 
-      <div className="@flex @flex-col @gap-4">
+      <div className="tw:flex tw:flex-col tw:gap-4">
         {comments.map((comment) => {
           const { createdAt, articleId, playerId, player, body } = comment;
           const formattedTime = getFormattedTime(createdAt);
@@ -111,11 +111,11 @@ export default function ArticleCommentSection({ comments }: Props) {
             <div
               role="comment"
               key={String(articleId) + playerId + createdAt.toJSON()}
-              className="@bg-bg-tertiary smallscreen:@p-10 @p-2 @rounded-2xl @shadow-xl @shadow-black"
+              className="tw:bg-bg-tertiary tw:smallscreen:p-10 tw:p-2 tw:rounded-2xl tw:shadow-xl tw:shadow-black"
             >
-              <div className="@flex @gap-2">
+              <div className="tw:flex tw:gap-2">
                 <strong>{player.name}</strong>
-                <time className="@text-gray-300" dateTime={createdAt.toJSON()}>
+                <time className="tw:text-gray-300" dateTime={createdAt.toJSON()}>
                   {formattedTime}
                 </time>
               </div>

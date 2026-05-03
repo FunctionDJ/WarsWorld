@@ -67,21 +67,21 @@ export default function LoginSignupModal({ isOpen, setIsOpen, width }: Props) {
   };
 
   return (
-    <Dialog open={isOpen} onClose={onClose} className="@relative @z-40">
+    <Dialog open={isOpen} onClose={onClose} className="tw:relative tw:z-40">
       {isSignupForm ? (
         /* SIGNUP */
         <DefaultDialogDesign title="Signup" width={width ?? "50vw"}>
-          <div className="@pt-4 smallscreen:@pt-8 @px-4 smallscreen:@px-20">
+          <div className="tw:pt-4 tw:smallscreen:pt-8 tw:px-4 tw:smallscreen:px-20">
             {didSignUp && <ErrorSuccessBlock title="Successfully signed up" />}
             <SignupForm
               setIsSignupForm={setIsSignupForm}
               setDidSignUp={setDidSignUp}
               callbackUrl={callbackUrl}
             />
-            <div className="@flex @flex-col @items-center @justify-center @pb-6 @px-10 @gap-2">
-              <div className="@h-[0.15rem] @w-full @bg-bg-primary @my-2" />
-              <p className="@text-lg smallscreen:@text">Already have an account?</p>
-              <div className="@my-2 @w-[80vw] smallscreen:@w-80 @h-14 @text-2xl">
+            <div className="tw:flex tw:flex-col tw:items-center tw:justify-center tw:pb-6 tw:px-10 tw:gap-2">
+              <div className="tw:h-[0.15rem] tw:w-full tw:bg-bg-primary tw:my-2" />
+              <p className="tw:text-lg smallscreen:@text">Already have an account?</p>
+              <div className="tw:my-2 tw:w-[80vw] tw:smallscreen:w-80 tw:h-14 tw:text-2xl">
                 <SquareButton onClick={() => void setIsSignupForm(false, callbackUrl)}>
                   Login
                 </SquareButton>
@@ -92,24 +92,24 @@ export default function LoginSignupModal({ isOpen, setIsOpen, width }: Props) {
       ) : (
         /* LOGIN */
         <DefaultDialogDesign title="Login" width={width ?? "50vw"}>
-          <div className="@pt-4 smallscreen:@pt-8 @px-4 smallscreen:@px-20">
+          <div className="tw:pt-4 tw:smallscreen:pt-8 tw:px-4 tw:smallscreen:px-20">
             {didSignUp && <ErrorSuccessBlock title="Successfully signed up" />}
             <LoginForm onLoginSuccess={onLoginSuccess} />
-            <div className="@flex @flex-col @items-center @justify-center @pb-6 smallscreen:@px-10 @gap-2">
+            <div className="tw:flex tw:flex-col tw:items-center tw:justify-center tw:pb-6 tw:smallscreen:px-10 tw:gap-2">
               <Link
-                className="@my-2 @text-xl smallscreen:@text @no-underline hover:@underline"
+                className="tw:my-2 tw:text-xl smallscreen:@text tw:no-underline tw:hover:underline"
                 href="."
                 onClick={onClose}
               >
                 Forgot password?
               </Link>
 
-              <p className="@pt-4 @text-lg smallscreen:@text">You can also sign in with:</p>
-              <div className="@flex @flex-wrap @justify-center @w-full @gap-4">
+              <p className="tw:pt-4 tw:text-lg smallscreen:@text">You can also sign in with:</p>
+              <div className="tw:flex tw:flex-wrap tw:justify-center tw:w-full tw:gap-4">
                 {possibleProviders.map((socialMedia) => (
                   <div
                     key={socialMedia}
-                    className="@h-14 @text-2xl large_monitor:@text-3xl @w-[75vw] smallscreen:@w-48 large_monitor:@w-56"
+                    className="tw:h-14 tw:text-2xl tw:large_monitor:text-3xl tw:w-[75vw] tw:smallscreen:w-48 tw:large_monitor:w-56"
                   >
                     <SocialMediaSignInButton
                       name={socialMedia}
@@ -118,13 +118,13 @@ export default function LoginSignupModal({ isOpen, setIsOpen, width }: Props) {
                   </div>
                 ))}
               </div>
-              <p className="@pt-6 @text-lg smallscreen:@text @text-center">
+              <p className="tw:pt-6 tw:text-lg smallscreen:@text tw:text-center">
                 Developer note: If you want to sign in with one of these providers, you must follow
                 the respective directions on README.md to set it up.
               </p>
-              <div className="@h-[0.15rem] @w-full @bg-bg-primary @my-2" />
-              <p className="@text-lg smallscreen:@text">Don&apos;t have an account?</p>
-              <div className="@my-2 @w-[80vw] smallscreen:@w-80 @h-20 cellphone:@h-14 @text-2xl">
+              <div className="tw:h-[0.15rem] tw:w-full tw:bg-bg-primary tw:my-2" />
+              <p className="tw:text-lg smallscreen:@text">Don&apos;t have an account?</p>
+              <div className="tw:my-2 tw:w-[80vw] tw:smallscreen:w-80 tw:h-20 tw:cellphone:h-14 tw:text-2xl">
                 <SquareButton onClick={() => void setIsSignupForm(true, callbackUrl)}>
                   Create New Account
                 </SquareButton>

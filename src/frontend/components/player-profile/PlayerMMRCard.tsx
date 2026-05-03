@@ -17,13 +17,13 @@ export function PlayerMMRCard({ data, leagueType, rank }: Props) {
   });
 
   return (
-    <div className="@flex @flex-col @items-center @justify-center @align-middle @w-full">
-      <div className="@flex @flex-col @items-center @justify-center @align-middle">
-        <div className="@w-full @py-2 @text-center @uppercase">
-          <h3 className="@font-russoOne @text-xl monitor:@text-2xl">{leagueType}</h3>
+    <div className="tw:flex tw:flex-col tw:items-center tw:justify-center tw:align-middle tw:w-full">
+      <div className="tw:flex tw:flex-col tw:items-center tw:justify-center tw:align-middle">
+        <div className="tw:w-full tw:py-2 tw:text-center tw:uppercase">
+          <h3 className="@font-russoOne tw:text-xl tw:monitor:text-2xl">{leagueType}</h3>
         </div>
         <MMRDataTable table={table} />
-        <div className="@w-full @py-2 @text-center">
+        <div className="tw:w-full tw:py-2 tw:text-center">
           <p>Rank: #{rank}</p>
         </div>
       </div>

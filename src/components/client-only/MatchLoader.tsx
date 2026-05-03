@@ -76,7 +76,7 @@ export function MatchLoader({ matchId, playerId, spritesheetDataByArmy }: Props)
   }
 
   return (
-    <div className="@w-full @h-full @flex @flex-col @items-center @justify-center @py-4">
+    <div className="tw:w-full tw:h-full tw:flex tw:flex-col tw:items-center tw:justify-center tw:py-4">
       <MatchRenderer
         match={fullMatchQuery.data}
         spriteSheets={spriteSheetQuery.data}

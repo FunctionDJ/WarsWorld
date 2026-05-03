@@ -7,12 +7,12 @@ interface Props {
 
 export default function BestPlayersSection({ bestPlayers }: Props) {
   return (
-    <div className="@flex @flex-row @flex-wrap @justify-center @items-center">
+    <div className="tw:flex tw:flex-row tw:flex-wrap tw:justify-center tw:items-center">
       {bestPlayers.map((player) => {
         return (
           <div
             key={player.id}
-            className="@w-28 smallscreen:@w-56 laptop:@w-60 large_monitor:@w-[20rem] @h-[20rem] smallscreen:@h-[40rem] large-monitor:@h-[52rem] @mb-8 @mx-1 smallscreen:@mx-4 large_monitor:@mb-16"
+            className="tw:w-28 tw:smallscreen:w-56 tw:laptop:w-60 tw:large_monitor:w-[20rem] tw:h-80 tw:smallscreen:h-160 large-monitor:@h-[52rem] tw:mb-8 tw:mx-1 tw:smallscreen:mx-4 tw:large_monitor:mb-16"
           >
             <PlayerCard
               name={player.name}

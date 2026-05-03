@@ -10,8 +10,8 @@ export default function SquareButton({ disabled, onClick, children, type }: Prop
     <button
       className={`@rounded @w-full @h-full @py-1 @px-3 cellphone:@px-4 @text-inherit @font-semibold @shadow-black/50 @shadow-md ${
         disabled === undefined || !disabled
-          ? "@bg-primary hover:@scale-[1.025] active:@scale-105"
-          : "@bg-primary-dark"
+          ? "tw:bg-primary tw:hover:scale-[1.025] tw:active:scale-105"
+          : "tw:bg-primary-dark"
       } active:@bg-primary-dark`}
       onClick={onClick}
       disabled={disabled}

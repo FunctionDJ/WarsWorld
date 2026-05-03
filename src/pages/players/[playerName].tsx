@@ -93,8 +93,8 @@ export default function UserProfile() {
         <title>{playerName} | Wars World</title>
       </Head>
 
-      <div className="@flex @flex-col @justify-center @items-center @align-middle">
-        <div className="@w-[95%] tablet:@w-[80%] @m-4 smallscreen:@px-4">
+      <div className="tw:flex tw:flex-col tw:justify-center tw:items-center tw:align-middle">
+        <div className="tw:w-[95%] tw:tablet:w-[80%] tw:m-4 tw:smallscreen:px-4">
           {/* Each Section calls the info? */}
           <PlayerProfileMainSection
             playerName={playerName}
@@ -109,8 +109,8 @@ export default function UserProfile() {
             lastActivity="05/21/2024 05:04pm"
             isOnline={true}
           />
-          <div className="@flex  @flex-col laptop:@flex-row laptop:@space-x-4">
-            <div className="@col-span-6 @h-full laptop:@w-[75%]">
+          <div className="tw:flex  tw:flex-col tw:laptop:flex-row tw:laptop:space-x-4">
+            <div className="tw:col-span-6 tw:h-full tw:laptop:w-[75%]">
               {/* 
                 Show all profile sections, can add a best maps section, fav maps section, and we 
                 can even make it so the user can personalize their profile sections,
@@ -120,7 +120,7 @@ export default function UserProfile() {
               <PlayerSelectLeagueSection playerMMRArray={playerMMRArray} />
               <PlayerFavoriteGamesSection />
             </div>
-            <div className="@min-h-full laptop:@w-[25%] @mb-8">
+            <div className="tw:min-h-full tw:laptop:w-[25%] tw:mb-8">
               <PlayerFriendSection />
             </div>
           </div>

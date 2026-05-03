@@ -34,9 +34,9 @@ export default function MatchSection({
 }: Props) {
   return (
     <>
-      <div id={jump} className="@w-full @my-2">
+      <div id={jump} className="tw:w-full tw:my-2">
         <PageTitle>{title}</PageTitle>
-        <p className="@py-0 @mt-4">{description}</p>
+        <p className="tw:py-0 tw:mt-4">{description}</p>
       </div>
       {/* <div> */}
       <div
@@ -51,7 +51,7 @@ export default function MatchSection({
         {matches === undefined && isLoading !== undefined && !isLoading
           ? "Loading..."
           : matches?.map((match) => (
-              // <div className="@flex @flex-col @items-center" key={match.id}>
+              // <div className="tw:flex tw:flex-col tw:items-center" key={match.id}>
               //   <MatchCard match={match} inMatch={inMatch} />
               // </div>
               <MatchCard match={match} inMatch={inMatch} key={match.id} />

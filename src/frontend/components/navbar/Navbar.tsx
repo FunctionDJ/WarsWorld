@@ -47,12 +47,12 @@ export function Navbar() {
   }, [windowWidth]);
 
   return (
-    <header className="@w-screen @fixed @top-0 @z-40 @shadow-lg @shadow-bg-primary">
-      <nav className="@flex @h-full @justify-between @items-center @bg-gradient-to-r @from-bg-primary @via-bg-secondary @to-bg-primary @mx-auto @px-4 smallscreen:@px-8 laptop:@px-6">
-        <div className="@relative @h-full @w-[25%] smallscreen:@w-[10%] @flex @flex-col @justify-center @align-middle">
-          <Link className=" @absolute @left-4 @top-0 @flex @align-middle @justify-start" href="/">
+    <header className="tw:w-screen tw:fixed tw:top-0 tw:z-40 tw:shadow-lg tw:shadow-bg-primary">
+      <nav className="tw:flex tw:h-full tw:justify-between tw:items-center tw:bg-linear-to-r tw:from-bg-primary tw:via-bg-secondary tw:to-bg-primary tw:mx-auto tw:px-4 tw:smallscreen:px-8 tw:laptop:px-6">
+        <div className="tw:relative tw:h-full tw:w-[25%] tw:smallscreen:w-[10%] tw:flex tw:flex-col tw:justify-center tw:align-middle">
+          <Link className=" tw:absolute tw:left-4 tw:top-0 tw:flex tw:align-middle tw:justify-start" href="/">
             <Image
-              className="@w-16 smallscreen:@w-24"
+              className="tw:w-16 tw:smallscreen:w-24"
               src="/img/layout/logo.webp"
               alt="AW Logo"
               width={0}
@@ -64,18 +64,18 @@ export function Navbar() {
 
         {!isMobileWidth ? (
           <>
-            <div className="@w-screen @flex @justify-end @items-center @relative @gap-8 tablet:@gap-10 laptop:@gap-16">
+            <div className="tw:w-screen tw:flex tw:justify-end tw:items-center tw:relative tw:gap-8 tw:tablet:gap-10 tw:laptop:gap-16">
               <button
-                className="@flex @justify-center @items-center @h-7 @w-7"
+                className="tw:flex tw:justify-center tw:items-center tw:h-7 tw:w-7"
                 onClick={handleBurgerMenu}
               >
-                <div className="@flex @flex-col @gap-[0.35rem] smallscreen:@gap-[0.7rem] burgerMenuIcon active:@scale-105">
-                  <div className="@h-1 @w-9 smallscreen:@h-[0.3rem] smallscreen:@w-14 @rounded @bg-gradient-to-r @from-primary @to-primary-dark" />
-                  <div className="@h-1 @w-9 smallscreen:@h-[0.3rem] smallscreen:@w-14 @rounded @bg-gradient-to-r @from-primary @to-primary-dark" />
-                  <div className="@h-1 @w-9 smallscreen:@h-[0.3rem] smallscreen:@w-14 @rounded @bg-gradient-to-r @from-primary @to-primary-dark" />
+                <div className="tw:flex tw:flex-col tw:gap-[0.35rem] tw:smallscreen:gap-[0.7rem] burgerMenuIcon tw:active:scale-105">
+                  <div className="tw:h-1 tw:w-9 tw:smallscreen:h-[0.3rem] tw:smallscreen:w-14 tw:rounded tw:bg-linear-to-r tw:from-primary tw:to-primary-dark" />
+                  <div className="tw:h-1 tw:w-9 tw:smallscreen:h-[0.3rem] tw:smallscreen:w-14 tw:rounded tw:bg-linear-to-r tw:from-primary tw:to-primary-dark" />
+                  <div className="tw:h-1 tw:w-9 tw:smallscreen:h-[0.3rem] tw:smallscreen:w-14 tw:rounded tw:bg-linear-to-r tw:from-primary tw:to-primary-dark" />
                 </div>
               </button>
-              <div className="@flex @h-full @justify-center @items-center @relative">
+              <div className="tw:flex tw:h-full tw:justify-center tw:items-center tw:relative">
                 <NavLoginLogout isOpen={isOpen} setIsOpen={setIsOpen} width="95vw" />
               </div>
             </div>

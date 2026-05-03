@@ -18,7 +18,7 @@ export const ProtectPage = ({ children }: { children: ReactNode }) => {
 
   if (status === "loading") {
     return (
-      <div className="@flex @flex-col @items-center @align-middle @justify-center @w-full @h-[50vh]">
+      <div className="tw:flex tw:flex-col tw:items-center tw:align-middle tw:justify-center tw:w-full tw:h-[50vh]">
         <div>LOADING . . .</div>
       </div>
     );

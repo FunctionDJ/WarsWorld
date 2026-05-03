@@ -21,41 +21,41 @@ export function PlayerProfileMainSection({
   isOnline,
 }: Props) {
   return (
-    <section className="@h-full @bg-black/60 @mt-4 @rounded-t-xl @overflow-hidden">
-      <div className={`@h-4 @w-full @bg-${preferedNation}`} />
-      <div className="@flex @flex-col @items-center smallscreen:@items-[normal] smallscreen:@flex-row @space-y-8 smallscreen:@space-y-0 smallscreen:@space-x-6 laptop:@space-x-12 @px-6 laptop:@px-12 @py-10">
+    <section className="tw:h-full tw:bg-black/60 tw:mt-4 tw:rounded-t-xl tw:overflow-hidden">
+      <div className={`tw:h-4 tw:w-full @bg-${preferedNation}`} />
+      <div className="tw:flex tw:flex-col tw:items-center smallscreen:@items-[normal] tw:smallscreen:flex-row tw:space-y-8 tw:smallscreen:space-y-0 tw:smallscreen:space-x-6 tw:laptop:space-x-12 tw:px-6 tw:laptop:px-12 tw:py-10">
         <div
-          className={`@min-w-48 @max-w-48 @min-h-48 @max-h-48 @border-${preferedNation} @bg-black/50 @border-4 @text-center @overflow-hidden`}
+          className={`tw:min-w-48 tw:max-w-48 tw:min-h-48 tw:max-h-48 @border-${preferedNation} tw:bg-black/50 tw:border-4 tw:text-center tw:overflow-hidden`}
         >
           <img src={`\\img\\CO\\smoothFull\\Awds-${preferedCO}.webp`} alt="grit" />
         </div>
-        <div className="@min-h-48 @flex @flex-col">
+        <div className="tw:min-h-48 tw:flex tw:flex-col">
           <div>
-            <div className="@flex @flex-col @space-y-4 laptop:@space-y-0 laptop:@flex-row @justify-between">
+            <div className="tw:flex tw:flex-col tw:space-y-4 tw:laptop:space-y-0 tw:laptop:flex-row tw:justify-between">
               <div>
-                <div className="@flex @space-x-2">
+                <div className="tw:flex tw:space-x-2">
                   <img
-                    className="[image-rendering:pixelated] @self-center @w-8 @h-8"
+                    className="tw:[image-rendering:pixelated] tw:self-center tw:w-8 tw:h-8"
                     src={`\\img\\nations\\${preferedNation}.gif`}
                     alt="blue-moon"
                   />
-                  <div className="@text-2xl smallscreen:@text-4xl @font-semibold">{playerName}</div>
+                  <div className="tw:text-2xl tw:smallscreen:text-4xl tw:font-semibold">{playerName}</div>
                 </div>
-                <div className="@text-gray-500">{realName}</div>
+                <div className="tw:text-gray-500">{realName}</div>
               </div>
-              <div className="@space-y-2">
-                <div className="@flex @h-6 @space-x-2 @items-center">
+              <div className="tw:space-y-2">
+                <div className="tw:flex tw:h-6 tw:space-x-2 tw:items-center">
                   <div
                     className={`@h-6 @w-6 @rounded-full ${
-                      isOnline ? "@bg-green-earth" : "@bg-orange-star"
+                      isOnline ? "tw:bg-green-earth" : "tw:bg-orange-star"
                     }`}
                   ></div>
-                  <div className="@text-xl">{isOnline ? "Online" : "Offline"}</div>
+                  <div className="tw:text-xl">{isOnline ? "Online" : "Offline"}</div>
                 </div>
-                <div className="@text-base @text-gray-500">Last Activity: {lastActivity}</div>
+                <div className="tw:text-base tw:text-gray-500">Last Activity: {lastActivity}</div>
               </div>
             </div>
-            <div className="@pt-6 @text-base">{description}</div>
+            <div className="tw:pt-6 tw:text-base">{description}</div>
           </div>
         </div>
       </div>

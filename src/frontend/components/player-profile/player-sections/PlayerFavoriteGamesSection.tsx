@@ -15,16 +15,16 @@ const games = [
 
 export function PlayerFavoriteGamesSection() {
   return (
-    <section className="@pb-8 @px-8 @h-full @w-full @bg-black/60 @my-4 @space-y-2">
-      <h1 className="@col-span-3 @text-center @font-russoOne">Favorite Games</h1>
-      <div className="@grid smallscreen:@grid-cols-2 laptop:@grid-cols-4 @gap-4">
+    <section className="tw:pb-8 tw:px-8 tw:h-full tw:w-full tw:bg-black/60 tw:my-4 tw:space-y-2">
+      <h1 className="tw:col-span-3 tw:text-center @font-russoOne">Favorite Games</h1>
+      <div className="tw:grid tw:smallscreen:grid-cols-2 tw:laptop:grid-cols-4 tw:gap-4">
         {games.map((game) => {
           return (
             <div
-              className="@w-full @h-52 @border-primary @border-4 @bg-bg-secondary"
+              className="tw:w-full tw:h-52 tw:border-primary tw:border-4 tw:bg-bg-secondary"
               key={game.gameName}
             >
-              <p className="@text-center">{game.gameName}</p>
+              <p className="tw:text-center">{game.gameName}</p>
             </div>
           );
         })}

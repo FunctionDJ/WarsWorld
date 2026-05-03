@@ -102,7 +102,7 @@ export default function CreateMatch({ currentPlayer, setCurrentPlayer }: Props) 
   };
 
   return (
-    <div className="@w-full">
+    <div className="tw:w-full">
       <h1>Match Page</h1>
       <p>
         To create a match, first change Current Player to any other player. Then click on create
@@ -110,10 +110,10 @@ export default function CreateMatch({ currentPlayer, setCurrentPlayer }: Props) 
       </p>
       <br />
       {ownedPlayers ? (
-        <div className="@flex @flex-col smallscreen:@flex-row @justify-center @items-center @py-2 @pb-6">
-          <p className="@px-0 smallscreen:@pr-8">Current Player: </p>
+        <div className="tw:flex tw:flex-col tw:smallscreen:flex-row tw:justify-center tw:items-center tw:py-2 tw:pb-6">
+          <p className="tw:px-0 tw:smallscreen:pr-8">Current Player: </p>
           <Select
-            className="@relative @w-64 @my-4 smallscreen:@m-0"
+            className="tw:relative tw:w-64 tw:my-4 tw:smallscreen:m-0"
             options={players}
             value={selectPlayer}
             onChange={selectPlayerHandler}
@@ -123,20 +123,20 @@ export default function CreateMatch({ currentPlayer, setCurrentPlayer }: Props) 
         <p>Loading Players...</p>
       )}
 
-      <div className="@flex @flex-col smallscreen:@flex-row @items-center @justify-center @gap-5 @py-0 smallscreen:@py-4">
+      <div className="tw:flex tw:flex-col tw:smallscreen:flex-row tw:items-center tw:justify-center tw:gap-5 tw:py-0 tw:smallscreen:py-4">
         {isLoadingMapQuery ? (
           <p>Loading maps...</p>
         ) : (
-          <div className="@flex @flex-col @items-center">
+          <div className="tw:flex tw:flex-col tw:items-center">
             <Select
-              className="@w-64 smallscreen:@w-96"
+              className="tw:w-64 tw:smallscreen:w-96"
               options={maps}
               value={selectMap}
               onChange={selectMapHandler}
             />
           </div>
         )}
-        <div className="@pt-4 smallscreen:@py-0 @px-2 @w-64 @h-16 smallscreen:@h-12">
+        <div className="tw:pt-4 tw:smallscreen:py-0 tw:px-2 tw:w-64 tw:h-16 tw:smallscreen:h-12">
           <SquareButton onClick={() => void createMatchHandler()}>Create game</SquareButton>
         </div>
       </div>

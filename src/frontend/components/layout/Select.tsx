@@ -37,17 +37,17 @@ export default function Select({ value, onChange, options, className }: Props) {
           setIsOpen((prev) => !prev);
         }}
         tabIndex={0}
-        className="@relative @cursor-pointer @w-full @h-full @border @border-bg-tertiary @flex @items-center @gap-2 @p-2 @rounded @outline-none @bg-bg-tertiary @shadow-black/70 @shadow-md"
+        className="tw:relative tw:cursor-pointer tw:w-full tw:h-full tw:border tw:border-bg-tertiary tw:flex tw:items-center tw:gap-2 tw:p-2 tw:rounded tw:outline-hidden tw:bg-bg-tertiary tw:shadow-black/70 tw:shadow-md"
       >
-        <span className="@grow @text-white @pl-2">{value?.label}</span>
-        <div className="@bg-bg-secondary @w-0.5 @self-stretch"></div>
-        <div className={`@font-mono @text-lg @duration-300 @px-1 ${isOpen && "@rotate-180"}`}>
+        <span className="tw:grow tw:text-white tw:pl-2">{value?.label}</span>
+        <div className="tw:bg-bg-secondary tw:w-0.5 tw:self-stretch"></div>
+        <div className={`tw:font-mono tw:text-lg tw:duration-300 tw:px-1 ${isOpen && "tw:rotate-180"}`}>
           &#x25BC;
         </div>
         <ul
           className={`@absolute @m-0 @p-0 @list-none @overflow-y-auto no-scrollbar @shadow-black @shadow-lg @rounded @w-full @left-0 @top-[calc(100%_+_0.5em)] 
             @bg-bg-tertiary @z-50 @duration-500
-            ${isOpen ? "@max-h-96" : "@max-h-0"}`}
+            ${isOpen ? "tw:max-h-96" : "tw:max-h-0"}`}
         >
           {options.map((option, index) => (
             <li
@@ -61,8 +61,8 @@ export default function Select({ value, onChange, options, className }: Props) {
               }}
               key={option.value}
               className={`@py-2 @px-4 @cursor-pointer 
-                ${isOptionSelected(option) && "@bg-blue-500 hover:@bg-blue-900"}
-                ${index === highlightedIndex && "@bg-bg-secondary"}
+                ${isOptionSelected(option) && "tw:bg-blue-500 tw:hover:bg-blue-900"}
+                ${index === highlightedIndex && "tw:bg-bg-secondary"}
                 `}
             >
               {option.label}

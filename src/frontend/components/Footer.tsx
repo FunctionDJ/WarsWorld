@@ -26,11 +26,11 @@ const footerLinks2 = [
 
 export function Footer() {
   return (
-    <footer className="@absolute @left-0 @bottom-0 @w-full @flex @flex-col @items-center @justify-center @gap-4 @bg-gradient-to-t @from-black @pb-5">
-      <nav className="@flex @gap-8">
+    <footer className="tw:absolute tw:left-0 tw:bottom-0 tw:w-full tw:flex tw:flex-col tw:items-center tw:justify-center tw:gap-4 tw:bg-linear-to-t tw:from-black tw:pb-5">
+      <nav className="tw:flex tw:gap-8">
         {footerLinks1.map((item) => (
           <Link
-            className="@text-base-a @text-md cellphone:@text-lg smallscreen:@text-2xl @text-primary hover:@text-primary hover:@scale-105"
+            className="@text-base-a @text-md tw:cellphone:text-lg tw:smallscreen:text-2xl tw:text-primary tw:hover:text-primary tw:hover:scale-105"
             key={item.text}
             href={item.href}
           >
@@ -39,10 +39,10 @@ export function Footer() {
         ))}
       </nav>
 
-      {/*<nav className="@flex @justify-center @gap-8">
+      {/*<nav className="tw:flex tw:justify-center tw:gap-8">
         {footerLinks2.map((item) => (
           <Link
-            className="@h-8"
+            className="tw:h-8"
             key={item.imgAlt}
             href={item.href}
             target="_blank"
@@ -53,7 +53,7 @@ export function Footer() {
         ))}
       </nav>*/}
 
-      <p className="@text-center @text-base-p @p-0 @mx-1">
+      <p className="tw:text-center @text-base-p tw:p-0 tw:mx-1">
         Advance Wars is (c) 1990-2001 Nintendo and (c) 2001 Intelligent Systems. All images are
         copyright of their respective owners.
       </p>

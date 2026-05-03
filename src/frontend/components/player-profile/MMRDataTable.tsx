@@ -9,21 +9,21 @@ interface Props {
 }
 
 const TableHeaderColorsWithMMR: Record<number, string> = {
-  0: "@bg-primary @text-white",
-  1: "@bg-black/80 @text-green-earth",
-  2: "@bg-black/80 @text-orange-star",
-  3: "@bg-black/80 @text-bg-tertiary",
+  0: "tw:bg-primary tw:text-white",
+  1: "tw:bg-black/80 tw:text-green-earth",
+  2: "tw:bg-black/80 tw:text-orange-star",
+  3: "tw:bg-black/80 tw:text-bg-tertiary",
 };
 
 const TableHeaderColors: Record<number, string> = {
-  0: "@bg-black/80 @text-green-earth",
-  1: "@bg-black/80 @text-orange-star",
-  2: "@bg-black/80 @text-bg-tertiary",
+  0: "tw:bg-black/80 tw:text-green-earth",
+  1: "tw:bg-black/80 tw:text-orange-star",
+  2: "tw:bg-black/80 tw:text-bg-tertiary",
 };
 
 export function MMRDataTable({ table }: Props) {
   return (
-    <table className="@w-full @bg-black/50 @shadow-lg @shadow-black @rounded-lg @overflow-hidden">
+    <table className="tw:w-full tw:bg-black/50 tw:shadow-lg tw:shadow-black tw:rounded-lg tw:overflow-hidden">
       <thead>
         {table.getHeaderGroups().map((headerGroup) => (
           <tr key={headerGroup.id}>
@@ -34,10 +34,10 @@ export function MMRDataTable({ table }: Props) {
                     ? TableHeaderColorsWithMMR[header.index]
                     : TableHeaderColors[header.index]
                 }
-                ${header.column.id === "MMR" && "@border-r-4"}`}
+                ${header.column.id === "MMR" && "tw:border-r-4"}`}
                 key={header.id}
               >
-                <h3 className="@font-russoOne @text-lg">
+                <h3 className="@font-russoOne tw:text-lg">
                   {header.isPlaceholder
                     ? null
                     : flexRender(header.column.columnDef.header, header.getContext())}
@@ -53,11 +53,11 @@ export function MMRDataTable({ table }: Props) {
             {row.getVisibleCells().map((cell) => (
               <td
                 className={`@p-1 monitor:@p-2 @text-center ${
-                  cell.id === "0_MMR" ? "@bg-bg-secondary @border-r-4" : ""
+                  cell.id === "0_MMR" ? "tw:bg-bg-secondary tw:border-r-4" : ""
                 }`}
                 key={cell.id}
               >
-                <div className={`@px-1 @text-lg`}>
+                <div className={`tw:px-1 tw:text-lg`}>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </div>
               </td>

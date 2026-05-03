@@ -24,27 +24,27 @@ export default function MatchPlayer({
   //opponent (non-current user) OR an unpicked spot (a greyed out upcoming "opponent")
   if (flipCO !== undefined) {
     return (
-      <div className={"@truncate @text-right"}>
+      <div className={"tw:truncate tw:text-right"}>
         <div
           style={{
             backgroundImage: `url("/img/CO/pixelated/${co.name}-full.png")`,
           }}
           className={`@h-[200px] [image-rendering:pixelated] @bg-cover 
-             ${opponent !== undefined ? "@brightness-[0.1]" : ""} 
-             ${playerReady === true ? "@contrast-[1]" : "@contrast-[0.5]"}`}
+             ${opponent !== undefined ? "tw:brightness-[0.1]" : ""} 
+             ${playerReady === true ? "tw:contrast-[1]" : "tw:contrast-[0.5]"}`}
         ></div>
         <div
           className={`@flex @flex-row-reverse
-      ${opponent !== undefined ? "@bg-gray-600" : `@bg-${country}`}`}
+      ${opponent !== undefined ? "tw:bg-gray-600" : `@bg-${country}`}`}
         >
           <img
             src={
               opponent !== undefined ? `/img/nations/black-hole.gif` : `/img/nations/${country}.gif`
             }
-            className="@h-7 [image-rendering:pixelated]"
+            className="tw:h-7 tw:[image-rendering:pixelated]"
             alt="opponent chosen CO"
           />
-          <p className="@truncate @px-0.5 @text-sm">
+          <p className="tw:truncate tw:px-0.5 tw:text-sm">
             {slot !== undefined ? `${name} slot: ${String(slot)}` : name}
           </p>
         </div>
@@ -54,22 +54,22 @@ export default function MatchPlayer({
   //it is the current player/user
   else {
     return (
-      <div className={"@truncate @text-left"}>
+      <div className={"tw:truncate tw:text-left"}>
         <div
           style={{
             backgroundImage: `url("/img/CO/pixelated/${co.name}-full.png")`,
           }}
           className={`@h-[200px] [image-rendering:pixelated] @bg-cover @scale-x-[-1] ${
-            playerReady === true ? "@contrast-[1]" : "@contrast-[0.5]"
+            playerReady === true ? "tw:contrast-[1]" : "tw:contrast-[0.5]"
           }`}
         ></div>
-        <div className={`@flex @bg-${country}`}>
+        <div className={`tw:flex @bg-${country}`}>
           <img
             src={`/img/nations/${country}.gif`}
-            className="@h-7 [image-rendering:pixelated]"
+            className="tw:h-7 tw:[image-rendering:pixelated]"
             alt="opponent chosen CO"
           />
-          <p className="@truncate @px-0.5 @text-sm">
+          <p className="tw:truncate tw:px-0.5 tw:text-sm">
             {slot !== undefined ? `${name} slot: ${String(slot)}` : name}
           </p>
         </div>

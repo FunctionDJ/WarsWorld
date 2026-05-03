@@ -25,12 +25,12 @@ export default function TextAreaInput({
 }: Props) {
   return (
     <div className={className}>
-      <label htmlFor={id ?? ""} className="@text-xl smallscreen:@text-2xl @text-white">
+      <label htmlFor={id ?? ""} className="tw:text-xl tw:smallscreen:text-2xl tw:text-white">
         {text}
       </label>
       <textarea
         className={`@mt-2 @w-full @text-white @p-4 @text-xl smallscreen:@text-2xl @border-[2.5px] @rounded-2xl @bg-black/50 ${
-          isError == true ? "@border-orange-star" : "@border-primary"
+          isError == true ? "tw:border-orange-star" : "tw:border-primary"
         }`}
         name={name}
         style={{ height }}
@@ -39,7 +39,7 @@ export default function TextAreaInput({
         onChange={onChange}
       />
       {isError == true && errorMessage != "" && (
-        <p className="@text-white @bg-orange-star/80 @my-2 @px-2 @rounded-lg">{errorMessage}</p>
+        <p className="tw:text-white tw:bg-orange-star/80 tw:my-2 tw:px-2 tw:rounded-lg">{errorMessage}</p>
       )}
     </div>
   );

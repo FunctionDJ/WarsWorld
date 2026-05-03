@@ -29,21 +29,21 @@ const homePageCards = [
 export default function BasicHome() {
   const router = useRouter();
   return (
-    <div className="@w-full">
+    <div className="tw:w-full">
       <Banner
         title={
-          <div className="@flex @flex-col @w-full @h-full @items-center @justify-center smallscreen:@items-start smallscreen:@mx-[5vw]">
-            <div className="@flex @flex-col @items-center">
-              <div className="@flex @items-center @mb-8 smallscreen:@mb-12 laptop:@mb-24 @space-x-6 smallscreen:@space-x-12 @h-auto">
+          <div className="tw:flex tw:flex-col tw:w-full tw:h-full tw:items-center tw:justify-center tw:smallscreen:items-start tw:smallscreen:mx-[5vw]">
+            <div className="tw:flex tw:flex-col tw:items-center">
+              <div className="tw:flex tw:items-center tw:mb-8 tw:smallscreen:mb-12 tw:laptop:mb-24 tw:space-x-6 tw:smallscreen:space-x-12 tw:h-auto">
                 <Image
-                  className="@w-16 cellphone:@w-24 smallscreen:@w-36 monitor:@w-48"
+                  className="tw:w-16 tw:cellphone:w-24 tw:smallscreen:w-36 tw:monitor:w-48"
                   src="/img/layout/logo.webp"
                   alt="AW Logo"
                   width={0}
                   height={0}
                   sizes="100vw"
                 />
-                <h1 className="@text-[1.2rem] cellphone:@text-[2rem] smallscreen:@text-7xl laptop:@text-8xl monitor:@text-9xl @font-russoOne">
+                <h1 className="tw:text-[1.2rem] tw:cellphone:text-[2rem] tw:smallscreen:text-7xl tw:laptop:text-8xl tw:monitor:text-9xl @font-russoOne">
                   WARSWORLD
                 </h1>
               </div>
@@ -59,14 +59,14 @@ export default function BasicHome() {
         }
         backgroundURL="/img/layout/homeBanner/Banner.jpg"
       />
-      <div className="@my-1 tablet:@my-4">
+      <div className="tw:my-1 tw:tablet:my-4">
         <ThreeLinesText
           subtitle="The Timeless Classic"
           title="Renewed"
           text="The best-turn based strategy game optimized!"
         />
       </div>
-      <div className="@flex @flex-col @items-center @justify-center @gap-8 @mx-8 @my-8 laptop:@flex-row">
+      <div className="tw:flex tw:flex-col tw:items-center tw:justify-center tw:gap-8 tw:mx-8 tw:my-8 tw:laptop:flex-row">
         {homePageCards.map((item) => (
           <SmallContainer
             key={item.image}
@@ -77,7 +77,7 @@ export default function BasicHome() {
           />
         ))}
       </div>
-      <div className="@mb-16">
+      <div className="tw:mb-16">
         <ThreeLinesText
           subtitle="1v1, Teamgames or FFA"
           title="There is a Space for You"
