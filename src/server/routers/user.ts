@@ -1,7 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import { hashPassword } from "server/hashPassword";
 import { prisma } from "server/prisma/prisma-client";
-import { authMiddleware } from "server/trpc/middleware/auth";
 import { playerWithoutCurrentMiddleware } from "server/trpc/middleware/player";
 import { playerBaseProcedure, publicBaseProcedure, router } from "server/trpc/trpc-setup";
 import { signUpSchema } from "shared/schemas/auth";
@@ -10,7 +9,7 @@ import { z } from "zod";
 
 export const userRouter = router({
   me: publicBaseProcedure
-    .use(authMiddleware)
+    // .use(authMiddleware)
     .use(playerWithoutCurrentMiddleware)
     .query(({ ctx }) => {
       return {

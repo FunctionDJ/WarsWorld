@@ -6,7 +6,6 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { NavGroup } from "./NavGroup";
 import { NavGroupMobile } from "./NavGroupMobile";
-import NavLoginLogout from "./NavLoginLogout";
 
 export function Navbar() {
   const searchParams = useSearchParams();
@@ -50,7 +49,10 @@ export function Navbar() {
     <header className="tw:w-screen tw:fixed tw:top-0 tw:z-40 tw:shadow-lg tw:shadow-bg-primary">
       <nav className="tw:flex tw:h-full tw:justify-between tw:items-center tw:bg-linear-to-r tw:from-bg-primary tw:via-bg-secondary tw:to-bg-primary tw:mx-auto tw:px-4 tw:smallscreen:px-8 tw:laptop:px-6">
         <div className="tw:relative tw:h-full tw:w-[25%] tw:smallscreen:w-[10%] tw:flex tw:flex-col tw:justify-center tw:align-middle">
-          <Link className=" tw:absolute tw:left-4 tw:top-0 tw:flex tw:align-middle tw:justify-start" href="/">
+          <Link
+            className=" tw:absolute tw:left-4 tw:top-0 tw:flex tw:align-middle tw:justify-start"
+            href="/"
+          >
             <Image
               className="tw:w-16 tw:smallscreen:w-24"
               src="/img/layout/logo.webp"
@@ -75,9 +77,6 @@ export function Navbar() {
                   <div className="tw:h-1 tw:w-9 tw:smallscreen:h-[0.3rem] tw:smallscreen:w-14 tw:rounded tw:bg-linear-to-r tw:from-primary tw:to-primary-dark" />
                 </div>
               </button>
-              <div className="tw:flex tw:h-full tw:justify-center tw:items-center tw:relative">
-                <NavLoginLogout isOpen={isOpen} setIsOpen={setIsOpen} width="95vw" />
-              </div>
             </div>
 
             <NavGroupMobile showLinks={showLinks} handleBurgerMenu={handleBurgerMenu} />

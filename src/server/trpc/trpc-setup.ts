@@ -1,15 +1,14 @@
-import { authMiddleware } from "./middleware/auth";
+import { DispatchableError } from "shared/DispatchedError";
 import { matchMiddleware, withMatchIdSchema } from "./middleware/match";
 import { playerMiddleware, withPlayerIdSchema } from "./middleware/player";
 import { t } from "./trpc-init";
-import { DispatchableError } from "shared/DispatchedError";
 
 export const { router } = t;
 export const publicBaseProcedure = t.procedure;
 
 export const playerBaseProcedure = t.procedure
   .input(withPlayerIdSchema)
-  .use(authMiddleware)
+  // .use(authMiddleware)
   .use(playerMiddleware);
 
 export const matchBaseProcedure = playerBaseProcedure.input(withMatchIdSchema).use(matchMiddleware);

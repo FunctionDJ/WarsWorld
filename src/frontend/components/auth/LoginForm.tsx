@@ -1,18 +1,12 @@
-import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
-import { useRouter } from "next/router";
 import type { SubmitEvent } from "react";
 import { useEffect, useState } from "react";
 import SquareButton from "../layout/SquareButton";
 import ErrorSuccessBlock from "../layout/forms/ErrorSuccessBlock";
 import FormInput from "../layout/forms/FormInput";
 
-interface Props {
-  onLoginSuccess: () => Promise<void>;
-}
-
-export default function LoginForm({ onLoginSuccess }: Props) {
-  const router = useRouter();
+export default function LoginForm() {
+  // const router = useRouter();
   const searchParams = useSearchParams();
   const [loginData, setLoginData] = useState({
     user: "",
@@ -57,43 +51,43 @@ export default function LoginForm({ onLoginSuccess }: Props) {
     }));
   };
 
-  const onSubmitLoginForm = async (event: SubmitEvent) => {
+  const onSubmitLoginForm = (event: SubmitEvent) => {
     event.preventDefault();
 
-    try {
-      const loginResponse = await signIn("credentials", {
-        name: loginData.user,
-        password: loginData.password,
-        redirect: false,
-      });
+    // try {
+    //   const loginResponse = await signIn("credentials", {
+    //     name: loginData.user,
+    //     password: loginData.password,
+    //     redirect: false,
+    //   });
 
-      if (!loginResponse) {
-        setError({
-          isError: true,
-          message: "Couldn't connect to the server.",
-        });
-        throw new Error("Couldn't connect to the server.");
-      }
+    //   if (!loginResponse) {
+    //     setError({
+    //       isError: true,
+    //       message: "Couldn't connect to the server.",
+    //     });
+    //     throw new Error("Couldn't connect to the server.");
+    //   }
 
-      if (loginResponse.status === 401) {
-        setError({
-          isError: true,
-          message: "User or password are incorrect",
-        });
-        throw new Error("User or password are incorrect");
-      }
+    //   if (loginResponse.status === 401) {
+    //     setError({
+    //       isError: true,
+    //       message: "User or password are incorrect",
+    //     });
+    //     throw new Error("User or password are incorrect");
+    //   }
 
-      if (loginResponse.ok) {
-        setError({
-          isError: false,
-          message: "",
-        });
+    //   if (loginResponse.ok) {
+    //     setError({
+    //       isError: false,
+    //       message: "",
+    //     });
 
-        void onLoginSuccess().then(() => {
-          router.reload();
-        });
-      }
-    } catch {}
+    //     void onLoginSuccess().then(() => {
+    //       router.reload();
+    //     });
+    //   }
+    // } catch {}
   };
 
   return (
@@ -102,7 +96,7 @@ export default function LoginForm({ onLoginSuccess }: Props) {
 
       <form
         onSubmit={(event) => {
-          void onSubmitLoginForm(event);
+          onSubmitLoginForm(event);
         }}
         className="tw:flex tw:flex-col tw:gap-2 tw:smallscreen:gap-6"
       >

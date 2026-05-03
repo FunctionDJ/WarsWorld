@@ -1,9 +1,8 @@
+import type { Player } from "@prisma/client";
+import { TRPCError } from "@trpc/server";
+import { prisma } from "server/prisma/prisma-client";
 import { z } from "zod";
 import { t } from "../trpc-init";
-import { prisma } from "server/prisma/prisma-client";
-import type { Session } from "next-auth";
-import { TRPCError } from "@trpc/server";
-import type { Player } from "@prisma/client";
 
 export const withPlayerIdSchema = z.object<{
   playerId: z.ZodType<Player["id"]>;
@@ -13,7 +12,9 @@ export const withPlayerIdSchema = z.object<{
 
 export const developmentPlayerNamePrefix = "[dev]";
 
-const getLoggedInUserPlayers = (session: Session | null) => {
+const getLoggedInUserPlayers = (session: unknown) => {
+  throw new Error("stub");
+
   if (typeof session?.user?.name !== "string") {
     return [];
   }
