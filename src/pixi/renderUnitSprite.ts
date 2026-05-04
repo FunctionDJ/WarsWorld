@@ -52,7 +52,7 @@ export function renderUnitSprite(
   }
 
   unitSprite.play();
-  unitContainer.name = `unit-${String(position[0])}-${String(position[1])}`;
+  unitContainer.label = `unit-${String(position[0])}-${String(position[1])}`;
   unitContainer.addChild(unitSprite);
 
   // Add capture points icon if applicable

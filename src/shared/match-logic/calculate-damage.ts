@@ -8,7 +8,8 @@ import { getTerrainDefenseStars } from "./game-constants/terrain-properties";
 /** @returns 1-10, whole numbers */
 export const getVisualHPfromHP = (hp: number) => Math.ceil(hp / 10);
 
-// unused yet
+// TODO unused yet
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const _roundUpTo = (value: number, step: number) => {
   const scalingFactor = 1 / step;
   return Math.ceil(value * scalingFactor) / scalingFactor;

@@ -8,7 +8,7 @@ export function createContext(opts: CreateHTTPContextOptions | CreateWSSContextF
     // session,
     req,
     // Include res for Next.js API routes
-    res: "res" in opts ? opts.res : undefined,
+    // res: "res" in opts ? opts.res : undefined,
   };
 }
 

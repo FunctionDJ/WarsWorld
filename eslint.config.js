@@ -21,30 +21,46 @@ const banNonSharedPattern = {
   allowTypeImports: true,
 };
 
+const alwaysIgnored = [
+  "node_modules/**",
+  ".next/**",
+  "dist/**",
+  // "src/generated/**",
+  // "src/pixi/**/*.*", // TODO temporarily
+  // "src/frontend/**", // TODO temporarily
+];
+
+/** @type {import("@eslint/core").SettingsConfig} */
+const settings = {
+  react: {
+    version: "detect",
+  },
+};
+
+const languageOptions = {
+  parserOptions: {
+    projectService: true,
+  },
+};
+
 export default defineConfig([
   eslint.configs.recommended,
   typescript.configs.strictTypeChecked,
   typescript.configs.stylisticTypeChecked,
   react.configs["strict-type-checked"],
   {
-    settings: {
-      react: {
-        version: "detect",
-      },
-    },
-    languageOptions: {
-      parserOptions: {
-        projectService: true,
-      },
-    },
-    ignores: ["node_modules/**", ".next/**", "dist/**"],
+    settings,
+    languageOptions,
+    ignores: alwaysIgnored,
     rules: {
       "@typescript-eslint/no-non-null-assertion": "off",
       "no-restricted-imports": "off",
     },
   },
   {
-    ignores: ["src/components/client-only/**/*.*", "src/pixi/**/*.*"],
+    settings,
+    languageOptions,
+    ignores: [...alwaysIgnored, "src/components/client-only/**/*.*", "src/pixi/**/*.*"],
     rules: {
       "@typescript-eslint/no-restricted-imports": [
         "error",
@@ -56,6 +72,9 @@ export default defineConfig([
     },
   },
   {
+    settings,
+    languageOptions,
+    ignores: alwaysIgnored,
     files: ["src/server/**/*"],
     rules: {
       "@typescript-eslint/no-restricted-imports": [
@@ -67,6 +86,9 @@ export default defineConfig([
     },
   },
   {
+    settings,
+    languageOptions,
+    ignores: alwaysIgnored,
     files: ["src/shared/**/*"],
     rules: {
       "@typescript-eslint/no-restricted-imports": [

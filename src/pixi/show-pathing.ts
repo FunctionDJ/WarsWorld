@@ -361,8 +361,8 @@ export const showPath = (spriteSheet: LoadedSpriteSheet, path: Position[]) => {
     arrowContainer.addChild(nodeSprite);
   }
 
-  //this name will let us easily remove arrows later
-  arrowContainer.name = "pathArrows";
+  //this label will let us easily remove arrows later
+  arrowContainer.label = "pathArrows";
   arrowContainer.zIndex = 9999;
   return arrowContainer;
 };

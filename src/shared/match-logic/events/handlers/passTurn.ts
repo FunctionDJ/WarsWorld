@@ -35,6 +35,7 @@ function getNewWeather(nextTurnPlayer: PlayerInMatchWrapper): Turn["newWeather"]
 export const passTurnActionToEvent: MainActionToEvent<PassTurnAction> = (match, action) => {
   const turns: Turn[] = [];
 
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   turnLoop: while (true) {
     const nextTurnPlayer = match.getCurrentTurnPlayer().getNextAlivePlayer();
 

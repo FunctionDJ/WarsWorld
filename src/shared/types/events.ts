@@ -204,4 +204,4 @@ type NonStoredEvent = WithPlayer &
       }
   );
 
-export type Emittable = (EmittableEvent | NonStoredEvent) & { matchId: string };
+export type Emittable = EmittableEvent | NonStoredEvent;

@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { emit } from "server/emitter/event-emitter";
+import { globalEmittable } from "server/emitter/event-emitter";
 import { matchStore } from "server/match-store";
 import { pageMatchIndex } from "server/page-match-index";
 import { playerMatchIndex } from "server/player-match-index";
@@ -137,11 +137,11 @@ export const matchRouter = router({
               data: { matches: [findMatch] },
             })*/
       });
-      //@ts-expect-error emit needs to be updated
-      emit({
+
+      await globalEmittable(match, {
         type: "player-joined",
         matchId: match.id,
-        playerId: currentPlayer.id,
+        playerId: player.data.id,
       });
     }),
   leave: playerInMatchBaseProcedure.mutation(async ({ ctx: { match, player } }) => {
@@ -176,10 +176,10 @@ export const matchRouter = router({
       await prisma.match.update({ where: { id: match.id }, data: { playerState: newPlayerState } });
 
       match.teams = match.teams.filter((teamToRemove) => teamToRemove.index !== player.team.index);
-      //@ts-expect-error emit needs to be updated
-      emit({
-        matchId: match.id,
+
+      await globalEmittable(match, {
         type: "player-left",
+        matchId: match.id,
         playerId: player.data.id,
       });
     }
@@ -217,17 +217,13 @@ export const matchRouter = router({
         match.status = "playing";
         const matchStartEvent = createMatchStartEvent(match);
 
-        let eventIndex: number | undefined = undefined;
-
         await prisma.$transaction(async (tx) => {
-          const eventOnDB = await tx.event.create({
+          await tx.event.create({
             data: {
               content: matchStartEvent,
               matchId: match.id,
             },
           });
-
-          eventIndex = eventOnDB.index;
 
           await tx.match.update({
             where: { id: match.id },
@@ -235,15 +231,10 @@ export const matchRouter = router({
           });
         });
 
-        if (eventIndex !== undefined) {
-          //@ts-expect-error emit needs to be updated
-          emit({
-            ...matchStartEvent,
-            //TODO: Fix this type-error with matchId
-            matchId: match.id,
-            // index: eventIndex
-          });
-        }
+        await globalEmittable(match, {
+          ...matchStartEvent,
+          teamIndex: 0, // TODO idk if this is correct
+        });
       }
       //Both players are NOT ready, therefore match doesnt start
       else {
@@ -253,8 +244,7 @@ export const matchRouter = router({
           data: { playerState: newPlayerState },
         });
 
-        //@ts-expect-error emit needs to be updated
-        emit({
+        await globalEmittable(match, {
           type: "player-changed-ready-status",
           matchId: match.id,
           playerId: player.data.id,
@@ -306,8 +296,7 @@ export const matchRouter = router({
       player.data = newPlayerData;
 
       if (input.selectedCO !== undefined) {
-        //@ts-expect-error emit needs to be updated
-        emit({
+        await globalEmittable(match, {
           type: "player-picked-co",
           coId: input.selectedCO,
           matchId: match.id,
@@ -316,8 +305,7 @@ export const matchRouter = router({
       }
 
       if (input.selectedArmy !== undefined) {
-        //@ts-expect-error emit needs to be updated
-        emit({
+        await globalEmittable(match, {
           type: "player-picked-army",
           army: input.selectedArmy,
           matchId: match.id,
@@ -326,8 +314,7 @@ export const matchRouter = router({
       }
 
       if (input.selectedSlot !== undefined) {
-        //@ts-expect-error emit needs to be updated
-        emit({
+        await globalEmittable(match, {
           type: "player-picked-slot",
           slot: input.selectedSlot,
           matchId: match.id,

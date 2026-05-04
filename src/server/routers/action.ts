@@ -1,5 +1,5 @@
-import { observable } from "@trpc/server/observable";
-import { emit, subscribe } from "server/emitter/event-emitter";
+import { TRPCError } from "@trpc/server";
+import { emitterMap } from "server/emitter/event-emitter";
 import { prisma } from "server/prisma/prisma-client";
 import {
   validateMainActionAndToEvent,
@@ -12,13 +12,11 @@ import {
 import { mainActionSchema } from "shared/schemas/action";
 import { getFinalPositionSafe } from "shared/schemas/position";
 import type {
-  Emittable,
   EmittableEvent,
   MainEventsWithoutSubEvents,
   MainEventWithSubEvents,
   SubEvent,
 } from "shared/types/events";
-import type { PlayerInMatchWrapper } from "shared/wrappers/player-in-match";
 import { mainEventToEmittables } from "../../shared/match-logic/events/event-to-emittable";
 import { updateMoveVision } from "../../shared/match-logic/events/handlers/move";
 import { fillDiscoveredUnitsAndProperties } from "../../shared/match-logic/events/vision-update";
@@ -42,8 +40,14 @@ export const actionRouter = router({
   send: playerInMatchBaseProcedure
     .input(mainActionSchema)
     .mutation(async ({ input, ctx: { match } }) => {
+      const matchEmitter = emitterMap.get(input.matchId);
+
+      if (matchEmitter === undefined) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Match emitter not found" });
+      }
+
       /**
-       * EXTREMELY IMPORTANT! This order MUST be followed, otherwise some things may not have required information:
+       * This order must be followed, otherwise some things may not have required information:
        * 1. Move action to event
        * 2. Apply move event to match
        * 3. Sub action to event
@@ -122,8 +126,9 @@ export const actionRouter = router({
       //  emittableEvents[i] is from match.teams[i]. emittableEvents has one extra "no team"(spectator) at the end
       emittableEvents.forEach((emittableEvent: EmittableEvent | undefined) => {
         if (emittableEvent) {
-          match.teams[emittableEvent.teamIndex].players.forEach((player: PlayerInMatchWrapper) => {
-            emit(player.data.id, { ...emittableEvent, matchId: match.id });
+          void matchEmitter.emit("emittable", {
+            ...emittableEvent,
+            teamId: emittableEvent.teamIndex,
           });
         }
       });
@@ -158,9 +163,24 @@ export const actionRouter = router({
       //   emit(emittableEliminationEvent)
       // }
     }),
-  onEvent: matchBaseProcedure.subscription(({ ctx: { match, currentPlayer } }) =>
-    observable<Emittable>((emit) => subscribe(match.id, currentPlayer.id, emit.next)),
-  ),
+  onEvent: matchBaseProcedure.subscription(async function* (opts) {
+    // TODO https://trpc.io/docs/server/subscriptions#tracked
+
+    // TODO how to subscribe with specific currentPlayer.id ?
+    // or filter the events/emittables otherwise for the observing player/viewer?
+
+    const matchEmitter = emitterMap.get(opts.input.matchId);
+
+    if (matchEmitter === undefined) {
+      throw new TRPCError({ code: "NOT_FOUND", message: "Match emitter not found" });
+    }
+
+    for await (const { data } of matchEmitter.events("emittable", {
+      signal: opts.signal,
+    })) {
+      yield data;
+    }
+  }),
   // TODO create procedure for anonymous users to observe games
   // (they get their own special "-1" team or something)
 });
