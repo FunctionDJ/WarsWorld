@@ -1,5 +1,5 @@
-import type { MatchStatus } from "@prisma/client";
 import PageTitle from "frontend/components/layout/PageTitle";
+import type { MatchStatus } from "generated/browser";
 import type { PlayerInMatch } from "shared/types/server-match-state";
 import MatchCard from "./MatchCard";
 
@@ -54,7 +54,7 @@ export default function MatchSection({
               // <div className="tw:flex tw:flex-col tw:items-center" key={match.id}>
               //   <MatchCard match={match} inMatch={inMatch} />
               // </div>
-              (<MatchCard match={match} inMatch={inMatch} key={match.id} />)
+              <MatchCard match={match} inMatch={inMatch} key={match.id} />
             ))}
       </div>
     </>

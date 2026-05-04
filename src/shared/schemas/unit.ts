@@ -140,7 +140,7 @@ export type UnitWithVisibleStats = z.infer<typeof unitSchema>;
 export type UnitType = UnitWithVisibleStats["type"];
 
 /** not nice to read but the only way to get the type strings as values */
-const unitTypes = unitSchema.options.flatMap((option) => {
+export const unitTypes = unitSchema.options.flatMap((option) => {
   // there are also potentially other paths:
   // infantrySchema.shape.type.def.values
   // otherLandUnitsWithAmmo.shape.type.options

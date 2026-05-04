@@ -6,7 +6,6 @@
     },
     "target": "esnext",
 
-    "outDir": "dist",
     "lib": ["dom", "dom.iterable", "esnext"],
 
     "allowJs": true,
@@ -19,11 +18,9 @@
     "esModuleInterop": true,
     "module": "preserve",
     "moduleResolution": "bundler",
-    "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve"
   },
 
-  "include": ["."],
-  "exclude": ["node_modules", "dist", ".next", "bundleServer.mjs"]
+  "exclude": ["node_modules", "dist", ".next"]
 }

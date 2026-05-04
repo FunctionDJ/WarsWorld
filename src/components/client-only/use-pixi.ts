@@ -43,7 +43,7 @@ export const usePixi = (
   useEffect(() => {
     const app = new Application();
 
-    app
+    void app
       .init({
         view: pixiCanvasRef.current ?? undefined,
         autoDensity: true,
@@ -115,6 +115,7 @@ export const usePixi = (
           onTileClick,
           onTileHover,
         );
+
         mapContainerRef.current = mapContainer;
         unitContainerRef.current = unitContainer;
         interactiveContainerRef.current = interactiveContainer;
@@ -123,11 +124,6 @@ export const usePixi = (
 
     return () => {
       app.stop();
-
-      for (const tile of interactiveContainer.children) {
-        tile.off("pointertap");
-        tile.off("pointerenter");
-      }
     };
   }, [actionMutation, match, player, spriteSheets]);
 

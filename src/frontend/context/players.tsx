@@ -1,8 +1,8 @@
-import type { Player } from "@prisma/client";
 import { trpc } from "frontend/utils/trpc-client";
 import { useLocalStorage } from "frontend/utils/use-local-storage";
+import type { Player } from "generated/browser";
 import type { ReactNode } from "react";
-import { createContext, use, useEffect, useMemo, useState } from "react";
+import { createContext, use, useMemo } from "react";
 
 type UserContext =
   | {
@@ -15,35 +15,20 @@ type UserContext =
 const PlayersContext = createContext<UserContext>(undefined);
 
 export const ProvidePlayers = ({ children }: { children: ReactNode }) => {
-  const [currentPlayerId, setCurrentPlayerId] = useLocalStorage("currentPlayerId", null);
-
   const { data } = trpc.user.me.useQuery(undefined, {
     refetchOnReconnect: false, // reduce trpc logging, this data doesn't really need to be refetched automatically
     refetchOnWindowFocus: false,
   });
 
-  const [user, setUser] = useState<typeof data>();
-
-  useEffect(() => {
-    if (data?.user && data !== user) {
-      setUser(data);
-
-      // const ownedPlayer =
-      const player = data.ownedPlayers.at(0);
-
-      if (player !== undefined && currentPlayerId === "") {
-        setCurrentPlayerId(player.id);
-      }
-    }
-  }, [data, currentPlayerId, setCurrentPlayerId, user]);
+  const [currentPlayerId, setCurrentPlayerId] = useLocalStorage("currentPlayerId", null);
 
   const userContextValue: UserContext = useMemo(
     () => ({
-      ownedPlayers: user?.ownedPlayers,
+      ownedPlayers: data?.ownedPlayers,
       currentPlayerId,
       setCurrentPlayerId,
     }),
-    [user?.ownedPlayers, currentPlayerId, setCurrentPlayerId],
+    [currentPlayerId, setCurrentPlayerId, data?.ownedPlayers],
   );
 
   return <PlayersContext value={userContextValue}>{children}</PlayersContext>;

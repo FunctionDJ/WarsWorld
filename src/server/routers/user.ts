@@ -13,7 +13,7 @@ export const userRouter = router({
     .use(playerWithoutCurrentMiddleware)
     .query(({ ctx }) => {
       return {
-        user: ctx.user,
+        // user: ctx.user,
         ownedPlayers: ctx.ownedPlayers,
       };
     }), // TODO session exposed in FE dangerous? 😳

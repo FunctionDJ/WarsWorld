@@ -1,4 +1,4 @@
-import type { ISpritesheetData } from "pixi.js";
+import type { SpritesheetData } from "pixi.js";
 import type { Army } from "shared/schemas/army";
 import type { PropertyTileType } from "shared/schemas/tile";
 import type { UnitType } from "shared/schemas/unit";
@@ -11,7 +11,7 @@ export type SpriteAnimationKeys =
   | UnitType
   | UnitAnimationVariants;
 
-export type ArmySpritesheetData = ISpritesheetData & {
+export type ArmySpritesheetData = SpritesheetData & {
   animations: Record<SpriteAnimationKeys, undefined>;
 };
 

@@ -23,9 +23,9 @@ export function setupApp(
   const unitContainer = renderUnits(match, spriteSheets);
   const interactiveContainer = renderInvisInteractiveTiles(match, onTileClick, onTileHover);
 
-  mapContainer.name = "mapContainer";
-  unitContainer.name = "childContainer";
-  interactiveContainer.name = "interactiveTilesContainer";
+  mapContainer.label = "mapContainer";
+  unitContainer.label = "childContainer";
+  interactiveContainer.label = "interactiveTilesContainer";
 
   app.stage.addChild(mapContainer, unitContainer, interactiveContainer);
 

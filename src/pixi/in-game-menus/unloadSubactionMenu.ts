@@ -133,7 +133,7 @@ export const createUnloadMenu = (
 
         step2Menu.zIndex = 999;
         interactiveContainer.addChild(step2Menu);
-        unload2Option.parent.destroy();
+        unload2Option.parent?.destroy();
       });
 
       const waitOption = createSubActionMenuElement("WAIT", 1);
@@ -150,14 +150,14 @@ export const createUnloadMenu = (
         });
 
         currentUnitClickedRef.current = null;
-        waitOption.parent.destroy();
+        waitOption.parent?.destroy();
       });
 
       const unload2OrWaitMenu = createInGameMenu(match, newPosition, 2 * unitSize * 2, 3, [
         unload2Option,
         waitOption,
       ]);
-      unload2OrWaitMenu.name = "unloadStep2ActionMenu";
+      unload2OrWaitMenu.label = "unloadStep2ActionMenu";
       interactiveContainer.addChild(unload2OrWaitMenu);
     }
   };
@@ -165,7 +165,7 @@ export const createUnloadMenu = (
   if (unloadPositions1 !== undefined && unloadPositions1.length > 0) {
     menuElements[0].on("pointerdown", () => {
       const unloadTilesContainer = new Container();
-      unloadTilesContainer.name = "unloadUnitsBox";
+      unloadTilesContainer.label = "unloadUnitsBox";
 
       for (const unloadPos of unloadPositions1) {
         const unloadTile = tileConstructor(unloadPos, "#43d9e4");
@@ -190,7 +190,7 @@ export const createUnloadMenu = (
       unloadTilesContainer.zIndex = 999;
       interactiveContainer.addChild(unloadTilesContainer);
       //as soon a selection is done, destroy/erase the menu
-      menuElements[0].parent.destroy();
+      menuElements[0].parent?.destroy();
     });
   }
 
@@ -198,7 +198,7 @@ export const createUnloadMenu = (
     const meIndex = unloadPositions1 === undefined ? 0 : 1; //if unit1 wasnt unloadable, the index will be 0
     menuElements[meIndex].on("pointerdown", () => {
       const unloadTilesContainer = new Container();
-      unloadTilesContainer.name = "unloadUnitsBox";
+      unloadTilesContainer.label = "unloadUnitsBox";
 
       for (const unloadPos of unloadPositions2) {
         const unloadTile = tileConstructor(unloadPos, "#43d9e4");
@@ -223,11 +223,11 @@ export const createUnloadMenu = (
       unloadTilesContainer.zIndex = 999;
       interactiveContainer.addChild(unloadTilesContainer);
       //as soon a selection is done, destroy/erase the menu
-      menuElements[0].parent.destroy();
+      menuElements[0].parent?.destroy();
     });
   }
 
   const unloadUnitSelectMenu = createInGameMenu(match, newPosition, yValue, 6, menuElements);
-  unloadUnitSelectMenu.name = "unloadUnitSelect";
+  unloadUnitSelectMenu.label = "unloadUnitSelect";
   return unloadUnitSelectMenu;
 };

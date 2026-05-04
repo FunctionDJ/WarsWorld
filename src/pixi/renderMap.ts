@@ -105,9 +105,11 @@ export const renderInvisInteractiveTiles = (
       tileSprite.y = (y + 1) * baseTileSize;
 
       tileSprite.interactive = true;
+
       tileSprite.on("pointertap", () => {
         void onTileClick([x, y]);
       });
+
       tileSprite.on("pointerenter", () => {
         void onTileHover([x, y]);
       });

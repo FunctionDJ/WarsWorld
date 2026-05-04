@@ -4,7 +4,7 @@ import SquareButton from "frontend/components/layout/SquareButton";
 import { usePlayers } from "frontend/context/players";
 import { trpc } from "frontend/utils/trpc-client";
 import type { Player } from "generated/browser";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 interface Props {
   currentPlayer: Player | undefined;
@@ -14,18 +14,15 @@ interface Props {
 export default function CreateMatch({ currentPlayer, setCurrentPlayer }: Props) {
   const { ownedPlayers } = usePlayers();
   const utils = trpc.useUtils();
-
-  // Get map data
-  const { data: mapQuery, isLoading: isLoadingMapQuery } = trpc.map.getAll.useQuery(undefined, {
-    onSuccess: (onSuccessMaps) => {
-      setCurrentMapId(onSuccessMaps[0].id);
-      setSelectMap({
-        label: onSuccessMaps[0].name,
-        value: onSuccessMaps[0].id,
-      });
-    },
-  });
   const [currentMapId, setCurrentMapId] = useState<string>();
+
+  const [selectMap, setSelectMap] = useState<SelectOption | undefined>({
+    label: "No map selected",
+    value: "",
+  });
+
+  const allMapsQuery = trpc.map.getAll.useQuery();
+
   const createMatchMutation = trpc.match.create.useMutation({
     onSuccess() {
       void utils.match.invalidate();
@@ -33,29 +30,15 @@ export default function CreateMatch({ currentPlayer, setCurrentPlayer }: Props) 
   });
 
   // Select Logic
-  const players: SelectOption[] = [];
-  ownedPlayers?.forEach((player) => players.push({ label: player.name, value: player.id }));
+  const players: SelectOption[] = ownedPlayers?.map((p) => ({ label: p.name, value: p.id })) ?? [];
+
   const maps: SelectOption[] = [];
-  mapQuery?.forEach((map) => maps.push({ label: map.name, value: map.id }));
+  allMapsQuery.data?.forEach((map) => maps.push({ label: map.name, value: map.id }));
 
   const [selectPlayer, setSelectPlayer] = useState<SelectOption | undefined>({
     label: "No player selected",
     value: "",
   });
-  const [selectMap, setSelectMap] = useState<SelectOption | undefined>({
-    label: "No map selected",
-    value: "",
-  });
-
-  // Fills the players Select when every time ownedplayers is changed
-  useEffect(() => {
-    if (currentPlayer) {
-      setSelectPlayer({
-        label: currentPlayer.name,
-        value: currentPlayer.id,
-      });
-    }
-  }, [currentPlayer]);
 
   const createMatchHandler = async () => {
     if (currentMapId == null || !currentPlayer) {
@@ -97,7 +80,7 @@ export default function CreateMatch({ currentPlayer, setCurrentPlayer }: Props) 
 
   const selectMapHandler = (o: SelectOption | undefined) => {
     setSelectMap(o);
-    const newCurrentMap = mapQuery?.find((p) => p.id === o?.value);
+    const newCurrentMap = allMapsQuery.data?.find((p) => p.id === o?.value);
     setCurrentMapId(newCurrentMap?.id);
   };
 
@@ -124,7 +107,7 @@ export default function CreateMatch({ currentPlayer, setCurrentPlayer }: Props) 
       )}
 
       <div className="tw:flex tw:flex-col tw:smallscreen:flex-row tw:items-center tw:justify-center tw:gap-5 tw:py-0 tw:smallscreen:py-4">
-        {isLoadingMapQuery ? (
+        {allMapsQuery.isLoading ? (
           <p>Loading maps...</p>
         ) : (
           <div className="tw:flex tw:flex-col tw:items-center">

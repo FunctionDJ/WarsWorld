@@ -1,12 +1,9 @@
 import { usePlayers } from "frontend/context/players";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { armySchema } from "shared/schemas/army";
-import { coSchema } from "shared/schemas/co";
 import type { FrontendMatch } from "shared/types/component-data";
 import type { PlayerInMatch } from "shared/types/server-match-state";
 import MatchCardSetup from "./MatchCardSetup";
-import MatchCardTop from "./MatchCardTop";
 import MatchPlayer from "./MatchPlayer";
 
 interface matchData {
@@ -18,7 +15,7 @@ export default function MatchCard({ match, inMatch }: matchData) {
   const { currentPlayer } = usePlayers();
 
   let firstPlayer: PlayerInMatch | undefined;
-  let playerIndex;
+  let playerIndex: number | undefined;
   let secondPlayer: PlayerInMatch | undefined;
 
   if (currentPlayer != undefined) {
@@ -34,7 +31,11 @@ export default function MatchCard({ match, inMatch }: matchData) {
     firstPlayer = match.players[0];
     secondPlayer = match.players[1];
   } else {
-    playerIndex === 0 ? (secondPlayer = match.players[1]) : (secondPlayer = match.players[0]);
+    if (playerIndex === 0) {
+      secondPlayer = match.players[1];
+    } else {
+      secondPlayer = match.players[0];
+    }
   }
 
   //this function can change co, army or status (ready/not ready)
@@ -45,16 +46,11 @@ export default function MatchCard({ match, inMatch }: matchData) {
     ready: firstPlayer.ready,
     slot: firstPlayer.slot,
   });
+
   const [selectedOptions, setSelectedOptions] = useState({
     selectedArmies: match.players.map((player) => player.army),
     selectedSlots: match.players.map((player) => player.slot),
   });
-
-  let twoPlayerCheck = false;
-
-  if (secondPlayer !== undefined) {
-    twoPlayerCheck = true;
-  }
 
   useEffect(() => {
     if (firstPlayer) {
@@ -69,14 +65,6 @@ export default function MatchCard({ match, inMatch }: matchData) {
 
   return (
     <div className="tw:grid tw:bg-bg-primary tw:relative">
-      <MatchCardTop
-        mapName={match.map.name}
-        day={match.turn}
-        state={match.state}
-        favorites={0}
-        spectators={0}
-        time={0.15}
-      />
       <div className="tw:grid tw:grid-cols-2 tw:gap-3">
         <MatchPlayer
           name={firstPlayer.name}
@@ -85,34 +73,14 @@ export default function MatchCard({ match, inMatch }: matchData) {
           playerReady={currentPlayerOptions.ready}
           slot={currentPlayerOptions.slot}
         />
-        {twoPlayerCheck ? (
-          <MatchPlayer
-            name={secondPlayer.name}
-            co={{ name: secondPlayer.coId.name, version: "AW2" }}
-            country={secondPlayer.army}
-            flipCO={true}
-            playerReady={secondPlayer.ready}
-            slot={secondPlayer.slot}
-          />
-        ) : (
-          <MatchPlayer
-            name={"Opponent"}
-            co={{
-              name: coSchema._zod.def.values[
-                Math.floor(Math.random() * coSchema._zod.def.values.length)
-              ],
-              version: "AW2",
-            }}
-            country={
-              armySchema._zod.def.values[
-                Math.floor(Math.random() * armySchema._zod.def.values.length)
-              ]
-            }
-            flipCO={true}
-            opponent={true}
-            playerReady={true}
-          />
-        )}
+        <MatchPlayer
+          name={secondPlayer.name}
+          co={{ name: secondPlayer.coId.name, version: "AW2" }}
+          country={secondPlayer.army}
+          flipCO={true}
+          playerReady={secondPlayer.ready}
+          slot={secondPlayer.slot}
+        />
       </div>
       {
         // if we are not in the match AND the match is full, we can't alter setup in anyway or form

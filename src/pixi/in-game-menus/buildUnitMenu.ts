@@ -4,8 +4,7 @@ import { AnimatedSprite, BitmapText, Container, Sprite, Texture } from "pixi.js"
 import { unitPropertiesMap } from "shared/match-logic/game-constants/unit-properties";
 import type { MainAction } from "shared/schemas/action";
 import type { Position } from "shared/schemas/position";
-import type { UnitType } from "shared/schemas/unit";
-import { unitTypes } from "shared/schemas/unit";
+import { unitTypes, type UnitType } from "shared/schemas/unit";
 import { baseTileSize } from "../../components/client-only/MatchRenderer";
 import type { MatchWrapper } from "../../shared/wrappers/match";
 import type { PlayerInMatchWrapper } from "../../shared/wrappers/player-in-match";
@@ -59,9 +58,13 @@ export const createMenuElementsForUnits = (
 
     //name of the unit
     //TODO display hp in unit sprite
-    const unitNameText = new BitmapText(unitType.toUpperCase(), {
-      fontName: "awFont",
-      fontSize: 10,
+
+    const unitNameText = new BitmapText({
+      text: unitType.toUpperCase(),
+      style: {
+        fontFamily: "awFont",
+        fontSize: 10,
+      },
     });
     unitNameText.y = yValue;
     unitNameText.x = baseTileSize;
@@ -70,9 +73,12 @@ export const createMenuElementsForUnits = (
     menuElement.addChild(unitNameText);
 
     //cost/hp/any_number displayed
-    const unitCostText = new BitmapText(String(num), {
-      fontName: "awFont",
-      fontSize: 10,
+    const unitCostText = new BitmapText({
+      text: String(num),
+      style: {
+        fontFamily: "awFont",
+        fontSize: 10,
+      },
     });
     unitCostText.y = yValue;
     //TODO: Standardize this size
@@ -150,12 +156,12 @@ export const buildUnitMenu = (
         unitType: buildableUnitTypes[i],
       });
       //as soon a selection is done, destroy/erase the menu
-      menuElements[i].parent.destroy();
+      menuElements[i].parent?.destroy();
     });
   }
 
   const buildMenu = createInGameMenu(match, [x, y], yValue, 6, menuElements);
-  buildMenu.name = "buildMenu";
+  buildMenu.label = "buildMenu";
   return buildMenu;
 };
 
@@ -165,9 +171,12 @@ const _createCaptureOption = (match: MatchWrapper, onCapture: () => void): Conta
   menuElement.eventMode = "static";
   //TODO: missing action icons
 
-  const actionText = new BitmapText("Capture", {
-    fontName: "awFont",
-    fontSize: 10,
+  const actionText = new BitmapText({
+    text: "Capture",
+    style: {
+      fontFamily: "awFont",
+      fontSize: 10,
+    },
   });
   actionText.y = 0;
   actionText.x = 60;

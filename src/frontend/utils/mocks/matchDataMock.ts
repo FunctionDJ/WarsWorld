@@ -1,4 +1,4 @@
-import { MatchStatus } from "@prisma/client";
+import { MatchStatus } from "generated/browser";
 import type { FrontendMatch } from "shared/types/component-data";
 import { mapBasicMock } from "./mapDataMock";
 import { playerInMatch1, playerInMatch2 } from "./playerInMatchMock";

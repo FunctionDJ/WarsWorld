@@ -1,5 +1,5 @@
-import type { Player } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
+import type { Player } from "generated/browser";
 import { prisma } from "server/prisma/prisma-client";
 import { z } from "zod";
 import { t } from "../trpc-init";
@@ -11,22 +11,6 @@ export const withPlayerIdSchema = z.object<{
 });
 
 export const developmentPlayerNamePrefix = "[dev]";
-
-const getLoggedInUserPlayers = (session: unknown) => {
-  throw new Error("stub");
-
-  if (typeof session?.user?.name !== "string") {
-    return [];
-  }
-
-  return prisma.player.findMany({
-    where: {
-      user: {
-        name: session.user.name,
-      },
-    },
-  });
-};
 
 export const playerMiddleware = t.middleware(async ({ ctx, next, input }) => {
   const parseResult = withPlayerIdSchema.safeParse(input);
@@ -40,7 +24,7 @@ export const playerMiddleware = t.middleware(async ({ ctx, next, input }) => {
 
   const { playerId } = parseResult.data;
 
-  const ownedPlayers = await getLoggedInUserPlayers(ctx.session);
+  const ownedPlayers = await prisma.player.findMany();
 
   const currentPlayer = ownedPlayers.find((p) => p.id === playerId);
 
@@ -61,7 +45,7 @@ export const playerMiddleware = t.middleware(async ({ ctx, next, input }) => {
 });
 
 export const playerWithoutCurrentMiddleware = t.middleware(async ({ ctx, next }) => {
-  const ownedPlayers = await getLoggedInUserPlayers(ctx.session);
+  const ownedPlayers = await prisma.player.findMany();
 
   return next({
     ctx: {

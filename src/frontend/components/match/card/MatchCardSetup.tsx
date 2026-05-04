@@ -1,5 +1,5 @@
-import type { Match, Player } from "@prisma/client";
 import { trpc } from "frontend/utils/trpc-client";
+import type { Match, Player } from "generated/browser";
 import { useState } from "react";
 import type { Army } from "shared/schemas/army";
 import { armySchema } from "shared/schemas/army";
@@ -69,6 +69,7 @@ export default function MatchCardSetup({
         {/* **** CO Button and Menu **** */}
         <div>
           <button
+            type="button"
             className="btnMenu"
             onClick={() => {
               setShowDropdown((prev) => (prev == "co" ? "" : "co"));
@@ -76,9 +77,9 @@ export default function MatchCardSetup({
           >
             Switch CO
           </button>
-          {showDropdown == "co" ? (
+          {showDropdown == "co" && (
             <div className="tw:overflow-visible tw:grid tw:grid-cols-4 tw:absolute  tw:z-10  tw:bg-bg-tertiary tw:outline-black tw:outline-2 tw:gap-2">
-              {coSchema._def.values.map((co) => {
+              {coSchema.options.map((co) => {
                 return (
                   <div
                     onClick={() => {
@@ -110,14 +111,13 @@ export default function MatchCardSetup({
                 );
               })}
             </div>
-          ) : (
-            <></>
           )}
         </div>
 
         {/* **** Army Button and Menu **** */}
         <div>
           <button
+            type="button"
             className=" btnMenu"
             onClick={() => {
               setShowDropdown((prev) => (prev == "army" ? "" : "army"));
@@ -125,9 +125,9 @@ export default function MatchCardSetup({
           >
             Switch Army
           </button>
-          {showDropdown == "army" ? (
+          {showDropdown == "army" && (
             <div className="tw:grid tw:grid-cols-2 tw:absolute  tw:z-10  tw:bg-bg-tertiary tw:outline-black tw:outline-2 tw:gap-2">
-              {armySchema._def.values.map((army) => {
+              {armySchema.options.map((army) => {
                 return (
                   <div
                     onClick={() => {
@@ -175,14 +175,13 @@ export default function MatchCardSetup({
                 );
               })}
             </div>
-          ) : (
-            <></>
           )}
         </div>
 
         {/* **** Slot Button and Menu **** */}
         <div>
           <button
+            type="button"
             className=" btnMenu"
             onClick={() => {
               setShowDropdown((prev) => (prev == "slot" ? "" : "slot"));
@@ -190,7 +189,7 @@ export default function MatchCardSetup({
           >
             Switch Slot
           </button>
-          {showDropdown == "slot" ? (
+          {showDropdown == "slot" && (
             <div className="tw:absolute tw:z-10 tw:bg-bg-tertiary tw:outline-black tw:outline-2">
               {[...Array(maxNumberOfPlayers).keys()].map((slot) => {
                 return (
@@ -236,14 +235,13 @@ export default function MatchCardSetup({
                 );
               })}
             </div>
-          ) : (
-            <></>
           )}
         </div>
 
         {/* Ready Button */}
         <div>
           <button
+            type="button"
             className=" btnMenu"
             onClick={() => {
               //TODO: Should ask player confirmation that if readying up AND other player is ready, it will start the match
@@ -267,6 +265,7 @@ export default function MatchCardSetup({
         {/* Leave Button */}
         <div>
           <button
+            type="button"
             className=" btnMenu"
             onClick={() => {
               void leaveMatch.mutateAsync({
@@ -287,6 +286,7 @@ export default function MatchCardSetup({
       <div className="tw:flex  ">
         <div>
           <button
+            type="button"
             className=" btnMenu"
             onClick={() => {
               void joinMatch.mutateAsync({

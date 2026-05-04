@@ -40,9 +40,12 @@ export const createSubActionMenuElement = (subActionName: string, numberInList: 
   actionBG.alpha = 0.5;
   menuElement.addChild(actionBG);
 
-  const actionText = new BitmapText(subActionName, {
-    fontName: "awFont",
-    fontSize: 10,
+  const actionText = new BitmapText({
+    text: subActionName,
+    style: {
+      fontFamily: "awFont",
+      fontSize: 10,
+    },
   });
   actionText.y = yValue;
   actionText.x = baseTileSize;
@@ -115,7 +118,7 @@ export default function subActionMenu(
 
         case AvailableSubActions.Repair: {
           const repairTilesContainer = new Container();
-          repairTilesContainer.name = "repairUnitsBox";
+          repairTilesContainer.label = "repairUnitsBox";
 
           for (const dir of allDirections) {
             if (match.map.isOutOfBounds(addDirection(unit.data.position, dir))) {
@@ -157,7 +160,7 @@ export default function subActionMenu(
 
         case AvailableSubActions.Launch: {
           const clickableLaunchTilesContainer = new Container();
-          clickableLaunchTilesContainer.name = "launchMissileClickableBox";
+          clickableLaunchTilesContainer.label = "launchMissileClickableBox";
 
           for (let x = 0; x < match.map.width; x++) {
             for (let y = 0; y < match.map.height; y++) {
@@ -242,7 +245,7 @@ export default function subActionMenu(
       }
 
       //as soon a selection is done, destroy/erase the menu
-      menuElement.parent.destroy();
+      menuElement.parent?.destroy();
     });
 
     iter++;
@@ -250,6 +253,6 @@ export default function subActionMenu(
   }
 
   const menuContainer = createInGameMenu(match, newPosition, iter * unitSize * 2, 3, menuElements);
-  menuContainer.name = "subActionMenu";
+  menuContainer.label = "subActionMenu";
   return menuContainer;
 }
