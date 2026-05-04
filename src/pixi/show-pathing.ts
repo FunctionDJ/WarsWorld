@@ -1,4 +1,5 @@
 import { Container, Sprite } from "pixi.js";
+import { arr } from "shared/arr";
 import {
   createPipeSeamUnitEquivalent,
   getBaseDamage,
@@ -43,33 +44,40 @@ export const getAccessibleNodes = (
 
   //queues[a] has current queued nodes with distance a from origin (technically a "stack", not a queue, but the result doesn't change)
   const queues: PathNode[][] = Array.from({ length: unit.getMovementPoints() }, () => []);
-  queues[0].push({ pos: unit.data.position, dist: 0, parent: null }); //queues[0] has the origin node, initially
+
+  const firstQueue = queues[0];
+
+  if (firstQueue === undefined) {
+    throw new DispatchableError("Unit has negative movement points, which is not possible");
+  }
+
+  firstQueue.push({ pos: unit.data.position, dist: 0, parent: null }); //queues[0] has the origin node, initially
 
   const visited = makeVisitedMatrix(match.map);
 
   for (const unit of ownerUnitPlayer.team.getEnemyUnits()) {
     //enemy tiles are impassible
-    visited[unit.data.position[0]][unit.data.position[1]] = true;
+    arr(visited, unit.data.position[0])[unit.data.position[1]] = true;
   }
 
   let currentDist = 0; //will check from closest to furthest, to find the shortest path
 
   while (currentDist < queues.length) {
-    if (queues[currentDist].length === 0) {
+    if (arr(queues, currentDist).length === 0) {
       //increase currentDist if all nodes within that distance have been processed
       ++currentDist;
       continue;
     }
 
-    const currNode = queues[currentDist].pop();
+    const currNode = arr(queues, currentDist).pop();
     const currPos = currNode?.pos;
 
-    if (currNode === undefined || currPos === undefined || visited[currPos[0]][currPos[1]]) {
+    if (currNode === undefined || currPos === undefined || arr(visited, currPos[0])[currPos[1]]) {
       continue;
     }
 
     //update variables to mark as visited and add to result
-    visited[currPos[0]][currPos[1]] = true;
+    arr(visited, currPos[0])[currPos[1]] = true;
     accessibleTiles.set(currPos, currNode);
 
     for (const pos of getNeighbourPositions(currPos)) {
@@ -86,7 +94,7 @@ export const getAccessibleNodes = (
       const nodeDist = currNode.dist + movementCost;
 
       if (nodeDist <= unit.getMovementPoints()) {
-        queues[nodeDist - 1].push({
+        arr(queues, nodeDist - 1).push({
           pos: pos,
           dist: nodeDist,
           parent: currPos,
@@ -137,9 +145,9 @@ export const getAttackableTiles = (
 
       for (const adjPos of getNeighbourPositions(pos)) {
         if (!match.map.isOutOfBounds(adjPos)) {
-          if (!visited[adjPos[0]][adjPos[1]]) {
+          if (!arr(visited, adjPos[0])[adjPos[1]]) {
             attackPositions.push(adjPos);
-            visited[adjPos[0]][adjPos[1]] = true;
+            arr(visited, adjPos[0])[adjPos[1]] = true;
           }
         }
       }
@@ -339,11 +347,10 @@ export const showPath = (spriteSheet: LoadedSpriteSheet, path: Position[]) => {
   const arrowContainer = new Container();
   arrowContainer.eventMode = "static";
 
-  const len = path.length;
   const path2 = [...path];
-  path2.push(path[len - 1]); //to detect the final node
+  path2.push(arr(path, "last")); //to detect the final node
 
-  for (let i = 0; i < len; ++i) {
+  for (let i = 0; i < path.length; ++i) {
     let spriteName = "";
 
     if (i === 0) {
@@ -351,13 +358,13 @@ export const showPath = (spriteSheet: LoadedSpriteSheet, path: Position[]) => {
       //special case for original node
       //spriteName = getSpriteName(path2[0], path2[i], path2[i + 1]);
     } else {
-      spriteName = getSpriteName(path2[i - 1], path2[i], path2[i + 1]);
+      spriteName = getSpriteName(arr(path2, i - 1), arr(path2, i), arr(path2, i + 1));
     }
 
     const nodeSprite = new Sprite(spriteSheet.arrow.textures[spriteName + ".png"]);
     nodeSprite.anchor.set(1, 1);
-    nodeSprite.x = (path2[i][0] + 1) * baseTileSize;
-    nodeSprite.y = (path2[i][1] + 1) * baseTileSize;
+    nodeSprite.x = (arr(path2, i)[0] + 1) * baseTileSize;
+    nodeSprite.y = (arr(path2, i)[1] + 1) * baseTileSize;
     arrowContainer.addChild(nodeSprite);
   }
 

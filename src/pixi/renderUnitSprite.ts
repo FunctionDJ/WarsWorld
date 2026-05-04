@@ -1,6 +1,7 @@
 import { baseTileSize } from "components/client-only/MatchRenderer";
 import type { FrontendUnit } from "frontend/components/match/FrontendUnit";
 import { AnimatedSprite, Container, Sprite } from "pixi.js";
+import { obj } from "shared/arr";
 import type { Position } from "shared/schemas/position";
 import type { UnitWrapper } from "../shared/wrappers/unit";
 import type { LoadedSpriteSheet } from "./load-spritesheet";
@@ -40,7 +41,7 @@ export function renderUnitSprite(
   // Create unit container and sprite
   const unitContainer = new Container();
   const armySpriteSheet = spriteSheets[unit.player.data.army];
-  const unitSprite = new AnimatedSprite(armySpriteSheet.animations[unit.data.type]);
+  const unitSprite = new AnimatedSprite(obj(armySpriteSheet.animations, unit.data.type));
 
   // Configure unit sprite
   unitSprite.x = spritePosition.x;

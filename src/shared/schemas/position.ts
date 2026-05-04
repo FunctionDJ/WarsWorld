@@ -14,6 +14,21 @@ export const positionSchema = z.tuple([
 
 export type Position = z.infer<typeof positionSchema>;
 
+export class PathWrapper {
+  constructor(private path: Path) {}
+
+  get(arg: number | "last"): Position {
+    const index = arg === "last" ? -1 : arg;
+    const pos = this.path.at(index);
+
+    if (pos === undefined) {
+      throw new Error(`Could not get position at index ${String(index)} of path`);
+    }
+
+    return pos;
+  }
+}
+
 /** throws if no final position */
 export const getFinalPositionSafe = (path: Path) => {
   const finalPosition = path.at(-1);
@@ -24,6 +39,26 @@ export const getFinalPositionSafe = (path: Path) => {
 
   return finalPosition;
 };
+
+export class PositionWrapper {
+  constructor(public readonly data: Position) {}
+
+  isSame(other: Position) {
+    return isSamePosition(this.data, other);
+  }
+
+  isNeighbour(other: Position) {
+    return positionsAreNeighbours(this.data, other);
+  }
+
+  getNeighbours() {
+    return getNeighbourPositions(this.data);
+  }
+
+  getDistance(other: Position) {
+    return getDistance(this.data, other);
+  }
+}
 
 export const isSamePosition = (positionA: Position, positionB: Position) =>
   positionA[0] === positionB[0] && positionA[1] === positionB[1];

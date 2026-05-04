@@ -120,9 +120,9 @@ export class MatchWrapper<
       return foundChangeableTile;
     }
 
-    // TODO `getTile` will be called very often. map data is a candidate for
+    // TODO `match.getTile` will be called very often. map data is a candidate for
     // the same ArrayBuffer / IntArray optimization like exists for vision.
-    return this.map.data.tiles[position[1]][position[0]];
+    return this.map.getTile(position);
   }
 
   // PLAYER STUFF **************************************************************
@@ -154,12 +154,25 @@ export class MatchWrapper<
 
   addUnwrappedPlayer(player: PlayerInMatch): PlayerInMatchWrapper {
     const teamIndex = this.rules.teamMapping[player.slot];
+
+    if (teamIndex === undefined) {
+      throw new Error(
+        `Player slot ${String(player.slot)} does not have a corresponding team in the team mapping.`,
+      );
+    }
+
     const foundTeam = this.teams.find((team) => team.index === teamIndex);
 
     if (foundTeam === undefined) {
       const team = new TeamWrapper([player], this, teamIndex);
       this.teams.push(team);
-      return team.players[0];
+      const playerInMatchWrapper = team.players[0];
+
+      if (playerInMatchWrapper === undefined) {
+        throw new Error("This should never happen since we just added a player to the team");
+      }
+
+      return playerInMatchWrapper;
     }
 
     return foundTeam.addUnwrappedPlayer(player);

@@ -1,3 +1,4 @@
+import { arr } from "shared/arr";
 import type { Path, Position } from "../../schemas/position";
 import { addDirection, getFinalPositionSafe, getNeighbourPositions } from "../../schemas/position";
 import type {
@@ -159,7 +160,11 @@ export const mainEventToEmittables = (
         // special visible function for hidden subs and stealth
         const isPositionVisible =
           "hidden" in unit.data && unit.data.hidden
-            ? (position: Position) => {
+            ? (position: Position | undefined): position is Position => {
+                if (position === undefined) {
+                  return false;
+                }
+
                 for (const pos of getNeighbourPositions(position)) {
                   if (match.getUnit(pos)?.player.team.index === team.index) {
                     return true;
@@ -168,19 +173,22 @@ export const mainEventToEmittables = (
 
                 return false;
               }
-            : (position: Position) => team.isPositionVisible(position);
+            : (position: Position | undefined): position is Position =>
+                position === undefined ? false : team.isPositionVisible(position);
 
         const shownPath: Path = [];
 
         const emittableSubEvent = emittableSubEvents.find((s) => s.teamIndex === team.index)!;
 
         if (event.path.length === 1) {
-          if (emittableSubEvent.requireLastMovePosition || isPositionVisible(event.path[0])) {
-            shownPath.push(event.path[0]);
+          const first = arr(event.path, 0);
+
+          if (emittableSubEvent.requireLastMovePosition || isPositionVisible(first)) {
+            shownPath.push(first);
           }
         } else {
-          if (isPositionVisible(event.path[0]) || isPositionVisible(event.path[1])) {
-            shownPath.push(event.path[0]);
+          if (isPositionVisible(arr(event.path, 0)) || isPositionVisible(arr(event.path, 1))) {
+            shownPath.push(arr(event.path, 0));
           }
 
           for (let pInd = 1; pInd < event.path.length - 1; ++pInd) {
@@ -189,13 +197,13 @@ export const mainEventToEmittables = (
               isPositionVisible(event.path[pInd]) ||
               isPositionVisible(event.path[pInd + 1])
             ) {
-              shownPath.push(event.path[0]);
+              shownPath.push(arr(event.path, 0));
             }
           }
 
           if (
-            isPositionVisible(event.path.at(-1)!) ||
-            isPositionVisible(event.path.at(-2)!) ||
+            isPositionVisible(event.path.at(-1)) ||
+            isPositionVisible(event.path.at(-2)) ||
             emittableSubEvent.requireLastMovePosition
           ) {
             shownPath.push(getFinalPositionSafe(event.path));
@@ -210,7 +218,7 @@ export const mainEventToEmittables = (
           path: shownPath,
           fundsGained:
             !match.rules.fogOfWar || unit.player.team === team ? event.fundsGained : undefined,
-          trap: team.isPositionVisible(event.path.at(-1)!) ? event.trap : false,
+          trap: team.isPositionVisible(event.path.at(-1)) ? event.trap : false,
           subEvent: emittableSubEvent.subEvent,
           //if unit shows and it was not visible before
           appearingUnit:

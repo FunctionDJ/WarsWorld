@@ -1,3 +1,4 @@
+import { arr } from "shared/arr";
 import { DispatchableError } from "shared/DispatchedError";
 import { unitPropertiesMap } from "shared/match-logic/game-constants/unit-properties";
 import type { MoveAction } from "shared/schemas/action";
@@ -15,6 +16,11 @@ export const moveActionToEvent = (
   action: MoveAction,
 ): MoveEventWithoutSubEvent => {
   const [unitPosition, ...path] = action.path;
+
+  if (unitPosition === undefined) {
+    throw new DispatchableError("Move action path must have at least one position");
+  }
+
   const player = match.getCurrentTurnPlayer();
   const unit = match.getUnitOrThrow(unitPosition);
 
@@ -36,7 +42,7 @@ export const moveActionToEvent = (
 
   //Unit is waiting in-place if it's path is only the starting tile
   if (action.path.length === 1) {
-    result.path.push(action.path[0]);
+    result.path.push(arr(action.path, 0));
 
     return result;
   }
@@ -49,7 +55,7 @@ export const moveActionToEvent = (
   }
 
   for (let pathIndex = 0; pathIndex < action.path.length; ++pathIndex) {
-    const position = action.path[pathIndex];
+    const position = arr(action.path, pathIndex);
 
     match.map.throwIfOutOfBounds(position);
 
@@ -97,7 +103,7 @@ export const moveActionToEvent = (
       }
     }
 
-    result.path.push(action.path[pathIndex]);
+    result.path.push(arr(action.path, pathIndex));
   }
 
   return result;
@@ -262,7 +268,7 @@ export const applyMoveEvent = (match: MatchWrapper, event: MoveEventWithoutSubEv
     return;
   }
 
-  const unit = match.getUnitOrThrow(event.path[0]);
+  const unit = match.getUnitOrThrow(arr(event.path, 0));
 
   unit.data.isReady = false;
 
@@ -313,7 +319,7 @@ export const updateMoveVision = (match: MatchWrapper, event: MoveEventWithSubEve
 
   const movedUnit = match.getUnitOrThrow(getFinalPositionSafe(event.path));
 
-  movedUnit.data.position = event.path[0]; // temporarily revert position
+  movedUnit.data.position = arr(event.path, 0); // temporarily revert position
   movedUnit.player.team.vision?.removeUnitVision(movedUnit); // remove vision from previous position
   movedUnit.data.position = getFinalPositionSafe(event.path); // revert the reversion (xd)
   movedUnit.player.team.vision?.addUnitVision(movedUnit); // add vision from new position

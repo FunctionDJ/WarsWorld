@@ -6,8 +6,35 @@ export class MapWrapper {
   public height: number;
 
   constructor(public data: WWMap) {
-    this.width = this.data.tiles[0].length;
+    const firstRow = this.data.tiles[0];
+
+    if (firstRow === undefined) {
+      throw new Error(`Unexpected error: map data for map ${this.data.name} has no rows`);
+    }
+
+    this.width = firstRow.length;
     this.height = this.data.tiles.length;
+  }
+
+  getTile(position: Position) {
+    this.throwIfOutOfBounds(position);
+    const row = this.data.tiles[position[1]];
+
+    if (row === undefined) {
+      throw new Error(
+        `Unexpected error: row ${String(position[1])} does not exist in map data for map ${this.data.name}`,
+      );
+    }
+
+    const tile = row[position[0]];
+
+    if (tile === undefined) {
+      throw new Error(
+        `Unexpected error: column ${String(position[0])} does not exist in map data for map ${this.data.name}`,
+      );
+    }
+
+    return tile;
   }
 
   isOutOfBounds(position: Position) {

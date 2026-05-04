@@ -21,10 +21,10 @@ export class TeamWrapper {
     }
   }
 
-  isPositionVisible(position: Position) {
+  isPositionVisible(position: Position | undefined): position is Position {
     if (this.match.isFogOfWar()) {
       this.vision ??= new Vision(this); // vision being nullish here should never happen, but whatever
-      return this.vision.isPositionVisible(position);
+      return position !== undefined && this.vision.isPositionVisible(position);
     }
 
     // in clear weather all positions are visible

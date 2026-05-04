@@ -1,6 +1,7 @@
 import { baseTileSize } from "components/client-only/MatchRenderer";
 import { Container } from "pixi.js";
 import type { RefObject } from "react";
+import { arr } from "shared/arr";
 import { getUnloadablePositions } from "shared/match-logic/events/handlers/unload/checkUnloadTiles";
 import { getDirection, isSamePosition, type Position } from "shared/schemas/position";
 import type { UnitWrapper } from "shared/wrappers/unit";
@@ -163,7 +164,7 @@ export const createUnloadMenu = (
   };
 
   if (unloadPositions1 !== undefined && unloadPositions1.length > 0) {
-    menuElements[0].on("pointerdown", () => {
+    arr(menuElements, 0).on("pointerdown", () => {
       const unloadTilesContainer = new Container();
       unloadTilesContainer.label = "unloadUnitsBox";
 
@@ -190,13 +191,13 @@ export const createUnloadMenu = (
       unloadTilesContainer.zIndex = 999;
       interactiveContainer.addChild(unloadTilesContainer);
       //as soon a selection is done, destroy/erase the menu
-      menuElements[0].parent?.destroy();
+      menuElements[0]?.parent?.destroy();
     });
   }
 
   if (unloadPositions2 !== undefined && unloadPositions2.length > 0) {
     const meIndex = unloadPositions1 === undefined ? 0 : 1; //if unit1 wasnt unloadable, the index will be 0
-    menuElements[meIndex].on("pointerdown", () => {
+    arr(menuElements, meIndex).on("pointerdown", () => {
       const unloadTilesContainer = new Container();
       unloadTilesContainer.label = "unloadUnitsBox";
 
@@ -223,7 +224,7 @@ export const createUnloadMenu = (
       unloadTilesContainer.zIndex = 999;
       interactiveContainer.addChild(unloadTilesContainer);
       //as soon a selection is done, destroy/erase the menu
-      menuElements[0].parent?.destroy();
+      menuElements[0]?.parent?.destroy();
     });
   }
 

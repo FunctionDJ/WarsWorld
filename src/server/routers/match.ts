@@ -4,6 +4,7 @@ import { matchStore } from "server/match-store";
 import { pageMatchIndex } from "server/page-match-index";
 import { playerMatchIndex } from "server/player-match-index";
 import { prisma } from "server/prisma/prisma-client";
+import { arr } from "shared/arr";
 import { DispatchableError } from "shared/DispatchedError";
 import { createMatchStartEvent } from "shared/match-logic/events/handlers/match-start";
 import type { Army } from "shared/schemas/army";
@@ -160,7 +161,7 @@ export const matchRouter = router({
     playerMatchIndex.onPlayerLeave(player);
 
     //There is only one player so, we can remove the whole match
-    if (match.teams.length === 1 && match.teams[0].players.length === 1) {
+    if (match.teams.length === 1 && arr(match.teams, 0).players.length === 1) {
       pageMatchIndex.removeMatch(match);
       matchStore.removeMatchFromIndex(match);
       await prisma.match.delete({ where: { id: match.id } });

@@ -7,7 +7,7 @@ import { applyEmittableAttackEvent } from "shared/match-logic/events/handlers/at
 import { applyBuildEvent } from "shared/match-logic/events/handlers/build";
 import { applyMoveEvent } from "shared/match-logic/events/handlers/move";
 import { applyPassTurnEvent } from "shared/match-logic/events/handlers/passTurn";
-import type { Position } from "shared/schemas/position";
+import { PathWrapper } from "shared/schemas/position";
 import type { EmittableAttackEvent, EmittableMoveEvent } from "shared/types/events";
 import type { MatchWrapper } from "shared/wrappers/match";
 import type { PlayerInMatchWrapper } from "shared/wrappers/player-in-match";
@@ -62,13 +62,13 @@ export function MatchRenderer({ match, player, spriteSheets, turn, setTurn }: Pr
             break;
           }
           case "move": {
-            if (event.path.length === 0 || !match.getUnit(event.path[0])) {
+            const pw = new PathWrapper(event.path);
+
+            if (event.path.length === 0 || !match.getUnit(pw.get(0))) {
               break;
             }
 
             applyMoveEvent(match, event as EmittableMoveEvent);
-
-            const finalPosition: Position = event.path[event.path.length - 1];
 
             switch (event.subEvent.type) {
               case "attack": {
@@ -76,7 +76,7 @@ export function MatchRenderer({ match, player, spriteSheets, turn, setTurn }: Pr
                 break;
               }
               case "ability": {
-                applyAbilityEvent(match, event.subEvent, finalPosition);
+                applyAbilityEvent(match, event.subEvent, pw.get("last"));
                 break;
               }
             }

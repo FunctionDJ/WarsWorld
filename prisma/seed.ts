@@ -1,15 +1,7 @@
-/**
- * Adds seed data to your db
- *
- * @link https://www.prisma.io/docs/guides/database/seed-database
- */
 import { PrismaPg } from "@prisma/adapter-pg";
-import * as fs from "fs/promises";
-import matter from "gray-matter";
 import { hashPassword } from "server/hashPassword";
 import { importAWBWMap } from "server/tools/map-importer-utilities";
 import { developmentPlayerNamePrefix as Prefix } from "server/trpc/middleware/player";
-import { articleSchema } from "shared/schemas/article";
 import { PrismaClient } from "../src/generated/client";
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
@@ -18,64 +10,6 @@ const prisma = new PrismaClient({ adapter });
 const developmentPlayerNames = ["Grimm Guy", "Incuggarch", "Master Chief Z", "Dev Player 4"].map(
   (name) => `${Prefix} ${name}`,
 );
-
-const news = [
-  "Good Girl Lash",
-  "Maintenance 2025-05-19",
-  "Master League",
-  "Welcome back Flak! Patch 1.01",
-];
-
-const guides = [
-  "Resource Management",
-  "Create or join a match",
-  "Enter the Global League",
-  "Fog of War 2",
-  "Fog of War",
-  "Indirect Units",
-  "Map Awareness",
-  "Master the Basics",
-  "Play in a tournament",
-  "Tech-ups",
-];
-
-async function seedArticles(articles: string[], type: string, authorId: string) {
-  for (const article of articles) {
-    const file = await fs.readFile(
-      `src/frontend/utils/articles/${type.toLowerCase()}/${article}.md`,
-      "utf-8",
-    );
-    const metaData = matter(file);
-    metaData.data.title = article;
-    metaData.data.type = type.toLowerCase();
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-    metaData.data.category = metaData.data.category.toLowerCase();
-    metaData.data.body = file;
-
-    const articleData = articleSchema.parse(metaData.data);
-
-    await prisma.article.create({
-      data: {
-        title: articleData.title,
-        description: articleData.description,
-        Authors: {
-          create: [
-            {
-              author: {
-                connect: {
-                  id: authorId,
-                },
-              },
-            },
-          ],
-        },
-        thumbnail: articleData.thumbnail,
-        category: articleData.category,
-        body: articleData.body,
-      },
-    });
-  }
-}
 
 async function main() {
   const hashedPassword = await hashPassword("secret");
@@ -93,14 +27,6 @@ async function main() {
       prisma.player.create({ data: { name, displayName: name, userId } }),
     ),
   );
-
-  await seedArticles(news, "News", devPlayers[0].id);
-  await seedArticles(guides, "Guide", devPlayers[1].id);
-
-  /**
-   * author: "Hellraider",
-   * published: "05/11/2008",
-   */
 
   const causticFinaleDBMap = await importAWBWMap({
     name: "Caustic Finale",
@@ -257,6 +183,12 @@ async function main() {
 `,
   });
 
+  const [dev1, dev2] = devPlayers;
+
+  if (dev1 === undefined || dev2 === undefined) {
+    throw new Error("Dev players not found - this should be impossible unless code got changed");
+  }
+
   await prisma.match.create({
     data: {
       leagueType: "standard",
@@ -277,8 +209,8 @@ async function main() {
         {
           slot: 0,
           hasCurrentTurn: true,
-          id: devPlayers[0].id,
-          name: devPlayers[0].name,
+          id: dev1.id,
+          name: dev1.name,
           ready: true,
           coId: {
             name: "andy",
@@ -294,8 +226,8 @@ async function main() {
         {
           slot: 1,
           hasCurrentTurn: false,
-          id: devPlayers[1].id,
-          name: devPlayers[1].name,
+          id: dev2.id,
+          name: dev2.name,
           ready: true,
           coId: {
             name: "flak",

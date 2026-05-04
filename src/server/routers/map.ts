@@ -1,4 +1,5 @@
 import { prisma } from "server/prisma/prisma-client";
+import { arr } from "shared/arr";
 import type { CreatableMap } from "shared/schemas/map";
 import { mapSchema } from "shared/schemas/map";
 import type { PlayerSlot } from "shared/schemas/player-slot";
@@ -57,7 +58,7 @@ export const mapRouter = router({
         numberOfPlayers: map.numberOfPlayers,
         // TODO which armies exactly?
         size: {
-          width: tiles[0].length,
+          width: arr(tiles, 0).length,
           height: tiles.length,
         },
         propertyStats: propertyTileTypes.reduce<PropertyStatsType>(
@@ -80,7 +81,7 @@ export const mapRouter = router({
 
     const tiles = input.tiles;
 
-    if (tiles.every((row) => row.length === tiles[0].length)) {
+    if (tiles.every((row) => row.length === arr(tiles, 0).length)) {
       throw new Error("All rows of the map must have the same length");
     }
 

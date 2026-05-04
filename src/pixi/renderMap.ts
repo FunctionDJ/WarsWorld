@@ -3,6 +3,7 @@ import type { FrontendUnit } from "frontend/components/match/FrontendUnit";
 import type { SpriteAnimationKeys } from "frontend/components/match/getSpritesheetData";
 import type { ChangeableTileWithSprite } from "frontend/components/match/types";
 import { AnimatedSprite, Container, Sprite, Texture } from "pixi.js";
+import { arr } from "shared/arr";
 import type { Position } from "shared/schemas/position";
 import type { Tile } from "shared/schemas/tile";
 import type { ChangeableTile } from "shared/types/server-match-state";
@@ -56,9 +57,10 @@ export function renderMap(
   const mapContainer = new Container(); // TODO add x,y values for margin/border
   mapContainer.x = mapBorder;
   mapContainer.y = mapBorder;
+  const { tiles } = match.map.data;
 
-  for (let y = 0; y < match.map.data.tiles.length; y++) {
-    for (let x = 0; x < match.map.data.tiles[y].length; x++) {
+  for (let y = 0; y < tiles.length; y++) {
+    for (let x = 0; x < arr(tiles, y).length; x++) {
       const tile = match.getTile([x, y]);
 
       const tileSprite = getTileSprite(match, tile, spriteSheets);
@@ -91,9 +93,10 @@ export const renderInvisInteractiveTiles = (
   const mapContainer = new Container();
   mapContainer.x = baseTileSize / 2;
   mapContainer.y = baseTileSize / 2;
+  const { tiles } = match.map.data;
 
-  for (let y = 0; y < match.map.data.tiles.length; y++) {
-    for (let x = 0; x < match.map.data.tiles[y].length; x++) {
+  for (let y = 0; y < tiles.length; y++) {
+    for (let x = 0; x < arr(tiles, y).length; x++) {
       const tileSprite = new Sprite(Texture.EMPTY);
       tileSprite.height = baseTileSize;
       tileSprite.width = baseTileSize;

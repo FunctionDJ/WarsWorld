@@ -1,15 +1,14 @@
 import type { EmittableEvent } from "../../types/events";
-import type { MatchWrapper } from "../../wrappers/match";
 import type { CapturableTile } from "../../types/server-match-state";
+import type { MatchWrapper } from "../../wrappers/match";
 
 export const fillDiscoveredUnitsAndProperties = (
   match: MatchWrapper,
   emittableEvents: (EmittableEvent | undefined)[],
 ) => {
   // emittableEvents.length = math.teams.length + 1, since it has "no team" in the end
-  for (let i = 0; i < match.teams.length; ++i) {
+  for (const [i, team] of match.teams.entries()) {
     const emittableEvent = emittableEvents[i]; // have to save it in a variable cause typescript is too dumb
-    const team = match.teams[i];
 
     if (emittableEvent === undefined) {
       continue;

@@ -1,3 +1,4 @@
+import { arr } from "shared/arr";
 import { DispatchableError } from "shared/DispatchedError";
 import type { UnloadWaitAction } from "shared/schemas/action";
 import type { Position } from "shared/schemas/position";
@@ -36,12 +37,12 @@ export const unloadWaitActionToEvent: SubActionToEvent<UnloadWaitAction> = (
     throw new DispatchableError("Transport doesn't currently have a loaded unit");
   }
 
-  const unloadPosition = addDirection(fromPosition, action.unloads[0].direction);
+  const unloadPosition = addDirection(fromPosition, arr(action.unloads, 0).direction);
 
   match.map.throwIfOutOfBounds(unloadPosition);
 
   if (action.unloads.length === 1) {
-    if (action.unloads[0].isSecondUnit) {
+    if (arr(action.unloads, 0).isSecondUnit) {
       if (!("loadedUnit2" in transportUnit.data)) {
         throw new DispatchableError("Trying to unload 2nd unit from a unit only carries 1 unit");
       }
@@ -83,19 +84,21 @@ export const unloadWaitActionToEvent: SubActionToEvent<UnloadWaitAction> = (
       throw new DispatchableError("Transport doesn't currently have a 2nd loaded unit");
     }
 
-    if (action.unloads[0].direction === action.unloads[1].direction) {
+    if (arr(action.unloads, 0).direction === arr(action.unloads, 1).direction) {
       throw new DispatchableError("Trying to unload both units in the same direction");
     }
 
-    if (action.unloads[0].isSecondUnit === action.unloads[1].isSecondUnit) {
+    if (arr(action.unloads, 0).isSecondUnit === arr(action.unloads, 1).isSecondUnit) {
       throw new DispatchableError("Trying to unload the same unit twice");
     }
 
-    if (action.unloads[0].isSecondUnit) {
-      [action.unloads[0], action.unloads[1]] = [action.unloads[1], action.unloads[0]];
+    if (arr(action.unloads, 0).isSecondUnit) {
+      const temp = arr(action.unloads, 0);
+      action.unloads[0] = arr(action.unloads, 1);
+      action.unloads[1] = temp;
     }
 
-    const unloadPosition2 = addDirection(fromPosition, action.unloads[1].direction);
+    const unloadPosition2 = addDirection(fromPosition, arr(action.unloads, 1).direction);
 
     match.map.throwIfOutOfBounds(unloadPosition2);
 
@@ -124,7 +127,7 @@ export const applyUnloadWaitEvent = (
   const unit = match.getUnitOrThrow(transportPosition);
 
   if (event.unloads.length === 1) {
-    if (event.unloads[0].isSecondUnit && "loadedUnit2" in unit.data) {
+    if (arr(event.unloads, 0).isSecondUnit && "loadedUnit2" in unit.data) {
       if (unit.data.loadedUnit2 === null) {
         throw new Error("Can't unload from empty slot 2");
       }
@@ -132,11 +135,11 @@ export const applyUnloadWaitEvent = (
       unit.player.addUnwrappedUnit({
         ...unit.data.loadedUnit2,
         isReady: false,
-        position: addDirection(transportPosition, event.unloads[1].direction),
+        position: addDirection(transportPosition, arr(event.unloads, 1).direction),
       });
 
       unit.data.loadedUnit2 = null;
-    } else if (!event.unloads[0].isSecondUnit && unit.isTransport()) {
+    } else if (!arr(event.unloads, 0).isSecondUnit && unit.isTransport()) {
       if (unit.data.loadedUnit === null) {
         throw new Error("Can't unload from empty slot 1");
       }
@@ -144,7 +147,7 @@ export const applyUnloadWaitEvent = (
       unit.player.addUnwrappedUnit({
         ...unit.data.loadedUnit,
         isReady: false,
-        position: addDirection(transportPosition, event.unloads[0].direction),
+        position: addDirection(transportPosition, arr(event.unloads, 0).direction),
       });
 
       if ("loadedUnit2" in unit.data) {
@@ -166,13 +169,13 @@ export const applyUnloadWaitEvent = (
       unit.player.addUnwrappedUnit({
         ...unit.data.loadedUnit,
         isReady: false,
-        position: addDirection(transportPosition, event.unloads[0].direction),
+        position: addDirection(transportPosition, arr(event.unloads, 0).direction),
       });
 
       unit.player.addUnwrappedUnit({
         ...unit.data.loadedUnit2,
         isReady: false,
-        position: addDirection(transportPosition, event.unloads[1].direction),
+        position: addDirection(transportPosition, arr(event.unloads, 1).direction),
       });
 
       unit.data.loadedUnit = null;

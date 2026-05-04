@@ -60,16 +60,23 @@ export class Vision {
   }
 
   private changeVision(position: Position, addVision: boolean) {
-    if (addVision) {
-      this.visionArray[position[1] * this.mapWidth + position[0]] += 1;
+    const index = position[1] * this.mapWidth + position[0];
+    const currentVision = this.visionArray[index];
 
-      if (this.visionArray[position[1] * this.mapWidth + position[0]] == 1) {
+    if (currentVision === undefined) {
+      throw new Error("Position for vision update is out of bounds");
+    }
+
+    if (addVision) {
+      this.visionArray[index] = currentVision + 1;
+
+      if (this.visionArray[index] === 1) {
         this.discoveredPositions.push(position);
       }
     } else {
-      this.visionArray[position[1] * this.mapWidth + position[0]] -= 1;
+      this.visionArray[index] = currentVision - 1;
 
-      if (this.visionArray[position[1] * this.mapWidth + position[0]] == 0) {
+      if (this.visionArray[index] === 0) {
         this.undiscoveredPositions.push(position);
       }
     }
@@ -107,9 +114,9 @@ export class Vision {
         }
 
         // if not next to forest or reef and sonja power not active, skip
+
         if (
-          (matchMap.data.tiles[pos[1]][pos[0]].type === "forest" ||
-            matchMap.data.tiles[pos[1]][pos[0]].type === "reef") &&
+          (matchMap.getTile(pos).type === "forest" || matchMap.getTile(pos).type === "reef") &&
           !activeSonjaPower &&
           Math.abs(i) + Math.abs(j) > 1
         ) {

@@ -50,7 +50,15 @@ nations.forEach(async (nation) => {
         const [source, name] = key.split(".");
 
         if (!(source === "map" || source === "unit")) {
-          throw new Error(`can't handle this frame key for compositing the file: ${source}`);
+          throw new Error(
+            `can't handle this frame key for compositing the file, source: ${String(source)}`,
+          );
+        }
+
+        if (name === undefined) {
+          throw new Error(
+            `can't handle this frame key for compositing the file, name: ${String(name)}`,
+          );
         }
 
         return {
@@ -146,8 +154,7 @@ async function genFramesAndSpriteSheetImage(
   // build the frames
   const frames: Record<string, SpritesheetFrameData> = {};
 
-  for (let i = 0; i < allSprites.toSorted((a, b) => (a.name < b.name ? -1 : 1)).length; i++) {
-    const sprite = allSprites[i];
+  for (const [i, sprite] of allSprites.entries()) {
     const metadata = await sharp(getTexturePath(sprite.type, nation, sprite.name)).metadata();
 
     const frameData = {
@@ -156,6 +163,7 @@ async function genFramesAndSpriteSheetImage(
       w: metadata.width,
       h: metadata.height,
     };
+
     frames[sprite.type + "." + sprite.name] = { frame: frameData };
   }
 

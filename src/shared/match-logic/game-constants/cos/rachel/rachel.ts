@@ -1,3 +1,4 @@
+import { arr } from "shared/arr";
 import type { COProperties } from "../../../co";
 import { getMissilePositions } from "./get-missile-positions";
 
@@ -33,17 +34,17 @@ export const rachelAWDS: COProperties = {
         player.match.damageUntil1HPInRadius({
           radius: 2,
           visualHpAmount: 3,
-          epicenter: positions[0],
+          epicenter: arr(positions, 0),
         });
         player.match.damageUntil1HPInRadius({
           radius: 2,
           visualHpAmount: 3,
-          epicenter: positions[1],
+          epicenter: arr(positions, 1),
         });
         player.match.damageUntil1HPInRadius({
           radius: 2,
           visualHpAmount: 3,
-          epicenter: positions[2],
+          epicenter: arr(positions, 2),
         });
       },
     },

@@ -46,7 +46,13 @@ export const createMenuElementsForUnits = (
     menuElement.addChild(unitBG);
 
     //the unit sprite we see on the menu
-    const unitSprite = new AnimatedSprite(spriteSheet.animations[unitType]);
+    const spriteOptions = spriteSheet.animations[unitType];
+
+    if (spriteOptions === undefined) {
+      throw new Error(`Sprite options for unit type ${String(unitType)} not found in spritesheet.`);
+    }
+
+    const unitSprite = new AnimatedSprite(spriteOptions);
     unitSprite.y = yValue;
     unitSprite.width = unitSize;
     unitSprite.height = unitSize;
@@ -144,19 +150,26 @@ export const buildUnitMenu = (
     }),
   );
 
-  for (let i = 0; i < menuElements.length; i++) {
-    if (!(player.data.funds >= unitPropertiesMap[buildableUnitTypes[i]].cost)) {
+  for (const [i, menuElement] of menuElements.entries()) {
+    const unitType = buildableUnitTypes[i];
+
+    if (unitType === undefined) {
+      throw new Error(`Unit type for menu element index ${i} is undefined.`);
+    }
+
+    if (!(player.data.funds >= unitPropertiesMap[unitType].cost)) {
       continue; //if not selectable because no funds, don't implement click behaviour
     }
 
-    menuElements[i].on("pointerdown", () => {
+    menuElement.on("pointerdown", () => {
       void sendAction({
         type: "build",
         position: [x, y],
-        unitType: buildableUnitTypes[i],
+        unitType,
       });
+
       //as soon a selection is done, destroy/erase the menu
-      menuElements[i].parent?.destroy();
+      menuElement.parent?.destroy();
     });
   }
 

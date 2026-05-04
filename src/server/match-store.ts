@@ -1,5 +1,6 @@
 import type { Match, WWMap } from "generated/client";
 import { prisma } from "server/prisma/prisma-client";
+import { arr } from "shared/arr";
 import { MatchWrapper } from "shared/wrappers/match";
 import { UnitWrapper } from "shared/wrappers/unit";
 import {
@@ -15,8 +16,8 @@ const getChangeableTilesFromMap = (map: WWMap): ChangeableTile[] => {
   const changeableTiles: ChangeableTile[] = [];
 
   for (let y = 0; y < map.tiles.length; y++) {
-    for (let x = 0; x < map.tiles[y].length; x++) {
-      const tile = map.tiles[y][x];
+    for (let x = 0; x < arr(map.tiles, y).length; x++) {
+      const tile = arr(arr(map.tiles, y), x);
 
       if (willBeChangeableTile(tile)) {
         if (tile.type === "unusedSilo") {

@@ -1,5 +1,6 @@
 import { BitmapText, Container, Sprite, Texture } from "pixi.js";
 import { type RefObject } from "react";
+import { arr } from "shared/arr";
 import type { MainAction } from "shared/schemas/action";
 import { /*baseTileSize,*/ renderedTileSize } from "../components/client-only/MatchRenderer";
 import type { Position } from "../shared/schemas/position";
@@ -46,10 +47,10 @@ export function renderAttackTiles(
 
       if (unit1 !== null && unit2 !== undefined) {
         console.log("PATHREF:", pathRef, pathRef.current);
+
         const attackingPos =
-          pathRef.current !== null
-            ? pathRef.current[pathRef.current.length - 1]
-            : unit1.data.position;
+          pathRef.current !== null ? arr(pathRef.current, "last") : unit1.data.position;
+
         attackTileContainer.addChild(renderProbabilities(unit1, unit2, attackingPos));
 
         if (unit1.isIndirect()) {

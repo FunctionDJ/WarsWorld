@@ -1,3 +1,4 @@
+import { arr } from "shared/arr";
 import { getDistance } from "shared/schemas/position";
 import type { COProperties } from "../../../co";
 import { getMissilePositions } from "../rachel/get-missile-positions";
@@ -21,7 +22,7 @@ export const vonBoltAWDS: COProperties = {
       calculatePositions: (player) => {
         // vb and rachel share missile position calculations. vb can either get the hp or the value position (random).
         const missilePositions = getMissilePositions(player);
-        return [missilePositions[Math.floor(Math.random() * 2) + 1]];
+        return [arr(missilePositions, Math.floor(Math.random() * 2) + 1)];
       },
       instantEffect(player, positions) {
         if (positions?.length !== 1) {
@@ -29,7 +30,7 @@ export const vonBoltAWDS: COProperties = {
         }
 
         for (const unit of player.team.getEnemyUnits()) {
-          if (getDistance(unit.data.position, positions[0]) <= 2) {
+          if (getDistance(unit.data.position, arr(positions, 0)) <= 2) {
             unit.data.isReady = false;
             unit.damageUntil1HP(3);
           }

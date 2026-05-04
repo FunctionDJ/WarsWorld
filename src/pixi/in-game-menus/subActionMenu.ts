@@ -1,5 +1,6 @@
 import { BitmapText, Container, Sprite, Texture } from "pixi.js";
 import type { RefObject } from "react";
+import { arr } from "shared/arr";
 import {
   AvailableSubActions,
   getAvailableSubActions,
@@ -82,7 +83,7 @@ export default function subActionMenu(
     pathRef.current !== null &&
     !(
       pathRef.current.length === 0 ||
-      (pathRef.current.length === 1 && isSamePosition(pathRef.current[0], newPosition))
+      (pathRef.current.length === 1 && isSamePosition(arr(pathRef.current, 0), newPosition))
     );
 
   const menuOptions = getAvailableSubActions(match, player, unit, newPosition, hasMoved);

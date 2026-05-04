@@ -1,4 +1,5 @@
 import type { WWMap } from "generated/client";
+import { arr, obj } from "shared/arr";
 import type { Tile } from "shared/schemas/tile";
 import { prisma } from "../prisma/prisma-client";
 
@@ -35,7 +36,7 @@ export const convertAWBWMapToWWMap = (tileDataString: string): WWMap["tiles"] =>
         .map((t) => t.trim()),
     );
   const tileDataFlat = tileData2DM.flat();
-  const row = tileData2DM[0].length;
+  const row = arr(tileData2DM, 0).length;
   const col = tileData2DM.length;
 
   const parsedArray: Tile[][] = [];
@@ -44,7 +45,7 @@ export const convertAWBWMapToWWMap = (tileDataString: string): WWMap["tiles"] =>
     const emptyArray: Tile[] = [];
 
     for (let j = 0; j < row; j++) {
-      emptyArray.push(awbwTileMapping[tileDataFlat[j + i * row]]);
+      emptyArray.push(obj(awbwTileMapping, arr(tileDataFlat, j + i * row)));
     }
 
     parsedArray.push(emptyArray);

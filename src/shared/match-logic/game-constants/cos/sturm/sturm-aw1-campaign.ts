@@ -1,3 +1,4 @@
+import { arr } from "shared/arr";
 import type { COProperties } from "../../../co";
 import { getRandomMeteorPosition } from "./get-meteor-position";
 
@@ -32,7 +33,7 @@ export const sturmAW1Campaign: COProperties = {
         player.match.damageUntil1HPInRadius({
           radius: 2,
           visualHpAmount: 8,
-          epicenter: positions[0],
+          epicenter: arr(positions, 0),
         });
       },
       hooks: {
