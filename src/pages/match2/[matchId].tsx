@@ -19,7 +19,9 @@ const MatchLoaderNoSSR = dynamic(
   },
 );
 
-type Props = { spritesheetDataByArmy: SpritesheetDataByArmy };
+interface Props {
+  spritesheetDataByArmy: SpritesheetDataByArmy;
+}
 
 const MatchPage = ({ spritesheetDataByArmy }: Props) => {
   const { query } = useRouter();

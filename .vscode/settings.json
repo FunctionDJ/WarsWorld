@@ -7,10 +7,5 @@
   // "js/ts.tsserver.experimental.enableProjectDiagnostics": true,
   "js/ts.referencesCodeLens.enabled": true,
   "editor.rulers": [100],
-  "editor.codeActionsOnSave": [
-    "addMissingImports",
-    "source.organizeImports",
-    "source.formatDocument",
-    "source.fixAll.eslint"
-  ]
+  "typescript.native-preview.tsdk": "/home/function/git/WarsWorld/node_modules/@typescript/native-preview"
 }
