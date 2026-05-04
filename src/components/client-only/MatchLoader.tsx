@@ -25,13 +25,6 @@ export function MatchLoader({ matchId, playerId, spritesheetDataByArmy }: Props)
   const fullMatchQuery = trpc.match.full.useQuery(
     { matchId, playerId },
     {
-      queryKey: [
-        "match.full",
-        {
-          matchId,
-          playerId,
-        },
-      ],
       refetchIntervalInBackground: false,
       refetchOnReconnect: true,
       //refetchInterval: 10000,
