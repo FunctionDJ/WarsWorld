@@ -2,7 +2,7 @@ import { baseTileSize } from "components/client-only/MatchRenderer";
 import type { FrontendUnit } from "frontend/components/match/FrontendUnit";
 import { AnimatedSprite, Container, Sprite } from "pixi.js";
 import { obj } from "shared/arr";
-import { PositionWrapper } from "shared/schemas/position";
+import { Position } from "shared/schemas/position";
 import type { UnitWrapper } from "../shared/wrappers/unit";
 import type { LoadedSpriteSheet } from "./load-spritesheet";
 
@@ -12,14 +12,14 @@ interface SpritePosition {
   y: number;
 }
 
-function calculatePosition(position: PositionWrapper, offset = 8): SpritePosition {
+function calculatePosition(position: Position, offset = 8): SpritePosition {
   return {
     x: position.data[0] * baseTileSize + offset,
     y: position.data[1] * baseTileSize + offset,
   };
 }
 
-function createIcon(spriteSheet: LoadedSpriteSheet, pos: PositionWrapper, texture: string): Sprite {
+function createIcon(spriteSheet: LoadedSpriteSheet, pos: Position, texture: string): Sprite {
   const icon = new Sprite(spriteSheet.icons.textures[texture]);
   icon.x = pos.data[0];
   icon.y = pos.data[1];
@@ -33,7 +33,7 @@ function createIcon(spriteSheet: LoadedSpriteSheet, pos: PositionWrapper, textur
 export function renderUnitSprite(
   unit: UnitType,
   spriteSheets: LoadedSpriteSheet,
-  newPosition?: PositionWrapper | null,
+  newPosition?: Position | null,
 ): Container {
   const position = newPosition ?? unit.data.position;
   const spritePosition = calculatePosition(position);
@@ -60,7 +60,7 @@ export function renderUnitSprite(
   if ("currentCapturePoints" in unit.data && unit.data.currentCapturePoints !== undefined) {
     const captureIcon = createIcon(
       spriteSheets,
-      new PositionWrapper([spritePosition.x, spritePosition.y + 8]),
+      new Position([spritePosition.x, spritePosition.y + 8]),
       "capturing.png",
     );
     unitContainer.addChild(captureIcon);
@@ -72,7 +72,7 @@ export function renderUnitSprite(
   if (visualHP !== 10) {
     const healthIcon = createIcon(
       spriteSheets,
-      new PositionWrapper([spritePosition.x + 8, spritePosition.y + 8]),
+      new Position([spritePosition.x + 8, spritePosition.y + 8]),
       `health-${String(visualHP)}.png`,
     );
     unitContainer.addChild(healthIcon);

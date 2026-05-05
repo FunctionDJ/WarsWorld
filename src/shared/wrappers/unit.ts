@@ -1,6 +1,6 @@
 import { unitPropertiesMap } from "shared/match-logic/game-constants/unit-properties";
 import { clamp } from "shared/math-utils";
-import { PositionWrapper } from "shared/schemas/position";
+import { Position } from "shared/schemas/position";
 import type { UnitType, WWUnit } from "shared/schemas/unit";
 import { getBaseMovementCost } from "../match-logic/movement-cost";
 import { getWeatherSpecialMovement } from "../match-logic/weather";
@@ -186,7 +186,7 @@ export class UnitWrapper<
    * returns the amount of movement points which must be spent to *enter* the tile
    * `null` means impassible terrain.
    */
-  getMovementCost(position: PositionWrapper): number | null {
+  getMovementCost(position: Position): number | null {
     const baseMovementCost = getBaseMovementCost(
       unitPropertiesMap[this.data.type].movementType,
       getWeatherSpecialMovement(this.player),
@@ -233,11 +233,12 @@ export class UnitWrapper<
 
     let maximumAttackRange =
       unitProperties.attackRange[1] - (this.match.getCurrentWeather() === "sandstorm" ? 1 : 0);
+
     maximumAttackRange =
       this.player.getHook("attackRange")?.(maximumAttackRange, this) ?? maximumAttackRange;
 
     // we'll need this logic to prevent e.g. Max from having
-    // [2, 1] artillery attack range in sandstorms.
+    // [2, 1] (invalid) artillery attack range in sandstorms.
     maximumAttackRange = Math.max(unitProperties.attackRange[0], maximumAttackRange);
 
     return { minRange: unitProperties.attackRange[0], maxRange: maximumAttackRange };

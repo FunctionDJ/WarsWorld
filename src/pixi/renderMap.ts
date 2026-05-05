@@ -4,7 +4,7 @@ import type { SpriteAnimationKeys } from "frontend/components/match/getSpriteshe
 import type { ChangeableTileWithSprite } from "frontend/components/match/types";
 import { AnimatedSprite, Container, Sprite, Texture } from "pixi.js";
 import { arr } from "shared/arr";
-import { PositionWrapper } from "shared/schemas/position";
+import { Position } from "shared/schemas/position";
 import type { Tile } from "shared/schemas/tile";
 import type { ChangeableTile } from "shared/types/server-match-state";
 import type { MatchWrapper } from "shared/wrappers/match";
@@ -61,7 +61,7 @@ export function renderMap(
 
   for (let y = 0; y < tiles.length; y++) {
     for (let x = 0; x < arr(tiles, y).length; x++) {
-      const tile = match.getTile(new PositionWrapper([x, y]));
+      const tile = match.getTile(new Position([x, y]));
 
       const tileSprite = getTileSprite(match, tile, spriteSheets);
 
@@ -87,8 +87,8 @@ export function renderMap(
 
 export const renderInvisInteractiveTiles = (
   match: MatchWrapper<ChangeableTileWithSprite, FrontendUnit>,
-  onTileClick: (pos: PositionWrapper) => Promise<void>,
-  onTileHover: (pos: PositionWrapper) => Promise<void>,
+  onTileClick: (pos: Position) => Promise<void>,
+  onTileHover: (pos: Position) => Promise<void>,
 ) => {
   const mapContainer = new Container();
   mapContainer.x = baseTileSize / 2;
@@ -109,7 +109,7 @@ export const renderInvisInteractiveTiles = (
 
       tileSprite.interactive = true;
 
-      const pos = new PositionWrapper([x, y]);
+      const pos = new Position([x, y]);
 
       tileSprite.on("pointertap", () => {
         void onTileClick(pos);

@@ -1,7 +1,7 @@
 import { arr } from "shared/arr";
 import { DispatchableError } from "shared/DispatchedError";
 import type { UnloadWaitAction } from "shared/schemas/action";
-import { PositionWrapper } from "shared/schemas/position";
+import { Position } from "shared/schemas/position";
 import type { UnloadWaitEvent } from "shared/types/events";
 import type { MatchWrapper } from "shared/wrappers/match";
 import type { SubActionToEvent } from "../../handler-types";
@@ -121,7 +121,7 @@ export const unloadWaitActionToEvent: SubActionToEvent<UnloadWaitAction> = (
 export const applyUnloadWaitEvent = (
   match: MatchWrapper,
   event: UnloadWaitEvent,
-  transportPosition: PositionWrapper,
+  transportPosition: Position,
 ) => {
   const unit = match.getUnitOrThrow(transportPosition);
 

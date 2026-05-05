@@ -2,7 +2,7 @@ import type { LeagueType, Match, MatchStatus, Player, WWMap } from "generated/br
 import { DispatchableError } from "shared/DispatchedError";
 import { type MatchRules } from "shared/schemas/match-rules";
 import type { PlayerSlot } from "shared/schemas/player-slot";
-import { PositionWrapper } from "shared/schemas/position";
+import { Position } from "shared/schemas/position";
 import type { Tile } from "shared/schemas/tile";
 import type { WWUnit } from "shared/schemas/unit";
 import type { Weather } from "shared/schemas/weather";
@@ -90,7 +90,7 @@ export class MatchWrapper<
     return this.currentWeather;
   }
 
-  getTile(position: PositionWrapper): Tile | ChangeableTile {
+  getTile(position: Position): Tile | ChangeableTile {
     this.map.throwIfOutOfBounds(position);
 
     const foundChangeableTile = this.changeableTiles.find((t) => position.isSame(t.position));
@@ -176,11 +176,11 @@ export class MatchWrapper<
   }
 
   // UNIT STUFF ****************************************************************
-  getUnit(position: PositionWrapper) {
+  getUnit(position: Position) {
     return this.units.find((u) => position.isSame(u.data.position));
   }
 
-  getUnitOrThrow(position: PositionWrapper) {
+  getUnitOrThrow(position: Position) {
     const unit = this.getUnit(position);
 
     if (unit === undefined) {
@@ -202,7 +202,7 @@ export class MatchWrapper<
   }: {
     radius: number;
     visualHpAmount: number;
-    epicenter: PositionWrapper;
+    epicenter: Position;
   }) {
     this.units
       .filter((unit) => unit.data.position.getDistance(epicenter) <= radius)

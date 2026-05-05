@@ -3,7 +3,7 @@ import { Container } from "pixi.js";
 import type { RefObject } from "react";
 import { arr } from "shared/arr";
 import { getUnloadablePositions } from "shared/match-logic/events/handlers/unload/checkUnloadTiles";
-import { PathWrapper, type Position } from "shared/schemas/position";
+import { Path, type Position } from "shared/schemas/position";
 import type { UnitWrapper } from "shared/wrappers/unit";
 import type { MainAction } from "../../shared/schemas/action";
 import type { MatchWrapper } from "../../shared/wrappers/match";
@@ -109,7 +109,7 @@ export const createUnloadMenu = (
             type: "unloadWait",
             unloads: unloads,
           },
-          path: new PathWrapper(path),
+          path: new Path(path),
         });
 
         currentUnitClickedRef.current = null;
@@ -147,7 +147,7 @@ export const createUnloadMenu = (
               { isSecondUnit: !isFirstUnit, direction: newPosition.getDirectionTo(unloadPos) },
             ],
           },
-          path: pathRef.current ? new PathWrapper(pathRef.current) : new PathWrapper([newPosition]),
+          path: pathRef.current ? new Path(pathRef.current) : new Path([newPosition]),
         });
 
         currentUnitClickedRef.current = null;

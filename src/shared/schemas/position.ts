@@ -9,15 +9,12 @@ import { z } from "zod";
 
 export const positionSchema = z
   .tuple([z.number().int().nonnegative(), z.number().int().nonnegative()])
-  .transform((pos) => new PositionWrapper(pos));
+  .transform((pos) => new Position(pos));
 
-/** @deprecated */
-export type Position = z.infer<typeof positionSchema>;
+export class Path {
+  constructor(public data: Position[]) {}
 
-export class PathWrapper {
-  constructor(public data: PositionWrapper[]) {}
-
-  get(arg: number | "last"): PositionWrapper {
+  get(arg: number | "last"): Position {
     const index = arg === "last" ? -1 : arg;
     const pos = this.data.at(index);
 
@@ -29,14 +26,14 @@ export class PathWrapper {
   }
 }
 
-export class PositionWrapper {
+export class Position {
   constructor(public readonly data: [number, number]) {}
 
-  isSame(other: PositionWrapper) {
+  isSame(other: Position) {
     return this.data[0] === other.data[0] && this.data[1] === other.data[1];
   }
 
-  isNeighbour(other: PositionWrapper) {
+  isNeighbour(other: Position) {
     const xDiff = Math.abs(this.data[0] - other.data[0]);
     const yDiff = Math.abs(this.data[1] - other.data[1]);
 
@@ -45,32 +42,32 @@ export class PositionWrapper {
 
   getNeighbours() {
     return [
-      new PositionWrapper([this.data[0] + 1, this.data[1]]),
-      new PositionWrapper([this.data[0] - 1, this.data[1]]),
-      new PositionWrapper([this.data[0], this.data[1] + 1]),
-      new PositionWrapper([this.data[0], this.data[1] - 1]),
+      new Position([this.data[0] + 1, this.data[1]]),
+      new Position([this.data[0] - 1, this.data[1]]),
+      new Position([this.data[0], this.data[1] + 1]),
+      new Position([this.data[0], this.data[1] - 1]),
     ];
   }
 
-  getDistance(other: PositionWrapper) {
+  getDistance(other: Position) {
     return Math.abs(this.data[0] - other.data[0]) + Math.abs(this.data[1] - other.data[1]);
   }
 
   addDirection(direction: Direction) {
     switch (direction) {
       case "up":
-        return new PositionWrapper([this.data[0], this.data[1] - 1]);
+        return new Position([this.data[0], this.data[1] - 1]);
       case "down":
-        return new PositionWrapper([this.data[0], this.data[1] + 1]);
+        return new Position([this.data[0], this.data[1] + 1]);
       case "left":
-        return new PositionWrapper([this.data[0] - 1, this.data[1]]);
+        return new Position([this.data[0] - 1, this.data[1]]);
       case "right":
-        return new PositionWrapper([this.data[0] + 1, this.data[1]]);
+        return new Position([this.data[0] + 1, this.data[1]]);
     }
   }
 
   /** untested!! */
-  getDirectionTo(other: PositionWrapper): Direction {
+  getDirectionTo(other: Position): Direction {
     const xDiff = other.data[0] - this.data[0];
     const yDiff = other.data[1] - this.data[1];
 
@@ -82,18 +79,13 @@ export class PositionWrapper {
   }
 
   offset({ x, y }: { x: number; y: number }) {
-    return new PositionWrapper([this.data[0] + x, this.data[1] + y]);
+    return new Position([this.data[0] + x, this.data[1] + y]);
   }
 }
 
 // === PATH ===
 
-export const pathSchema = z
-  .array(positionSchema)
-  .transform((positions) => new PathWrapper(positions));
-
-/** @deprecated */
-export type Path = z.infer<typeof pathSchema>;
+export const pathSchema = z.array(positionSchema).transform((positions) => new Path(positions));
 
 // === DIRECTION ===
 

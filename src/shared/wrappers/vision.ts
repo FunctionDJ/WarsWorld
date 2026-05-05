@@ -1,15 +1,13 @@
 import { unitPropertiesMap } from "shared/match-logic/game-constants/unit-properties";
-import { PositionWrapper } from "shared/schemas/position";
+import { Position } from "shared/schemas/position";
 import type { TeamWrapper } from "./team";
 import type { UnitWrapper } from "./unit";
 
-const getUnitVisionRange = (unit: UnitWrapper) => {
+const getUnitVisionRange = (unit: UnitWrapper): number => {
   const { vision: baseVision } = unitPropertiesMap[unit.data.type];
 
   const hasMountainBonus = unit.isInfantryOrMech() && unit.getTile().type === "mountain";
-
   const modifiedVision = unit.player.getHook("vision")?.(baseVision);
-
   const coVisionRange = (modifiedVision ?? baseVision) + (hasMountainBonus ? 3 : 0);
 
   const weatherVisionRange =
@@ -24,31 +22,32 @@ const getUnitVisionRange = (unit: UnitWrapper) => {
 export class Vision {
   private visionArray: Uint16Array; // i put 16 cause 2^8 = 256 and we *could* go over 256, in theory
   private mapWidth: number;
-  private ownedProperties: Set<PositionWrapper>;
+  private ownedProperties: Set<Position>; // TODO does a set make sense here? maybe we need a more sophisticated data structure to deduplicate positions.
 
   // used for temporary information storage. does not guarantee that a position is not in both at the same time
   // (but making discovered have priority over undiscovered works for all current events)
-  private discoveredPositions: PositionWrapper[] = [];
-  private undiscoveredPositions: PositionWrapper[] = [];
+  private discoveredPositions: Position[] = [];
+  private undiscoveredPositions: Position[] = [];
 
   constructor(team: TeamWrapper) {
     const { map } = team.match;
     this.mapWidth = map.width;
     const visionArraySize = this.mapWidth * map.height;
     this.visionArray = new Uint16Array(visionArraySize);
-    this.ownedProperties = new Set<PositionWrapper>();
+    this.ownedProperties = new Set<Position>();
 
     // add property and pipeSeam vision
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < this.mapWidth; x++) {
-        const tile = team.match.getTile(new PositionWrapper([x, y]));
+        const position = new Position([x, y]);
+        const tile = team.match.getTile(position);
 
         if (
           ("playerSlot" in tile &&
             team.match.getPlayerBySlot(tile.playerSlot)?.team.index === team.index) ||
           tile.type === "pipeSeam"
         ) {
-          this.addOwnedProperty(new PositionWrapper([x, y]));
+          this.addOwnedProperty(position);
         }
       }
     }
@@ -59,7 +58,7 @@ export class Vision {
     }
   }
 
-  private changeVision(position: PositionWrapper, addVision: boolean) {
+  private changeVision(position: Position, addVision: boolean) {
     const index = position.data[1] * this.mapWidth + position.data[0];
     const currentVision = this.visionArray[index];
 
@@ -85,7 +84,7 @@ export class Vision {
   /**
    * Used when a non-owned property gets captured.
    */
-  addOwnedProperty(position: PositionWrapper) {
+  addOwnedProperty(position: Position) {
     this.ownedProperties.add(position);
     // you will always have vision of a property you just captured cause a unit has to be on top
     this.changeVision(position, false);
@@ -94,7 +93,7 @@ export class Vision {
   /**
    * Used when an owned property gets captured.
    */
-  removeOwnedProperty(position: PositionWrapper) {
+  removeOwnedProperty(position: Position) {
     this.ownedProperties.delete(position);
     this.changeVision(position, false);
   }
@@ -162,7 +161,7 @@ export class Vision {
    * Returns new discovered positions until now, and resets the array.
    * Does NOT work when recalculateVision() is called!
    */
-  getDiscoveredPositionsAndClear(): PositionWrapper[] {
+  getDiscoveredPositionsAndClear(): Position[] {
     const discoveredPositions = [...this.discoveredPositions];
     this.discoveredPositions = [];
     return discoveredPositions;
@@ -172,7 +171,7 @@ export class Vision {
    * Returns new undiscovered positions until now, and resets the array.
    * Does NOT work when recalculateVision() is called!
    */
-  getUndiscoveredPositionsAndClear(): PositionWrapper[] {
+  getUndiscoveredPositionsAndClear(): Position[] {
     const undiscoveredPositions = [...this.undiscoveredPositions];
     this.undiscoveredPositions = [];
     return undiscoveredPositions;
@@ -181,7 +180,7 @@ export class Vision {
   /**
    * Returns is a position is visible, !supposing fog of war is activated!
    */
-  isPositionVisible(position: PositionWrapper): boolean {
+  isPositionVisible(position: Position): boolean {
     const result: number | undefined =
       this.visionArray[position.data[1] * this.mapWidth + position.data[0]];
 

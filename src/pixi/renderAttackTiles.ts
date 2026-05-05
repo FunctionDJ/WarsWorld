@@ -3,7 +3,7 @@ import { type RefObject } from "react";
 import { arr } from "shared/arr";
 import type { MainAction } from "shared/schemas/action";
 import { /*baseTileSize,*/ renderedTileSize } from "../components/client-only/MatchRenderer";
-import { PathWrapper, PositionWrapper } from "../shared/schemas/position";
+import { Path, Position } from "../shared/schemas/position";
 import type { MatchWrapper } from "../shared/wrappers/match";
 import type { UnitWrapper } from "../shared/wrappers/unit";
 import type { BattleForecast } from "./interactiveTileFunctions";
@@ -18,10 +18,10 @@ export function renderAttackTiles(
   match: MatchWrapper,
   currentUnitClickedRef: RefObject<UnitWrapper | null>,
   spriteSheets: LoadedSpriteSheet,
-  pathRef: RefObject<PositionWrapper[] | null>,
+  pathRef: RefObject<Position[] | null>,
   mapContainer: Container,
   sendAction: (action: MainAction) => Promise<void>,
-  attackingPosition?: PositionWrapper,
+  attackingPosition?: Position,
 ) {
   interactiveContainer.getChildByName("preAttackBox")?.destroy();
 
@@ -80,7 +80,7 @@ export function renderAttackTiles(
             type: "attack",
             defenderPosition: pos,
           },
-          path: new PathWrapper(path),
+          path: new Path(path),
         });
 
         //The currentUnitClicked has changed (moved, attacked, died), therefore, we delete the previous information as it is not accurate anymore
@@ -97,7 +97,7 @@ export function renderAttackTiles(
   function renderProbabilities(
     attacker: UnitWrapper,
     defender: UnitWrapper,
-    attackingPos: PositionWrapper,
+    attackingPos: Position,
   ) {
     const defenderPosition = defender.data.position;
     const probabilitiesContainer = new Container();
@@ -146,18 +146,10 @@ export function renderAttackTiles(
     defenderText.y = -renderedTileSize / 2 + 2;
     probabilitiesContainer.addChild(defenderText);
 
-    const attackerSprite = renderUnitSprite(
-      attacker,
-      spriteSheets,
-      new PositionWrapper([-4.25, -2.75]),
-    );
+    const attackerSprite = renderUnitSprite(attacker, spriteSheets, new Position([-4.25, -2.75]));
     probabilitiesContainer.addChild(attackerSprite);
 
-    const defenderSprite = renderUnitSprite(
-      defender,
-      spriteSheets,
-      new PositionWrapper([-1.75, -1.75]),
-    );
+    const defenderSprite = renderUnitSprite(defender, spriteSheets, new Position([-1.75, -1.75]));
     probabilitiesContainer.addChild(defenderSprite);
 
     return probabilitiesContainer;

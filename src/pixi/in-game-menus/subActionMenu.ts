@@ -5,12 +5,7 @@ import {
   AvailableSubActions,
   getAvailableSubActions,
 } from "shared/match-logic/events/available-sub-actions";
-import {
-  allDirections,
-  PathWrapper,
-  PositionWrapper,
-  type Position,
-} from "shared/schemas/position";
+import { allDirections, Path, Position } from "shared/schemas/position";
 import type { UnitWrapper } from "shared/wrappers/unit";
 import { baseTileSize } from "../../components/client-only/MatchRenderer";
 import type { MainAction } from "../../shared/schemas/action";
@@ -142,7 +137,7 @@ export default function subActionMenu(
                       type: "repair",
                       direction: dir,
                     },
-                    path: new PathWrapper(path),
+                    path: new Path(path),
                   });
 
                   currentUnitClickedRef.current = null;
@@ -165,7 +160,7 @@ export default function subActionMenu(
 
           for (let x = 0; x < match.map.width; x++) {
             for (let y = 0; y < match.map.height; y++) {
-              const pos = new PositionWrapper([x, y]);
+              const pos = new Position([x, y]);
               const hoverableTile = tileConstructor(pos, "#000000", 0);
               hoverableTile.eventMode = "static";
               hoverableTile.on("mouseenter", () => {
@@ -181,7 +176,7 @@ export default function subActionMenu(
                       type: "launchMissile",
                       targetPosition: pos,
                     },
-                    path: new PathWrapper(path),
+                    path: new Path(path),
                   });
 
                   currentUnitClickedRef.current = null;
@@ -236,7 +231,7 @@ export default function subActionMenu(
           void sendAction({
             type: "move",
             subAction: subAction,
-            path: new PathWrapper(pathRef.current ?? [newPosition]),
+            path: new Path(pathRef.current ?? [newPosition]),
           });
 
           //The currentUnitClicked has changed (moved, attacked, died), therefore, we delete the previous information as it is not accurate anymore

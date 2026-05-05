@@ -1,8 +1,8 @@
 import { Sprite, Texture } from "pixi.js";
-import type { PositionWrapper } from "shared/schemas/position";
+import type { Position } from "shared/schemas/position";
 import { renderedTileSize } from "../components/client-only/MatchRenderer";
 
-export const tileConstructor = (position: PositionWrapper, color: string, alpha?: number) => {
+export const tileConstructor = (position: Position, color: string, alpha?: number) => {
   const tile = new Sprite(Texture.WHITE);
   tile.anchor.set(1, 1); //?
   tile.x = ((position.data[0] + 1) * renderedTileSize) / 2;

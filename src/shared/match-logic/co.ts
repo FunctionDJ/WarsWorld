@@ -1,6 +1,6 @@
 import type { CO, COID } from "shared/schemas/co";
 import type { GameVersion } from "shared/schemas/game-version";
-import type { PositionWrapper } from "shared/schemas/position";
+import type { Position } from "shared/schemas/position";
 import type { PlayerInMatchWrapper } from "shared/wrappers/player-in-match";
 import type { Hooks } from "./co-hooks";
 import { adderAW2 } from "./game-constants/cos/adder/adder-aw2";
@@ -66,8 +66,8 @@ interface COPower {
   name: string;
   description: string;
   stars: number; //Stars are 9k value for AW2 and AWDS, 10k value for AW1
-  instantEffect?: (player: PlayerInMatchWrapper, positions?: PositionWrapper[]) => void;
-  calculatePositions?: (player: PlayerInMatchWrapper) => PositionWrapper[];
+  instantEffect?: (player: PlayerInMatchWrapper, positions?: Position[]) => void;
+  calculatePositions?: (player: PlayerInMatchWrapper) => Position[];
   hooks?: Partial<Hooks>;
 }
 

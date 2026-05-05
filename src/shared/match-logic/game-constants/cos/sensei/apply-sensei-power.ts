@@ -1,5 +1,5 @@
 import { unitPropertiesMap } from "shared/match-logic/game-constants/unit-properties";
-import { PositionWrapper } from "shared/schemas/position";
+import { Position } from "shared/schemas/position";
 import type { PlayerInMatchWrapper } from "shared/wrappers/player-in-match";
 
 export function applySenseiPowerSpawn(player: PlayerInMatchWrapper, unitType: "infantry" | "mech") {
@@ -20,7 +20,7 @@ export function applySenseiPowerSpawn(player: PlayerInMatchWrapper, unitType: "i
         return;
       }
 
-      const position = new PositionWrapper([x, y]);
+      const position = new Position([x, y]);
       const tile = match.getTile(position);
 
       if (tile.type !== "city" || !player.owns(tile) || match.getUnit(position) !== undefined) {

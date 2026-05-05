@@ -2,7 +2,7 @@ import { arr } from "shared/arr";
 import { DispatchableError } from "shared/DispatchedError";
 import { unitPropertiesMap } from "shared/match-logic/game-constants/unit-properties";
 import type { MoveAction } from "shared/schemas/action";
-import { PathWrapper } from "shared/schemas/position";
+import { Path } from "shared/schemas/position";
 import type { UnitWithVisibleStats } from "shared/schemas/unit";
 import type { MoveEventWithoutSubEvent, MoveEventWithSubEvent } from "shared/types/events";
 import type { MatchWrapper } from "shared/wrappers/match";
@@ -36,7 +36,7 @@ export const moveActionToEvent = (
 
   const result: MoveEventWithoutSubEvent = {
     type: "move",
-    path: new PathWrapper([]),
+    path: new Path([]),
     trap: false,
   };
 

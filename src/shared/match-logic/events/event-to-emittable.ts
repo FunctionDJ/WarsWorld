@@ -1,5 +1,5 @@
 import { arr } from "shared/arr";
-import { PathWrapper, PositionWrapper } from "../../schemas/position";
+import { Path, Position } from "../../schemas/position";
 import type {
   EmittableEvent,
   EmittableSubEvent,
@@ -159,7 +159,7 @@ export const mainEventToEmittables = (
         // special visible function for hidden subs and stealth
         const isPositionVisible =
           "hidden" in unit.data && unit.data.hidden
-            ? (position: PositionWrapper | undefined): position is PositionWrapper => {
+            ? (position: Position | undefined): position is Position => {
                 if (position === undefined) {
                   return false;
                 }
@@ -172,10 +172,10 @@ export const mainEventToEmittables = (
 
                 return false;
               }
-            : (position: PositionWrapper | undefined): position is PositionWrapper =>
+            : (position: Position | undefined): position is Position =>
                 position === undefined ? false : team.isPositionVisible(position);
 
-        const shownPath = new PathWrapper([]);
+        const shownPath = new Path([]);
 
         const emittableSubEvent = emittableSubEvents.find((s) => s.teamIndex === team.index)!;
 

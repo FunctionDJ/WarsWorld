@@ -4,8 +4,7 @@ import {
   createPipeSeamUnitEquivalent,
   getBaseDamage,
 } from "shared/match-logic/game-constants/base-damage";
-import type { Position } from "shared/schemas/position";
-import { PositionWrapper } from "shared/schemas/position";
+import { Position } from "shared/schemas/position";
 import type { MapWrapper } from "shared/wrappers/map";
 import type { MatchWrapper } from "shared/wrappers/match";
 import { baseTileSize } from "../components/client-only/MatchRenderer";
@@ -121,7 +120,7 @@ export const getAttackableTiles = (
 
     for (let x = 0; x < match.map.width; x++) {
       for (let y = 0; y < match.map.height; y++) {
-        const pos = new PositionWrapper([x, y]);
+        const pos = new Position([x, y]);
         const distance = pos.getDistance(sourcePosition);
 
         if (distance <= attackRange.maxRange && distance >= attackRange.minRange) {
@@ -138,7 +137,7 @@ export const getAttackableTiles = (
     const visited = makeVisitedMatrix(match.map);
 
     for (const [pos] of accessibleNodes.entries()) {
-      if (match.getUnit(pos) !== undefined && pos !== unit.data.position) {
+      if (match.getUnit(pos) !== undefined && !pos.isSame(unit.data.position)) {
         //another unit occupies this spot so we can't move to it to attack
         continue;
       }
@@ -269,7 +268,7 @@ export const updatePath = (
   return newPath.toReversed();
 };
 
-const getSpriteName = (a: PositionWrapper, b: PositionWrapper, c: PositionWrapper): string => {
+const getSpriteName = (a: Position, b: Position, c: Position): string => {
   //path from a to b to c, the sprite is the one displayed in b (middle node)
   const difx = Math.abs(a.data[0] - c.data[0]);
   const dify = Math.abs(a.data[1] - c.data[1]);

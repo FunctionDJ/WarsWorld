@@ -5,7 +5,7 @@ import type { LoadedSpriteSheet } from "pixi/load-spritesheet";
 import { setupApp } from "pixi/setupApp";
 import { useEffect, useRef } from "react";
 import type { MainAction } from "shared/schemas/action";
-import type { PositionWrapper } from "shared/schemas/position";
+import type { Position } from "shared/schemas/position";
 import type { MatchWrapper } from "shared/wrappers/match";
 import type { PlayerInMatchWrapper } from "shared/wrappers/player-in-match";
 import type { FrontendUnit } from "../../frontend/components/match/FrontendUnit";
@@ -34,9 +34,9 @@ export const usePixi = (
   const unitRangeShowRef = useRef<"attack" | "movement" | "vision">("movement");
 
   //TODO: To some extent, these three all store the same type of information (positions), however, they store it at different times...
-  const moveTilesRef = useRef<Map<PositionWrapper, PathNode> | null>(null);
+  const moveTilesRef = useRef<Map<Position, PathNode> | null>(null);
 
-  const pathRef = useRef<PositionWrapper[] | null>(null);
+  const pathRef = useRef<Position[] | null>(null);
 
   const { actionMutation } = trpcActions();
 
@@ -61,7 +61,7 @@ export const usePixi = (
           });
         };
 
-        const onTileClick = async (pos: PositionWrapper) => {
+        const onTileClick = async (pos: Position) => {
           if (
             mapContainerRef.current !== null &&
             unitContainerRef.current !== null &&
@@ -84,7 +84,7 @@ export const usePixi = (
           }
         };
 
-        const onTileHover = async (pos: PositionWrapper) => {
+        const onTileHover = async (pos: Position) => {
           if (
             mapContainerRef.current !== null &&
             unitContainerRef.current !== null &&

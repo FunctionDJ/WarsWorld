@@ -1,16 +1,12 @@
 import { getVisualHPfromHP } from "shared/match-logic/calculate-damage";
-import type { PositionWrapper } from "shared/schemas/position";
+import type { Position } from "shared/schemas/position";
 import type { AttackEvent, EmittableAttackEvent } from "shared/types/events";
 import type { MatchWrapper } from "shared/wrappers/match";
 import { canAttackWithPrimary } from "./canAttackWithPrimary";
 import { getPowerChargeGain } from "./getPowerChargeGain";
 import { applySashaFundsDamage, handleSashaScopFunds } from "./handleSashaScopFunds";
 
-export const applyAttackEvent = (
-  match: MatchWrapper,
-  event: AttackEvent,
-  position: PositionWrapper,
-) => {
+export const applyAttackEvent = (match: MatchWrapper, event: AttackEvent, position: Position) => {
   const attacker = match.getUnitOrThrow(position);
   const defender = match.getUnit(event.defenderPosition);
 

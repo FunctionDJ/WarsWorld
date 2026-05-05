@@ -6,7 +6,7 @@ import { unitPropertiesMap } from "shared/match-logic/game-constants/unit-proper
 import { getBaseMovementCost } from "shared/match-logic/movement-cost";
 import { getWeatherSpecialMovement } from "shared/match-logic/weather";
 import type { SubAction } from "shared/schemas/action";
-import { PositionWrapper } from "shared/schemas/position";
+import { Position } from "shared/schemas/position";
 import type { MatchWrapper } from "shared/wrappers/match";
 import type { PlayerInMatchWrapper } from "shared/wrappers/player-in-match";
 import type { UnitWrapper } from "shared/wrappers/unit";
@@ -31,7 +31,7 @@ export const getAvailableSubActions = (
   match: MatchWrapper,
   player: PlayerInMatchWrapper,
   unit: UnitWrapper,
-  newPosition: PositionWrapper,
+  newPosition: Position,
   hasMoved: boolean,
 ) => {
   const menuOptions: Map<AvailableSubActions, SubAction | undefined> = new Map<
@@ -70,7 +70,7 @@ export const getAvailableSubActions = (
     if (unit.isIndirect() && !hasMoved) {
       for (let x = 0; x < match.map.width && !addAttackSubaction; x++) {
         for (let y = 0; y < match.map.height && !addAttackSubaction; y++) {
-          const pos = new PositionWrapper([x, y]);
+          const pos = new Position([x, y]);
           const distance = unit.data.position.getDistance(pos);
 
           if (

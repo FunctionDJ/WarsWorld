@@ -1,12 +1,12 @@
-import { PositionWrapper } from "../../../../schemas/position";
+import { Position } from "../../../../schemas/position";
 import type { PlayerInMatchWrapper } from "../../../../wrappers/player-in-match";
 
 export const getUnitValueMeteorPosition = (
   sturmPlayer: PlayerInMatchWrapper,
   damage: number,
   canSeeHiddenUnits: boolean, //AW2 sturm can't see units inside fow
-): PositionWrapper => {
-  let bestPosition = new PositionWrapper([0, 0]);
+): Position => {
+  let bestPosition = new Position([0, 0]);
   let bestValue = Number.NEGATIVE_INFINITY;
 
   //centered in an enemy unit
@@ -42,8 +42,8 @@ export const getIndirectsMeteorPosition = (
   sturmPlayer: PlayerInMatchWrapper,
   damage: number,
   canSeeHiddenUnits: boolean,
-): PositionWrapper => {
-  let bestPosition = new PositionWrapper([0, 0]);
+): Position => {
+  let bestPosition = new Position([0, 0]);
   let bestValue = Number.NEGATIVE_INFINITY;
 
   //centered in an enemy unit
@@ -86,8 +86,8 @@ export const getMostHPMeteorPosition = (
   sturmPlayer: PlayerInMatchWrapper,
   damage: number,
   canSeeHiddenUnits: boolean,
-): PositionWrapper => {
-  let bestPosition = new PositionWrapper([0, 0]);
+): Position => {
+  let bestPosition = new Position([0, 0]);
   let bestHP = Number.NEGATIVE_INFINITY;
 
   //centered in an enemy unit
@@ -120,7 +120,7 @@ export const getRandomMeteorPosition = (
   sturmPlayer: PlayerInMatchWrapper,
   damage: number,
   canSeeHiddenUnits: boolean,
-): PositionWrapper => {
+): Position => {
   switch (Math.floor(Math.random() * 3)) {
     case 0:
       return getUnitValueMeteorPosition(sturmPlayer, damage, canSeeHiddenUnits);

@@ -1,5 +1,5 @@
 import type { WWMap } from "generated/browser";
-import type { PositionWrapper } from "shared/schemas/position";
+import type { Position } from "shared/schemas/position";
 
 export class MapWrapper {
   public width: number;
@@ -16,7 +16,7 @@ export class MapWrapper {
     this.height = this.data.tiles.length;
   }
 
-  getTile(position: PositionWrapper) {
+  getTile(position: Position) {
     this.throwIfOutOfBounds(position);
     const row = this.data.tiles[position.data[1]];
 
@@ -37,12 +37,12 @@ export class MapWrapper {
     return tile;
   }
 
-  isOutOfBounds(position: PositionWrapper) {
+  isOutOfBounds(position: Position) {
     const { data } = position;
     return data[0] < 0 || data[0] >= this.width || data[1] < 0 || data[1] >= this.height;
   }
 
-  throwIfOutOfBounds(position: PositionWrapper) {
+  throwIfOutOfBounds(position: Position) {
     if (this.isOutOfBounds(position)) {
       throw new Error(
         `Out of bounds position ${JSON.stringify(position)} for map ${this.data.name}`,
