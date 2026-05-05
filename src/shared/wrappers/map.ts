@@ -1,5 +1,5 @@
 import type { WWMap } from "generated/browser";
-import type { Position } from "shared/schemas/position";
+import type { PositionWrapper } from "shared/schemas/position";
 
 export class MapWrapper {
   public width: number;
@@ -16,34 +16,33 @@ export class MapWrapper {
     this.height = this.data.tiles.length;
   }
 
-  getTile(position: Position) {
+  getTile(position: PositionWrapper) {
     this.throwIfOutOfBounds(position);
-    const row = this.data.tiles[position[1]];
+    const row = this.data.tiles[position.data[1]];
 
     if (row === undefined) {
       throw new Error(
-        `Unexpected error: row ${String(position[1])} does not exist in map data for map ${this.data.name}`,
+        `Unexpected error: row ${String(position.data[1])} does not exist in map data for map ${this.data.name}`,
       );
     }
 
-    const tile = row[position[0]];
+    const tile = row[position.data[0]];
 
     if (tile === undefined) {
       throw new Error(
-        `Unexpected error: column ${String(position[0])} does not exist in map data for map ${this.data.name}`,
+        `Unexpected error: column ${String(position.data[0])} does not exist in map data for map ${this.data.name}`,
       );
     }
 
     return tile;
   }
 
-  isOutOfBounds(position: Position) {
-    return (
-      position[0] < 0 || position[0] >= this.width || position[1] < 0 || position[1] >= this.height
-    );
+  isOutOfBounds(position: PositionWrapper) {
+    const { data } = position;
+    return data[0] < 0 || data[0] >= this.width || data[1] < 0 || data[1] >= this.height;
   }
 
-  throwIfOutOfBounds(position: Position) {
+  throwIfOutOfBounds(position: PositionWrapper) {
     if (this.isOutOfBounds(position)) {
       throw new Error(
         `Out of bounds position ${JSON.stringify(position)} for map ${this.data.name}`,

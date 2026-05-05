@@ -6,7 +6,6 @@ import {
 } from "shared/match-logic/game-constants/base-damage";
 import type { AttackAction } from "shared/schemas/action";
 import type { LuckRoll } from "shared/schemas/co";
-import { getDistance } from "shared/schemas/position";
 import type { AttackEvent } from "shared/types/events";
 import type { SubActionToEvent } from "../../handler-types";
 import { getEliminationReason } from "./getEliminationReason";
@@ -45,7 +44,7 @@ export const attackActionToEvent: (...params: Params) => AttackEvent = (
     throw new DispatchableError("Trying to move and attack with an indirect unit");
   }
 
-  const attackDistance = getDistance(fromPosition, action.defenderPosition);
+  const attackDistance = fromPosition.getDistance(action.defenderPosition);
 
   if (attackRange.minRange > attackDistance || attackDistance > attackRange.maxRange) {
     throw new DispatchableError("Unit is not in range to attack");

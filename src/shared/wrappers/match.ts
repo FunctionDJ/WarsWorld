@@ -2,8 +2,7 @@ import type { LeagueType, Match, MatchStatus, Player, WWMap } from "generated/br
 import { DispatchableError } from "shared/DispatchedError";
 import { type MatchRules } from "shared/schemas/match-rules";
 import type { PlayerSlot } from "shared/schemas/player-slot";
-import type { Position } from "shared/schemas/position";
-import { getDistance, isSamePosition } from "shared/schemas/position";
+import { PositionWrapper } from "shared/schemas/position";
 import type { Tile } from "shared/schemas/tile";
 import type { WWUnit } from "shared/schemas/unit";
 import type { Weather } from "shared/schemas/weather";
@@ -91,12 +90,10 @@ export class MatchWrapper<
     return this.currentWeather;
   }
 
-  getTile(position: Position): Tile | ChangeableTile {
+  getTile(position: PositionWrapper): Tile | ChangeableTile {
     this.map.throwIfOutOfBounds(position);
 
-    const foundChangeableTile = this.changeableTiles.find((t) =>
-      isSamePosition(t.position, position),
-    );
+    const foundChangeableTile = this.changeableTiles.find((t) => position.isSame(t.position));
 
     if (foundChangeableTile !== undefined) {
       const isBrokenPipeSeam = "hp" in foundChangeableTile && foundChangeableTile.hp < 1;
@@ -179,11 +176,11 @@ export class MatchWrapper<
   }
 
   // UNIT STUFF ****************************************************************
-  getUnit(position: Position) {
-    return this.units.find((u) => isSamePosition(u.data.position, position));
+  getUnit(position: PositionWrapper) {
+    return this.units.find((u) => position.isSame(u.data.position));
   }
 
-  getUnitOrThrow(position: Position) {
+  getUnitOrThrow(position: PositionWrapper) {
     const unit = this.getUnit(position);
 
     if (unit === undefined) {
@@ -205,10 +202,10 @@ export class MatchWrapper<
   }: {
     radius: number;
     visualHpAmount: number;
-    epicenter: Position;
+    epicenter: PositionWrapper;
   }) {
     this.units
-      .filter((unit) => getDistance(unit.data.position, epicenter) <= radius)
+      .filter((unit) => unit.data.position.getDistance(epicenter) <= radius)
       .forEach((unit) => {
         unit.damageUntil1HP(visualHpAmount);
       });

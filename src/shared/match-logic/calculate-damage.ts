@@ -1,5 +1,4 @@
 import type { LuckRoll } from "shared/schemas/co";
-import { getDistance } from "shared/schemas/position";
 import type { UnitWrapper } from "shared/wrappers/unit";
 import type { CombatProps } from "./co-hooks";
 import { getBaseDamage } from "./game-constants/base-damage";
@@ -152,7 +151,7 @@ export const calculateEngagementOutcome = (
   }
 
   //check if defender can counterattack
-  if (getDistance(attacker.data.position, defender.data.position) === 1) {
+  if (attacker.data.position.getDistance(defender.data.position) === 1) {
     if ("attackRange" in defender.properties && defender.properties.attackRange[1] === 1) {
       //defender is melee, maybe can counterattack
       //temporarily subtract hp to calculate counter dmg

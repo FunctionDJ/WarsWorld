@@ -6,9 +6,9 @@ import {
   getAvailableSubActions,
 } from "shared/match-logic/events/available-sub-actions";
 import {
-  addDirection,
   allDirections,
-  isSamePosition,
+  PathWrapper,
+  PositionWrapper,
   type Position,
 } from "shared/schemas/position";
 import type { UnitWrapper } from "shared/wrappers/unit";
@@ -83,7 +83,7 @@ export default function subActionMenu(
     pathRef.current !== null &&
     !(
       pathRef.current.length === 0 ||
-      (pathRef.current.length === 1 && isSamePosition(arr(pathRef.current, 0), newPosition))
+      (pathRef.current.length === 1 && arr(pathRef.current, 0).isSame(newPosition))
     );
 
   const menuOptions = getAvailableSubActions(match, player, unit, newPosition, hasMoved);
@@ -122,14 +122,14 @@ export default function subActionMenu(
           repairTilesContainer.label = "repairUnitsBox";
 
           for (const dir of allDirections) {
-            if (match.map.isOutOfBounds(addDirection(unit.data.position, dir))) {
+            if (match.map.isOutOfBounds(unit.data.position.addDirection(dir))) {
               continue;
             }
 
-            const unitToRepair = match.getUnit(addDirection(unit.data.position, dir));
+            const unitToRepair = match.getUnit(unit.data.position.addDirection(dir));
 
             if (unitToRepair?.player.data.slot === unit.player.data.slot) {
-              const repairTile = tileConstructor(addDirection(unit.data.position, dir), "#43d9e4");
+              const repairTile = tileConstructor(unit.data.position.addDirection(dir), "#43d9e4");
               repairTile.eventMode = "static";
 
               repairTile.on("pointerdown", () => {
@@ -142,7 +142,7 @@ export default function subActionMenu(
                       type: "repair",
                       direction: dir,
                     },
-                    path: path,
+                    path: new PathWrapper(path),
                   });
 
                   currentUnitClickedRef.current = null;
@@ -165,7 +165,8 @@ export default function subActionMenu(
 
           for (let x = 0; x < match.map.width; x++) {
             for (let y = 0; y < match.map.height; y++) {
-              const hoverableTile = tileConstructor([x, y], "#000000", 0);
+              const pos = new PositionWrapper([x, y]);
+              const hoverableTile = tileConstructor(pos, "#000000", 0);
               hoverableTile.eventMode = "static";
               hoverableTile.on("mouseenter", () => {
                 //TODO render impact tiles
@@ -178,9 +179,9 @@ export default function subActionMenu(
                     type: "move",
                     subAction: {
                       type: "launchMissile",
-                      targetPosition: [x, y],
+                      targetPosition: pos,
                     },
-                    path: path,
+                    path: new PathWrapper(path),
                   });
 
                   currentUnitClickedRef.current = null;
@@ -235,7 +236,7 @@ export default function subActionMenu(
           void sendAction({
             type: "move",
             subAction: subAction,
-            path: pathRef.current ?? [newPosition],
+            path: new PathWrapper(pathRef.current ?? [newPosition]),
           });
 
           //The currentUnitClicked has changed (moved, attacked, died), therefore, we delete the previous information as it is not accurate anymore

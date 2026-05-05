@@ -1,6 +1,6 @@
 import type { WWUnit } from "shared/schemas/unit";
 import type { PlayerInMatch } from "shared/types/server-match-state";
-import type { Position } from "../schemas/position";
+import { PositionWrapper } from "../schemas/position";
 import type { MatchWrapper } from "./match";
 import { PlayerInMatchWrapper } from "./player-in-match";
 import { Vision } from "./vision";
@@ -21,7 +21,8 @@ export class TeamWrapper {
     }
   }
 
-  isPositionVisible(position: Position | undefined): position is Position {
+  // TODO type predicate would be useful, but locks the false-branch into position being incorrectly typed as "undefined"
+  isPositionVisible(position: PositionWrapper | undefined): boolean {
     if (this.match.isFogOfWar()) {
       this.vision ??= new Vision(this); // vision being nullish here should never happen, but whatever
       return position !== undefined && this.vision.isPositionVisible(position);
@@ -40,7 +41,7 @@ export class TeamWrapper {
     return this.match.units.filter((unit) => !playerSlotsOfTeam.includes(unit.data.playerSlot));
   }
 
-  canSeeUnitAtPosition(position: Position) {
+  canSeeUnitAtPosition(position: PositionWrapper) {
     const playerSlots = this.players.map((player) => player.data.slot);
     const tile = this.match.getTile(position);
     const unit = this.match.getUnit(position);

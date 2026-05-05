@@ -1,6 +1,6 @@
 import { DispatchableError } from "shared/DispatchedError";
 import type { AbilityAction } from "shared/schemas/action";
-import { addDirection, allDirections } from "shared/schemas/position";
+import { allDirections } from "shared/schemas/position";
 import type { AbilityEvent } from "shared/types/events";
 import type { CapturableTile } from "shared/types/server-match-state";
 import type { MatchWrapper } from "shared/wrappers/match";
@@ -218,7 +218,7 @@ export const applyAbilityEvent: ApplySubEvent<AbilityEvent> = (match, event, fro
     case "apc": {
       //supply
       for (const dir of allDirections) {
-        match.getUnit(addDirection(unit.data.position, dir))?.resupply();
+        match.getUnit(unit.data.position.addDirection(dir))?.resupply();
       }
 
       break;

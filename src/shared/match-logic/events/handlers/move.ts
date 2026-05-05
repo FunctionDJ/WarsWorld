@@ -2,7 +2,7 @@ import { arr } from "shared/arr";
 import { DispatchableError } from "shared/DispatchedError";
 import { unitPropertiesMap } from "shared/match-logic/game-constants/unit-properties";
 import type { MoveAction } from "shared/schemas/action";
-import { getFinalPositionSafe, isSamePosition } from "shared/schemas/position";
+import { PathWrapper } from "shared/schemas/position";
 import type { UnitWithVisibleStats } from "shared/schemas/unit";
 import type { MoveEventWithoutSubEvent, MoveEventWithSubEvent } from "shared/types/events";
 import type { MatchWrapper } from "shared/wrappers/match";
@@ -15,7 +15,7 @@ export const moveActionToEvent = (
   match: MatchWrapper,
   action: MoveAction,
 ): MoveEventWithoutSubEvent => {
-  const [unitPosition, ...path] = action.path;
+  const [unitPosition, ...path] = action.path.data;
 
   if (unitPosition === undefined) {
     throw new DispatchableError("Move action path must have at least one position");
@@ -36,13 +36,13 @@ export const moveActionToEvent = (
 
   const result: MoveEventWithoutSubEvent = {
     type: "move",
-    path: [],
+    path: new PathWrapper([]),
     trap: false,
   };
 
   //Unit is waiting in-place if it's path is only the starting tile
-  if (action.path.length === 1) {
-    result.path.push(arr(action.path, 0));
+  if (action.path.data.length === 1) {
+    result.path.data.push(arr(action.path.data, 0));
 
     return result;
   }
@@ -54,8 +54,8 @@ export const moveActionToEvent = (
     throw new DispatchableError("Not enough fuel for this move");
   }
 
-  for (let pathIndex = 0; pathIndex < action.path.length; ++pathIndex) {
-    const position = arr(action.path, pathIndex);
+  for (let pathIndex = 0; pathIndex < action.path.data.length; ++pathIndex) {
+    const position = arr(action.path.data, pathIndex);
 
     match.map.throwIfOutOfBounds(position);
 
@@ -70,7 +70,7 @@ export const moveActionToEvent = (
       throw new DispatchableError("Cannot move to a desired position");
     }
 
-    if (result.path.find((pos) => isSamePosition(pos, position))) {
+    if (result.path.data.find((pos) => pos.isSame(position))) {
       throw new DispatchableError("The given path passes through the same position twice");
     }
 
@@ -88,7 +88,7 @@ export const moveActionToEvent = (
     remainingMovePoints -= moveCost;
 
     if (
-      pathIndex === action.path.length - 1 &&
+      pathIndex === action.path.data.length - 1 &&
       unitInPosition?.data.playerSlot === unit.data.playerSlot
     ) {
       throwIfCantMoveIntoUnit(unit, unitInPosition);
@@ -103,7 +103,7 @@ export const moveActionToEvent = (
       }
     }
 
-    result.path.push(arr(action.path, pathIndex));
+    result.path.data.push(arr(action.path.data, pathIndex));
   }
 
   return result;
@@ -264,11 +264,11 @@ const getOneTileFuelCost = (match: MatchWrapper, unit: UnitWrapper): number => {
 
 export const applyMoveEvent = (match: MatchWrapper, event: MoveEventWithoutSubEvent) => {
   //check if unit is moving or just standing still
-  if (event.path.length <= 1) {
+  if (event.path.data.length <= 1) {
     return;
   }
 
-  const unit = match.getUnitOrThrow(arr(event.path, 0));
+  const unit = match.getUnitOrThrow(arr(event.path.data, 0));
 
   unit.data.isReady = false;
 
@@ -277,11 +277,11 @@ export const applyMoveEvent = (match: MatchWrapper, event: MoveEventWithoutSubEv
     unit.data.currentCapturePoints = undefined;
   }
 
-  unit.drainFuel((event.path.length - 1) * getOneTileFuelCost(match, unit));
-  const unitAtDestination = match.getUnit(getFinalPositionSafe(event.path));
+  unit.drainFuel((event.path.data.length - 1) * getOneTileFuelCost(match, unit));
+  const unitAtDestination = match.getUnit(event.path.get("last"));
 
   if (unitAtDestination === undefined) {
-    unit.data.position = getFinalPositionSafe(event.path);
+    unit.data.position = event.path.get("last");
   } else {
     if (unit.data.type === unitAtDestination.data.type) {
       //join (hp, fuel, ammo, (keep capture points))
@@ -312,16 +312,16 @@ export const applyMoveEvent = (match: MatchWrapper, event: MoveEventWithoutSubEv
  * Call this AFTER creating the sub event but BEFORE applying it
  */
 export const updateMoveVision = (match: MatchWrapper, event: MoveEventWithSubEvent) => {
-  if (event.path.length < 2) {
+  if (event.path.data.length < 2) {
     // if didn't move no vision change
     return;
   }
 
-  const movedUnit = match.getUnitOrThrow(getFinalPositionSafe(event.path));
+  const movedUnit = match.getUnitOrThrow(event.path.get("last"));
 
-  movedUnit.data.position = arr(event.path, 0); // temporarily revert position
+  movedUnit.data.position = arr(event.path.data, 0); // temporarily revert position
   movedUnit.player.team.vision?.removeUnitVision(movedUnit); // remove vision from previous position
-  movedUnit.data.position = getFinalPositionSafe(event.path); // revert the reversion (xd)
+  movedUnit.data.position = event.path.get("last"); // revert the reversion (xd)
   movedUnit.player.team.vision?.addUnitVision(movedUnit); // add vision from new position
 
   /*

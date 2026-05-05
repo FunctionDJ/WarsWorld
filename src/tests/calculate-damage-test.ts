@@ -1,5 +1,6 @@
 import type { WWMap } from "generated/browser";
 import { attackActionToEvent } from "shared/match-logic/events/handlers/attack/attackActionToEvent";
+import { PositionWrapper } from "shared/schemas/position";
 import type { PlayerInMatch } from "shared/types/server-match-state";
 import { MatchWrapper } from "shared/wrappers/match";
 import { UnitWrapper } from "shared/wrappers/unit";
@@ -118,7 +119,7 @@ const p2 = match.getPlayerBySlot(1)!;
 const u1 = p1.addUnwrappedUnit({
   type: "infantry",
   isReady: true,
-  position: [0, 0],
+  position: new PositionWrapper([0, 0]),
   stats: {
     fuel: 99,
     hp: 100,
@@ -128,7 +129,7 @@ const u1 = p1.addUnwrappedUnit({
 const u2 = p2.addUnwrappedUnit({
   type: "infantry",
   isReady: true,
-  position: [1, 0],
+  position: new PositionWrapper([1, 0]),
   stats: {
     fuel: 99,
     hp: 100,

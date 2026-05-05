@@ -5,12 +5,7 @@ import {
   getBaseDamage,
 } from "shared/match-logic/game-constants/base-damage";
 import type { Position } from "shared/schemas/position";
-import {
-  getDistance,
-  getNeighbourPositions,
-  isSamePosition,
-  positionsAreNeighbours,
-} from "shared/schemas/position";
+import { PositionWrapper } from "shared/schemas/position";
 import type { MapWrapper } from "shared/wrappers/map";
 import type { MatchWrapper } from "shared/wrappers/match";
 import { baseTileSize } from "../components/client-only/MatchRenderer";
@@ -57,7 +52,7 @@ export const getAccessibleNodes = (
 
   for (const unit of ownerUnitPlayer.team.getEnemyUnits()) {
     //enemy tiles are impassible
-    arr(visited, unit.data.position[0])[unit.data.position[1]] = true;
+    arr(visited, unit.data.position.data[0])[unit.data.position.data[1]] = true;
   }
 
   let currentDist = 0; //will check from closest to furthest, to find the shortest path
@@ -72,15 +67,19 @@ export const getAccessibleNodes = (
     const currNode = arr(queues, currentDist).pop();
     const currPos = currNode?.pos;
 
-    if (currNode === undefined || currPos === undefined || arr(visited, currPos[0])[currPos[1]]) {
+    if (
+      currNode === undefined ||
+      currPos === undefined ||
+      arr(visited, currPos.data[0])[currPos.data[1]]
+    ) {
       continue;
     }
 
     //update variables to mark as visited and add to result
-    arr(visited, currPos[0])[currPos[1]] = true;
+    arr(visited, currPos.data[0])[currPos.data[1]] = true;
     accessibleTiles.set(currPos, currNode);
 
-    for (const pos of getNeighbourPositions(currPos)) {
+    for (const pos of currPos.getNeighbours()) {
       if (match.map.isOutOfBounds(pos)) {
         continue;
       }
@@ -122,10 +121,11 @@ export const getAttackableTiles = (
 
     for (let x = 0; x < match.map.width; x++) {
       for (let y = 0; y < match.map.height; y++) {
-        const distance = getDistance([x, y], sourcePosition);
+        const pos = new PositionWrapper([x, y]);
+        const distance = pos.getDistance(sourcePosition);
 
         if (distance <= attackRange.maxRange && distance >= attackRange.minRange) {
-          attackPositions.push([x, y]);
+          attackPositions.push(pos);
         }
       }
     }
@@ -143,11 +143,11 @@ export const getAttackableTiles = (
         continue;
       }
 
-      for (const adjPos of getNeighbourPositions(pos)) {
+      for (const adjPos of pos.getNeighbours()) {
         if (!match.map.isOutOfBounds(adjPos)) {
-          if (!arr(visited, adjPos[0])[adjPos[1]]) {
+          if (!arr(visited, adjPos.data[0])[adjPos.data[1]]) {
             attackPositions.push(adjPos);
-            arr(visited, adjPos[0])[adjPos[1]] = true;
+            arr(visited, adjPos.data[0])[adjPos.data[1]] = true;
           }
         }
       }
@@ -214,7 +214,7 @@ export const updatePath = (
     const lastPosition = path.at(-1)!;
 
     for (const pos of path) {
-      if (isSamePosition(pos, newPos)) {
+      if (pos.isSame(newPos)) {
         //the "new" node is part of the current path, so delete all nodes after that one
         while (pos !== path.at(-1)) {
           path.pop();
@@ -225,7 +225,7 @@ export const updatePath = (
     }
 
     //check if new node is adjacent
-    if (positionsAreNeighbours(lastPosition, newPos)) {
+    if (lastPosition.isNeighbour(newPos)) {
       const moveCost = unit.getMovementCost(newPos);
       const distanceCovered = calculatePathDistance(unit, path);
 
@@ -242,7 +242,7 @@ export const updatePath = (
   let currentPathNode = undefined;
 
   for (const [key, value] of accessibleNodes) {
-    if (isSamePosition(key, newPos)) {
+    if (key.isSame(newPos)) {
       currentPathNode = value;
       break;
     }
@@ -269,10 +269,10 @@ export const updatePath = (
   return newPath.toReversed();
 };
 
-const getSpriteName = (a: Position, b: Position, c: Position): string => {
+const getSpriteName = (a: PositionWrapper, b: PositionWrapper, c: PositionWrapper): string => {
   //path from a to b to c, the sprite is the one displayed in b (middle node)
-  const difx = Math.abs(a[0] - c[0]);
-  const dify = Math.abs(a[1] - c[1]);
+  const difx = Math.abs(a.data[0] - c.data[0]);
+  const dify = Math.abs(a.data[1] - c.data[1]);
 
   if (dify + difx === 2) {
     //not start nor end
@@ -286,13 +286,13 @@ const getSpriteName = (a: Position, b: Position, c: Position): string => {
 
     let ans: string;
 
-    if (a[1] > b[1] || c[1] > b[1]) {
+    if (a.data[1] > b.data[1] || c.data[1] > b.data[1]) {
       ans = "s";
     } else {
       ans = "n";
     }
 
-    if (a[0] > b[0] || c[0] > b[0]) {
+    if (a.data[0] > b.data[0] || c.data[0] > b.data[0]) {
       ans += "e";
     } else {
       ans += "w";
@@ -301,37 +301,37 @@ const getSpriteName = (a: Position, b: Position, c: Position): string => {
     return ans;
   }
 
-  if (a[0] === b[0] && a[1] === b[1]) {
+  if (a.data[0] === b.data[0] && a.data[1] === b.data[1]) {
     //starting node
-    if (c[0] === b[0] && c[1] === b[1]) {
+    if (c.data[0] === b.data[0] && c.data[1] === b.data[1]) {
       //AND ending node
       return "od";
     }
 
-    if (c[0] < b[0]) {
+    if (c.data[0] < b.data[0]) {
       return "ow";
     }
 
-    if (c[0] > b[0]) {
+    if (c.data[0] > b.data[0]) {
       return "oe";
     }
 
-    if (c[1] > b[1]) {
+    if (c.data[1] > b.data[1]) {
       return "os";
     }
 
     return "on";
   } else {
     //ending node
-    if (a[0] < b[0]) {
+    if (a.data[0] < b.data[0]) {
       return "wd";
     }
 
-    if (a[0] > b[0]) {
+    if (a.data[0] > b.data[0]) {
       return "ed";
     }
 
-    if (a[1] < b[1]) {
+    if (a.data[1] < b.data[1]) {
       return "nd";
     }
 
@@ -363,8 +363,8 @@ export const showPath = (spriteSheet: LoadedSpriteSheet, path: Position[]) => {
 
     const nodeSprite = new Sprite(spriteSheet.arrow.textures[spriteName + ".png"]);
     nodeSprite.anchor.set(1, 1);
-    nodeSprite.x = (arr(path2, i)[0] + 1) * baseTileSize;
-    nodeSprite.y = (arr(path2, i)[1] + 1) * baseTileSize;
+    nodeSprite.x = (arr(path2, i).data[0] + 1) * baseTileSize;
+    nodeSprite.y = (arr(path2, i).data[1] + 1) * baseTileSize;
     arrowContainer.addChild(nodeSprite);
   }
 

@@ -1,7 +1,6 @@
 import { unitPropertiesMap } from "shared/match-logic/game-constants/unit-properties";
 import { clamp } from "shared/math-utils";
-import type { Position } from "shared/schemas/position";
-import { getNeighbourPositions, isSamePosition } from "shared/schemas/position";
+import { PositionWrapper } from "shared/schemas/position";
 import type { UnitType, WWUnit } from "shared/schemas/unit";
 import { getBaseMovementCost } from "../match-logic/movement-cost";
 import { getWeatherSpecialMovement } from "../match-logic/weather";
@@ -162,11 +161,12 @@ export class UnitWrapper<
   getTile() {
     return this.match.getTile(this.data.position);
   }
+
   getNeighbouringUnits() {
-    const neighbourPositions = getNeighbourPositions(this.data.position);
+    const neighbourPositions = this.data.position.getNeighbours();
 
     return this.match.units.filter((unit) =>
-      neighbourPositions.some((p) => isSamePosition(unit.data.position, p)),
+      neighbourPositions.some((p) => p.isSame(unit.data.position)),
     );
   }
 
@@ -186,7 +186,7 @@ export class UnitWrapper<
    * returns the amount of movement points which must be spent to *enter* the tile
    * `null` means impassible terrain.
    */
-  getMovementCost(position: Position): number | null {
+  getMovementCost(position: PositionWrapper): number | null {
     const baseMovementCost = getBaseMovementCost(
       unitPropertiesMap[this.data.type].movementType,
       getWeatherSpecialMovement(this.player),
@@ -210,10 +210,7 @@ export class UnitWrapper<
 
   remove() {
     this.player.team.vision?.removeUnitVision(this);
-
-    this.match.units = this.match.units.filter(
-      (u) => !isSamePosition(u.data.position, this.data.position),
-    );
+    this.match.units = this.match.units.filter((u) => !u.data.position.isSame(this.data.position));
   }
 
   // UNIT TYPE CHECKS **********************************************************

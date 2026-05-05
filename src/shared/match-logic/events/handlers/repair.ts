@@ -1,11 +1,10 @@
 import { DispatchableError } from "shared/DispatchedError";
-import type { RepairAction } from "shared/schemas/action";
-import { addDirection } from "shared/schemas/position";
-import type { MatchWrapper } from "shared/wrappers/match";
-import type { RepairEvent } from "shared/types/events";
-import type { Position } from "shared/schemas/position";
-import type { SubActionToEvent } from "../handler-types";
 import { getVisualHPfromHP } from "shared/match-logic/calculate-damage";
+import type { RepairAction } from "shared/schemas/action";
+import type { PositionWrapper } from "shared/schemas/position";
+import type { RepairEvent } from "shared/types/events";
+import type { MatchWrapper } from "shared/wrappers/match";
+import type { SubActionToEvent } from "../handler-types";
 
 export const repairActionToEvent: SubActionToEvent<RepairAction> = (
   match,
@@ -25,7 +24,7 @@ export const repairActionToEvent: SubActionToEvent<RepairAction> = (
     throw new DispatchableError("Trying to repair with a unit that is not a black boat");
   }
 
-  const repairPosition = addDirection(fromPosition, action.direction);
+  const repairPosition = fromPosition.addDirection(action.direction);
   match.map.throwIfOutOfBounds(repairPosition);
 
   const repairedUnit = match.getUnitOrThrow(repairPosition);
@@ -40,11 +39,11 @@ export const repairActionToEvent: SubActionToEvent<RepairAction> = (
 export const applyRepairEvent = (
   match: MatchWrapper,
   event: RepairEvent,
-  fromPosition: Position,
+  fromPosition: PositionWrapper,
 ) => {
   const player = match.getCurrentTurnPlayer();
 
-  const repairedUnit = match.getUnitOrThrow(addDirection(fromPosition, event.direction));
+  const repairedUnit = match.getUnitOrThrow(fromPosition.addDirection(event.direction));
 
   repairedUnit.resupply();
 

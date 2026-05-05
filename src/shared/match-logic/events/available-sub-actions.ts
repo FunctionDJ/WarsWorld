@@ -6,12 +6,7 @@ import { unitPropertiesMap } from "shared/match-logic/game-constants/unit-proper
 import { getBaseMovementCost } from "shared/match-logic/movement-cost";
 import { getWeatherSpecialMovement } from "shared/match-logic/weather";
 import type { SubAction } from "shared/schemas/action";
-import {
-  getDistance,
-  getNeighbourPositions,
-  isSamePosition,
-  type Position,
-} from "shared/schemas/position";
+import { PositionWrapper } from "shared/schemas/position";
 import type { MatchWrapper } from "shared/wrappers/match";
 import type { PlayerInMatchWrapper } from "shared/wrappers/player-in-match";
 import type { UnitWrapper } from "shared/wrappers/unit";
@@ -36,7 +31,7 @@ export const getAvailableSubActions = (
   match: MatchWrapper,
   player: PlayerInMatchWrapper,
   unit: UnitWrapper,
-  newPosition: Position,
+  newPosition: PositionWrapper,
   hasMoved: boolean,
 ) => {
   const menuOptions: Map<AvailableSubActions, SubAction | undefined> = new Map<
@@ -46,16 +41,16 @@ export const getAvailableSubActions = (
   const tile = match.getTile(newPosition);
 
   //This grabs the neighboring units in the new position, units.getNeighboringUnits() gets them in the old position
-  const neighbourPositions = getNeighbourPositions(newPosition);
+  const neighbourPositions = newPosition.getNeighbours();
 
   const neighbourUnitsInNewPosition = match.units.filter((unit) =>
-    neighbourPositions.some((p) => isSamePosition(unit.data.position, p)),
+    neighbourPositions.some((p) => unit.data.position.isSame(p)),
   );
 
   //check for wait / join / load (move validity
   // already checked somewhere else)
   //if loading / joining, there is only one menu option
-  if (match.getUnit(newPosition) === undefined || isSamePosition(newPosition, unit.data.position)) {
+  if (match.getUnit(newPosition) === undefined || newPosition.isSame(unit.data.position)) {
     menuOptions.set(AvailableSubActions.Wait, { type: "wait" });
   } else if (match.getUnit(newPosition)?.data.type === unit.data.type) {
     menuOptions.set(AvailableSubActions.Join, { type: "wait" });
@@ -75,7 +70,8 @@ export const getAvailableSubActions = (
     if (unit.isIndirect() && !hasMoved) {
       for (let x = 0; x < match.map.width && !addAttackSubaction; x++) {
         for (let y = 0; y < match.map.height && !addAttackSubaction; y++) {
-          const distance = getDistance([x, y], unit.data.position);
+          const pos = new PositionWrapper([x, y]);
+          const distance = unit.data.position.getDistance(pos);
 
           if (
             distance <= unit.properties.attackRange[1] &&
@@ -83,13 +79,13 @@ export const getAvailableSubActions = (
           ) {
             if (
               canAttackPipeseams &&
-              !match.map.isOutOfBounds([x, y]) &&
-              match.getTile([x, y]).type === "pipeSeam"
+              !match.map.isOutOfBounds(pos) &&
+              match.getTile(pos).type === "pipeSeam"
             ) {
               addAttackSubaction = true;
             }
 
-            const attackableUnit = match.getUnit([x, y]);
+            const attackableUnit = match.getUnit(pos);
 
             if (
               attackableUnit &&
@@ -103,7 +99,7 @@ export const getAvailableSubActions = (
       }
     } else {
       if (canAttackPipeseams) {
-        for (const adjacentPos of getNeighbourPositions(newPosition)) {
+        for (const adjacentPos of newPosition.getNeighbours()) {
           if (addAttackSubaction) {
             break;
           }
@@ -186,7 +182,7 @@ export const getAvailableSubActions = (
       );
 
       if (baseMovementCost !== null) {
-        for (const adjacentPosition of getNeighbourPositions(newPosition)) {
+        for (const adjacentPosition of newPosition.getNeighbours()) {
           if (!match.map.isOutOfBounds(adjacentPosition)) {
             const adjacentBaseMovementCost = getBaseMovementCost(
               unitPropertiesMap[unit.data.loadedUnit.type].movementType,
@@ -214,7 +210,7 @@ export const getAvailableSubActions = (
       );
 
       if (baseMovementCost !== null) {
-        for (const adjacentPosition of getNeighbourPositions(newPosition)) {
+        for (const adjacentPosition of newPosition.getNeighbours()) {
           if (!match.map.isOutOfBounds(adjacentPosition)) {
             const adjacentBaseMovementCost = getBaseMovementCost(
               unitPropertiesMap[unit.data.loadedUnit2.type].movementType,

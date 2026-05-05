@@ -1,5 +1,4 @@
 import { arr } from "shared/arr";
-import { getDistance } from "shared/schemas/position";
 import type { COProperties } from "../../../co";
 import { getMissilePositions } from "../rachel/get-missile-positions";
 
@@ -30,7 +29,7 @@ export const vonBoltAWDS: COProperties = {
         }
 
         for (const unit of player.team.getEnemyUnits()) {
-          if (getDistance(unit.data.position, arr(positions, 0)) <= 2) {
+          if (unit.data.position.getDistance(arr(positions, 0)) <= 2) {
             unit.data.isReady = false;
             unit.damageUntil1HP(3);
           }

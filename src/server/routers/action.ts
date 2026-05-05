@@ -10,13 +10,13 @@ import {
   applySubEventToMatch,
 } from "shared/match-logic/events/apply-event-to-match";
 import { mainActionSchema } from "shared/schemas/action";
-import { getFinalPositionSafe } from "shared/schemas/position";
 import type {
   EmittableEvent,
   MainEventsWithoutSubEvents,
   MainEventWithSubEvents,
   SubEvent,
 } from "shared/types/events";
+import type { MatchWrapper } from "shared/wrappers/match";
 import { mainEventToEmittables } from "../../shared/match-logic/events/event-to-emittable";
 import { updateMoveVision } from "../../shared/match-logic/events/handlers/move";
 import { fillDiscoveredUnitsAndProperties } from "../../shared/match-logic/events/vision-update";
@@ -34,6 +34,27 @@ const attachSubEvent = (
   }
 
   return mainEventWithoutSubEvent;
+};
+
+const getIsJoinOrLoad = (
+  mainEventWithoutSubEvent: MainEventsWithoutSubEvents,
+  match: MatchWrapper,
+) => {
+  if (mainEventWithoutSubEvent.type !== "move") {
+    return false;
+  }
+
+  const { path } = mainEventWithoutSubEvent;
+
+  if (match.getUnit(path.get("last")) === undefined) {
+    return false;
+  }
+
+  if (path.get("last").isSame(path.get(0))) {
+    return false;
+  }
+
+  return true;
 };
 
 export const actionRouter = router({
@@ -66,10 +87,8 @@ export const actionRouter = router({
       const mainEventWithoutSubEvent = validateMainActionAndToEvent(match, input);
 
       // if there was a trap or join/load, the default subEvent is "wait" (check must be done before moving the unit)
-      const isJoinOrLoad =
-        mainEventWithoutSubEvent.type === "move" &&
-        match.getUnit(getFinalPositionSafe(mainEventWithoutSubEvent.path)) !== undefined &&
-        getFinalPositionSafe(mainEventWithoutSubEvent.path) !== mainEventWithoutSubEvent.path[0];
+
+      const isJoinOrLoad = getIsJoinOrLoad(mainEventWithoutSubEvent, match);
 
       /* 2. Apply move event to match */
       applyMainEventToMatch(match, mainEventWithoutSubEvent);

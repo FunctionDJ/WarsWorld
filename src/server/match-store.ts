@@ -1,6 +1,7 @@
 import type { Match, WWMap } from "generated/client";
 import { prisma } from "server/prisma/prisma-client";
 import { arr } from "shared/arr";
+import { PositionWrapper } from "shared/schemas/position";
 import { MatchWrapper } from "shared/wrappers/match";
 import { UnitWrapper } from "shared/wrappers/unit";
 import {
@@ -18,24 +19,25 @@ const getChangeableTilesFromMap = (map: WWMap): ChangeableTile[] => {
   for (let y = 0; y < map.tiles.length; y++) {
     for (let x = 0; x < arr(map.tiles, y).length; x++) {
       const tile = arr(arr(map.tiles, y), x);
+      const position = new PositionWrapper([x, y]);
 
       if (willBeChangeableTile(tile)) {
         if (tile.type === "unusedSilo") {
           changeableTiles.push({
             type: tile.type,
-            position: [x, y],
+            position,
             fired: false,
           });
         } else if (tile.type === "pipeSeam") {
           changeableTiles.push({
             type: tile.type,
-            position: [x, y],
+            position,
             hp: 99,
           });
         } else {
           changeableTiles.push({
             type: tile.type,
-            position: [x, y],
+            position,
             playerSlot: tile.playerSlot,
           });
         }

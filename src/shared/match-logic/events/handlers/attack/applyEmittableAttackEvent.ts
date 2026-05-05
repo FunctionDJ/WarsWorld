@@ -1,9 +1,13 @@
-import type { Position } from "shared/schemas/position";
+import type { PositionWrapper } from "shared/schemas/position";
 import type { EmittableAttackEvent } from "shared/types/events";
 import type { MatchWrapper } from "shared/wrappers/match";
 import { applyPlayerUpdate } from "../apply-player-update";
 
-const updateHPorDestroy = (match: MatchWrapper, hp: number | undefined, position?: Position) => {
+const updateHPorDestroy = (
+  match: MatchWrapper,
+  hp: number | undefined,
+  position?: PositionWrapper,
+) => {
   if (position !== undefined) {
     const defender = match.getUnitOrThrow(position);
 

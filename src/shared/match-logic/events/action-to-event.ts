@@ -1,6 +1,5 @@
 import { DispatchableError } from "shared/DispatchedError";
 import type { MainAction, MoveAction } from "shared/schemas/action";
-import { getFinalPositionSafe } from "shared/schemas/position";
 import type { MainEventsWithoutSubEvents, SubEvent } from "shared/types/events";
 import type { MatchWrapper } from "shared/wrappers/match";
 import { abilityActionToEvent } from "./handlers/ability";
@@ -42,7 +41,7 @@ export const validateSubActionAndToEvent = (
   match: MatchWrapper,
   { subAction, path }: MoveAction,
 ): SubEvent => {
-  const unitPosition = getFinalPositionSafe(path);
+  const unitPosition = path.get("last");
 
   switch (subAction.type) {
     case "attack":
@@ -50,7 +49,7 @@ export const validateSubActionAndToEvent = (
         match,
         subAction,
         unitPosition,
-        path.length > 1,
+        path.data.length > 1,
         { goodLuck: Math.random(), badLuck: Math.random() },
         { goodLuck: Math.random(), badLuck: Math.random() },
       );

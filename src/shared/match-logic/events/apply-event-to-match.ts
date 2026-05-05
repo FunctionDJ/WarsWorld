@@ -1,5 +1,4 @@
 import { DispatchableError } from "shared/DispatchedError";
-import { getFinalPositionSafe } from "shared/schemas/position";
 import type { MatchWrapper } from "shared/wrappers/match";
 import type { MainEventsWithoutSubEvents, MoveEventWithSubEvent } from "../../types/events";
 import { applyAbilityEvent } from "./handlers/ability";
@@ -58,7 +57,7 @@ export const applySubEventToMatch = (
   match: MatchWrapper,
   { subEvent, path }: MoveEventWithSubEvent,
 ) => {
-  const fromPosition = getFinalPositionSafe(path);
+  const fromPosition = path.get("last");
 
   switch (subEvent.type) {
     case "wait": {

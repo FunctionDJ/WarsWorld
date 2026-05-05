@@ -5,7 +5,6 @@ import type { RefObject } from "react";
 import { throwIfCantMoveIntoUnit } from "shared/match-logic/events/handlers/move";
 import type { MainAction } from "shared/schemas/action";
 import type { Position } from "shared/schemas/position";
-import { isSamePosition } from "shared/schemas/position";
 import type { MatchWrapper } from "shared/wrappers/match";
 import { isUnitProducingProperty } from "../shared/schemas/tile";
 import type { PlayerInMatchWrapper } from "../shared/wrappers/player-in-match";
@@ -79,7 +78,7 @@ export const handleClick = async (
 
     for (const [pos] of moveTilesRef.current) {
       //we found the path / user clicked on a legal path
-      if (isSamePosition(clickPosition, pos)) {
+      if (clickPosition.isSame(pos)) {
         const unitInTile = match.getUnit(clickPosition);
 
         let canUnitMoveIntoOther = false;
@@ -93,7 +92,7 @@ export const handleClick = async (
 
         const canMoveToTile =
           unitInTile === undefined || //empty tile
-          isSamePosition(currentUnit.data.position, pos) || //same position
+          currentUnit.data.position.isSame(pos) || //same position
           (unitInTile.player.data.slot === currentUnit.player.data.slot && canUnitMoveIntoOther); //join or load
 
         if (canMoveToTile) {
@@ -209,7 +208,7 @@ export const handleClick = async (
       if (
         match.getUnit(currentUnitClickedRef.current.data.position) &&
         !unitContainer.getChildByName(
-          `unit-${String(currentUnitClickedRef.current.data.position[0])}-${String(currentUnitClickedRef.current.data.position[1])}`,
+          `unit-${String(currentUnitClickedRef.current.data.position.data[0])}-${String(currentUnitClickedRef.current.data.position.data[1])}`,
         )
       ) {
         unitContainer.addChild(renderUnitSprite(currentUnitClickedRef.current, spriteSheets));
@@ -245,7 +244,7 @@ export const handleHover = async (
 
   if (moveTiles !== null) {
     for (const [key] of moveTiles) {
-      if (isSamePosition(hoverPosition, key)) {
+      if (hoverPosition.isSame(key)) {
         hoveredMoveTile = true;
       }
     }

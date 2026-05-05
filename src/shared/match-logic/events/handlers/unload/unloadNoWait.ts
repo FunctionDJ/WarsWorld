@@ -1,6 +1,5 @@
 import { DispatchableError } from "shared/DispatchedError";
 import type { UnloadNoWaitAction } from "shared/schemas/action";
-import { addDirection } from "shared/schemas/position";
 import type { UnloadNoWaitEvent } from "shared/types/events";
 import type { MatchWrapper } from "shared/wrappers/match";
 import type { MainActionToEvent } from "../../handler-types";
@@ -27,7 +26,7 @@ export const unloadNoWaitActionToEvent: MainActionToEvent<UnloadNoWaitAction> = 
     throw new DispatchableError("Transport doesn't currently have a loaded unit");
   }
 
-  const unloadPosition = addDirection(action.transportPosition, action.unloads.direction);
+  const unloadPosition = action.transportPosition.addDirection(action.unloads.direction);
 
   match.map.throwIfOutOfBounds(unloadPosition);
 
@@ -77,7 +76,7 @@ export const applyUnloadNoWaitEvent = (match: MatchWrapper, event: UnloadNoWaitE
     unit.player.addUnwrappedUnit({
       ...unit.data.loadedUnit2,
       isReady: false,
-      position: addDirection(event.transportPosition, event.unloads.direction),
+      position: event.transportPosition.addDirection(event.unloads.direction),
     });
 
     unit.data.loadedUnit2 = null;
@@ -89,7 +88,7 @@ export const applyUnloadNoWaitEvent = (match: MatchWrapper, event: UnloadNoWaitE
     unit.player.addUnwrappedUnit({
       ...unit.data.loadedUnit,
       isReady: false,
-      position: addDirection(event.transportPosition, event.unloads.direction),
+      position: event.transportPosition.addDirection(event.unloads.direction),
     });
 
     if ("loadedUnit2" in unit.data) {

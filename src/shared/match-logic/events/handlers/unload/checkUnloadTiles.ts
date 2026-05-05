@@ -2,8 +2,7 @@ import { DispatchableError } from "shared/DispatchedError";
 import { unitPropertiesMap } from "shared/match-logic/game-constants/unit-properties";
 import { getBaseMovementCost } from "shared/match-logic/movement-cost";
 import { getWeatherSpecialMovement } from "shared/match-logic/weather";
-import type { Position } from "shared/schemas/position";
-import { getNeighbourPositions } from "shared/schemas/position";
+import type { PositionWrapper } from "shared/schemas/position";
 import type { Tile } from "shared/schemas/tile";
 import type { UnitType } from "shared/schemas/unit";
 import type { ChangeableTile } from "shared/types/server-match-state";
@@ -37,7 +36,7 @@ export const throwIfUnitCantBeUnloadedToTile = (
 export const getUnloadablePositions = (
   transportUnit: UnitWrapper,
   unitToUnload: { type: UnitType },
-  newTransportUnitLocation?: Position,
+  newTransportUnitLocation?: PositionWrapper,
 ) => {
   const transportPos = newTransportUnitLocation ?? transportUnit.data.position;
 
@@ -52,9 +51,9 @@ export const getUnloadablePositions = (
     return [];
   }
 
-  const unloadablePositions: Position[] = [];
+  const unloadablePositions: PositionWrapper[] = [];
 
-  for (const adjPos of getNeighbourPositions(transportPos)) {
+  for (const adjPos of transportPos.getNeighbours()) {
     if (transportUnit.match.map.isOutOfBounds(adjPos)) {
       continue;
     }

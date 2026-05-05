@@ -1,5 +1,5 @@
 import type { MainAction, SubAction } from "shared/schemas/action";
-import type { Position } from "shared/schemas/position";
+import type { PositionWrapper } from "shared/schemas/position";
 import type { MainEventWithSubEvents, SubEvent } from "shared/types/events";
 import type { MatchWrapper } from "shared/wrappers/match";
 
@@ -11,7 +11,7 @@ export type MainActionToEvent<T extends MainAction> = (
 export type SubActionToEvent<T extends SubAction> = (
   match: MatchWrapper,
   action: T,
-  fromPosition: Position,
+  fromPosition: PositionWrapper,
 ) => Extract<SubEvent, { type: T["type"] }>;
 
 export type ApplyEvent<Event extends MainEventWithSubEvents | SubEvent> = (
@@ -22,5 +22,5 @@ export type ApplyEvent<Event extends MainEventWithSubEvents | SubEvent> = (
 export type ApplySubEvent<Event extends SubEvent> = (
   match: MatchWrapper,
   subEvent: Event,
-  fromPosition: Position,
+  fromPosition: PositionWrapper,
 ) => void;

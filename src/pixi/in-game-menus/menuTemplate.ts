@@ -1,11 +1,11 @@
 import { Container, Sprite, Texture } from "pixi.js";
-import type { Position } from "shared/schemas/position";
+import type { PositionWrapper } from "shared/schemas/position";
 import { baseTileSize } from "../../components/client-only/MatchRenderer";
 import type { MatchWrapper } from "../../shared/wrappers/match";
 
 export const createInGameMenu = (
   match: MatchWrapper,
-  [x, y]: Position,
+  position: PositionWrapper,
   menuHeight: number, //must match given Y values for elements
   widthInTiles: number,
   menuElements: Container[],
@@ -16,6 +16,9 @@ export const createInGameMenu = (
   menuContainer.eventMode = "static";
   menuContainer.sortableChildren = true;
   menuContainer.zIndex = 999;
+
+  const x = position.data[0];
+  const y = position.data[1];
 
   // if we are over half the map. invert menu placement
   if (x > match.map.width / 2) {

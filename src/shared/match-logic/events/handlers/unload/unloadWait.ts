@@ -1,8 +1,7 @@
 import { arr } from "shared/arr";
 import { DispatchableError } from "shared/DispatchedError";
 import type { UnloadWaitAction } from "shared/schemas/action";
-import type { Position } from "shared/schemas/position";
-import { addDirection } from "shared/schemas/position";
+import { PositionWrapper } from "shared/schemas/position";
 import type { UnloadWaitEvent } from "shared/types/events";
 import type { MatchWrapper } from "shared/wrappers/match";
 import type { SubActionToEvent } from "../../handler-types";
@@ -37,7 +36,7 @@ export const unloadWaitActionToEvent: SubActionToEvent<UnloadWaitAction> = (
     throw new DispatchableError("Transport doesn't currently have a loaded unit");
   }
 
-  const unloadPosition = addDirection(fromPosition, arr(action.unloads, 0).direction);
+  const unloadPosition = fromPosition.addDirection(arr(action.unloads, 0).direction);
 
   match.map.throwIfOutOfBounds(unloadPosition);
 
@@ -98,7 +97,7 @@ export const unloadWaitActionToEvent: SubActionToEvent<UnloadWaitAction> = (
       action.unloads[1] = temp;
     }
 
-    const unloadPosition2 = addDirection(fromPosition, arr(action.unloads, 1).direction);
+    const unloadPosition2 = fromPosition.addDirection(arr(action.unloads, 1).direction);
 
     match.map.throwIfOutOfBounds(unloadPosition2);
 
@@ -122,7 +121,7 @@ export const unloadWaitActionToEvent: SubActionToEvent<UnloadWaitAction> = (
 export const applyUnloadWaitEvent = (
   match: MatchWrapper,
   event: UnloadWaitEvent,
-  transportPosition: Position,
+  transportPosition: PositionWrapper,
 ) => {
   const unit = match.getUnitOrThrow(transportPosition);
 
@@ -135,7 +134,7 @@ export const applyUnloadWaitEvent = (
       unit.player.addUnwrappedUnit({
         ...unit.data.loadedUnit2,
         isReady: false,
-        position: addDirection(transportPosition, arr(event.unloads, 1).direction),
+        position: transportPosition.addDirection(arr(event.unloads, 1).direction),
       });
 
       unit.data.loadedUnit2 = null;
@@ -147,7 +146,7 @@ export const applyUnloadWaitEvent = (
       unit.player.addUnwrappedUnit({
         ...unit.data.loadedUnit,
         isReady: false,
-        position: addDirection(transportPosition, arr(event.unloads, 0).direction),
+        position: transportPosition.addDirection(arr(event.unloads, 0).direction),
       });
 
       if ("loadedUnit2" in unit.data) {
@@ -169,13 +168,13 @@ export const applyUnloadWaitEvent = (
       unit.player.addUnwrappedUnit({
         ...unit.data.loadedUnit,
         isReady: false,
-        position: addDirection(transportPosition, arr(event.unloads, 0).direction),
+        position: transportPosition.addDirection(arr(event.unloads, 0).direction),
       });
 
       unit.player.addUnwrappedUnit({
         ...unit.data.loadedUnit2,
         isReady: false,
-        position: addDirection(transportPosition, arr(event.unloads, 1).direction),
+        position: transportPosition.addDirection(arr(event.unloads, 1).direction),
       });
 
       unit.data.loadedUnit = null;

@@ -7,19 +7,19 @@ import { z } from "zod";
 
 // === POSITION ===
 
-export const positionSchema = z.tuple([
-  z.number().int().nonnegative(),
-  z.number().int().nonnegative(),
-]);
+export const positionSchema = z
+  .tuple([z.number().int().nonnegative(), z.number().int().nonnegative()])
+  .transform((pos) => new PositionWrapper(pos));
 
+/** @deprecated */
 export type Position = z.infer<typeof positionSchema>;
 
 export class PathWrapper {
-  constructor(private path: Path) {}
+  constructor(public data: PositionWrapper[]) {}
 
-  get(arg: number | "last"): Position {
+  get(arg: number | "last"): PositionWrapper {
     const index = arg === "last" ? -1 : arg;
-    const pos = this.path.at(index);
+    const pos = this.data.at(index);
 
     if (pos === undefined) {
       throw new Error(`Could not get position at index ${String(index)} of path`);
@@ -29,62 +29,70 @@ export class PathWrapper {
   }
 }
 
-/** throws if no final position */
-export const getFinalPositionSafe = (path: Path) => {
-  const finalPosition = path.at(-1);
-
-  if (finalPosition === undefined) {
-    throw new Error("Could not get final position of empty path");
-  }
-
-  return finalPosition;
-};
-
 export class PositionWrapper {
-  constructor(public readonly data: Position) {}
+  constructor(public readonly data: [number, number]) {}
 
-  isSame(other: Position) {
-    return isSamePosition(this.data, other);
+  isSame(other: PositionWrapper) {
+    return this.data[0] === other.data[0] && this.data[1] === other.data[1];
   }
 
-  isNeighbour(other: Position) {
-    return positionsAreNeighbours(this.data, other);
+  isNeighbour(other: PositionWrapper) {
+    const xDiff = Math.abs(this.data[0] - other.data[0]);
+    const yDiff = Math.abs(this.data[1] - other.data[1]);
+
+    return xDiff + yDiff === 1;
   }
 
   getNeighbours() {
-    return getNeighbourPositions(this.data);
+    return [
+      new PositionWrapper([this.data[0] + 1, this.data[1]]),
+      new PositionWrapper([this.data[0] - 1, this.data[1]]),
+      new PositionWrapper([this.data[0], this.data[1] + 1]),
+      new PositionWrapper([this.data[0], this.data[1] - 1]),
+    ];
   }
 
-  getDistance(other: Position) {
-    return getDistance(this.data, other);
+  getDistance(other: PositionWrapper) {
+    return Math.abs(this.data[0] - other.data[0]) + Math.abs(this.data[1] - other.data[1]);
+  }
+
+  addDirection(direction: Direction) {
+    switch (direction) {
+      case "up":
+        return new PositionWrapper([this.data[0], this.data[1] - 1]);
+      case "down":
+        return new PositionWrapper([this.data[0], this.data[1] + 1]);
+      case "left":
+        return new PositionWrapper([this.data[0] - 1, this.data[1]]);
+      case "right":
+        return new PositionWrapper([this.data[0] + 1, this.data[1]]);
+    }
+  }
+
+  /** untested!! */
+  getDirectionTo(other: PositionWrapper): Direction {
+    const xDiff = other.data[0] - this.data[0];
+    const yDiff = other.data[1] - this.data[1];
+
+    if (Math.abs(xDiff) > Math.abs(yDiff)) {
+      return xDiff > 0 ? "right" : "left";
+    }
+
+    return yDiff > 0 ? "down" : "up";
+  }
+
+  offset({ x, y }: { x: number; y: number }) {
+    return new PositionWrapper([this.data[0] + x, this.data[1] + y]);
   }
 }
 
-export const isSamePosition = (positionA: Position, positionB: Position) =>
-  positionA[0] === positionB[0] && positionA[1] === positionB[1];
-
-export const positionsAreNeighbours = (positionA: Position, positionB: Position) => {
-  const xDiff = Math.abs(positionA[0] - positionB[0]);
-  const yDiff = Math.abs(positionA[1] - positionB[1]);
-
-  return xDiff + yDiff <= 1;
-};
-
-export const getNeighbourPositions = (p: Position): Position[] => [
-  [p[0] + 1, p[1]],
-  [p[0] - 1, p[1]],
-  [p[0], p[1] + 1],
-  [p[0], p[1] - 1],
-];
-
-export const getDistance = (positionA: Position, positionB: Position): number => {
-  return Math.abs(positionA[0] - positionB[0]) + Math.abs(positionA[1] - positionB[1]);
-};
-
 // === PATH ===
 
-export const pathSchema = z.array(positionSchema);
+export const pathSchema = z
+  .array(positionSchema)
+  .transform((positions) => new PathWrapper(positions));
 
+/** @deprecated */
 export type Path = z.infer<typeof pathSchema>;
 
 // === DIRECTION ===
@@ -93,37 +101,4 @@ export const directionSchema = z.enum(["up", "down", "left", "right"]);
 
 type Direction = z.infer<typeof directionSchema>;
 
-export const allDirections: Direction[] = ["up", "down", "left", "right"];
-
-export const addDirection = (position: Position, direction: Direction): Position => {
-  switch (direction) {
-    case "up":
-      return [position[0], position[1] - 1];
-    case "down":
-      return [position[0], position[1] + 1];
-    case "left":
-      return [position[0] - 1, position[1]];
-    case "right":
-      return [position[0] + 1, position[1]];
-  }
-};
-
-//untested!!
-export const getDirection = (fromPosition: Position, toPosition: Position): Direction => {
-  const dx = toPosition[0] - fromPosition[0];
-  const dy = toPosition[1] - fromPosition[1];
-
-  if (Math.abs(dx) > Math.abs(dy)) {
-    if (dx > 0) {
-      return "right";
-    }
-
-    return "left";
-  }
-
-  if (dy > 0) {
-    return "down";
-  }
-
-  return "up";
-};
+export const allDirections = directionSchema.options;

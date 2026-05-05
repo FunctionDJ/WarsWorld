@@ -1,5 +1,5 @@
 import { unitPropertiesMap } from "shared/match-logic/game-constants/unit-properties";
-import type { Position } from "shared/schemas/position";
+import { PositionWrapper } from "shared/schemas/position";
 import type { TeamWrapper } from "./team";
 import type { UnitWrapper } from "./unit";
 
@@ -24,31 +24,31 @@ const getUnitVisionRange = (unit: UnitWrapper) => {
 export class Vision {
   private visionArray: Uint16Array; // i put 16 cause 2^8 = 256 and we *could* go over 256, in theory
   private mapWidth: number;
-  private ownedProperties: Set<Position>;
+  private ownedProperties: Set<PositionWrapper>;
 
   // used for temporary information storage. does not guarantee that a position is not in both at the same time
   // (but making discovered have priority over undiscovered works for all current events)
-  private discoveredPositions: Position[] = [];
-  private undiscoveredPositions: Position[] = [];
+  private discoveredPositions: PositionWrapper[] = [];
+  private undiscoveredPositions: PositionWrapper[] = [];
 
   constructor(team: TeamWrapper) {
     const { map } = team.match;
     this.mapWidth = map.width;
     const visionArraySize = this.mapWidth * map.height;
     this.visionArray = new Uint16Array(visionArraySize);
-    this.ownedProperties = new Set<Position>();
+    this.ownedProperties = new Set<PositionWrapper>();
 
     // add property and pipeSeam vision
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < this.mapWidth; x++) {
-        const tile = team.match.getTile([x, y]);
+        const tile = team.match.getTile(new PositionWrapper([x, y]));
 
         if (
           ("playerSlot" in tile &&
             team.match.getPlayerBySlot(tile.playerSlot)?.team.index === team.index) ||
           tile.type === "pipeSeam"
         ) {
-          this.addOwnedProperty([x, y]);
+          this.addOwnedProperty(new PositionWrapper([x, y]));
         }
       }
     }
@@ -59,8 +59,8 @@ export class Vision {
     }
   }
 
-  private changeVision(position: Position, addVision: boolean) {
-    const index = position[1] * this.mapWidth + position[0];
+  private changeVision(position: PositionWrapper, addVision: boolean) {
+    const index = position.data[1] * this.mapWidth + position.data[0];
     const currentVision = this.visionArray[index];
 
     if (currentVision === undefined) {
@@ -85,7 +85,7 @@ export class Vision {
   /**
    * Used when a non-owned property gets captured.
    */
-  addOwnedProperty(position: Position) {
+  addOwnedProperty(position: PositionWrapper) {
     this.ownedProperties.add(position);
     // you will always have vision of a property you just captured cause a unit has to be on top
     this.changeVision(position, false);
@@ -94,7 +94,7 @@ export class Vision {
   /**
    * Used when an owned property gets captured.
    */
-  removeOwnedProperty(position: Position) {
+  removeOwnedProperty(position: PositionWrapper) {
     this.ownedProperties.delete(position);
     this.changeVision(position, false);
   }
@@ -107,7 +107,7 @@ export class Vision {
 
     for (let i = -visionRange; i <= visionRange; ++i) {
       for (let j = -(visionRange - Math.abs(i)); j <= visionRange - Math.abs(i); ++j) {
-        const pos: Position = [unit.data.position[0] + i, unit.data.position[1] + j];
+        const pos = unit.data.position.offset({ x: i, y: j });
 
         if (matchMap.isOutOfBounds(pos)) {
           continue;
@@ -162,7 +162,7 @@ export class Vision {
    * Returns new discovered positions until now, and resets the array.
    * Does NOT work when recalculateVision() is called!
    */
-  getDiscoveredPositionsAndClear(): Position[] {
+  getDiscoveredPositionsAndClear(): PositionWrapper[] {
     const discoveredPositions = [...this.discoveredPositions];
     this.discoveredPositions = [];
     return discoveredPositions;
@@ -172,7 +172,7 @@ export class Vision {
    * Returns new undiscovered positions until now, and resets the array.
    * Does NOT work when recalculateVision() is called!
    */
-  getUndiscoveredPositionsAndClear(): Position[] {
+  getUndiscoveredPositionsAndClear(): PositionWrapper[] {
     const undiscoveredPositions = [...this.undiscoveredPositions];
     this.undiscoveredPositions = [];
     return undiscoveredPositions;
@@ -181,8 +181,9 @@ export class Vision {
   /**
    * Returns is a position is visible, !supposing fog of war is activated!
    */
-  isPositionVisible(position: Position): boolean {
-    const result: number | undefined = this.visionArray[position[1] * this.mapWidth + position[0]];
+  isPositionVisible(position: PositionWrapper): boolean {
+    const result: number | undefined =
+      this.visionArray[position.data[1] * this.mapWidth + position.data[0]];
 
     if (result === undefined) {
       throw new Error("Position for visible check is out of bounds");

@@ -3,7 +3,7 @@ import type { Spritesheet } from "pixi.js";
 import { AnimatedSprite, BitmapText, Container, Sprite, Texture } from "pixi.js";
 import { unitPropertiesMap } from "shared/match-logic/game-constants/unit-properties";
 import type { MainAction } from "shared/schemas/action";
-import type { Position } from "shared/schemas/position";
+import type { PositionWrapper } from "shared/schemas/position";
 import { unitTypes, type UnitType } from "shared/schemas/unit";
 import { baseTileSize } from "../../components/client-only/MatchRenderer";
 import type { MatchWrapper } from "../../shared/wrappers/match";
@@ -124,12 +124,11 @@ export const buildUnitMenu = (
   spriteSheet: Spritesheet<ArmySpritesheetData>,
   match: MatchWrapper,
   player: PlayerInMatchWrapper,
-  [x, y]: Position,
+  position: PositionWrapper,
   sendAction: (action: MainAction) => Promise<void>,
 ) => {
   const allowedUnits = unitTypes.filter((t) => !match.rules.bannedUnitTypes.includes(t));
-
-  const facility = match.getTile([x, y]).type;
+  const facility = match.getTile(position).type;
 
   // Filter allowed units based on facility type and then sort by cost
   const buildableUnitTypes = allowedUnits
@@ -164,7 +163,7 @@ export const buildUnitMenu = (
     menuElement.on("pointerdown", () => {
       void sendAction({
         type: "build",
-        position: [x, y],
+        position,
         unitType,
       });
 
@@ -173,7 +172,7 @@ export const buildUnitMenu = (
     });
   }
 
-  const buildMenu = createInGameMenu(match, [x, y], yValue, 6, menuElements);
+  const buildMenu = createInGameMenu(match, position, yValue, 6, menuElements);
   buildMenu.label = "buildMenu";
   return buildMenu;
 };

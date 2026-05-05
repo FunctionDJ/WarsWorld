@@ -3,7 +3,7 @@ import { Container } from "pixi.js";
 import type { RefObject } from "react";
 import { arr } from "shared/arr";
 import { getUnloadablePositions } from "shared/match-logic/events/handlers/unload/checkUnloadTiles";
-import { getDirection, isSamePosition, type Position } from "shared/schemas/position";
+import { PathWrapper, type Position } from "shared/schemas/position";
 import type { UnitWrapper } from "shared/wrappers/unit";
 import type { MainAction } from "../../shared/schemas/action";
 import type { MatchWrapper } from "../../shared/wrappers/match";
@@ -44,7 +44,7 @@ export const createUnloadMenu = (
 
     if (firstUnloadInfo !== undefined) {
       unloadPositions1.filter((pos) => {
-        return !isSamePosition(pos, firstUnloadInfo.unloadedPosition);
+        return !pos.isSame(firstUnloadInfo.unloadedPosition);
       });
     }
 
@@ -65,7 +65,7 @@ export const createUnloadMenu = (
 
     if (firstUnloadInfo !== undefined) {
       unloadPositions2.filter((pos) => {
-        return !isSamePosition(pos, firstUnloadInfo.unloadedPosition);
+        return !pos.isSame(firstUnloadInfo.unloadedPosition);
       });
     }
 
@@ -93,13 +93,13 @@ export const createUnloadMenu = (
         const path = pathRef.current ?? [currentUnitClickedRef.current.data.position];
 
         const unloads = [
-          { isSecondUnit: !isFirstUnit, direction: getDirection(newPosition, unloadPos) },
+          { isSecondUnit: !isFirstUnit, direction: newPosition.getDirectionTo(unloadPos) },
         ];
 
         if (firstUnloadInfo !== undefined) {
           unloads.push({
             isSecondUnit: !firstUnloadInfo.isFirstUnit,
-            direction: getDirection(newPosition, firstUnloadInfo.unloadedPosition),
+            direction: newPosition.getDirectionTo(firstUnloadInfo.unloadedPosition),
           });
         }
 
@@ -109,7 +109,7 @@ export const createUnloadMenu = (
             type: "unloadWait",
             unloads: unloads,
           },
-          path: path,
+          path: new PathWrapper(path),
         });
 
         currentUnitClickedRef.current = null;
@@ -144,10 +144,10 @@ export const createUnloadMenu = (
           subAction: {
             type: "unloadWait",
             unloads: [
-              { isSecondUnit: !isFirstUnit, direction: getDirection(newPosition, unloadPos) },
+              { isSecondUnit: !isFirstUnit, direction: newPosition.getDirectionTo(unloadPos) },
             ],
           },
-          path: pathRef.current ?? [newPosition],
+          path: pathRef.current ? new PathWrapper(pathRef.current) : new PathWrapper([newPosition]),
         });
 
         currentUnitClickedRef.current = null;
@@ -177,7 +177,7 @@ export const createUnloadMenu = (
             player.getVersionProperties().unloadOnlyAfterMove &&
             (infosForMenu.length === 1 ||
               unloadPositions2?.every((pos) => {
-                return isSamePosition(pos, unloadPos);
+                return pos.isSame(unloadPos);
               }) === true);
 
           unloadTilesContainer.visible = false;
@@ -210,7 +210,7 @@ export const createUnloadMenu = (
             player.getVersionProperties().unloadOnlyAfterMove &&
             (infosForMenu.length === 1 ||
               unloadPositions1?.every((pos) => {
-                return isSamePosition(pos, unloadPos);
+                return pos.isSame(unloadPos);
               }) === true);
 
           unloadTilesContainer.visible = false;

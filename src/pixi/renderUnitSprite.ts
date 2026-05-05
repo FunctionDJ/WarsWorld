@@ -2,7 +2,7 @@ import { baseTileSize } from "components/client-only/MatchRenderer";
 import type { FrontendUnit } from "frontend/components/match/FrontendUnit";
 import { AnimatedSprite, Container, Sprite } from "pixi.js";
 import { obj } from "shared/arr";
-import type { Position } from "shared/schemas/position";
+import { PositionWrapper } from "shared/schemas/position";
 import type { UnitWrapper } from "../shared/wrappers/unit";
 import type { LoadedSpriteSheet } from "./load-spritesheet";
 
@@ -12,17 +12,17 @@ interface SpritePosition {
   y: number;
 }
 
-function calculatePosition(position: Position, offset = 8): SpritePosition {
+function calculatePosition(position: PositionWrapper, offset = 8): SpritePosition {
   return {
-    x: position[0] * baseTileSize + offset,
-    y: position[1] * baseTileSize + offset,
+    x: position.data[0] * baseTileSize + offset,
+    y: position.data[1] * baseTileSize + offset,
   };
 }
 
-function createIcon(spriteSheet: LoadedSpriteSheet, pos: Position, texture: string): Sprite {
+function createIcon(spriteSheet: LoadedSpriteSheet, pos: PositionWrapper, texture: string): Sprite {
   const icon = new Sprite(spriteSheet.icons.textures[texture]);
-  icon.x = pos[0];
-  icon.y = pos[1];
+  icon.x = pos.data[0];
+  icon.y = pos.data[1];
   icon.width = 8;
   icon.height = 8;
   icon.eventMode = "static";
@@ -33,7 +33,7 @@ function createIcon(spriteSheet: LoadedSpriteSheet, pos: Position, texture: stri
 export function renderUnitSprite(
   unit: UnitType,
   spriteSheets: LoadedSpriteSheet,
-  newPosition?: Position | null,
+  newPosition?: PositionWrapper | null,
 ): Container {
   const position = newPosition ?? unit.data.position;
   const spritePosition = calculatePosition(position);
@@ -53,14 +53,14 @@ export function renderUnitSprite(
   }
 
   unitSprite.play();
-  unitContainer.label = `unit-${String(position[0])}-${String(position[1])}`;
+  unitContainer.label = `unit-${String(position.data[0])}-${String(position.data[1])}`;
   unitContainer.addChild(unitSprite);
 
   // Add capture points icon if applicable
   if ("currentCapturePoints" in unit.data && unit.data.currentCapturePoints !== undefined) {
     const captureIcon = createIcon(
       spriteSheets,
-      [spritePosition.x, spritePosition.y + 8],
+      new PositionWrapper([spritePosition.x, spritePosition.y + 8]),
       "capturing.png",
     );
     unitContainer.addChild(captureIcon);
@@ -72,7 +72,7 @@ export function renderUnitSprite(
   if (visualHP !== 10) {
     const healthIcon = createIcon(
       spriteSheets,
-      [spritePosition.x + 8, spritePosition.y + 8],
+      new PositionWrapper([spritePosition.x + 8, spritePosition.y + 8]),
       `health-${String(visualHP)}.png`,
     );
     unitContainer.addChild(healthIcon);

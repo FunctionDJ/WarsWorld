@@ -3,27 +3,27 @@ import type { COPowerState } from "shared/match-logic/co";
 import type { Army } from "shared/schemas/army";
 import type { COID } from "shared/schemas/co";
 import type { PlayerSlot } from "shared/schemas/player-slot";
-import type { Position } from "shared/schemas/position";
+import type { PositionWrapper } from "shared/schemas/position";
 import type { PropertyTileType, UnusedSiloTileType } from "shared/schemas/tile";
 import type { PipeSeamTileType } from "../schemas/variable-tiles";
 
 export interface CapturableTile {
   type: PropertyTileType;
   playerSlot: PlayerSlot;
-  position: Position;
+  position: PositionWrapper;
   // capture points are stored in unit
 }
 
 interface LaunchableSiloTile {
   type: UnusedSiloTileType;
   fired: boolean;
-  position: Position;
+  position: PositionWrapper;
 }
 
 interface PipeSeamTile {
   type: PipeSeamTileType;
   hp: number;
-  position: Position;
+  position: PositionWrapper;
 }
 
 export type ChangeableTile = CapturableTile | LaunchableSiloTile | PipeSeamTile;

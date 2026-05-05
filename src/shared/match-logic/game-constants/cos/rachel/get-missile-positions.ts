@@ -1,5 +1,4 @@
-import type { Position } from "../../../../schemas/position";
-import { getDistance } from "../../../../schemas/position";
+import { PositionWrapper } from "../../../../schemas/position";
 import type { PlayerInMatchWrapper } from "../../../../wrappers/player-in-match";
 
 /**
@@ -8,18 +7,18 @@ import type { PlayerInMatchWrapper } from "../../../../wrappers/player-in-match"
  * 2) Value
  * 3) HP
  */
-export const getMissilePositions = (rachelPlayer: PlayerInMatchWrapper): Position[] => {
+export const getMissilePositions = (rachelPlayer: PlayerInMatchWrapper): PositionWrapper[] => {
   // !!! mechs do count as infantry
   // apparently, this missile is in fact 1x normal hp, 2x infantry hp, 8x capturing infantry hp
-  let bestPositionInf: Position = [0, 0];
+  let bestPositionInf = new PositionWrapper([0, 0]);
   let mostInfantryHP = Number.NEGATIVE_INFINITY;
   let mostValueInf = Number.NEGATIVE_INFINITY;
 
-  let bestPositionHp: Position = [0, 0];
+  let bestPositionHp = new PositionWrapper([0, 0]);
   let mostHP = Number.NEGATIVE_INFINITY;
   let mostValueHP = Number.NEGATIVE_INFINITY; //for tiebreak
 
-  let bestPositionValue: Position = [0, 0];
+  let bestPositionValue = new PositionWrapper([0, 0]);
   let mostValue = Number.NEGATIVE_INFINITY;
 
   for (let y = 0; y < rachelPlayer.match.map.height; y++) {
@@ -29,7 +28,7 @@ export const getMissilePositions = (rachelPlayer: PlayerInMatchWrapper): Positio
         currentHP = 0;
 
       for (const unit of rachelPlayer.match.units) {
-        if (getDistance([x, y], unit.data.position) > 2) {
+        if (new PositionWrapper([x, y]).getDistance(unit.data.position) > 2) {
           continue;
         }
 
@@ -62,18 +61,18 @@ export const getMissilePositions = (rachelPlayer: PlayerInMatchWrapper): Positio
       ) {
         mostInfantryHP = currentInfantryHP;
         mostValueInf = currentValue;
-        bestPositionInf = [x, y];
+        bestPositionInf = new PositionWrapper([x, y]);
       }
 
       if (currentHP > mostHP || (currentHP === mostHP && currentValue > mostValueHP)) {
         mostHP = currentHP;
         mostValueHP = currentValue;
-        bestPositionHp = [x, y];
+        bestPositionHp = new PositionWrapper([x, y]);
       }
 
       if (currentValue > mostValue) {
         mostValue = currentValue;
-        bestPositionValue = [x, y];
+        bestPositionValue = new PositionWrapper([x, y]);
       }
     }
   }
