@@ -56,8 +56,8 @@ export const applyMainEventToMatch = (
 export const applySubEventToMatch = (
   match: MatchWrapper,
   { subEvent, path }: MoveEventWithSubEvent,
-) => {
-  const fromPosition = path.get("last");
+): void => {
+  const fromPosition = path.at("last");
 
   switch (subEvent.type) {
     case "wait": {

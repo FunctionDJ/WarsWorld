@@ -1,7 +1,10 @@
 import type { CreateHTTPContextOptions } from "@trpc/server/adapters/standalone";
 import type { CreateWSSContextFnOptions } from "@trpc/server/adapters/ws";
+import type { IncomingMessage } from "node:http";
 
-export function createContext(opts: CreateHTTPContextOptions | CreateWSSContextFnOptions) {
+export function createContext(opts: CreateHTTPContextOptions | CreateWSSContextFnOptions): {
+  req: IncomingMessage | undefined;
+} {
   const req = "req" in opts ? opts.req : undefined;
 
   return {

@@ -1,4 +1,4 @@
-import { z, type core } from "zod";
+import { z } from "zod";
 import { playerSlotForPropertiesSchema } from "./player-slot";
 import { positionSchema } from "./position";
 
@@ -31,13 +31,9 @@ export const withCapturePoints = {
   currentCapturePoints: z.number().positive().optional(),
 };
 
-export const withTypeSchema = <T extends string>(input: T) =>
+export const withTypeSchema = <T extends string>(
+  input: T,
+): z.ZodObject<{ type: z.ZodLiteral<T> }> =>
   z.object({
     type: z.literal(input),
   });
-
-export function getLoadedSchema<
-  T extends readonly [core.$ZodTypeDiscriminable<"type">, ...core.$ZodTypeDiscriminable<"type">[]],
->(things: T) {
-  return z.nullable(z.discriminatedUnion("type", things));
-}

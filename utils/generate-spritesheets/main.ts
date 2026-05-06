@@ -86,7 +86,7 @@ function getTexturePath(
   spriteType: SpriteType,
   spriteNation: string,
   spriteName: string | null = null,
-) {
+): string {
   return path.resolve(
     __dirname,
     texturesBasePath, // e.g. AWBW-Replay-Player/AWBWApp.Resources/Textures

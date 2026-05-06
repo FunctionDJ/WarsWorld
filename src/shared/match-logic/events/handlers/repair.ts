@@ -13,10 +13,7 @@ export const repairActionToEvent: SubActionToEvent<RepairAction> = (
 ) => {
   const player = match.getCurrentTurnPlayer();
   const unit = match.getUnitOrThrow(fromPosition);
-
-  if (!player.owns(unit)) {
-    throw new DispatchableError("You don't own this unit");
-  }
+  player.ownsOrThrow(unit);
 
   // TESTED: if trying to repair but no funds, unit will get resupplied but not repaired
 
@@ -40,7 +37,7 @@ export const applyRepairEvent = (
   match: MatchWrapper,
   event: RepairEvent,
   fromPosition: Position,
-) => {
+): void => {
   const player = match.getCurrentTurnPlayer();
 
   const repairedUnit = match.getUnitOrThrow(fromPosition.addDirection(event.direction));

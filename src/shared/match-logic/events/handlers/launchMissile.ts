@@ -11,12 +11,8 @@ export const launchMissileActionToEvent: SubActionToEvent<LaunchMissileAction> =
   fromPosition,
 ) => {
   const player = match.getCurrentTurnPlayer();
-
   const unit = match.getUnitOrThrow(fromPosition);
-
-  if (!player.owns(unit)) {
-    throw new DispatchableError("You don't own this unit");
-  }
+  player.ownsOrThrow(unit);
 
   const tile = match.getTile(fromPosition);
 
@@ -41,7 +37,7 @@ export const applyLaunchMissileEvent = (
   match: MatchWrapper,
   event: LaunchMissileEvent,
   fromPosition: Position,
-) => {
+): void => {
   const siloTile = match.getTile(fromPosition);
 
   if (!("fired" in siloTile)) {

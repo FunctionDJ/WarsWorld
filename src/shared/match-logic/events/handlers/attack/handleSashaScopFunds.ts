@@ -4,7 +4,7 @@ import type { UnitWrapper } from "shared/wrappers/unit";
 export const applySashaFundsDamage = (
   sashaPlayer: PlayerInMatchWrapper,
   damageInFundsDealt: number,
-) => {
+): void => {
   sashaPlayer.data.funds += damageInFundsDealt * 0.5;
 };
 
@@ -13,7 +13,7 @@ export const handleSashaScopFunds = (
   defender: UnitWrapper,
   attackerHpDiff: number,
   defenderHpDiff: number,
-) => {
+): void => {
   if (
     attacker.player.data.coId.name === "sasha" &&
     attacker.player.data.COPowerState === "super-co-power"

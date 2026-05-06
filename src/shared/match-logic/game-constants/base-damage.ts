@@ -8,7 +8,7 @@ export const createPipeSeamUnitEquivalent = (
   attacker: UnitWrapper,
   pipeSeamPosition?: Position,
   pipeSeamHp?: number,
-) => {
+): UnitWrapper => {
   const usedVersion = match.rules.gameVersion ?? attacker.player.data.coId.version;
   const unitEquivalent: WWUnit = {
     type: usedVersion === "AW1" ? "mediumTank" : "neoTank",

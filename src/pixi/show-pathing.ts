@@ -1,3 +1,4 @@
+import { baseTileSize } from "components/client-only/common";
 import { Container, Sprite } from "pixi.js";
 import { arr } from "shared/arr";
 import {
@@ -7,7 +8,6 @@ import {
 import { Position } from "shared/schemas/position";
 import type { MapWrapper } from "shared/wrappers/map";
 import type { MatchWrapper } from "shared/wrappers/match";
-import { baseTileSize } from "../components/client-only/MatchRenderer";
 import { DispatchableError } from "../shared/DispatchedError";
 import type { UnitWrapper } from "../shared/wrappers/unit";
 import type { LoadedSpriteSheet } from "./load-spritesheet";

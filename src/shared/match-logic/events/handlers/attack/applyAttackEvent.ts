@@ -6,7 +6,11 @@ import { canAttackWithPrimary } from "./canAttackWithPrimary";
 import { getPowerChargeGain } from "./getPowerChargeGain";
 import { applySashaFundsDamage, handleSashaScopFunds } from "./handleSashaScopFunds";
 
-export const applyAttackEvent = (match: MatchWrapper, event: AttackEvent, position: Position) => {
+export const applyAttackEvent = (
+  match: MatchWrapper,
+  event: AttackEvent,
+  position: Position,
+): void => {
   const attacker = match.getUnitOrThrow(position);
   const defender = match.getUnit(event.defenderPosition);
 
@@ -71,7 +75,10 @@ export const applyAttackEvent = (match: MatchWrapper, event: AttackEvent, positi
   }
 };
 
-export const applyEmittableAttackEvent = (match: MatchWrapper, event: EmittableAttackEvent) => {
+export const applyEmittableAttackEvent = (
+  match: MatchWrapper,
+  event: EmittableAttackEvent,
+): void => {
   if (event.attacker) {
     //power charge
     if (event.attacker.powerChargeGained != null) {

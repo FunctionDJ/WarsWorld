@@ -1,5 +1,7 @@
 import { z } from "zod";
-import { directionSchema, pathSchema, positionSchema } from "./position";
+import { directionSchema } from "./direction";
+import { pathSchema } from "./path";
+import { positionSchema } from "./position";
 import { unitTypeSchema } from "./unit";
 
 const buildActionSchema = z.object({
@@ -50,7 +52,7 @@ const unloadNoWaitActionSchema = z.object({
   type: z.literal("unloadNoWait"),
   transportPosition: positionSchema,
   unloads: z.object({
-    isSecondUnit: z.boolean(), //if the unloaded unit is "loadedUnit2"
+    slot: z.literal(1).or(z.literal(2)),
     direction: directionSchema,
   }),
 });

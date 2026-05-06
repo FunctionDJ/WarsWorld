@@ -3,7 +3,7 @@ import { prisma } from "server/prisma/prisma-client";
 import { z } from "zod";
 import { t } from "../trpc-init";
 
-export const withMapIdSchema = z.object({
+const withMapIdSchema = z.object({
   mapId: z.string(),
 });
 

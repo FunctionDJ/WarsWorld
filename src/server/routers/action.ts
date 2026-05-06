@@ -1,5 +1,4 @@
-import { TRPCError } from "@trpc/server";
-import { emitterMap } from "server/emitter/event-emitter";
+import { getMatchEmitter } from "server/emitter/event-emitter";
 import { prisma } from "server/prisma/prisma-client";
 import {
   validateMainActionAndToEvent,
@@ -39,18 +38,18 @@ const attachSubEvent = (
 const getIsJoinOrLoad = (
   mainEventWithoutSubEvent: MainEventsWithoutSubEvents,
   match: MatchWrapper,
-) => {
+): boolean => {
   if (mainEventWithoutSubEvent.type !== "move") {
     return false;
   }
 
   const { path } = mainEventWithoutSubEvent;
 
-  if (match.getUnit(path.get("last")) === undefined) {
+  if (match.getUnit(path.at("last")) === undefined) {
     return false;
   }
 
-  if (path.get("last").isSame(path.get(0))) {
+  if (path.at("last").isSame(path.at(0))) {
     return false;
   }
 
@@ -61,11 +60,7 @@ export const actionRouter = router({
   send: playerInMatchBaseProcedure
     .input(mainActionSchema)
     .mutation(async ({ input, ctx: { match } }) => {
-      const matchEmitter = emitterMap.get(input.matchId);
-
-      if (matchEmitter === undefined) {
-        throw new TRPCError({ code: "NOT_FOUND", message: "Match emitter not found" });
-      }
+      const matchEmitter = getMatchEmitter(input.matchId);
 
       /**
        * This order must be followed, otherwise some things may not have required information:
@@ -188,11 +183,7 @@ export const actionRouter = router({
     // TODO how to subscribe with specific currentPlayer.id ?
     // or filter the events/emittables otherwise for the observing player/viewer?
 
-    const matchEmitter = emitterMap.get(opts.input.matchId);
-
-    if (matchEmitter === undefined) {
-      throw new TRPCError({ code: "NOT_FOUND", message: "Match emitter not found" });
-    }
+    const matchEmitter = getMatchEmitter(opts.input.matchId);
 
     for await (const { data } of matchEmitter.events("emittable", {
       signal: opts.signal,

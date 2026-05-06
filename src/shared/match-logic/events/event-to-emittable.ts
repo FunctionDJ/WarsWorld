@@ -1,5 +1,5 @@
-import { arr } from "shared/arr";
-import { Path, Position } from "../../schemas/position";
+import { Path } from "shared/schemas/path";
+import type { Position } from "../../schemas/position";
 import type {
   EmittableEvent,
   EmittableSubEvent,
@@ -34,7 +34,7 @@ const subEventToEmittables = (
   }
 
   const { subEvent, path } = moveEvent;
-  const fromPosition = path.get("last");
+  const fromPosition = path.at("last");
 
   // requireLastMovePosition is responsible for letting move event know if last position is
   // required for the sub-event to work
@@ -153,7 +153,7 @@ export const mainEventToEmittables = (
         ...event,
       });
 
-      const unit = match.getUnitOrThrow(event.path.get("last"));
+      const unit = match.getUnitOrThrow(event.path.at("last"));
 
       return teamsWithSpectator.map((team) => {
         // special visible function for hidden subs and stealth
@@ -175,40 +175,37 @@ export const mainEventToEmittables = (
             : (position: Position | undefined): position is Position =>
                 position === undefined ? false : team.isPositionVisible(position);
 
-        const shownPath = new Path([]);
+        let shownPath = new Path([]);
 
         const emittableSubEvent = emittableSubEvents.find((s) => s.teamIndex === team.index)!;
 
-        if (event.path.data.length === 1) {
-          const first = arr(event.path.data, 0);
+        if (event.path.len() === 1) {
+          const first = event.path.at(0);
 
           if (emittableSubEvent.requireLastMovePosition || isPositionVisible(first)) {
-            shownPath.data.push(first);
+            shownPath = shownPath.with(first);
           }
         } else {
-          if (
-            isPositionVisible(arr(event.path.data, 0)) ||
-            isPositionVisible(arr(event.path.data, 1))
-          ) {
-            shownPath.data.push(arr(event.path.data, 0));
+          if (isPositionVisible(event.path.at(0)) || isPositionVisible(event.path.at(1))) {
+            shownPath = shownPath.with(event.path.at(0));
           }
 
-          for (let pInd = 1; pInd < event.path.data.length - 1; ++pInd) {
+          for (let pInd = 1; pInd < event.path.len() - 1; ++pInd) {
             if (
-              isPositionVisible(event.path.data[pInd - 1]) ||
-              isPositionVisible(event.path.data[pInd]) ||
-              isPositionVisible(event.path.data[pInd + 1])
+              isPositionVisible(event.path.at(pInd - 1)) ||
+              isPositionVisible(event.path.at(pInd)) ||
+              isPositionVisible(event.path.at(pInd + 1))
             ) {
-              shownPath.data.push(arr(event.path.data, 0));
+              shownPath = shownPath.with(event.path.at(pInd));
             }
           }
 
           if (
-            isPositionVisible(event.path.data.at(-1)) ||
-            isPositionVisible(event.path.data.at(-2)) ||
+            isPositionVisible(event.path.at("last")) ||
+            isPositionVisible(event.path.at(-2)) ||
             emittableSubEvent.requireLastMovePosition
           ) {
-            shownPath.data.push(event.path.get("last"));
+            shownPath = shownPath.with(event.path.at("last"));
           }
         }
 
@@ -220,13 +217,13 @@ export const mainEventToEmittables = (
           path: shownPath,
           fundsGained:
             !match.rules.fogOfWar || unit.player.team === team ? event.fundsGained : undefined,
-          trap: team.isPositionVisible(event.path.data.at(-1)) ? event.trap : false,
+          trap: team.isPositionVisible(event.path.at("last")) ? event.trap : false,
           subEvent: emittableSubEvent.subEvent,
           //if unit shows and it was not visible before
           appearingUnit:
-            shownPath.data.length == 0 || team.isPositionVisible(event.path.data[0])
+            shownPath.len() == 0 || team.isPositionVisible(event.path.at(0))
               ? undefined
-              : match.getUnitOrThrow(event.path.get("last")).data,
+              : match.getUnitOrThrow(event.path.at("last")).data,
         };
 
         return result;

@@ -1,46 +1,30 @@
 import { z } from "zod";
+import type { Direction } from "./direction";
 
 // Position / Coordinate System
 //
 // AWBW and probably AW too starts "x: 0, y: 0" in the top-left corner.
 // So going down means y increases.
 
-// === POSITION ===
-
 export const positionSchema = z
   .tuple([z.number().int().nonnegative(), z.number().int().nonnegative()])
   .transform((pos) => new Position(pos));
 
-export class Path {
-  constructor(public data: Position[]) {}
-
-  get(arg: number | "last"): Position {
-    const index = arg === "last" ? -1 : arg;
-    const pos = this.data.at(index);
-
-    if (pos === undefined) {
-      throw new Error(`Could not get position at index ${String(index)} of path`);
-    }
-
-    return pos;
-  }
-}
-
 export class Position {
-  constructor(public readonly data: [number, number]) {}
+  constructor(public readonly data: readonly [number, number]) {}
 
-  isSame(other: Position) {
+  isSame(other: Position): boolean {
     return this.data[0] === other.data[0] && this.data[1] === other.data[1];
   }
 
-  isNeighbour(other: Position) {
+  isNeighbour(other: Position): boolean {
     const xDiff = Math.abs(this.data[0] - other.data[0]);
     const yDiff = Math.abs(this.data[1] - other.data[1]);
 
     return xDiff + yDiff === 1;
   }
 
-  getNeighbours() {
+  getNeighbours(): Position[] {
     return [
       new Position([this.data[0] + 1, this.data[1]]),
       new Position([this.data[0] - 1, this.data[1]]),
@@ -49,11 +33,11 @@ export class Position {
     ];
   }
 
-  getDistance(other: Position) {
+  getDistance(other: Position): number {
     return Math.abs(this.data[0] - other.data[0]) + Math.abs(this.data[1] - other.data[1]);
   }
 
-  addDirection(direction: Direction) {
+  addDirection(direction: Direction): Position {
     switch (direction) {
       case "up":
         return new Position([this.data[0], this.data[1] - 1]);
@@ -78,19 +62,7 @@ export class Position {
     return yDiff > 0 ? "down" : "up";
   }
 
-  offset({ x, y }: { x: number; y: number }) {
+  offset({ x, y }: { x: number; y: number }): Position {
     return new Position([this.data[0] + x, this.data[1] + y]);
   }
 }
-
-// === PATH ===
-
-export const pathSchema = z.array(positionSchema).transform((positions) => new Path(positions));
-
-// === DIRECTION ===
-
-export const directionSchema = z.enum(["up", "down", "left", "right"]);
-
-type Direction = z.infer<typeof directionSchema>;
-
-export const allDirections = directionSchema.options;

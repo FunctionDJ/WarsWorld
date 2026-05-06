@@ -1,8 +1,9 @@
 import type { WWUnit } from "shared/schemas/unit";
 import type { PlayerInMatch } from "shared/types/server-match-state";
-import { Position } from "../schemas/position";
+import type { Position } from "../schemas/position";
 import type { MatchWrapper } from "./match";
 import { PlayerInMatchWrapper } from "./player-in-match";
+import type { UnitWrapper } from "./unit";
 import { Vision } from "./vision";
 
 export class TeamWrapper {
@@ -32,16 +33,16 @@ export class TeamWrapper {
     return true;
   }
 
-  getUnits() {
+  getUnits(): UnitWrapper[] {
     return this.players.flatMap((player) => player.getUnits());
   }
 
-  getEnemyUnits() {
+  getEnemyUnits(): UnitWrapper[] {
     const playerSlotsOfTeam = this.players.map((p) => p.data.slot);
     return this.match.units.filter((unit) => !playerSlotsOfTeam.includes(unit.data.playerSlot));
   }
 
-  canSeeUnitAtPosition(position: Position) {
+  canSeeUnitAtPosition(position: Position): boolean {
     const playerSlots = this.players.map((player) => player.data.slot);
     const tile = this.match.getTile(position);
     const unit = this.match.getUnit(position);
@@ -66,7 +67,7 @@ export class TeamWrapper {
     return this.isPositionVisible(unit.data.position);
   }
 
-  getEnemyUnitsInVision() {
+  getEnemyUnitsInVision(): WWUnit[] {
     const playerSlots = this.players.map((player) => player.data.slot);
 
     return this.getEnemyUnits()

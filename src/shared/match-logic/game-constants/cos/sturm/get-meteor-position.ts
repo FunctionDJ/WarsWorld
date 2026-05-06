@@ -1,7 +1,7 @@
 import { Position } from "../../../../schemas/position";
 import type { PlayerInMatchWrapper } from "../../../../wrappers/player-in-match";
 
-export const getUnitValueMeteorPosition = (
+const getUnitValueMeteorPosition = (
   sturmPlayer: PlayerInMatchWrapper,
   damage: number,
   canSeeHiddenUnits: boolean, //AW2 sturm can't see units inside fow
@@ -38,7 +38,7 @@ export const getUnitValueMeteorPosition = (
   return bestPosition;
 };
 
-export const getIndirectsMeteorPosition = (
+const getIndirectsMeteorPosition = (
   sturmPlayer: PlayerInMatchWrapper,
   damage: number,
   canSeeHiddenUnits: boolean,
@@ -82,7 +82,7 @@ export const getIndirectsMeteorPosition = (
   return bestPosition;
 };
 
-export const getMostHPMeteorPosition = (
+const getMostHPMeteorPosition = (
   sturmPlayer: PlayerInMatchWrapper,
   damage: number,
   canSeeHiddenUnits: boolean,

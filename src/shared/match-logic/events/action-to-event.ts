@@ -41,7 +41,7 @@ export const validateSubActionAndToEvent = (
   match: MatchWrapper,
   { subAction, path }: MoveAction,
 ): SubEvent => {
-  const unitPosition = path.get("last");
+  const unitPosition = path.at("last");
 
   switch (subAction.type) {
     case "attack":
@@ -49,7 +49,7 @@ export const validateSubActionAndToEvent = (
         match,
         subAction,
         unitPosition,
-        path.data.length > 1,
+        path.len() > 1,
         { goodLuck: Math.random(), badLuck: Math.random() },
         { goodLuck: Math.random(), badLuck: Math.random() },
       );

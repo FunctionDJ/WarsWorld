@@ -1,0 +1,19 @@
+{
+  "$schema": "https://raw.githubusercontent.com/fallow-rs/fallow/main/schema.json",
+  "entry": [
+    "src/server/main*.ts",
+    "src/frontend/components/calculator/Calculator.tsx",
+    "src/shared/match-logic/events/handlers/attack/applyEmittableAttackEvent.ts",
+    "src/shared/match-logic/game-constants/cos/sturm/sturm-aw1-campaign.ts",
+    "src/tests/*.ts",
+    "utils/generate-spritesheets/main.ts"
+  ],
+  "ignoreDependencies": [
+    "@typescript/native-preview"
+  ],
+  "duplicates": {
+    "ignore": [
+      "src/shared/match-logic/game-constants/cos/**/*.*"
+    ]
+  }
+}

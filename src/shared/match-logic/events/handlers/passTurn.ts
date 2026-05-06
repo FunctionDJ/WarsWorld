@@ -157,13 +157,13 @@ export const applyPassTurnEvent: ApplyEvent<PassTurnEvent> = (match, event) => {
   }
 };
 
-function unwaitUnits(player: PlayerInMatchWrapper) {
+function unwaitUnits(player: PlayerInMatchWrapper): void {
   for (const unit of player.getUnits()) {
     unit.data.isReady = true;
   }
 }
 
-function APCresupply(unit: UnitWrapper) {
+function APCresupply(unit: UnitWrapper): void {
   if (unit.data.type === "apc") {
     for (const neighbourUnit of unit.getNeighbouringUnits()) {
       if (unit.player.owns(neighbourUnit)) {

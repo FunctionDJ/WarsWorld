@@ -14,3 +14,4 @@
 tsconfig.tsbuildinfo
 prisma/migrations/20230510171142_amogus/migration.sql
 /src/generated
+.fallow/

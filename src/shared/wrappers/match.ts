@@ -2,7 +2,7 @@ import type { LeagueType, Match, MatchStatus, Player, WWMap } from "generated/br
 import { DispatchableError } from "shared/DispatchedError";
 import { type MatchRules } from "shared/schemas/match-rules";
 import type { PlayerSlot } from "shared/schemas/player-slot";
-import { Position } from "shared/schemas/position";
+import type { Position } from "shared/schemas/position";
 import type { Tile } from "shared/schemas/tile";
 import type { WWUnit } from "shared/schemas/unit";
 import type { Weather } from "shared/schemas/weather";
@@ -73,7 +73,7 @@ export class MatchWrapper<
     );
   }
 
-  setWeather(weather: Weather, duration: number) {
+  setWeather(weather: Weather, duration: number): void {
     this.currentWeather = weather;
     this.playerToRemoveWeatherEffect = this.getCurrentTurnPlayer();
     this.weatherDaysLeft = duration;
@@ -123,8 +123,8 @@ export class MatchWrapper<
   }
 
   // PLAYER STUFF **************************************************************
-  getCurrentTurnPlayer() {
-    const player = this.getAllPlayers().find((p) => p.data.hasCurrentTurn);
+  getCurrentTurnPlayer(): PlayerInMatchWrapper {
+    const player = this.getAllPlayers().find((p) => p.data.hasCurrentTurn === true);
 
     if (player === undefined) {
       throw new Error("No player with current turn was found");
@@ -133,15 +133,15 @@ export class MatchWrapper<
     return player;
   }
 
-  getAllPlayers() {
+  getAllPlayers(): PlayerInMatchWrapper[] {
     return this.teams.flatMap((team) => team.players).sort((p1, p2) => p1.data.slot - p2.data.slot);
   }
 
-  getPlayerById(playerId: Player["id"]) {
+  getPlayerById(playerId: Player["id"]): PlayerInMatchWrapper | undefined {
     return this.getAllPlayers().find((p) => p.data.id === playerId);
   }
 
-  getPlayerBySlot(playerSlot: PlayerSlot) {
+  getPlayerBySlot(playerSlot: PlayerSlot): PlayerInMatchWrapper | undefined {
     if (playerSlot < 0) {
       return this.neutralPlayer;
     }
@@ -176,11 +176,11 @@ export class MatchWrapper<
   }
 
   // UNIT STUFF ****************************************************************
-  getUnit(position: Position) {
+  getUnit(position: Position): UnitWrapper | undefined {
     return this.units.find((u) => position.isSame(u.data.position));
   }
 
-  getUnitOrThrow(position: Position) {
+  getUnitOrThrow(position: Position): UnitWrapper {
     const unit = this.getUnit(position);
 
     if (unit === undefined) {
@@ -203,7 +203,7 @@ export class MatchWrapper<
     radius: number;
     visualHpAmount: number;
     epicenter: Position;
-  }) {
+  }): void {
     this.units
       .filter((unit) => unit.data.position.getDistance(epicenter) <= radius)
       .forEach((unit) => {

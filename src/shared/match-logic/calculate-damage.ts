@@ -5,11 +5,11 @@ import { getBaseDamage } from "./game-constants/base-damage";
 import { getTerrainDefenseStars } from "./game-constants/terrain-properties";
 
 /** @returns 1-10, whole numbers */
-export const getVisualHPfromHP = (hp: number) => Math.ceil(hp / 10);
+export const getVisualHPfromHP = (hp: number): number => Math.ceil(hp / 10);
 
 // TODO unused yet
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const _roundUpTo = (value: number, step: number) => {
+const _roundUpTo = (value: number, step: number): number => {
   const scalingFactor = 1 / step;
   return Math.ceil(value * scalingFactor) / scalingFactor;
 };
@@ -20,13 +20,13 @@ const _roundUpTo = (value: number, step: number) => {
  * badLuck roll same as goodLuck roll (but not always used): 1 = max bad luck, 0 = no bad luck
  * @param isCounterAttack only used for sonja d2d and kanbei during scop (bonus counterattack damage).
  *
- * @see https://awbw.fandom.com/wiki/Damage_Formula?so=search
+ * @see https://awbw.fandom.com/wiki/Damage_Formula
  */
 export const calculateDamage = (
   { attacker, defender }: CombatProps,
   luckRoll: LuckRoll,
   isCounterAttack: boolean,
-) => {
+): number | null => {
   const baseDamage = getBaseDamage(attacker, defender);
 
   // null baseDamage = unit can't attack this other unit
@@ -111,9 +111,7 @@ export const calculateDamage = (
   // damage formula application
 
   const luckModifier = goodLuckValue - badLuckValue;
-
   const attackFactor = Math.max(0, Math.floor(baseDamage * (attackModifier / 100) + luckModifier));
-
   const attackHPFactor = Math.floor(attackFactor * (visualHPOfAttacker / 10));
 
   const defenseFactor =

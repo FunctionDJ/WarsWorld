@@ -7,10 +7,10 @@ import type { Tile, TileType } from "shared/schemas/tile";
 import { isNotNeutralProperty, isUnitProducingProperty } from "shared/schemas/tile";
 import { publicBaseProcedure, router } from "../trpc/trpc-setup";
 
-export const getPlayerAmountOfMap = (map: CreatableMap) => {
+export const getPlayerAmountOfMap = (map: CreatableMap): number => {
   const seenPlayerSlots: PlayerSlot[] = [];
 
-  const addToPlayerSlotsIfNotAddedAlready = (item: { playerSlot: PlayerSlot }) => {
+  const addToPlayerSlotsIfNotAddedAlready = (item: { playerSlot: PlayerSlot }): void => {
     if (!seenPlayerSlots.includes(item.playerSlot)) {
       seenPlayerSlots.push(item.playerSlot);
     }

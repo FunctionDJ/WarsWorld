@@ -1,7 +1,7 @@
 "use client";
 import { Layout } from "frontend/components/layout";
 import { ProvidePlayers } from "frontend/context/players";
-import "frontend/styles/global.scss";
+import "frontend/styles/global.css";
 import { trpc } from "frontend/utils/trpc-client";
 import type { AppType } from "next/app";
 import Head from "next/head";

@@ -1,6 +1,6 @@
-import http from "http";
 import next from "next";
-import { parse } from "url";
+import http from "node:http";
+import { parse } from "node:url";
 import { createTRPCwebSocketServer } from "./common-server";
 import { matchStore } from "./match-store";
 
@@ -8,7 +8,7 @@ const port = parseInt(process.env.PORT ?? "3001", 10);
 const app = next({ dev: false });
 const handler = app.getRequestHandler();
 
-void (async () => {
+void (async (): Promise<void> => {
   await matchStore.rebuild();
   await app.prepare();
 

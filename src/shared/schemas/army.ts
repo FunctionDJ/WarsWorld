@@ -19,6 +19,4 @@ export const armySchema = z.enum([
   // "white-nova",
 ]);
 
-export const armyWithNeutralSchema = armySchema.or(z.literal("neutral"));
-
 export type Army = z.infer<typeof armySchema>;

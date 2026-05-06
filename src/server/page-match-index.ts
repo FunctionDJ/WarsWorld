@@ -7,17 +7,17 @@ class PageMatchIndex {
    */
   private list: MatchWrapper[] = [];
 
-  getPage(pageNumber: number) {
+  getPage(pageNumber: number): MatchWrapper[] {
     //this.list is a list of matches, it returns 50 matches
     const start = pageNumber * 50;
     return this.list.slice(start, start + 50);
   }
 
-  addMatch(match: MatchWrapper) {
+  addMatch(match: MatchWrapper): void {
     this.list.push(match);
   }
 
-  removeMatch(match: MatchWrapper) {
+  removeMatch(match: MatchWrapper): void {
     const listIndex = this.list.findIndex((m) => m.id === match.id);
 
     if (listIndex === -1) {

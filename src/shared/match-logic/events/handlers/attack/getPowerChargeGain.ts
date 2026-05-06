@@ -5,7 +5,7 @@ export const getPowerChargeGain = (
   attackerHpDiff: number,
   defender: UnitWrapper,
   defenderHpDiff: number,
-) => {
+): { attackerPowerCharge: number; defenderPowerCharge: number } => {
   //power meter charge
   const attackerVP = attacker.player.getVersionProperties();
   const defenderVP = defender.player.getVersionProperties();

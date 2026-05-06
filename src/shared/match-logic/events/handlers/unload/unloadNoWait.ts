@@ -1,9 +1,9 @@
 import { DispatchableError } from "shared/DispatchedError";
+import { UnloadPositionError } from "shared/match-logic/logic-errors";
 import type { UnloadNoWaitAction } from "shared/schemas/action";
 import type { UnloadNoWaitEvent } from "shared/types/events";
 import type { MatchWrapper } from "shared/wrappers/match";
 import type { MainActionToEvent } from "../../handler-types";
-import { throwIfUnitCantBeUnloadedToTile } from "./checkUnloadTiles";
 
 export const unloadNoWaitActionToEvent: MainActionToEvent<UnloadNoWaitAction> = (match, action) => {
   const player = match.getCurrentTurnPlayer();
@@ -13,89 +13,29 @@ export const unloadNoWaitActionToEvent: MainActionToEvent<UnloadNoWaitAction> = 
   }
 
   const transportUnit = match.getUnitOrThrow(action.transportPosition);
-
-  if (!player.owns(transportUnit)) {
-    throw new DispatchableError("You don't own this unit");
-  }
+  player.ownsOrThrow(transportUnit);
 
   if (!transportUnit.isTransport()) {
     throw new DispatchableError("Trying to unload from a unit that can't load units");
-  }
-
-  if (transportUnit.data.loadedUnit === null) {
-    throw new DispatchableError("Transport doesn't currently have a loaded unit");
   }
 
   const unloadPosition = action.transportPosition.addDirection(action.unloads.direction);
 
   match.map.throwIfOutOfBounds(unloadPosition);
 
-  if (action.unloads.isSecondUnit) {
-    if (!("loadedUnit2" in transportUnit.data)) {
-      throw new DispatchableError("Trying to unload 2nd unit from a unit only carries 1 unit");
-    }
-
-    if (transportUnit.data.loadedUnit2 === null) {
-      throw new DispatchableError("Transport doesn't currently have a 2nd loaded unit");
-    }
-
-    throwIfUnitCantBeUnloadedToTile(
-      transportUnit.data.loadedUnit2,
-      match.getTile(action.transportPosition),
-      transportUnit.player,
-    );
-    throwIfUnitCantBeUnloadedToTile(
-      transportUnit.data.loadedUnit2,
-      match.getTile(unloadPosition),
-      transportUnit.player,
-    );
-  } else {
-    throwIfUnitCantBeUnloadedToTile(
-      transportUnit.data.loadedUnit,
-      match.getTile(action.transportPosition),
-      transportUnit.player,
-    );
-    throwIfUnitCantBeUnloadedToTile(
-      transportUnit.data.loadedUnit,
-      match.getTile(unloadPosition),
-      transportUnit.player,
-    );
+  if (!transportUnit.getLoadedUnit(action.unloads.slot).canMoveTo(unloadPosition)) {
+    throw new UnloadPositionError();
   }
 
   return action;
 };
 
-export const applyUnloadNoWaitEvent = (match: MatchWrapper, event: UnloadNoWaitEvent) => {
+export const applyUnloadNoWaitEvent = (match: MatchWrapper, event: UnloadNoWaitEvent): void => {
   const unit = match.getUnitOrThrow(event.transportPosition);
 
-  if (event.unloads.isSecondUnit && "loadedUnit2" in unit.data) {
-    if (unit.data.loadedUnit2 === null) {
-      throw new Error("Can't unload from empty unit slot 2");
-    }
-
-    unit.player.addUnwrappedUnit({
-      ...unit.data.loadedUnit2,
-      isReady: false,
-      position: event.transportPosition.addDirection(event.unloads.direction),
-    });
-
-    unit.data.loadedUnit2 = null;
-  } else if (!event.unloads.isSecondUnit && "loadedUnit" in unit.data) {
-    if (unit.data.loadedUnit === null) {
-      throw new Error("Can't unload from empty unit slot 2");
-    }
-
-    unit.player.addUnwrappedUnit({
-      ...unit.data.loadedUnit,
-      isReady: false,
-      position: event.transportPosition.addDirection(event.unloads.direction),
-    });
-
-    if ("loadedUnit2" in unit.data) {
-      unit.data.loadedUnit = unit.data.loadedUnit2;
-      unit.data.loadedUnit2 = null;
-    } else {
-      unit.data.loadedUnit = null;
-    }
+  if (!unit.isTransport()) {
+    throw new DispatchableError("Trying to apply unload event to a unit that isn't a transport");
   }
+
+  unit.unload({ slot: event.unloads.slot, direction: event.unloads.direction });
 };

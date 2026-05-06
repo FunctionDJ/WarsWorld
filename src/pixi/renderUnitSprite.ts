@@ -1,4 +1,4 @@
-import { baseTileSize } from "components/client-only/MatchRenderer";
+import { baseTileSize } from "components/client-only/common";
 import type { FrontendUnit } from "frontend/components/match/FrontendUnit";
 import { AnimatedSprite, Container, Sprite } from "pixi.js";
 import { obj } from "shared/arr";

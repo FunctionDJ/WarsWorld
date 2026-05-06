@@ -1,9 +1,13 @@
-import { arr } from "shared/arr";
 import { DispatchableError } from "shared/DispatchedError";
-import { unitPropertiesMap } from "shared/match-logic/game-constants/unit-properties";
 import type { MoveAction } from "shared/schemas/action";
-import { Path } from "shared/schemas/position";
-import type { UnitWithVisibleStats } from "shared/schemas/unit";
+import { Path } from "shared/schemas/path";
+import {
+  carrierLoadedUnitSchema,
+  cruiserLoadedUnitSchema,
+  infantryOrMechSchema,
+  landerLoadedUnitSchema,
+  type UnitWithVisibleStats,
+} from "shared/schemas/unit";
 import type { MoveEventWithoutSubEvent, MoveEventWithSubEvent } from "shared/types/events";
 import type { MatchWrapper } from "shared/wrappers/match";
 import type { UnitWrapper } from "../../../wrappers/unit";
@@ -15,18 +19,15 @@ export const moveActionToEvent = (
   match: MatchWrapper,
   action: MoveAction,
 ): MoveEventWithoutSubEvent => {
-  const [unitPosition, ...path] = action.path.data;
-
-  if (unitPosition === undefined) {
+  if (action.path.len() === 0) {
     throw new DispatchableError("Move action path must have at least one position");
   }
 
+  const unitPosition = action.path.at(0);
+  const path = action.path.tail();
   const player = match.getCurrentTurnPlayer();
   const unit = match.getUnitOrThrow(unitPosition);
-
-  if (!player.owns(unit)) {
-    throw new DispatchableError("You don't own this unit");
-  }
+  player.ownsOrThrow(unit);
 
   console.log("Unit trying to move:", unit.data);
 
@@ -41,21 +42,20 @@ export const moveActionToEvent = (
   };
 
   //Unit is waiting in-place if it's path is only the starting tile
-  if (action.path.data.length === 1) {
-    result.path.data.push(arr(action.path.data, 0));
-
+  if (action.path.len() === 1) {
+    result.path = result.path.with(unitPosition);
     return result;
   }
 
   let remainingMovePoints = unit.getMovementPoints();
 
-  if (unit.getFuel() < path.length) {
+  if (unit.getFuel() < path.len()) {
     // TODO isn't there AWDS weather or something that makes units burn >1 fuel per tile?
     throw new DispatchableError("Not enough fuel for this move");
   }
 
-  for (let pathIndex = 0; pathIndex < action.path.data.length; ++pathIndex) {
-    const position = arr(action.path.data, pathIndex);
+  for (let pathIndex = 0; pathIndex < action.path.len(); ++pathIndex) {
+    const position = action.path.at(pathIndex);
 
     match.map.throwIfOutOfBounds(position);
 
@@ -70,7 +70,7 @@ export const moveActionToEvent = (
       throw new DispatchableError("Cannot move to a desired position");
     }
 
-    if (result.path.data.find((pos) => pos.isSame(position))) {
+    if (result.path.contains(position)) {
       throw new DispatchableError("The given path passes through the same position twice");
     }
 
@@ -88,7 +88,7 @@ export const moveActionToEvent = (
     remainingMovePoints -= moveCost;
 
     if (
-      pathIndex === action.path.data.length - 1 &&
+      pathIndex === action.path.len() - 1 &&
       unitInPosition?.data.playerSlot === unit.data.playerSlot
     ) {
       throwIfCantMoveIntoUnit(unit, unitInPosition);
@@ -103,13 +103,13 @@ export const moveActionToEvent = (
       }
     }
 
-    result.path.data.push(arr(action.path.data, pathIndex));
+    result.path = result.path.with(action.path.at(pathIndex));
   }
 
   return result;
 };
 
-export const throwIfCantMoveIntoUnit = (unit: UnitWrapper, unitInPosition: UnitWrapper) => {
+export const throwIfCantMoveIntoUnit = (unit: UnitWrapper, unitInPosition: UnitWrapper): void => {
   if (unitInPosition.data.type === unit.data.type) {
     // trying to join (same unit type)
     // join logic: if neither unit has loaded units, and the unit at join destination is not 10 hp
@@ -142,28 +142,28 @@ export const throwIfCantMoveIntoUnit = (unit: UnitWrapper, unitInPosition: UnitW
       case "transportCopter":
       case "apc":
       case "blackBoat": {
-        if (unit.data.type !== "infantry" && unit.data.type !== "mech") {
+        if (!unit.isInfantryOrMech()) {
           throw new DispatchableError("Can't load non-soldier in apc / transport / black boat");
         }
 
         break;
       }
       case "lander": {
-        if (unitPropertiesMap[unit.data.type].facility !== "base") {
+        if (!landerLoadedUnitSchema.safeParse(unit.data).success) {
           throw new DispatchableError("Can't load non-land unit to lander");
         }
 
         break;
       }
       case "cruiser": {
-        if (unit.data.type !== "transportCopter" && unit.data.type !== "battleCopter") {
+        if (!cruiserLoadedUnitSchema.safeParse(unit.data).success) {
           throw new DispatchableError("Can't load non-copter in cruiser");
         }
 
         break;
       }
       case "carrier": {
-        if (unitPropertiesMap[unit.data.type].facility !== "airport") {
+        if (!carrierLoadedUnitSchema.safeParse(unit.data).success) {
           throw new DispatchableError("Can't load non-air unit to carrier");
         }
 
@@ -173,75 +173,68 @@ export const throwIfCantMoveIntoUnit = (unit: UnitWrapper, unitInPosition: UnitW
   }
 };
 
-const loadUnitInto = (unitToLoad: UnitWithVisibleStats, transportUnit: UnitWithVisibleStats) => {
+const loadUnitInto = (
+  unitToLoad: UnitWithVisibleStats,
+  transportUnit: UnitWithVisibleStats,
+): void => {
   switch (transportUnit.type) {
     case "transportCopter":
     case "apc": {
-      if (unitToLoad.type === "infantry" || unitToLoad.type === "mech") {
-        transportUnit.loadedUnit = unitToLoad;
+      const loadable = infantryOrMechSchema.safeParse(unitToLoad);
+
+      if (loadable.success) {
+        transportUnit.loadedUnit = loadable.data;
       }
 
       break;
     }
     case "blackBoat": {
-      if (unitToLoad.type === "infantry" || unitToLoad.type === "mech") {
+      const loadable = infantryOrMechSchema.safeParse(unitToLoad);
+
+      if (loadable.success) {
         if (transportUnit.loadedUnit === null) {
-          transportUnit.loadedUnit = unitToLoad;
+          transportUnit.loadedUnit = loadable.data;
         } else {
-          transportUnit.loadedUnit2 = unitToLoad;
+          transportUnit.loadedUnit2 = loadable.data;
         }
       }
 
       break;
     }
     case "lander": {
-      if (
-        unitToLoad.type === "infantry" ||
-        unitToLoad.type === "mech" ||
-        unitToLoad.type === "recon" ||
-        unitToLoad.type === "apc" ||
-        unitToLoad.type === "artillery" ||
-        unitToLoad.type === "tank" ||
-        unitToLoad.type === "antiAir" ||
-        unitToLoad.type === "missile" ||
-        unitToLoad.type === "rocket" ||
-        unitToLoad.type === "mediumTank" ||
-        unitToLoad.type === "neoTank" ||
-        unitToLoad.type === "megaTank"
-      ) {
+      const loadable = landerLoadedUnitSchema.safeParse(unitToLoad);
+
+      if (loadable.success) {
         if (transportUnit.loadedUnit === null) {
-          transportUnit.loadedUnit = unitToLoad;
+          transportUnit.loadedUnit = loadable.data;
         } else {
-          transportUnit.loadedUnit2 = unitToLoad;
+          transportUnit.loadedUnit2 = loadable.data;
         }
       }
 
       break;
     }
     case "cruiser": {
-      if (unitToLoad.type === "transportCopter" || unitToLoad.type === "battleCopter") {
+      const loadable = cruiserLoadedUnitSchema.safeParse(unitToLoad);
+
+      if (loadable.success) {
         if (transportUnit.loadedUnit === null) {
-          transportUnit.loadedUnit = unitToLoad;
+          transportUnit.loadedUnit = loadable.data;
         } else {
-          transportUnit.loadedUnit2 = unitToLoad;
+          transportUnit.loadedUnit2 = loadable.data;
         }
       }
 
       break;
     }
     case "carrier": {
-      if (
-        unitToLoad.type === "transportCopter" ||
-        unitToLoad.type === "battleCopter" ||
-        unitToLoad.type === "fighter" ||
-        unitToLoad.type === "bomber" ||
-        unitToLoad.type === "blackBomb" ||
-        unitToLoad.type === "stealth"
-      ) {
+      const loadable = carrierLoadedUnitSchema.safeParse(unitToLoad);
+
+      if (loadable.success) {
         if (transportUnit.loadedUnit === null) {
-          transportUnit.loadedUnit = unitToLoad;
+          transportUnit.loadedUnit = loadable.data;
         } else {
-          transportUnit.loadedUnit2 = unitToLoad;
+          transportUnit.loadedUnit2 = loadable.data;
         }
       }
     }
@@ -262,13 +255,13 @@ const getOneTileFuelCost = (match: MatchWrapper, unit: UnitWrapper): number => {
   return 1;
 };
 
-export const applyMoveEvent = (match: MatchWrapper, event: MoveEventWithoutSubEvent) => {
+export const applyMoveEvent = (match: MatchWrapper, event: MoveEventWithoutSubEvent): void => {
   //check if unit is moving or just standing still
-  if (event.path.data.length <= 1) {
+  if (event.path.len() <= 1) {
     return;
   }
 
-  const unit = match.getUnitOrThrow(arr(event.path.data, 0));
+  const unit = match.getUnitOrThrow(event.path.at(0));
 
   unit.data.isReady = false;
 
@@ -277,11 +270,11 @@ export const applyMoveEvent = (match: MatchWrapper, event: MoveEventWithoutSubEv
     unit.data.currentCapturePoints = undefined;
   }
 
-  unit.drainFuel((event.path.data.length - 1) * getOneTileFuelCost(match, unit));
-  const unitAtDestination = match.getUnit(event.path.get("last"));
+  unit.drainFuel((event.path.len() - 1) * getOneTileFuelCost(match, unit));
+  const unitAtDestination = match.getUnit(event.path.at("last"));
 
   if (unitAtDestination === undefined) {
-    unit.data.position = event.path.get("last");
+    unit.data.position = event.path.at("last");
   } else {
     if (unit.data.type === unitAtDestination.data.type) {
       //join (hp, fuel, ammo, (keep capture points))
@@ -311,17 +304,17 @@ export const applyMoveEvent = (match: MatchWrapper, event: MoveEventWithoutSubEv
 /**
  * Call this AFTER creating the sub event but BEFORE applying it
  */
-export const updateMoveVision = (match: MatchWrapper, event: MoveEventWithSubEvent) => {
-  if (event.path.data.length < 2) {
+export const updateMoveVision = (match: MatchWrapper, event: MoveEventWithSubEvent): void => {
+  if (event.path.len() < 2) {
     // if didn't move no vision change
     return;
   }
 
-  const movedUnit = match.getUnitOrThrow(event.path.get("last"));
+  const movedUnit = match.getUnitOrThrow(event.path.at("last"));
 
-  movedUnit.data.position = arr(event.path.data, 0); // temporarily revert position
+  movedUnit.data.position = event.path.at(0); // temporarily revert position
   movedUnit.player.team.vision?.removeUnitVision(movedUnit); // remove vision from previous position
-  movedUnit.data.position = event.path.get("last"); // revert the reversion (xd)
+  movedUnit.data.position = event.path.at("last"); // revert the reversion (xd)
   movedUnit.player.team.vision?.addUnitVision(movedUnit); // add vision from new position
 
   /*

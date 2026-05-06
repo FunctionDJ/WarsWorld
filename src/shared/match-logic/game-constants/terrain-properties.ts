@@ -200,5 +200,5 @@ export const terrainProperties: Record<TileType, TileProperties> = {
  * an integer between 0 and 4 which modifies the amount of damage
  * a unit on that tile takes from attacks.
  */
-export const getTerrainDefenseStars = (tileType: TileType) =>
+export const getTerrainDefenseStars = (tileType: TileType): number =>
   terrainProperties[tileType].defenseStars;

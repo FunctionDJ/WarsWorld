@@ -17,35 +17,36 @@ const threeWayConnectionSchema = z.enum([
 
 const fourWayConnectionSchema = z.literal("top-right-bottom-left");
 
-export const roadTileSchema = z.object({
+const roadTileSchema = z.object({
   type: z.literal("road"),
   variant: twoWayConnectionsSchema.or(threeWayConnectionSchema).or(fourWayConnectionSchema),
 });
 
-export const bridgeTileSchema = z.object({
+const bridgeTileSchema = z.object({
   type: z.literal("bridge"),
   variant: axisConnectionsSchema,
 });
 
-export const pipeTileSchema = z.object({
+const pipeTileSchema = z.object({
   type: z.literal("pipe"),
   variant: oneWayConnectionsSchema.or(twoWayConnectionsSchema),
 });
 
-export const pipeSeamTileSchema = z.object({
+const pipeSeamTileSchema = z.object({
   type: z.literal("pipeSeam"),
   variant: axisConnectionsSchema,
   hp: z.number().int().min(1).max(100),
 });
+
 export type PipeSeamTile = z.infer<typeof pipeSeamTileSchema>;
 export type PipeSeamTileType = z.infer<typeof pipeSeamTileSchema>["type"];
 
-export const plainTileSchema = z.object({
+const plainTileSchema = z.object({
   type: z.literal("plain"),
   variant: z.enum(["normal", "broken-pipe-right-left", "broken-pipe-top-bottom"]),
 });
 
-export const riverTileSchema = z.object({
+const riverTileSchema = z.object({
   type: z.literal("river"),
   // TODO rivers have MANY more variants with flow direction and all
   // the question is: do we want to support them for map creation?

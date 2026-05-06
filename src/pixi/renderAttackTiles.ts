@@ -1,9 +1,10 @@
+import { renderedTileSize } from "components/client-only/common";
 import { BitmapText, Container, Sprite, Texture } from "pixi.js";
 import { type RefObject } from "react";
 import { arr } from "shared/arr";
 import type { MainAction } from "shared/schemas/action";
-import { /*baseTileSize,*/ renderedTileSize } from "../components/client-only/MatchRenderer";
-import { Path, Position } from "../shared/schemas/position";
+import { Path } from "shared/schemas/path";
+import { Position } from "../shared/schemas/position";
 import type { MatchWrapper } from "../shared/wrappers/match";
 import type { UnitWrapper } from "../shared/wrappers/unit";
 import type { BattleForecast } from "./interactiveTileFunctions";

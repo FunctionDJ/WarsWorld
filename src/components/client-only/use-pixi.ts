@@ -14,13 +14,16 @@ import { handleClick, handleHover } from "../../pixi/handleClick";
 import type { PathNode } from "../../pixi/show-pathing";
 import { trpcActions } from "../../pixi/trpcActions";
 import type { UnitWrapper } from "../../shared/wrappers/unit";
-import { renderMultiplier, renderedTileSize } from "./MatchRenderer";
+import { renderedTileSize, renderMultiplier } from "./common";
 
 export const usePixi = (
   match: MatchWrapper<ChangeableTileWithSprite, FrontendUnit>,
   spriteSheets: LoadedSpriteSheet,
   player: PlayerInMatchWrapper,
-) => {
+): {
+  pixiCanvasRef: React.RefObject<HTMLCanvasElement | null>;
+  mapContainerRef: React.RefObject<Container | null>;
+} => {
   //containers holding pixi elements
   const pixiCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const mapContainerRef = useRef<Container | null>(null);
@@ -53,7 +56,7 @@ export const usePixi = (
         height: match.map.height * renderedTileSize + renderedTileSize,
       })
       .then(() => {
-        const sendAction = async (action: MainAction) => {
+        const sendAction = async (action: MainAction): Promise<void> => {
           await actionMutation.mutateAsync({
             playerId: player.data.id,
             matchId: match.id,
@@ -61,7 +64,7 @@ export const usePixi = (
           });
         };
 
-        const onTileClick = async (pos: Position) => {
+        const onTileClick = async (pos: Position): Promise<void> => {
           if (
             mapContainerRef.current !== null &&
             unitContainerRef.current !== null &&
@@ -84,7 +87,7 @@ export const usePixi = (
           }
         };
 
-        const onTileHover = async (pos: Position) => {
+        const onTileHover = async (pos: Position): Promise<void> => {
           if (
             mapContainerRef.current !== null &&
             unitContainerRef.current !== null &&
@@ -122,7 +125,7 @@ export const usePixi = (
         mapContainerRef.current.eventMode = "static";
       });
 
-    return () => {
+    return (): void => {
       app.stop();
     };
   }, [actionMutation, match, player, spriteSheets]);

@@ -20,7 +20,8 @@
     "module": "preserve",
     "moduleResolution": "bundler",
     "isolatedModules": true,
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "types": ["@types/node"]
   },
 
   "exclude": ["node_modules", "dist", ".next"]

@@ -31,7 +31,7 @@ export const eagleAW1: COProperties = {
       instantEffect(player) {
         player
           .getUnits()
-          .filter((unit) => unit.data.type !== "infantry" && unit.data.type !== "mech")
+          .filter((unit) => !unit.isInfantryOrMech())
           .forEach((unit) => {
             unit.data.isReady = true;
           });

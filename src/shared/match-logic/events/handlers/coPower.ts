@@ -37,7 +37,7 @@ export const coPowerActionToEvent: MainActionToEvent<COPowerAction> = (match, ac
   return action;
 };
 
-export const applyCOPowerEvent = (match: MatchWrapper, event: COPowerEvent) => {
+export const applyCOPowerEvent = (match: MatchWrapper, event: COPowerEvent): void => {
   const player = match.getCurrentTurnPlayer();
   const COProperties = getCOProperties(player.data.coId);
   const powerType: keyof COProperties["powers"] = event.isSuper ? "superCOPower" : "COPower";

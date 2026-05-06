@@ -4,7 +4,7 @@ import type { UnitWrapper } from "../../wrappers/unit";
 import type { DamageChart } from "./base-damage";
 import { damageChartAW1, damageChartAW2, damageChartAWDS } from "./base-damage";
 
-interface VersionProperties {
+export interface VersionProperties {
   gameVersion: GameVersion;
   /**
    * Max good luck possible (usually 10 or 15)

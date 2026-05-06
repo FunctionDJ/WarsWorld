@@ -5,7 +5,7 @@ import type { MatchWrapper } from "../../wrappers/match";
 export const fillDiscoveredUnitsAndProperties = (
   match: MatchWrapper,
   emittableEvents: (EmittableEvent | undefined)[],
-) => {
+): void => {
   // emittableEvents.length = math.teams.length + 1, since it has "no team" in the end
   for (const [i, team] of match.teams.entries()) {
     const emittableEvent = emittableEvents[i]; // have to save it in a variable cause typescript is too dumb

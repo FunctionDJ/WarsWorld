@@ -28,10 +28,7 @@ export const attackActionToEvent: (...params: Params) => AttackEvent = (
   const player = match.getCurrentTurnPlayer();
 
   const attacker = match.getUnitOrThrow(fromPosition);
-
-  if (attacker.data.playerSlot !== player.data.slot) {
-    throw new DispatchableError("You don't own this unit");
-  }
+  player.ownsOrThrow(attacker);
 
   //check if unit is in range
   const attackRange = attacker.getAttackRange();

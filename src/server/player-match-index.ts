@@ -5,11 +5,11 @@ import type { PlayerInMatchWrapper } from "shared/wrappers/player-in-match";
 class PlayerMatchIndex {
   private index = new Map<Player["id"], MatchWrapper[]>();
 
-  getPlayerMatches(playerId: Player["id"]) {
+  getPlayerMatches(playerId: Player["id"]): MatchWrapper[] | undefined {
     return this.index.get(playerId);
   }
 
-  onPlayerJoin(player: PlayerInMatchWrapper) {
+  onPlayerJoin(player: PlayerInMatchWrapper): void {
     const playerMatches = this.index.get(player.data.id);
 
     if (playerMatches === undefined) {
@@ -19,7 +19,7 @@ class PlayerMatchIndex {
     }
   }
 
-  onPlayerLeave(player: PlayerInMatchWrapper) {
+  onPlayerLeave(player: PlayerInMatchWrapper): void {
     //Lets get all the matches this player is on
     const playerMatches = this.index.get(player.data.id);
 

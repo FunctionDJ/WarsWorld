@@ -1,8 +1,8 @@
-import type { MainActionToEvent } from "../handler-types";
-import type { DeleteAction } from "../../../schemas/action";
 import { DispatchableError } from "../../../DispatchedError";
-import type { MatchWrapper } from "../../../wrappers/match";
+import type { DeleteAction } from "../../../schemas/action";
 import type { DeleteEvent } from "../../../types/events";
+import type { MatchWrapper } from "../../../wrappers/match";
+import type { MainActionToEvent } from "../handler-types";
 
 export const deleteActionToEvent: MainActionToEvent<DeleteAction> = (match, action) => {
   const player = match.getCurrentTurnPlayer();
@@ -13,9 +13,7 @@ export const deleteActionToEvent: MainActionToEvent<DeleteAction> = (match, acti
     throw new DispatchableError("No unit to delete was selected");
   }
 
-  if (deletedUnit.data.playerSlot !== player.data.slot) {
-    throw new DispatchableError("You don't own this unit");
-  }
+  player.ownsOrThrow(deletedUnit);
 
   if (player.getUnits().length <= 1) {
     return {
@@ -27,6 +25,6 @@ export const deleteActionToEvent: MainActionToEvent<DeleteAction> = (match, acti
   }
 };
 
-export const applyDeleteEvent = (match: MatchWrapper, event: DeleteEvent) => {
-  match.getUnit(event.position)?.remove();
+export const applyDeleteEvent = (match: MatchWrapper, event: DeleteEvent): void => {
+  match.getUnitOrThrow(event.position).remove();
 };

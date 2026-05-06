@@ -1,9 +1,10 @@
-import { baseTileSize } from "components/client-only/MatchRenderer";
+import { baseTileSize } from "components/client-only/common";
 import { Container } from "pixi.js";
 import type { RefObject } from "react";
 import { arr } from "shared/arr";
 import { getUnloadablePositions } from "shared/match-logic/events/handlers/unload/checkUnloadTiles";
-import { Path, type Position } from "shared/schemas/position";
+import { Path } from "shared/schemas/path";
+import { type Position } from "shared/schemas/position";
 import type { UnitWrapper } from "shared/wrappers/unit";
 import type { MainAction } from "../../shared/schemas/action";
 import type { MatchWrapper } from "../../shared/wrappers/match";
@@ -11,8 +12,8 @@ import type { PlayerInMatchWrapper } from "../../shared/wrappers/player-in-match
 import type { LoadedSpriteSheet } from "../load-spritesheet";
 import { tileConstructor } from "../sprite-constructor";
 import { createMenuElementsForUnits } from "./buildUnitMenu";
+import { createSubActionMenuElement } from "./createSubActionMenuElement";
 import { createInGameMenu } from "./menuTemplate";
-import { createSubActionMenuElement } from "./subActionMenu";
 
 export const createUnloadMenu = (
   match: MatchWrapper,
@@ -163,12 +164,12 @@ export const createUnloadMenu = (
     }
   };
 
-  if (unloadPositions1 !== undefined && unloadPositions1.length > 0) {
-    arr(menuElements, 0).on("pointerdown", () => {
+  const attachUnloadPositionHandler = (unloadPositions: Position[], index: number) => {
+    arr(menuElements, index).on("pointerdown", () => {
       const unloadTilesContainer = new Container();
       unloadTilesContainer.label = "unloadUnitsBox";
 
-      for (const unloadPos of unloadPositions1) {
+      for (const unloadPos of unloadPositions) {
         const unloadTile = tileConstructor(unloadPos, "#43d9e4");
         unloadTile.eventMode = "static";
 
@@ -176,7 +177,7 @@ export const createUnloadMenu = (
           const canOtherUnitBeUnloaded =
             player.getVersionProperties().unloadOnlyAfterMove &&
             (infosForMenu.length === 1 ||
-              unloadPositions2?.every((pos) => {
+              unloadPositions?.every((pos) => {
                 return pos.isSame(unloadPos);
               }) === true);
 
@@ -193,39 +194,15 @@ export const createUnloadMenu = (
       //as soon a selection is done, destroy/erase the menu
       menuElements[0]?.parent?.destroy();
     });
+  };
+
+  if (unloadPositions1 !== undefined && unloadPositions1.length > 0) {
+    attachUnloadPositionHandler(unloadPositions1, 0);
   }
 
   if (unloadPositions2 !== undefined && unloadPositions2.length > 0) {
     const meIndex = unloadPositions1 === undefined ? 0 : 1; //if unit1 wasnt unloadable, the index will be 0
-    arr(menuElements, meIndex).on("pointerdown", () => {
-      const unloadTilesContainer = new Container();
-      unloadTilesContainer.label = "unloadUnitsBox";
-
-      for (const unloadPos of unloadPositions2) {
-        const unloadTile = tileConstructor(unloadPos, "#43d9e4");
-        unloadTile.eventMode = "static";
-
-        unloadTile.on("pointerdown", () => {
-          const canOtherUnitBeUnloaded =
-            player.getVersionProperties().unloadOnlyAfterMove &&
-            (infosForMenu.length === 1 ||
-              unloadPositions1?.every((pos) => {
-                return pos.isSame(unloadPos);
-              }) === true);
-
-          unloadTilesContainer.visible = false;
-          clickedUnloadPosition(unloadPos, false, canOtherUnitBeUnloaded);
-          unloadTilesContainer.destroy();
-        });
-
-        unloadTilesContainer.addChild(unloadTile);
-      }
-
-      unloadTilesContainer.zIndex = 999;
-      interactiveContainer.addChild(unloadTilesContainer);
-      //as soon a selection is done, destroy/erase the menu
-      menuElements[0]?.parent?.destroy();
-    });
+    attachUnloadPositionHandler(unloadPositions2, meIndex);
   }
 
   const unloadUnitSelectMenu = createInGameMenu(match, newPosition, yValue, 6, menuElements);

@@ -10,5 +10,6 @@
   "editor.codeActionsOnSave": {
     "source.organizeImports": "always"
   },
-  "typescript.native-preview.tsdk": "/home/function/git/WarsWorld/node_modules/@typescript/native-preview"
+  "typescript.native-preview.tsdk": "/home/function/git/WarsWorld/node_modules/@typescript/native-preview",
+  
 }

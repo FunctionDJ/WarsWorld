@@ -7,6 +7,7 @@ import { getBaseMovementCost } from "shared/match-logic/movement-cost";
 import { getWeatherSpecialMovement } from "shared/match-logic/weather";
 import type { SubAction } from "shared/schemas/action";
 import { Position } from "shared/schemas/position";
+import type { LoadedUnit } from "shared/schemas/unit";
 import type { MatchWrapper } from "shared/wrappers/match";
 import type { PlayerInMatchWrapper } from "shared/wrappers/player-in-match";
 import type { UnitWrapper } from "shared/wrappers/unit";
@@ -33,7 +34,7 @@ export const getAvailableSubActions = (
   unit: UnitWrapper,
   newPosition: Position,
   hasMoved: boolean,
-) => {
+): Map<AvailableSubActions, SubAction | undefined> => {
   const menuOptions: Map<AvailableSubActions, SubAction | undefined> = new Map<
     AvailableSubActions,
     SubAction | undefined
@@ -173,9 +174,9 @@ export const getAvailableSubActions = (
   if (player.getVersionProperties().unloadOnlyAfterMove && unit.isTransport()) {
     let addUnloadSubaction = false;
 
-    if (unit.data.loadedUnit !== null) {
+    const getAddUnloadSubaction = (unit: UnitWrapper, loadedUnit: LoadedUnit): boolean => {
       const baseMovementCost = getBaseMovementCost(
-        unitPropertiesMap[unit.data.loadedUnit.type].movementType,
+        unitPropertiesMap[loadedUnit.type].movementType,
         getWeatherSpecialMovement(unit.player),
         tile.type,
         match.rules.gameVersion ?? unit.player.data.coId.version,
@@ -185,47 +186,28 @@ export const getAvailableSubActions = (
         for (const adjacentPosition of newPosition.getNeighbours()) {
           if (!match.map.isOutOfBounds(adjacentPosition)) {
             const adjacentBaseMovementCost = getBaseMovementCost(
-              unitPropertiesMap[unit.data.loadedUnit.type].movementType,
+              unitPropertiesMap[loadedUnit.type].movementType,
               getWeatherSpecialMovement(unit.player),
               match.getTile(adjacentPosition).type,
               match.rules.gameVersion ?? unit.player.data.coId.version,
             );
 
             if (adjacentBaseMovementCost !== null) {
-              addUnloadSubaction = true;
-              break;
+              return true;
             }
           }
         }
       }
+
+      return false;
+    };
+
+    if (unit.data.loadedUnit !== null) {
+      addUnloadSubaction = getAddUnloadSubaction(unit, unit.data.loadedUnit);
     }
 
     if (!addUnloadSubaction && "loadedUnit2" in unit.data && unit.data.loadedUnit2 !== null) {
-      //duplicated code for loadedUnit2
-      const baseMovementCost = getBaseMovementCost(
-        unitPropertiesMap[unit.data.loadedUnit2.type].movementType,
-        getWeatherSpecialMovement(unit.player),
-        tile.type,
-        match.rules.gameVersion ?? unit.player.data.coId.version,
-      );
-
-      if (baseMovementCost !== null) {
-        for (const adjacentPosition of newPosition.getNeighbours()) {
-          if (!match.map.isOutOfBounds(adjacentPosition)) {
-            const adjacentBaseMovementCost = getBaseMovementCost(
-              unitPropertiesMap[unit.data.loadedUnit2.type].movementType,
-              getWeatherSpecialMovement(unit.player),
-              match.getTile(adjacentPosition).type,
-              match.rules.gameVersion ?? unit.player.data.coId.version,
-            );
-
-            if (adjacentBaseMovementCost !== null) {
-              addUnloadSubaction = true;
-              break;
-            }
-          }
-        }
-      }
+      addUnloadSubaction = getAddUnloadSubaction(unit, unit.data.loadedUnit2);
     }
 
     if (addUnloadSubaction) {

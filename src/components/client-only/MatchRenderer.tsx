@@ -22,11 +22,6 @@ interface Props {
   setTurn: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const baseTileSize = 16;
-export const renderMultiplier = 2;
-export const renderedTileSize = baseTileSize * renderMultiplier;
-export const mapBorder = baseTileSize / 2;
-
 export function MatchRenderer({ match, player, spriteSheets, turn, setTurn }: Props) {
   const [eventTrigger, setEventTrigger] = useState(0);
   useEffect(
@@ -63,7 +58,7 @@ export function MatchRenderer({ match, player, spriteSheets, turn, setTurn }: Pr
           case "move": {
             const pw = event.path;
 
-            if (event.path.data.length === 0 || !match.getUnit(pw.get(0))) {
+            if (event.path.len() === 0 || !match.getUnit(pw.at(0))) {
               break;
             }
 
@@ -75,7 +70,7 @@ export function MatchRenderer({ match, player, spriteSheets, turn, setTurn }: Pr
                 break;
               }
               case "ability": {
-                applyAbilityEvent(match, event.subEvent, pw.get("last"));
+                applyAbilityEvent(match, event.subEvent, pw.at("last"));
                 break;
               }
             }

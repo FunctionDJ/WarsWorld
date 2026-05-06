@@ -1,6 +1,6 @@
 import { DispatchableError } from "shared/DispatchedError";
 import type { AbilityAction } from "shared/schemas/action";
-import { allDirections } from "shared/schemas/position";
+import { allDirections } from "shared/schemas/direction";
 import type { AbilityEvent } from "shared/types/events";
 import type { CapturableTile } from "shared/types/server-match-state";
 import type { MatchWrapper } from "shared/wrappers/match";
@@ -97,10 +97,7 @@ export const abilityActionToEvent: SubActionToEvent<AbilityAction> = (
 ) => {
   const player = match.getCurrentTurnPlayer();
   const unit = match.getUnitOrThrow(fromPosition);
-
-  if (!player.owns(unit)) {
-    throw new DispatchableError("You don't own this unit");
-  }
+  player.ownsOrThrow(unit);
 
   switch (unit.data.type) {
     case "infantry":
@@ -122,7 +119,7 @@ export const abilityActionToEvent: SubActionToEvent<AbilityAction> = (
   return action;
 };
 
-const eliminatePlayerByCapture = (match: MatchWrapper, capturingUnit: UnitWrapper) => {
+const eliminatePlayerByCapture = (match: MatchWrapper, capturingUnit: UnitWrapper): void => {
   const capturedTile = capturingUnit.getTile() as CapturableTile; // `as` because lazy
 
   const playerToEliminate = match.getPlayerBySlot(capturedTile.playerSlot);
@@ -216,7 +213,6 @@ export const applyAbilityEvent: ApplySubEvent<AbilityEvent> = (match, event, fro
       break;
     }
     case "apc": {
-      //supply
       for (const dir of allDirections) {
         match.getUnit(unit.data.position.addDirection(dir))?.resupply();
       }

@@ -51,7 +51,7 @@ const getChangeableTilesFromMap = (map: WWMap): ChangeableTile[] => {
 export class MatchStore {
   private index = new Map<Match["id"], MatchWrapper>();
 
-  createMatchAndIndex(rawMatch: Match, rawMap: WWMap) {
+  createMatchAndIndex(rawMatch: Match, rawMap: WWMap): MatchWrapper {
     const match = new MatchWrapper(
       rawMatch.id,
       rawMatch.leagueType,
@@ -76,7 +76,7 @@ export class MatchStore {
     return match;
   }
 
-  async rebuild() {
+  async rebuild(): Promise<void> {
     console.log("Rebuilding server state...");
 
     const rawMatches = await prisma.match.findMany({
@@ -105,11 +105,11 @@ export class MatchStore {
     console.log("Rebuilding server state done.");
   }
 
-  get(matchId: Match["id"]) {
+  get(matchId: Match["id"]): MatchWrapper | undefined {
     return this.index.get(matchId);
   }
 
-  removeMatchFromIndex(match: MatchWrapper) {
+  removeMatchFromIndex(match: MatchWrapper): void {
     this.index.delete(match.id);
   }
 }

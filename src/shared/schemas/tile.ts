@@ -4,7 +4,8 @@ import { playerSlotForPropertiesSchema } from "./player-slot";
 import type { PipeSeamTile } from "./variable-tiles";
 import { variableTileSchema } from "./variable-tiles";
 
-export const isNotNeutralProperty = (propertyTile: PropertyTile) => propertyTile.playerSlot !== -1;
+export const isNotNeutralProperty = (propertyTile: PropertyTile): boolean =>
+  propertyTile.playerSlot !== -1;
 
 export const isUnitProducingProperty = (tile: Tile | ChangeableTile): tile is PropertyTile =>
   tile.type === "base" || tile.type === "airport" || tile.type === "port";
@@ -16,25 +17,25 @@ export const willBeChangeableTile = (
     tile.type,
   );
 
-export const propertyTileSchema = z.object({
+const propertyTileSchema = z.object({
   type: z.enum(["base", "airport", "port", "hq", "lab", "commtower", "city"]),
   playerSlot: playerSlotForPropertiesSchema,
 });
+
 type PropertyTile = z.infer<typeof propertyTileSchema>;
 export type PropertyTileType = z.infer<typeof propertyTileSchema>["type"];
 
-export const unusedSiloTileSchema = z.object({
+const unusedSiloTileSchema = z.object({
   type: z.literal("unusedSilo"),
 });
 type UnusedSiloTile = z.infer<typeof unusedSiloTileSchema>;
 export type UnusedSiloTileType = z.infer<typeof unusedSiloTileSchema>["type"];
 
-export const invariableTileSchema = z
+const invariableTileSchema = z
   .object({
     type: z.enum(["shoal", "sea", "forest", "mountain", "reef", "usedSilo"]),
   })
   .or(unusedSiloTileSchema);
-export type InvariableTile = z.infer<typeof invariableTileSchema>;
 
 export const tileSchema = z.discriminatedUnion("type", [
   propertyTileSchema,

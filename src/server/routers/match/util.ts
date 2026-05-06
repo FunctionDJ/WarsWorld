@@ -1,8 +1,9 @@
 import { TRPCError } from "@trpc/server";
+import type { PlayerInMatch } from "shared/types/server-match-state";
 import type { MapWrapper } from "shared/wrappers/map";
 import type { MatchWrapper } from "shared/wrappers/match";
 
-export const throwIfMatchNotInSetupState = (match: MatchWrapper) => {
+export const throwIfMatchNotInSetupState = (match: MatchWrapper): void => {
   if (match.status !== "setup") {
     throw new TRPCError({
       code: "BAD_REQUEST",
@@ -11,13 +12,21 @@ export const throwIfMatchNotInSetupState = (match: MatchWrapper) => {
   }
 };
 
-const mapToFrontend = (map: MapWrapper) => ({
+const mapToFrontend = (map: MapWrapper): { id: string; name: string; numberOfPlayers: number } => ({
   id: map.data.id,
   name: map.data.name,
   numberOfPlayers: map.data.numberOfPlayers,
 });
 
-export const matchToFrontend = (match: MatchWrapper) => ({
+export const matchToFrontend = (
+  match: MatchWrapper,
+): {
+  id: string;
+  map: ReturnType<typeof mapToFrontend>;
+  players: PlayerInMatch[];
+  state: string;
+  turn: number;
+} => ({
   id: match.id,
   map: mapToFrontend(match.map),
   players: match.getAllPlayers().map((player) => player.data),
@@ -25,7 +34,7 @@ export const matchToFrontend = (match: MatchWrapper) => ({
   turn: match.turn,
 });
 
-export function allMatchSlotsReady(match: MatchWrapper) {
+export function allMatchSlotsReady(match: MatchWrapper): boolean {
   for (let i = 0; i < match.map.data.numberOfPlayers; i++) {
     if (match.getPlayerBySlot(i)?.data.ready !== true) {
       return false;
@@ -35,9 +44,9 @@ export function allMatchSlotsReady(match: MatchWrapper) {
   return true;
 }
 
-export function getNextAvailableSlot(match: MatchWrapper) {
+export function getNextAvailableSlot(match: MatchWrapper): number {
   for (let i = 0; i < match.map.data.numberOfPlayers; i++) {
-    if (match.getPlayerBySlot(i) !== undefined) {
+    if (match.getPlayerBySlot(i) === undefined) {
       return i;
     }
   }

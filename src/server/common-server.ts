@@ -4,7 +4,7 @@ import { WebSocketServer } from "ws";
 import { appRouter } from "./routers/app";
 import { createContext } from "./trpc/trpc-context";
 
-export const createTRPCwebSocketServer = (wssConfig: ServerOptions) => {
+export const createTRPCwebSocketServer = (wssConfig: ServerOptions): WebSocketServer => {
   const wss = new WebSocketServer(wssConfig);
 
   const handler = applyWSSHandler({ wss, router: appRouter, createContext });

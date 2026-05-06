@@ -11,7 +11,7 @@ const developmentPlayerNames = ["Grimm Guy", "Incuggarch", "Master Chief Z", "De
   (name) => `${Prefix} ${name}`,
 );
 
-async function main() {
+async function main(): Promise<void> {
   const hashedPassword = await hashPassword("secret");
 
   const { id: userId } = await prisma.user.create({

@@ -5,6 +5,7 @@
     "outDir": "dist",
     "lib": ["ES2023", "DOM"],
     "isolatedModules": false,
-    "noEmit": false
+    "noEmit": false,
+    "types": ["node", "@types/node"]
   }
 }

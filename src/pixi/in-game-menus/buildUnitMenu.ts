@@ -1,3 +1,4 @@
+import { baseTileSize } from "components/client-only/common";
 import type { ArmySpritesheetData } from "frontend/components/match/getSpritesheetData";
 import type { Spritesheet } from "pixi.js";
 import { AnimatedSprite, BitmapText, Container, Sprite, Texture } from "pixi.js";
@@ -5,7 +6,6 @@ import { unitPropertiesMap } from "shared/match-logic/game-constants/unit-proper
 import type { MainAction } from "shared/schemas/action";
 import type { Position } from "shared/schemas/position";
 import { unitTypes, type UnitType } from "shared/schemas/unit";
-import { baseTileSize } from "../../components/client-only/MatchRenderer";
 import type { MatchWrapper } from "../../shared/wrappers/match";
 import type { PlayerInMatchWrapper } from "../../shared/wrappers/player-in-match";
 import { createInGameMenu } from "./menuTemplate";

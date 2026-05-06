@@ -2,7 +2,10 @@ import { unitPropertiesMap } from "shared/match-logic/game-constants/unit-proper
 import { Position } from "shared/schemas/position";
 import type { PlayerInMatchWrapper } from "shared/wrappers/player-in-match";
 
-export function applySenseiPowerSpawn(player: PlayerInMatchWrapper, unitType: "infantry" | "mech") {
+export function applySenseiPowerSpawn(
+  player: PlayerInMatchWrapper,
+  unitType: "infantry" | "mech",
+): void {
   const { match } = player;
 
   // it's faster to track the unitCount with a variable here than

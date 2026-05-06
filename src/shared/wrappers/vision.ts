@@ -22,7 +22,9 @@ const getUnitVisionRange = (unit: UnitWrapper): number => {
 export class Vision {
   private visionArray: Uint16Array; // i put 16 cause 2^8 = 256 and we *could* go over 256, in theory
   private mapWidth: number;
-  private ownedProperties: Set<Position>; // TODO does a set make sense here? maybe we need a more sophisticated data structure to deduplicate positions.
+
+  // TODO does a set make sense here? maybe we need a more sophisticated data structure to deduplicate positions.
+  private ownedProperties: Set<Position>;
 
   // used for temporary information storage. does not guarantee that a position is not in both at the same time
   // (but making discovered have priority over undiscovered works for all current events)
@@ -58,7 +60,7 @@ export class Vision {
     }
   }
 
-  private changeVision(position: Position, addVision: boolean) {
+  private changeVision(position: Position, addVision: boolean): void {
     const index = position.data[1] * this.mapWidth + position.data[0];
     const currentVision = this.visionArray[index];
 
@@ -84,7 +86,7 @@ export class Vision {
   /**
    * Used when a non-owned property gets captured.
    */
-  addOwnedProperty(position: Position) {
+  addOwnedProperty(position: Position): void {
     this.ownedProperties.add(position);
     // you will always have vision of a property you just captured cause a unit has to be on top
     this.changeVision(position, false);
@@ -93,12 +95,12 @@ export class Vision {
   /**
    * Used when an owned property gets captured.
    */
-  removeOwnedProperty(position: Position) {
+  removeOwnedProperty(position: Position): void {
     this.ownedProperties.delete(position);
     this.changeVision(position, false);
   }
 
-  private changeUnitVision(unit: UnitWrapper, addVision: boolean) {
+  private changeUnitVision(unit: UnitWrapper, addVision: boolean): void {
     const visionRange = getUnitVisionRange(unit);
     const activeSonjaPower =
       unit.player.data.coId.name === "sonja" && unit.player.data.COPowerState !== "no-power";
@@ -130,14 +132,14 @@ export class Vision {
   /**
    * Used for creating, unloading or moving units.
    */
-  addUnitVision(unit: UnitWrapper) {
+  addUnitVision(unit: UnitWrapper): void {
     this.changeUnitVision(unit, true);
   }
 
   /**
    * Used for when a unit dies or a unit moves from a position.
    */
-  removeUnitVision(unit: UnitWrapper) {
+  removeUnitVision(unit: UnitWrapper): void {
     this.changeUnitVision(unit, false);
   }
 
@@ -145,7 +147,7 @@ export class Vision {
    * Used for vision powers (and expiring powers) and rain activation / deactivation.
    * Does NOT update new discovered / undiscovered positions.
    */
-  recalculateVision(units: UnitWrapper[]) {
+  recalculateVision(units: UnitWrapper[]): void {
     this.visionArray.fill(0);
 
     for (const property of this.ownedProperties.values()) {

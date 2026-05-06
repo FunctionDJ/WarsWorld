@@ -153,7 +153,7 @@ const createUnitFromBuildEvent = (
   }
 };
 
-export const applyBuildEvent = (match: MatchWrapper, event: BuildEvent) => {
+export const applyBuildEvent = (match: MatchWrapper, event: BuildEvent): void => {
   const player = match.getCurrentTurnPlayer();
 
   player.data.funds -= unitPropertiesMap[event.unitType].cost;

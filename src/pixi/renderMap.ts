@@ -1,4 +1,4 @@
-import { baseTileSize, mapBorder } from "components/client-only/MatchRenderer";
+import { baseTileSize, mapBorder } from "components/client-only/common";
 import type { FrontendUnit } from "frontend/components/match/FrontendUnit";
 import type { SpriteAnimationKeys } from "frontend/components/match/getSpritesheetData";
 import type { ChangeableTileWithSprite } from "frontend/components/match/types";

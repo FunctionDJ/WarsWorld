@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const weatherSchema = z.union([
+const weatherSchema = z.union([
   z.literal("clear"),
   z.literal("snow"),
   z.literal("rain"),
@@ -10,5 +10,3 @@ export const weatherSchema = z.union([
 export type Weather = z.infer<typeof weatherSchema>;
 
 export const weatherSettingSchema = weatherSchema.or(z.literal("random"));
-
-export type WeatherSetting = z.infer<typeof weatherSettingSchema>;

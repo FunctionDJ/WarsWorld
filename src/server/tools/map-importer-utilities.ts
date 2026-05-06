@@ -9,7 +9,7 @@ interface AWBWMapImportSchema {
   numberOfPlayers: 2;
 }
 
-export const importAWBWMap = async (data: AWBWMapImportSchema) => {
+export const importAWBWMap = async (data: AWBWMapImportSchema): Promise<WWMap> => {
   try {
     return await prisma.wWMap.create({
       data: {

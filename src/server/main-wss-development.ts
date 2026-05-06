@@ -1,7 +1,7 @@
 import { createTRPCwebSocketServer } from "./common-server";
 import { matchStore } from "./match-store";
 
-void (async () => {
+void (async (): Promise<void> => {
   await matchStore.rebuild();
 
   const wss = createTRPCwebSocketServer({

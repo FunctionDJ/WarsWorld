@@ -17,7 +17,7 @@ function weatherBaseChance(match: MatchWrapper): number {
   }
 }
 
-function getChanceOfRain(match: MatchWrapper) {
+function getChanceOfRain(match: MatchWrapper): number {
   //AWDS Drake doesn't increase weather chances
   const numberOfDrakes = match
     .getAllPlayers()
