@@ -2,7 +2,7 @@ import { Container } from "pixi.js";
 import type { RefObject } from "react";
 import type { MatchWrapper } from "../shared/wrappers/match/match";
 import type { UnitWrapper } from "../shared/wrappers/unit/unit";
-import { createTilesContainer } from "./interactiveTileFunctions";
+import { createTilesContainer } from "./interactive-tile-functions";
 import { getAccessibleNodes, getAttackableTiles } from "./show-pathing";
 
 export function displayEnemyRange(

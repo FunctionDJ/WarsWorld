@@ -5,9 +5,9 @@ import type { WWReadOnly } from "shared/types/ww-readonly";
 import type { PlayerInMatchWrapper } from "shared/wrappers/player/player-in-match";
 import type { UnitWrapper } from "shared/wrappers/unit/unit";
 import type { ApplyEvent, MainActionToEvent } from "../handler-types";
-import { getTurnFuelConsumption } from "./passTurn/consumeFuelAndCrash";
+import { getTurnFuelConsumption } from "./passTurn/consume-fuel-and-crash";
 import { propertyRepairAndResupply } from "./passTurn/property-repair-and-resupply";
-import { updateWeather } from "./passTurn/updateWeather";
+import { updateWeather } from "./passTurn/update-weather";
 
 function getNewWeather(nextTurnPlayer: WWReadOnly<PlayerInMatchWrapper>): Turn["newWeather"] {
   const { match } = nextTurnPlayer;

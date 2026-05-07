@@ -2,8 +2,8 @@ import { getVisualHPfromHP } from "shared/match-logic/calculate-damage";
 import type { Position } from "shared/schemas/position";
 import type { AttackEvent, EmittableAttackEvent } from "shared/types/events";
 import type { MutableMatch } from "shared/wrappers/match/mutable-match";
-import { canAttackWithPrimary } from "./canAttackWithPrimary";
-import { getPowerChargeGain } from "./getPowerChargeGain";
+import { canAttackWithPrimary } from "./can-attack-with-primary";
+import { getPowerChargeGain } from "./get-power-charge-gain";
 import { applySashaFundsDamage, handleSashaScopFunds } from "./handle-sasha-scop-funds";
 
 export const applyAttackEvent = (

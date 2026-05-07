@@ -11,7 +11,7 @@ import type {
 } from "../../types/events";
 import type { MatchWrapper } from "../../wrappers/match/match";
 import { Team } from "../../wrappers/team/team";
-import { createEmittableAttackEvent } from "./handlers/attack/attackEventToEmittable";
+import { createEmittableAttackEvent } from "./handlers/attack/attack-event-to-emittable";
 
 type EmittableSubEventWithExtraInfo = Readonly<{
   teamIndex: number;

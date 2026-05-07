@@ -1,5 +1,5 @@
 import { baseTileSize, mapBorder } from "components/client-only/common";
-import type { SpriteAnimationKeys } from "frontend/components/match/getSpritesheetData";
+import type { SpriteAnimationKeys } from "frontend/components/match/get-spritesheet-data";
 import { AnimatedSprite, Container, Sprite, Texture } from "pixi.js";
 import { arrayAtOrThrow } from "shared/array-utilities";
 import { Position } from "shared/schemas/position";

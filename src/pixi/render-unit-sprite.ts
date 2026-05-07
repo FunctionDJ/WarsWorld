@@ -1,5 +1,5 @@
 import { baseTileSize } from "components/client-only/common";
-import type { FrontendUnit } from "frontend/components/match/FrontendUnit";
+import type { FrontendUnit } from "frontend/components/match/frontend-unit";
 import { AnimatedSprite, Container, Sprite } from "pixi.js";
 import { getFromObjectOrThrow } from "shared/array-utilities";
 import { Position } from "shared/schemas/position";

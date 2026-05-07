@@ -1,7 +1,7 @@
-import MatchPlayer from "frontend/components/match/MatchPlayer";
+import MatchPlayer from "frontend/components/match/match-player";
 import { usePlayers } from "frontend/context/players";
-import type { SpritesheetDataByArmy } from "frontend/pixi/getSpritesheetData";
-import getSpriteSheets from "frontend/pixi/getSpritesheetData";
+import type { SpritesheetDataByArmy } from "frontend/pixi/get-spritesheet-data";
+import getSpriteSheets from "frontend/pixi/get-spritesheet-data";
 import { loadSpritesFromSpriteMap, type LoadedSpriteSheet } from "frontend/pixi/load-spritesheet";
 import { trpc } from "frontend/utils/trpc-client";
 import type { GetServerSideProps } from "next";
@@ -13,7 +13,7 @@ import type { UnitType } from "shared/schemas/unit";
 import type { PlayerInMatch } from "shared/types/server-match-state";
 import { MatchWrapper } from "shared/wrappers/match";
 import { UnitWrapper } from "shared/wrappers/unit";
-import Calculator from "../../frontend/components/calculator/Calculator";
+import Calculator from "../../frontend/components/calculator/calculator";
 import { mapRender } from "../../interactiveMatchRenders/map-render";
 
 BaseTexture.defaultOptions.scaleMode = SCALE_MODES.NEAREST;

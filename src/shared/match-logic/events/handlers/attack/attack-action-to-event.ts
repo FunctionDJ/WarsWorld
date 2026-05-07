@@ -8,7 +8,7 @@ import type { AttackAction } from "shared/schemas/action";
 import type { LuckRoll } from "shared/schemas/co";
 import type { AttackEvent } from "shared/types/events";
 import type { SubActionToEvent } from "../../handler-types";
-import { getEliminationReason } from "./getEliminationReason";
+import { getEliminationReason } from "./get-elimination-reason";
 
 type Parameters = [
   ...Parameters<SubActionToEvent<AttackAction>>,

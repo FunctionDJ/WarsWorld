@@ -11,9 +11,9 @@ import type { MatchWrapper } from "../../shared/wrappers/match/match";
 import type { PlayerInMatchWrapper } from "../../shared/wrappers/player/player-in-match";
 import type { LoadedSpriteSheet } from "../load-spritesheet";
 import { tileConstructor } from "../sprite-constructor";
-import { createMenuElementsForUnits } from "./buildUnitMenu";
-import { createSubActionMenuElement } from "./createSubActionMenuElement";
-import { createInGameMenu } from "./menuTemplate";
+import { createMenuElementsForUnits } from "./build-unit-menu";
+import { createSubActionMenuElement } from "./create-sub-action-menu-element";
+import { createInGameMenu } from "./menu-template";
 
 export const createUnloadMenu = (
   match: MatchWrapper,

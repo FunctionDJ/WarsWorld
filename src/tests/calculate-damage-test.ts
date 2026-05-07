@@ -1,5 +1,5 @@
 import type { WWMap } from "generated/browser";
-import { attackActionToEvent } from "shared/match-logic/events/handlers/attack/attackActionToEvent";
+import { attackActionToEvent } from "shared/match-logic/events/handlers/attack/attack-action-to-event";
 import { Position } from "shared/schemas/position";
 import type { PlayerInMatch } from "shared/types/server-match-state";
 import { MutableMatch } from "shared/wrappers/match/mutable-match";

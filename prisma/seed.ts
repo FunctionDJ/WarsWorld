@@ -1,5 +1,5 @@
 import { PrismaPg } from "@prisma/adapter-pg";
-import { hashPassword } from "server/hashPassword";
+import { hashPassword } from "server/hash-password";
 import { importAWBWMap } from "server/tools/map-importer-utilities";
 import { developmentPlayerNamePrefix as Prefix } from "server/trpc/middleware/player";
 import { arrayAtOrThrow } from "shared/array-utilities";

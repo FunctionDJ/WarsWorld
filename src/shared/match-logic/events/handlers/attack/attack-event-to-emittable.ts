@@ -2,8 +2,8 @@ import type { AttackEvent, EmittableAttackEvent } from "shared/types/events";
 import type { MatchWrapper } from "shared/wrappers/match/match";
 import type { Team } from "shared/wrappers/team/team";
 import type { UnitWrapper } from "shared/wrappers/unit/unit";
-import { canAttackWithPrimary } from "./canAttackWithPrimary";
-import { getPowerChargeGain } from "./getPowerChargeGain";
+import { canAttackWithPrimary } from "./can-attack-with-primary";
+import { getPowerChargeGain } from "./get-power-charge-gain";
 
 export const createEmittableAttackEvent = (
   match: MatchWrapper,

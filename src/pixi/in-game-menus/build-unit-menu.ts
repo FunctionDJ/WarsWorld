@@ -1,5 +1,5 @@
 import { baseTileSize } from "components/client-only/common";
-import type { ArmySpritesheetData } from "frontend/components/match/getSpritesheetData";
+import type { ArmySpritesheetData } from "frontend/components/match/get-spritesheet-data";
 import type { Spritesheet } from "pixi.js";
 import { AnimatedSprite, BitmapText, Container, Sprite, Texture } from "pixi.js";
 import { unitPropertiesMap } from "shared/match-logic/game-constants/unit-properties";
@@ -8,7 +8,7 @@ import type { Position } from "shared/schemas/position";
 import { unitTypes, type UnitTypeString } from "shared/schemas/unit";
 import type { MatchWrapper } from "../../shared/wrappers/match/match";
 import type { PlayerInMatchWrapper } from "../../shared/wrappers/player/player-in-match";
-import { createInGameMenu } from "./menuTemplate";
+import { createInGameMenu } from "./menu-template";
 
 /**
  * Creates menu of units, without applying any behaviour on click/pointerdown (must be implemented afterwards)

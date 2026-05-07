@@ -14,11 +14,11 @@ import type { MainAction } from "../../shared/schemas/action";
 import type { MatchWrapper } from "../../shared/wrappers/match/match";
 import type { PlayerInMatchWrapper } from "../../shared/wrappers/player/player-in-match";
 import type { LoadedSpriteSheet } from "../load-spritesheet";
-import { renderAttackTiles } from "../renderAttackTiles";
+import { renderAttackTiles } from "../render-attack-tiles";
 import { tileConstructor } from "../sprite-constructor";
-import { createSubActionMenuElement } from "./createSubActionMenuElement";
-import { createInGameMenu } from "./menuTemplate";
-import { createUnloadMenu } from "./unloadSubactionMenu";
+import { createSubActionMenuElement } from "./create-sub-action-menu-element";
+import { createInGameMenu } from "./menu-template";
+import { createUnloadMenu } from "./unload-subaction-menu";
 
 export default function subActionMenu(
   match: MatchWrapper,

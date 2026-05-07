@@ -1,11 +1,11 @@
-import type { FrontendUnit } from "frontend/components/match/FrontendUnit";
+import type { FrontendUnit } from "frontend/components/match/frontend-unit";
 import type { ChangeableTileWithSprite } from "frontend/components/match/types";
 import type { Application } from "pixi.js";
 import type { Position } from "shared/schemas/position";
 import type { MatchWrapper } from "shared/wrappers/match/match";
 import type { LoadedSpriteSheet } from "./load-spritesheet";
-import { renderInvisInteractiveTiles, renderMap } from "./renderMap";
-import { renderUnits } from "./renderUnits";
+import { renderInvisInteractiveTiles, renderMap } from "./render-map";
+import { renderUnits } from "./render-units";
 
 export function setupApp(
   app: Application,

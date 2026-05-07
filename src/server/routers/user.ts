@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { hashPassword } from "server/hashPassword";
+import { hashPassword } from "server/hash-password";
 import { prisma } from "server/prisma/prisma-client";
 import { playerWithoutCurrentMiddleware } from "server/trpc/middleware/player";
 import { playerBaseProcedure, publicBaseProcedure, router } from "server/trpc/trpc-setup";

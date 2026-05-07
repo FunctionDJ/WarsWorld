@@ -7,10 +7,10 @@ import { Path } from "shared/schemas/path";
 import { Position } from "../shared/schemas/position";
 import type { MatchWrapper } from "../shared/wrappers/match/match";
 import type { UnitWrapper } from "../shared/wrappers/unit/unit";
-import type { BattleForecast } from "./interactiveTileFunctions";
-import { getBattleForecast } from "./interactiveTileFunctions";
+import type { BattleForecast } from "./interactive-tile-functions";
+import { getBattleForecast } from "./interactive-tile-functions";
 import type { LoadedSpriteSheet } from "./load-spritesheet";
-import { renderUnitSprite } from "./renderUnitSprite";
+import { renderUnitSprite } from "./render-unit-sprite";
 import { getAttackTargetTiles } from "./show-pathing";
 import { tileConstructor } from "./sprite-constructor";
 

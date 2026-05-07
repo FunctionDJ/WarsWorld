@@ -3,16 +3,16 @@ import type { MainAction, MoveAction } from "shared/schemas/action";
 import type { MainEventsWithoutSubEvents, SubEvent } from "shared/types/events";
 import type { MatchWrapper } from "shared/wrappers/match/match";
 import { abilityActionToEvent } from "./handlers/ability";
-import { attackActionToEvent } from "./handlers/attack/attackActionToEvent";
+import { attackActionToEvent } from "./handlers/attack/attack-action-to-event";
 import { buildActionToEvent } from "./handlers/build";
 import { coPowerActionToEvent } from "./handlers/co-power";
 import { deleteActionToEvent } from "./handlers/delete";
-import { launchMissileActionToEvent } from "./handlers/launchMissile";
+import { launchMissileActionToEvent } from "./handlers/launch-missile";
 import { moveActionToEvent } from "./handlers/move";
 import { passTurnActionToEvent } from "./handlers/pass-turn";
 import { repairActionToEvent } from "./handlers/repair";
-import { unloadNoWaitActionToEvent } from "./handlers/unload/unloadNoWait";
-import { unloadWaitActionToEvent } from "./handlers/unload/unloadWait";
+import { unloadNoWaitActionToEvent } from "./handlers/unload/unload-no-wait";
+import { unloadWaitActionToEvent } from "./handlers/unload/unload-wait";
 
 export const validateMainActionAndToEvent = (
   match: MatchWrapper,

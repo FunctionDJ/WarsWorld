@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { FrontendUnit } from "frontend/components/match/FrontendUnit";
-import type { SpritesheetDataByArmy } from "frontend/components/match/getSpritesheetData";
+import { FrontendUnit } from "frontend/components/match/frontend-unit";
+import type { SpritesheetDataByArmy } from "frontend/components/match/get-spritesheet-data";
 import type { ChangeableTileWithSprite } from "frontend/components/match/types";
 import { trpc } from "frontend/utils/trpc-client";
 import { loadSpritesFromSpriteMap } from "pixi/load-spritesheet";

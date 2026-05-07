@@ -6,12 +6,12 @@ import { applyAttackEvent } from "./handlers/attack/apply-attack-event";
 import { applyBuildEvent } from "./handlers/build";
 import { applyCOPowerEvent } from "./handlers/co-power";
 import { applyDeleteEvent } from "./handlers/delete";
-import { applyLaunchMissileEvent } from "./handlers/launchMissile";
+import { applyLaunchMissileEvent } from "./handlers/launch-missile";
 import { applyMoveEvent } from "./handlers/move";
 import { applyPassTurnEvent } from "./handlers/pass-turn";
 import { applyRepairEvent } from "./handlers/repair";
-import { applyUnloadNoWaitEvent } from "./handlers/unload/unloadNoWait";
-import { applyUnloadWaitEvent } from "./handlers/unload/unloadWait";
+import { applyUnloadNoWaitEvent } from "./handlers/unload/unload-no-wait";
+import { applyUnloadWaitEvent } from "./handlers/unload/unload-wait";
 
 export const applyMainEventToMatch = (
   match: MatchWrapper,
