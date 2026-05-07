@@ -74,6 +74,12 @@ export default defineConfig([
       "@typescript-eslint/explicit-module-boundary-types": "warn",
       "@typescript-eslint/consistent-type-imports": "warn",
       "@typescript-eslint/strict-boolean-expressions": "error",
+      "@typescript-eslint/consistent-type-assertions": [
+        "error",
+        {
+          assertionStyle: "never",
+        },
+      ],
       // "@typescript-eslint/prefer-readonly-parameter-types": [
       //   "error",
       //   {

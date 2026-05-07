@@ -1,11 +1,12 @@
 import { clamp } from "shared/math-utilities";
 import type {
-  UnitByVisibilityAndTypeString,
-  UnitTypeString,
-  Visibility,
+    UnitByVisibilityAndTypeString,
+    UnitTypeString,
+    Visibility,
 } from "shared/schemas/unit";
 import type { MutableMatch } from "../match/mutable-match";
 import type { MutablePlayerInMatch } from "../player/mutable-player-in-match";
+import type { MutableTransport } from "./mutable-transport";
 import { UnitWrapper } from "./unit";
 
 export class MutableUnit<
@@ -27,6 +28,17 @@ export class MutableUnit<
     }
 
     this.player = player;
+  }
+
+  isTransport(): this is MutableTransport<TVisibility> {
+    return (
+      this.data.type === "apc" ||
+      this.data.type === "transportCopter" ||
+      this.data.type === "blackBoat" ||
+      this.data.type === "lander" ||
+      this.data.type === "carrier" ||
+      this.data.type === "cruiser"
+    );
   }
 
   setFuel(newFuel: number): void {

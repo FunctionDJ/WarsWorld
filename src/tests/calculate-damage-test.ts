@@ -3,7 +3,6 @@ import { attackActionToEvent } from "shared/match-logic/events/handlers/attack/a
 import { Position } from "shared/schemas/position";
 import type { PlayerInMatch } from "shared/types/server-match-state";
 import { MutableMatch } from "shared/wrappers/match/mutable-match";
-import { MutableUnit } from "shared/wrappers/unit/mutable-unit";
 
 /**
  * TODO add memory usage readouts by reading memory used by process
@@ -110,7 +109,6 @@ const match = new MutableMatch(
   map,
   players,
   [],
-  MutableUnit,
   0,
 );
 

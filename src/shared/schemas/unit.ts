@@ -1,11 +1,11 @@
 import { z } from "zod";
 import {
-  unitInMapSharedProperties as shared,
-  withAmmoUnitStats,
-  withCapturePoints,
-  withHidden,
-  withNoAmmoUnitStats,
-  withTypeSchema,
+    unitInMapSharedProperties as shared,
+    withAmmoUnitStats,
+    withCapturePoints,
+    withHidden,
+    withNoAmmoUnitStats,
+    withTypeSchema,
 } from "./unit-traits";
 
 //LAND UNITS:
@@ -147,7 +147,7 @@ export type UnitWithVisibleStats = z.infer<typeof visibleUnitSchema>;
 export type UnitTypeString = UnitWithVisibleStats["type"];
 export type TransportTypeString = Extract<
   UnitTypeString,
-  "apc" | "transportCopter" | "blackBoat" | "lander" | "carrier"
+  "apc" | "transportCopter" | "blackBoat" | "lander" | "carrier" | "cruiser"
 >;
 export type IndirectTypeString = Extract<
   UnitTypeString,

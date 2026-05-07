@@ -1,17 +1,21 @@
+import { DispatchableError } from "shared/dispatchable-error";
 import { unitPropertiesMap } from "shared/match-logic/game-constants/unit-properties";
 import type { Direction } from "shared/schemas/direction";
 import type {
+  LoadedTypeString,
   TransportTypeString,
   UnitByVisibilityAndTypeString,
   Visibility,
 } from "shared/schemas/unit";
 import type { MutableMatch } from "../match/mutable-match";
 import type { MutablePlayerInMatch } from "../player/mutable-player-in-match";
-import { Transport } from "./transport";
+import { MutableUnit } from "./mutable-unit";
+import { UnitWrapper } from "./unit";
 
-export class MutableTransport<
-  TVisibility extends Visibility = Visibility,
-> extends Transport<TVisibility> {
+export class MutableTransport<TVisibility extends Visibility = Visibility> extends MutableUnit<
+  TVisibility,
+  TransportTypeString
+> {
   public player: MutablePlayerInMatch<TVisibility>;
 
   constructor(
@@ -28,6 +32,42 @@ export class MutableTransport<
 
     this.player = player;
     this.properties = unitPropertiesMap[data.type];
+  }
+
+  getLoadedUnit(slot: 1 | 2): UnitWrapper<Visibility, LoadedTypeString> {
+    if (slot === 1) {
+      if (this.data.loadedUnit === undefined) {
+        throw new DispatchableError("Transport doesn't currently have a loaded unit in slot 1");
+      }
+
+      return new UnitWrapper<Visibility, LoadedTypeString>(
+        {
+          ...this.data.loadedUnit,
+          playerSlot: this.data.playerSlot,
+          isReady: false,
+          position: this.data.position,
+        },
+        this.match,
+      );
+    }
+
+    if (!("loadedUnit2" in this.data)) {
+      throw new DispatchableError("This transport type doesn't support a second loaded unit");
+    }
+
+    if (this.data.loadedUnit2 === undefined) {
+      throw new DispatchableError("Transport doesn't currently have a loaded unit in slot 2");
+    }
+
+    return new UnitWrapper<Visibility, LoadedTypeString>(
+      {
+        ...this.data.loadedUnit2,
+        playerSlot: this.data.playerSlot,
+        isReady: false,
+        position: this.data.position,
+      },
+      this.match,
+    );
   }
 
   unload({ slot, direction }: Readonly<{ slot: 1 | 2; direction: Direction }>): void {

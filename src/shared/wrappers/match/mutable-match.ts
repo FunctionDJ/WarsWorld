@@ -4,17 +4,18 @@ import { DispatchableError } from "shared/dispatchable-error";
 import type { MatchRules } from "shared/schemas/match-rules";
 import type { PlayerSlot } from "shared/schemas/player-slot";
 import type { Position } from "shared/schemas/position";
-import type { WWUnit } from "shared/schemas/unit";
+import type { UnitTypeString, Visibility, WWUnit } from "shared/schemas/unit";
 import type { Weather } from "shared/schemas/weather";
 import {
-  createNeutralPlayerInMatch,
-  type ChangeableTile,
-  type PlayerInMatch,
+    createNeutralPlayerInMatch,
+    type ChangeableTile,
+    type PlayerInMatch,
 } from "shared/types/server-match-state";
 import type { WWReadOnly } from "shared/types/ww-readonly";
 import { MutablePlayerInMatch } from "../player/mutable-player-in-match";
 import { getTeamPlayers } from "../team/get-team-players";
 import { MutableTeam } from "../team/mutable-team";
+import { MutableTransport } from "../unit/mutable-transport";
 import { MutableUnit } from "../unit/mutable-unit";
 import { MutableVision } from "../vision/mutable-vision";
 import { MatchWrapper } from "./match";
@@ -36,7 +37,16 @@ export class MutableMatch extends MatchWrapper {
     public turn: number,
   ) {
     super(id, leagueType, changeableTiles, rules, state, map, players, units, turn);
-    this.units = units.map((unit) => new MutableUnit(unit, this));
+    this.units = units.map((unit): MutableUnit =>
+      unit.type === "apc" ||
+      unit.type === "transportCopter" ||
+      unit.type === "blackBoat" ||
+      unit.type === "lander" ||
+      unit.type === "carrier" ||
+      unit.type === "cruiser"
+        ? new MutableTransport(unit, this)
+        : new MutableUnit<Visibility, UnitTypeString>(unit, this),
+    );
 
     this.teams = this.rules.teamMapping.map(
       (teamIndex) =>

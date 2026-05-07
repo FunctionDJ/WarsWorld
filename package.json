@@ -9,7 +9,7 @@
     "prisma:push": "prisma db push",
     "prisma:seed": "prisma db seed",
     "prisma:reset": "prisma migrate reset",
-    "prisma:generate-once": "prisma generate",
+    "prisma:generate-once": "bunx --bun prisma generate",
     "prisma:generate-watch": "prisma generate --watch",
     "prisma:studio": "prisma studio",
     "dev:wss": "cross-env PORT=3001 bun --watch src/server/main-wss-development.ts --tsconfig tsconfig.server.json",

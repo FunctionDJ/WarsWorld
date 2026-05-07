@@ -2,17 +2,22 @@ import { unitPropertiesMap } from "shared/match-logic/game-constants/unit-proper
 import type { Position } from "shared/schemas/position";
 import type { PassableTile } from "shared/schemas/tile";
 import type {
-  IndirectTypeString,
-  InfantryOrMechTypeString,
-  UnitByVisibilityAndTypeString,
-  UnitTypeString,
-  Visibility,
+    IndirectTypeString,
+    InfantryOrMechTypeString,
+    LoadedTypeString,
+    TransportTypeString,
+    UnitByVisibilityAndTypeString,
+    UnitTypeString,
+    Visibility,
 } from "shared/schemas/unit";
 import { getBaseMovementCost } from "../../match-logic/movement-cost";
 import { getWeatherSpecialMovement } from "../../match-logic/weather";
 import type { MatchWrapper } from "../match/match";
 import type { PlayerInMatchWrapper } from "../player/player-in-match";
-import type { Transport } from "./transport";
+
+export interface TransportMethods {
+  getLoadedUnit(slot: 1 | 2): UnitWrapper<Visibility, LoadedTypeString>;
+}
 
 export class UnitWrapper<
   TVisibility extends Visibility = Visibility,
@@ -152,8 +157,15 @@ export class UnitWrapper<
     return this.data.type === "infantry" || this.data.type === "mech";
   }
 
-  isTransport(): this is Transport<TVisibility> {
-    return "loadedUnit" in this.data;
+  isTransport(): this is UnitWrapper<TVisibility, TransportTypeString> & TransportMethods {
+    return (
+      this.data.type === "apc" ||
+      this.data.type === "transportCopter" ||
+      this.data.type === "blackBoat" ||
+      this.data.type === "lander" ||
+      this.data.type === "carrier" ||
+      this.data.type === "cruiser"
+    );
   }
 
   /**
