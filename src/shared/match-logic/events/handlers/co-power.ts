@@ -1,7 +1,7 @@
 import { DispatchableError } from "shared/dispatchable-error";
 import type { COPowerAction } from "shared/schemas/action";
 import type { COPowerEvent } from "shared/types/events";
-import type { MatchWrapper } from "shared/wrappers/match/match";
+import type { MutableMatch } from "shared/wrappers/match/mutable-match";
 import type { COProperties } from "../../co";
 import { getCOProperties } from "../../co";
 import type { MainActionToEvent } from "../handler-types";
@@ -37,7 +37,7 @@ export const coPowerActionToEvent: MainActionToEvent<COPowerAction> = (match, ac
   return action;
 };
 
-export const applyCOPowerEvent = (match: MatchWrapper, event: COPowerEvent): void => {
+export const applyCOPowerEvent = (match: MutableMatch, event: COPowerEvent): void => {
   const player = match.getCurrentTurnPlayer();
   const COProperties = getCOProperties(player.data.coId);
   const powerType: keyof COProperties["powers"] = event.isSuper ? "superCOPower" : "COPower";

@@ -46,4 +46,21 @@ export class MutablePlayerInMatch<
   getUnits(): MutableUnit<TVisibility>[] {
     return this.match.units.filter((unit) => this.owns(unit));
   }
+
+  /**
+   * gets the next player, looping back around to index 0
+   * if needed until current player slot.
+   * cant be readonly.
+   */
+  getNextAlivePlayer(): MutablePlayerInMatch | undefined {
+    const nextSlot = (n: number): number => (n + 1) % this.match.map.data.numberOfPlayers;
+
+    for (let index = nextSlot(this.data.slot); index !== this.data.slot; index = nextSlot(index)) {
+      const player = this.match.getPlayerBySlot(index);
+
+      if (player?.data.status === "alive") {
+        return player;
+      }
+    }
+  }
 }

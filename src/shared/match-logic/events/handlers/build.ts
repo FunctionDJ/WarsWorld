@@ -1,8 +1,7 @@
 import { DispatchableError } from "shared/dispatchable-error";
 import type { BuildAction } from "shared/schemas/action";
 import type { BuildEvent } from "shared/types/events";
-import type { WWReadOnly } from "shared/types/ww-readonly";
-import type { MatchWrapper } from "shared/wrappers/match/match";
+import type { MutableMatch } from "shared/wrappers/match/mutable-match";
 import type { PlayerSlot } from "../../../schemas/player-slot";
 import type { UnitWithVisibleStats } from "../../../schemas/unit";
 import { unitPropertiesMap } from "../../game-constants/unit-properties";
@@ -161,7 +160,7 @@ const createUnitFromBuildEvent = (
   }
 };
 
-export const applyBuildEvent = (match: WWReadOnly<MatchWrapper>, event: BuildEvent): void => {
+export const applyBuildEvent = (match: MutableMatch, event: BuildEvent): void => {
   const player = match.getCurrentTurnPlayer();
 
   player.data.funds -= unitPropertiesMap[event.unitType].cost;

@@ -2,7 +2,7 @@ import type {
   ArmySpritesheetData,
   SheetNames,
   SpritesheetDataByArmy,
-} from "frontend/components/match/getSpritesheetData";
+} from "frontend/components/match/get-spritesheet-data";
 import { ImageSource, Spritesheet, Texture } from "pixi.js";
 
 export type LoadedSpriteSheet = Record<SheetNames, Spritesheet<ArmySpritesheetData>>;

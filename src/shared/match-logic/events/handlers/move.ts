@@ -11,6 +11,7 @@ import {
 import type { MoveEventWithoutSubEvent, MoveEventWithSubEvent } from "shared/types/events";
 import type { WWReadOnly } from "shared/types/ww-readonly";
 import type { MatchWrapper } from "shared/wrappers/match/match";
+import type { MutableMatch } from "shared/wrappers/match/mutable-match";
 import type { UnitWrapper } from "../../../wrappers/unit/unit";
 
 // we don't use MainActionToEvent here because MoveEvent is special
@@ -180,7 +181,6 @@ export const throwIfCantMoveIntoUnit = (
 
 const loadUnitInto = (
   unitToLoad: WWReadOnly<UnitWithVisibleStats>,
-  // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
   transportUnit: UnitWithVisibleStats,
 ): void => {
   switch (transportUnit.type) {
@@ -265,7 +265,7 @@ const getOneTileFuelCost = (
 };
 
 export const applyMoveEvent = (
-  match: WWReadOnly<MatchWrapper>,
+  match: MutableMatch,
   event: WWReadOnly<MoveEventWithoutSubEvent>,
 ): void => {
   //check if unit is moving or just standing still
@@ -317,7 +317,7 @@ export const applyMoveEvent = (
  * Call this AFTER creating the sub event but BEFORE applying it
  */
 export const updateMoveVision = (
-  match: WWReadOnly<MatchWrapper>,
+  match: MutableMatch,
   event: WWReadOnly<MoveEventWithSubEvent>,
 ): void => {
   if (event.path.len() < 2) {

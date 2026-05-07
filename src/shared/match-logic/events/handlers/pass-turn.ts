@@ -1,7 +1,6 @@
 import { getRandomWeather } from "shared/match-logic/weather";
 import type { PassTurnAction } from "shared/schemas/action";
 import type { PassTurnEvent, Turn } from "shared/types/events";
-import type { WWReadOnly } from "shared/types/ww-readonly";
 import type { PlayerInMatchWrapper } from "shared/wrappers/player/player-in-match";
 import type { UnitWrapper } from "shared/wrappers/unit/unit";
 import type { ApplyEvent, MainActionToEvent } from "../handler-types";
@@ -9,7 +8,7 @@ import { getTurnFuelConsumption } from "./passTurn/consume-fuel-and-crash";
 import { propertyRepairAndResupply } from "./passTurn/property-repair-and-resupply";
 import { updateWeather } from "./passTurn/update-weather";
 
-function getNewWeather(nextTurnPlayer: WWReadOnly<PlayerInMatchWrapper>): Turn["newWeather"] {
+function getNewWeather(nextTurnPlayer: PlayerInMatchWrapper): Turn["newWeather"] {
   const { match } = nextTurnPlayer;
 
   if (match.playerToRemoveWeatherEffect !== undefined) {

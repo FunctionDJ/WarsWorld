@@ -1,5 +1,5 @@
 import { DispatchableError } from "shared/dispatchable-error";
-import type { MatchWrapper } from "shared/wrappers/match/match";
+import type { MutableMatch } from "shared/wrappers/match/mutable-match";
 import type { MainEventsWithoutSubEvents, MoveEventWithSubEvent } from "../../types/events";
 import { applyAbilityEvent } from "./handlers/ability";
 import { applyAttackEvent } from "./handlers/attack/apply-attack-event";
@@ -14,7 +14,7 @@ import { applyUnloadNoWaitEvent } from "./handlers/unload/unload-no-wait";
 import { applyUnloadWaitEvent } from "./handlers/unload/unload-wait";
 
 export const applyMainEventToMatch = (
-  match: MatchWrapper,
+  match: MutableMatch,
   event: MainEventsWithoutSubEvents,
 ): void => {
   switch (event.type) {
@@ -54,7 +54,7 @@ export const applyMainEventToMatch = (
 };
 
 export const applySubEventToMatch = (
-  match: MatchWrapper,
+  match: MutableMatch,
   { subEvent, path }: MoveEventWithSubEvent,
 ): void => {
   const fromPosition = path.at("last");

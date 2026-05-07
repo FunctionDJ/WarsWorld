@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { FrontendUnit } from "frontend/components/match/frontend-unit";
 import type { SpritesheetDataByArmy } from "frontend/components/match/get-spritesheet-data";
-import type { ChangeableTileWithSprite } from "frontend/components/match/types";
 import { trpc } from "frontend/utils/trpc-client";
 import { loadSpritesFromSpriteMap } from "pixi/load-spritesheet";
 import { useEffect, useState } from "react";
@@ -30,7 +29,7 @@ export function MatchLoader({ matchId, playerId, spritesheetDataByArmy }: Props)
       //refetchInterval: 10000,
       refetchOnWindowFocus: true,
       select(match) {
-        return new MatchWrapper<ChangeableTileWithSprite, FrontendUnit>(
+        return new MatchWrapper(
           match.id,
           match.leagueType,
           match.changeableTiles.map((tile) => ({ ...tile })),

@@ -7,9 +7,9 @@ import type { Position } from "shared/schemas/position";
 import type { UnitTypeString, Visibility, WWUnit } from "shared/schemas/unit";
 import type { Weather } from "shared/schemas/weather";
 import {
-    createNeutralPlayerInMatch,
-    type ChangeableTile,
-    type PlayerInMatch,
+  createNeutralPlayerInMatch,
+  type ChangeableTile,
+  type PlayerInMatch,
 } from "shared/types/server-match-state";
 import type { WWReadOnly } from "shared/types/ww-readonly";
 import { MutablePlayerInMatch } from "../player/mutable-player-in-match";
@@ -37,15 +37,16 @@ export class MutableMatch extends MatchWrapper {
     public turn: number,
   ) {
     super(id, leagueType, changeableTiles, rules, state, map, players, units, turn);
-    this.units = units.map((unit): MutableUnit =>
-      unit.type === "apc" ||
-      unit.type === "transportCopter" ||
-      unit.type === "blackBoat" ||
-      unit.type === "lander" ||
-      unit.type === "carrier" ||
-      unit.type === "cruiser"
-        ? new MutableTransport(unit, this)
-        : new MutableUnit<Visibility, UnitTypeString>(unit, this),
+    this.units = units.map(
+      (unit): MutableUnit =>
+        unit.type === "apc" ||
+        unit.type === "transportCopter" ||
+        unit.type === "blackBoat" ||
+        unit.type === "lander" ||
+        unit.type === "carrier" ||
+        unit.type === "cruiser"
+          ? new MutableTransport(unit, this)
+          : new MutableUnit<Visibility, UnitTypeString>(unit, this),
     );
 
     this.teams = this.rules.teamMapping.map(
@@ -152,5 +153,15 @@ export class MutableMatch extends MatchWrapper {
 
   getPlayerById(playerId: Player["id"]): MutablePlayerInMatch | undefined {
     return this.getAllPlayers().find((p) => p.data.id === playerId);
+  }
+
+  getCurrentTurnPlayer(): MutablePlayerInMatch {
+    const player = this.getAllPlayers().find((p) => p.data.hasCurrentTurn);
+
+    if (player === undefined) {
+      throw new Error("No player with current turn was found");
+    }
+
+    return player;
   }
 }

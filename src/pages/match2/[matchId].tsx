@@ -1,7 +1,7 @@
 import type {
   ArmySpritesheetData,
   SpritesheetDataByArmy,
-} from "frontend/components/match/getSpritesheetData";
+} from "frontend/components/match/get-spritesheet-data";
 import { usePlayers } from "frontend/context/players";
 import type { GetServerSideProps } from "next";
 import dynamic from "next/dynamic";

@@ -1,9 +1,10 @@
 import type { Position } from "shared/schemas/position";
+import type { Visibility } from "shared/schemas/unit";
 import type { UnitWrapper } from "shared/wrappers/unit/unit";
 
-export const getUnloadablePositions = (
-  transportUnit: UnitWrapper,
-  unitToUnload: UnitWrapper,
+export const getUnloadablePositions = <TVisibility extends Visibility = Visibility>(
+  transportUnit: UnitWrapper<TVisibility>,
+  unitToUnload: UnitWrapper<TVisibility>,
   newTransportUnitLocation?: Position,
 ): Position[] => {
   const transportPos = newTransportUnitLocation ?? transportUnit.data.position;

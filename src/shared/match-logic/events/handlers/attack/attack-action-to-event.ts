@@ -10,14 +10,16 @@ import type { AttackEvent } from "shared/types/events";
 import type { SubActionToEvent } from "../../handler-types";
 import { getEliminationReason } from "./get-elimination-reason";
 
-type Parameters = [
+type ParametersForAttackActionToEvent = [
   ...Parameters<SubActionToEvent<AttackAction>>,
   unitHasMoved: boolean,
   attackerLuck: LuckRoll,
   defenderLuck: LuckRoll,
 ];
 
-export const attackActionToEvent: (...params: Parameters) => AttackEvent = (
+export const attackActionToEvent: (
+  ...parameters: ParametersForAttackActionToEvent
+) => AttackEvent = (
   match,
   action,
   fromPosition,
@@ -121,11 +123,11 @@ export const attackActionToEvent: (...params: Parameters) => AttackEvent = (
   return {
     ...action,
     defenderHP: Math.max(0, result.defenderHP),
-    attackerHP: result.attackerHP !== undefined ? Math.max(0, result.attackerHP) : undefined,
+    attackerHP: result.attackerHP === undefined ? undefined : Math.max(0, result.attackerHP),
     eliminationReason: getEliminationReason({
       attacker: attacker.player,
       defender: defender.player,
-      attackerHP: result.attackerHP !== undefined ? Math.max(0, result.attackerHP) : undefined,
+      attackerHP: result.attackerHP === undefined ? undefined : Math.max(0, result.attackerHP),
       defenderHP: Math.max(0, result.defenderHP),
     }),
   };

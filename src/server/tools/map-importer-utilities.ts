@@ -41,12 +41,15 @@ export const convertAWBWMapToWWMap = (tileDataString: string): WWMap["tiles"] =>
 
   const parsedArray: PassableTile[][] = [];
 
-  for (let i = 0; i < col; i++) {
+  for (let rowIndex = 0; rowIndex < col; rowIndex++) {
     const emptyArray: PassableTile[] = [];
 
-    for (let j = 0; j < row; j++) {
+    for (let columnIndex = 0; columnIndex < row; columnIndex++) {
       emptyArray.push(
-        getFromObjectOrThrow(awbwTileMapping, arrayAtOrThrow(tileDataFlat, j + i * row)),
+        getFromObjectOrThrow(
+          awbwTileMapping,
+          arrayAtOrThrow(tileDataFlat, columnIndex + rowIndex * row),
+        ),
       );
     }
 

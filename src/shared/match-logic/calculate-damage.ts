@@ -1,5 +1,5 @@
 import type { LuckRoll } from "shared/schemas/co";
-import type { UnitWrapper } from "shared/wrappers/unit/unit";
+import type { MutableUnit } from "shared/wrappers/unit/mutable-unit";
 import type { CombatProperties } from "./co-hooks";
 import { getBaseDamage } from "./game-constants/base-damage";
 import { getTerrainDefenseStars } from "./game-constants/terrain-properties";
@@ -50,6 +50,7 @@ export const calculateDamage = (
     if (dCoId.name === "sonja" && (dCoId.version === "AW1" || dCoId.version === "AW2")) {
       attackModifier += 50; //aw1 and aw2 sonja d2d is +50% firepower on counters
     } else if (dCoId.name === "kanbei" && defender.player.data.COPowerState === "super-co-power") {
+      // eslint-disable-next-line unicorn/prefer-ternary
       if (dCoId.version === "AW2") {
         attackModifier *= 5 / 3; //aw2 kanbei with super deals x5/3 dmg on counters
       } else {
@@ -125,11 +126,11 @@ export const calculateDamage = (
 
 //can return negative hp values (useful for damage calculator / displaying damage range)
 export const calculateEngagementOutcome = (
-  attacker: UnitWrapper,
-  defender: UnitWrapper,
+  attacker: MutableUnit,
+  defender: MutableUnit,
   attackerLuck: LuckRoll,
   defenderLuck: LuckRoll,
-): { defenderHP: number; attackerHP: number | undefined } => {
+): { defenderHP: number; attackerHP?: number } => {
   let damageByAttacker = calculateDamage(
     {
       attacker,
@@ -150,31 +151,33 @@ export const calculateEngagementOutcome = (
   }
 
   //check if defender can counterattack
-  if (attacker.data.position.getDistance(defender.data.position) === 1) {
-    if ("attackRange" in defender.properties && defender.properties.attackRange[1] === 1) {
-      //defender is melee, maybe can counterattack
-      //temporarily subtract hp to calculate counter dmg
-      const originalHP = defender.getHP();
-      defender.setHp(originalHP - damageByAttacker);
+  if (
+    attacker.data.position.getDistance(defender.data.position) === 1 &&
+    //defender is melee, maybe can counterattack
+    "attackRange" in defender.properties &&
+    defender.properties.attackRange[1] === 1
+  ) {
+    //temporarily subtract hp to calculate counter dmg
+    const originalHP = defender.getHP();
+    defender.setHp(originalHP - damageByAttacker);
 
-      const damageByDefender = calculateDamage(
-        {
-          attacker: defender,
-          defender: attacker,
-        },
-        defenderLuck,
-        true,
-      );
+    const damageByDefender = calculateDamage(
+      {
+        attacker: defender,
+        defender: attacker,
+      },
+      defenderLuck,
+      true,
+    );
 
-      defender.setHp(originalHP);
+    defender.setHp(originalHP);
 
-      if (damageByDefender !== undefined) {
-        //return event with counter-attack
-        return {
-          defenderHP: defender.getHP() - damageByAttacker,
-          attackerHP: attacker.getHP() - damageByDefender,
-        };
-      }
+    if (damageByDefender !== undefined) {
+      //return event with counter-attack
+      return {
+        defenderHP: defender.getHP() - damageByAttacker,
+        attackerHP: attacker.getHP() - damageByDefender,
+      };
     }
   }
 

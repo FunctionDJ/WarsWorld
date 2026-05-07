@@ -1,5 +1,3 @@
-import type { FrontendUnit } from "frontend/components/match/frontend-unit";
-import type { ChangeableTileWithSprite } from "frontend/components/match/types";
 import type { Application } from "pixi.js";
 import type { Position } from "shared/schemas/position";
 import type { MatchWrapper } from "shared/wrappers/match/match";
@@ -9,7 +7,7 @@ import { renderUnits } from "./render-units";
 
 export function setupApp(
   app: Application,
-  match: MatchWrapper<ChangeableTileWithSprite, FrontendUnit>,
+  match: MatchWrapper,
   renderMultiplier: number,
   spriteSheets: LoadedSpriteSheet,
   onTileClick: (pos: Position) => Promise<void>,

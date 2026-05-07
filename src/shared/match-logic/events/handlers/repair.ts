@@ -3,7 +3,7 @@ import { getVisualHPfromHP } from "shared/match-logic/calculate-damage";
 import type { RepairAction } from "shared/schemas/action";
 import type { Position } from "shared/schemas/position";
 import type { RepairEvent } from "shared/types/events";
-import type { MatchWrapper } from "shared/wrappers/match/match";
+import type { MutableMatch } from "shared/wrappers/match/mutable-match";
 import type { SubActionToEvent } from "../handler-types";
 
 export const repairActionToEvent: SubActionToEvent<RepairAction> = (
@@ -34,7 +34,7 @@ export const repairActionToEvent: SubActionToEvent<RepairAction> = (
 };
 
 export const applyRepairEvent = (
-  match: MatchWrapper,
+  match: MutableMatch,
   event: RepairEvent,
   fromPosition: Position,
 ): void => {

@@ -1,5 +1,4 @@
 "use client";
-import type { ReadonlyDeep } from "@prisma/client/runtime/client";
 import type { Container } from "pixi.js";
 import { Application } from "pixi.js";
 import type { LoadedSpriteSheet } from "pixi/load-spritesheet";
@@ -7,10 +6,9 @@ import { setupApp } from "pixi/setup-app";
 import { useEffect, useRef } from "react";
 import type { MainAction } from "shared/schemas/action";
 import type { Position } from "shared/schemas/position";
+import type { WWReadOnly } from "shared/types/ww-readonly";
 import type { MatchWrapper } from "shared/wrappers/match/match";
 import type { PlayerInMatchWrapper } from "shared/wrappers/player/player-in-match";
-import type { FrontendUnit } from "../../frontend/components/match/frontend-unit";
-import type { ChangeableTileWithSprite } from "../../frontend/components/match/types";
 import { handleClick, handleHover } from "../../pixi/handle-click";
 import type { PathNode } from "../../pixi/show-pathing";
 import { trpcActions } from "../../pixi/trpc-actions";
@@ -18,9 +16,9 @@ import type { UnitWrapper } from "../../shared/wrappers/unit/unit";
 import { renderedTileSize, renderMultiplier } from "./common";
 
 export const usePixi = (
-  match: ReadonlyDeep<MatchWrapper<ChangeableTileWithSprite, FrontendUnit>>,
-  spriteSheets: ReadonlyDeep<LoadedSpriteSheet>,
-  player: ReadonlyDeep<PlayerInMatchWrapper>,
+  match: WWReadOnly<MatchWrapper>,
+  spriteSheets: WWReadOnly<LoadedSpriteSheet>,
+  player: WWReadOnly<PlayerInMatchWrapper>,
 ): {
   pixiCanvasRef: React.RefObject<HTMLCanvasElement | undefined>;
   mapContainerRef: React.RefObject<Container | undefined>;

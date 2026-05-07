@@ -10,12 +10,10 @@ import { applyPassTurnEvent } from "shared/match-logic/events/handlers/pass-turn
 import type { EmittableAttackEvent, EmittableMoveEvent } from "shared/types/events";
 import type { MatchWrapper } from "shared/wrappers/match/match";
 import type { PlayerInMatchWrapper } from "shared/wrappers/player/player-in-match";
-import type { FrontendUnit } from "../../frontend/components/match/frontend-unit";
-import type { ChangeableTileWithSprite } from "../../frontend/components/match/types";
 import { usePixi } from "./use-pixi";
 
 interface Props {
-  match: MatchWrapper<ChangeableTileWithSprite, FrontendUnit>;
+  match: MatchWrapper;
   player: PlayerInMatchWrapper;
   spriteSheets: LoadedSpriteSheet;
   turn: boolean;

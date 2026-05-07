@@ -22,7 +22,7 @@ import { getAccessibleNodes, showPath, updatePath } from "./show-pathing";
 
 export const handleClick = async (
   clickPosition: Position,
-  match: Readonly<MatchWrapper>,
+  match: MatchWrapper,
   player: Readonly<PlayerInMatchWrapper>,
   mapContainer: Container,
   unitContainer: Container,

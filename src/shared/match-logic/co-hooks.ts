@@ -10,7 +10,7 @@ export type CombatProperties = Readonly<{
 type ReturnValue = number | undefined;
 
 export interface Hooks {
-  buildCost: (baseBuildCost: number, match: MatchWrapper) => ReturnValue;
+  buildCost: (baseBuildCost: number, match: WWReadOnly<MatchWrapper>) => ReturnValue;
   movementCost: (baseMovementCost: number, unit: WWReadOnly<UnitWrapper>) => ReturnValue;
   movementPoints: (baseMovementPoints: number, unit: WWReadOnly<UnitWrapper>) => ReturnValue;
   vision: (baseVisionRange: number) => ReturnValue;
