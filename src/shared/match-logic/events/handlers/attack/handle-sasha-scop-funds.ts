@@ -1,5 +1,5 @@
-import type { PlayerInMatchWrapper } from "shared/wrappers/player-in-match";
-import type { UnitWrapper } from "shared/wrappers/unit";
+import type { PlayerInMatchWrapper } from "shared/wrappers/player/player-in-match";
+import type { UnitWrapper } from "shared/wrappers/unit/unit";
 
 export const applySashaFundsDamage = (
   sashaPlayer: PlayerInMatchWrapper,

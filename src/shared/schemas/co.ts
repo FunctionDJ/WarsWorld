@@ -32,10 +32,12 @@ export const coSchema = z.enum([
   "rachel",
 ]);
 
-export const coIdSchema = z.strictObject({
-  name: coSchema,
-  version: gameVersionSchema,
-});
+export const coIdSchema = z
+  .strictObject({
+    name: coSchema,
+    version: gameVersionSchema,
+  })
+  .readonly();
 
 export type COID = z.infer<typeof coIdSchema>;
 

@@ -4,7 +4,7 @@ import { mapMiddleware } from "server/trpc/middleware/map";
 import { playerBaseProcedure } from "server/trpc/trpc-setup";
 import { matchRulesSchema } from "shared/schemas/match-rules";
 import { z } from "zod";
-import { matchToFrontend } from "./util";
+import { matchToFrontend } from "./utility";
 
 export const createMatchProcedure = playerBaseProcedure
   .input(

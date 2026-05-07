@@ -8,9 +8,9 @@ import { getWeatherSpecialMovement } from "shared/match-logic/weather";
 import type { SubAction } from "shared/schemas/action";
 import { Position } from "shared/schemas/position";
 import type { LoadedUnit } from "shared/schemas/unit";
-import type { MatchWrapper } from "shared/wrappers/match";
-import type { PlayerInMatchWrapper } from "shared/wrappers/player-in-match";
-import type { UnitWrapper } from "shared/wrappers/unit";
+import type { MatchWrapper } from "shared/wrappers/match/match";
+import type { PlayerInMatchWrapper } from "shared/wrappers/player/player-in-match";
+import type { UnitWrapper } from "shared/wrappers/unit/unit";
 
 export enum AvailableSubActions {
   "Wait",
@@ -66,7 +66,7 @@ export const getAvailableSubActions = (
     let addAttackSubaction = false;
 
     const pipeSeamUnitEquivalent = createPipeSeamUnitEquivalent(match, unit);
-    const canAttackPipeseams = getBaseDamage(unit, pipeSeamUnitEquivalent) !== null;
+    const canAttackPipeseams = getBaseDamage(unit, pipeSeamUnitEquivalent) !== undefined;
 
     if (unit.isIndirect() && !hasMoved) {
       for (let x = 0; x < match.map.width && !addAttackSubaction; x++) {
@@ -91,7 +91,7 @@ export const getAvailableSubActions = (
             if (
               attackableUnit &&
               attackableUnit.player.team !== unit.player.team &&
-              getBaseDamage(unit, attackableUnit) !== null
+              getBaseDamage(unit, attackableUnit) !== undefined
             ) {
               addAttackSubaction = true;
             }
@@ -121,7 +121,7 @@ export const getAvailableSubActions = (
 
         if (
           adjacentUnit.player.team !== unit.player.team &&
-          getBaseDamage(unit, adjacentUnit) !== null
+          getBaseDamage(unit, adjacentUnit) !== undefined
         ) {
           addAttackSubaction = true;
         }
@@ -182,7 +182,7 @@ export const getAvailableSubActions = (
         match.rules.gameVersion ?? unit.player.data.coId.version,
       );
 
-      if (baseMovementCost !== null) {
+      if (baseMovementCost !== undefined) {
         for (const adjacentPosition of newPosition.getNeighbours()) {
           if (!match.map.isOutOfBounds(adjacentPosition)) {
             const adjacentBaseMovementCost = getBaseMovementCost(
@@ -192,7 +192,7 @@ export const getAvailableSubActions = (
               match.rules.gameVersion ?? unit.player.data.coId.version,
             );
 
-            if (adjacentBaseMovementCost !== null) {
+            if (adjacentBaseMovementCost !== undefined) {
               return true;
             }
           }
@@ -202,11 +202,11 @@ export const getAvailableSubActions = (
       return false;
     };
 
-    if (unit.data.loadedUnit !== null) {
+    if (unit.data.loadedUnit !== undefined) {
       addUnloadSubaction = getAddUnloadSubaction(unit, unit.data.loadedUnit);
     }
 
-    if (!addUnloadSubaction && "loadedUnit2" in unit.data && unit.data.loadedUnit2 !== null) {
+    if (!addUnloadSubaction && "loadedUnit2" in unit.data && unit.data.loadedUnit2 !== undefined) {
       addUnloadSubaction = getAddUnloadSubaction(unit, unit.data.loadedUnit2);
     }
 

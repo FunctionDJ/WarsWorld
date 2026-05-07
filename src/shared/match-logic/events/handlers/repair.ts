@@ -1,9 +1,9 @@
-import { DispatchableError } from "shared/DispatchedError";
+import { DispatchableError } from "shared/dispatchable-error";
 import { getVisualHPfromHP } from "shared/match-logic/calculate-damage";
 import type { RepairAction } from "shared/schemas/action";
 import type { Position } from "shared/schemas/position";
 import type { RepairEvent } from "shared/types/events";
-import type { MatchWrapper } from "shared/wrappers/match";
+import type { MatchWrapper } from "shared/wrappers/match/match";
 import type { SubActionToEvent } from "../handler-types";
 
 export const repairActionToEvent: SubActionToEvent<RepairAction> = (

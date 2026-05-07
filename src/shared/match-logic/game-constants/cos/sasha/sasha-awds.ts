@@ -17,7 +17,7 @@ export const sashaAWDS: COProperties = {
       stars: 2,
       instantEffect(player) {
         //power meter decrease in percentage. 1 means 100% decrease
-        const powerMeterDecrease = player.data.funds / 50000;
+        const powerMeterDecrease = player.data.funds / 50_000;
 
         for (const enemy of player.match.getAllPlayers()) {
           if (enemy.team.index === player.team.index) {

@@ -1,26 +1,27 @@
-import { DispatchableError } from "shared/DispatchedError";
+import { DispatchableError } from "shared/dispatchable-error";
 import type { COPowerState } from "shared/match-logic/co";
 import { getCOProperties } from "shared/match-logic/co";
 import type { Hooks } from "shared/match-logic/co-hooks";
 import type { CO } from "shared/schemas/co";
 import type { GameVersion } from "shared/schemas/game-version";
-import type { Tile } from "shared/schemas/tile";
-import type { UnitWithVisibleStats, WWUnit } from "shared/schemas/unit";
+import type { PassableTile } from "shared/schemas/tile";
+import type { Visibility } from "shared/schemas/unit";
 import type { ChangeableTile, PlayerInMatch } from "shared/types/server-match-state";
+import type { WWReadOnly } from "shared/types/ww-readonly";
 import {
   versionPropertiesMap,
   type VersionProperties,
-} from "../match-logic/game-constants/version-properties";
-import type { MatchWrapper } from "./match";
-import type { TeamWrapper } from "./team";
-import { UnitWrapper } from "./unit";
+} from "../../match-logic/game-constants/version-properties";
+import type { MatchWrapper } from "../match/match";
+import type { Team } from "../team/team";
+import type { UnitWrapper } from "../unit/unit";
 
-export class PlayerInMatchWrapper {
-  public match: MatchWrapper;
+export class PlayerInMatchWrapper<TVisibility extends Visibility = Visibility> {
+  public readonly match: MatchWrapper;
 
   constructor(
-    public data: PlayerInMatch,
-    public team: TeamWrapper,
+    public readonly data: PlayerInMatch,
+    public readonly team: Team,
   ) {
     this.match = team.match;
   }
@@ -29,38 +30,33 @@ export class PlayerInMatchWrapper {
    * returns amount of commtowers owned * 10 (since 1 commtower gives 10% attack boost)
    */
   getCommtowerAttackBoost(): number {
-    return (
-      10 *
-      this.match.changeableTiles.reduce(
-        (prev, cur) =>
-          cur.type === "commtower" && cur.playerSlot === this.data.slot ? prev + 1 : prev,
-        0,
-      )
+    const ownedCommtowers = this.match.changeableTiles.filter(
+      (tile) => tile.type === "commtower" && this.owns(tile),
     );
+    return ownedCommtowers.length * 10;
   }
 
   hasLab(): boolean {
-    return (
-      this.match.changeableTiles.find(
-        (tile) => tile.type === "lab" && tile.playerSlot === this.data.slot,
-      ) !== undefined
-    );
+    return this.match.changeableTiles.some((tile) => tile.type === "lab" && this.owns(tile));
   }
 
-  getUnits(): UnitWrapper[] {
-    return this.match.units.filter((u) => u.data.playerSlot === this.data.slot);
+  getUnits(): UnitWrapper<TVisibility>[] {
+    return this.match.units.filter((unit) => this.owns(unit));
   }
 
   getHook<HookType extends keyof Hooks>(hookType: HookType): Hooks[HookType] | undefined {
     const COProperties = getCOProperties(this.data.coId);
 
     switch (this.data.COPowerState) {
-      case "no-power":
+      case "no-power": {
         return COProperties.dayToDay?.hooks[hookType];
-      case "co-power":
+      }
+      case "co-power": {
         return COProperties.powers.COPower?.hooks?.[hookType];
-      case "super-co-power":
+      }
+      case "super-co-power": {
         return COProperties.powers.superCOPower?.hooks?.[hookType];
+      }
     }
   }
 
@@ -71,19 +67,18 @@ export class PlayerInMatchWrapper {
   /**
    * gets the next player, looping back around to index 0
    * if needed until current player slot.
+   * cant be readonly.
    */
-  getNextAlivePlayer(): PlayerInMatchWrapper | null {
+  getNextAlivePlayer(): PlayerInMatchWrapper | undefined {
     const nextSlot = (n: number): number => (n + 1) % this.match.map.data.numberOfPlayers;
 
-    for (let i = nextSlot(this.data.slot); i !== this.data.slot; i = nextSlot(i)) {
-      const player = this.match.getPlayerBySlot(i);
+    for (let index = nextSlot(this.data.slot); index !== this.data.slot; index = nextSlot(index)) {
+      const player = this.match.getPlayerBySlot(index);
 
       if (player?.data.status === "alive") {
         return player;
       }
     }
-
-    return null;
   }
 
   getPowerStarCost(): number {
@@ -108,15 +103,7 @@ export class PlayerInMatchWrapper {
     return 0;
   }
 
-  gainPowerCharge(value: number): void {
-    if (this.data.COPowerState !== "no-power") {
-      return;
-    }
-
-    this.data.powerMeter = Math.min(value, this.getMaxPowerMeter());
-  }
-
-  owns(tileOrUnit: Tile | ChangeableTile | UnitWrapper): boolean {
+  owns(tileOrUnit: PassableTile | WWReadOnly<ChangeableTile> | UnitWrapper): boolean {
     if ("playerSlot" in tileOrUnit && tileOrUnit.playerSlot === this.data.slot) {
       return true;
     }
@@ -133,7 +120,7 @@ export class PlayerInMatchWrapper {
   }
 
   /** @throws {DispatchableError} */
-  ownsOrThrow(tileOrUnit: Tile | ChangeableTile | UnitWrapper): void {
+  ownsOrThrow(tileOrUnit: PassableTile | WWReadOnly<ChangeableTile> | UnitWrapper): void {
     if (!this.owns(tileOrUnit)) {
       throw new DispatchableError("Invalid action on tile or unit not owned by player");
     }
@@ -159,20 +146,6 @@ export class PlayerInMatchWrapper {
     }
 
     return numberOfFundsGivingProperties * fundsPerProperty;
-  }
-
-  // TODO i don't really understand yet why WWUnit isn't compatible with
-  // Omit<UnitWithVisibleStats, "playerSlot"> by default,
-  // which is why it's currently explicitly listed.
-  addUnwrappedUnit(rawUnit: Omit<UnitWithVisibleStats, "playerSlot"> | WWUnit): UnitWrapper {
-    const unit = new UnitWrapper(
-      { ...rawUnit, playerSlot: this.data.slot } as UnitWithVisibleStats,
-      this.match,
-    );
-
-    this.match.units.push(unit);
-    this.team.vision?.addUnitVision(unit);
-    return unit;
   }
 
   /**

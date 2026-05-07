@@ -30,7 +30,7 @@ export interface MatchStartEvent {
 
 interface MatchEndEvent {
   type: "matchEnd";
-  winningTeamPlayerIds: string[] | null; // null = draw
+  winningTeamPlayerIds?: string[]; // undefined/missing = draw
   // TODO this type can probably be made a lot more fine-grained later on
 }
 
@@ -85,7 +85,7 @@ interface WithElimination<Reason extends string> {
 
 /** TODO maybe add the turn/day number */
 export type Turn = WithElimination<"all-units-crashed"> & {
-  newWeather: Weather | null;
+  newWeather?: Weather;
 };
 
 export type PassTurnEvent = PassTurnAction & { turns: Turn[] };

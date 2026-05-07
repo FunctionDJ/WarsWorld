@@ -2,8 +2,10 @@ import react from "@eslint-react/eslint-plugin";
 import eslint from "@eslint/js";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
+import unicorn from "eslint-plugin-unicorn";
 import { defineConfig, globalIgnores } from "eslint/config";
 import typescript from "typescript-eslint";
+import local from "./src/eslint/local-rules";
 
 const banPixiPattern = {
   group: ["**pixi**"],
@@ -46,8 +48,12 @@ export default defineConfig([
   eslint.configs.recommended,
   typescript.configs.strictTypeChecked,
   typescript.configs.stylisticTypeChecked,
+  unicorn.configs.recommended,
   react.configs["strict-type-checked"],
   {
+    plugins: {
+      local,
+    },
     settings: {
       react: {
         // [upstream] https://github.com/vercel/next.js/issues/89764
@@ -62,11 +68,36 @@ export default defineConfig([
     },
     rules: {
       curly: "error",
+      "unicorn/no-null": "error",
       "@typescript-eslint/no-non-null-assertion": "off",
       "@typescript-eslint/explicit-function-return-type": "warn",
       "@typescript-eslint/explicit-module-boundary-types": "warn",
       "@typescript-eslint/consistent-type-imports": "warn",
       "@typescript-eslint/strict-boolean-expressions": "error",
+      // "@typescript-eslint/prefer-readonly-parameter-types": [
+      //   "error",
+      //   {
+      //     treatMethodsAsReadonly: true,
+      //   },
+      // ],
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector:
+            ":matches(Identifier.params, TSPropertySignature, PropertyDefinition)[optional=false] > TSTypeAnnotation > TSUnionType:has(TSUndefinedKeyword)",
+          message:
+            "Use TypeScript optional syntax (`foo?: T`) instead of `T | undefined` when optional syntax is possible.",
+        },
+        {
+          selector:
+            "AssignmentExpression[left.type='MemberExpression'][right.type='FunctionExpression'], AssignmentExpression[left.type='MemberExpression'][right.type='ArrowFunctionExpression']",
+          message: "Do not reassign methods/functions on object properties.",
+        },
+        {
+          selector: "TSTypeReference[typeName.name='ReadonlyDeep']",
+          message: "Use WWReadOnly<T>",
+        },
+      ],
       "max-len": [
         "error",
         {
@@ -79,6 +110,12 @@ export default defineConfig([
         },
       ],
       "no-restricted-imports": "off",
+      "local/no-redundant-type-wrapper": [
+        "off", // TODO doesnt work like i want to yet
+        {
+          requireWrappedTypeEffectivelyReadonlyFor: ["WWReadOnly", "Readonly"],
+        },
+      ],
       /**
        * TODO
        * we haven't decided yet if we want to use next.js' <Image> or just
@@ -86,6 +123,7 @@ export default defineConfig([
        * should be banned through linting.
        */
       "@next/next/no-img-element": "off",
+      "arrow-body-style": ["error", "as-needed"],
     },
   },
   {
@@ -129,6 +167,28 @@ export default defineConfig([
           patterns: [banPixiPattern, banNonSharedPattern],
         },
       ],
+    },
+  },
+  {
+    files: ["eslint/local-rules.ts"],
+    rules: {
+      "local/no-redundant-type-wrapper": "off",
+      "@typescript-eslint/no-unsafe-assignment": "off",
+      "@typescript-eslint/no-unsafe-member-access": "off",
+      "@typescript-eslint/no-unsafe-call": "off",
+      "@typescript-eslint/no-unsafe-return": "off",
+      "@typescript-eslint/no-unsafe-argument": "off",
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-unnecessary-condition": "off",
+      "@typescript-eslint/consistent-type-definitions": "off",
+      "@typescript-eslint/array-type": "off",
+      "@typescript-eslint/strict-boolean-expressions": "off",
+      "@typescript-eslint/explicit-function-return-type": "off",
+      "@typescript-eslint/explicit-module-boundary-types": "off",
+      "@typescript-eslint/prefer-optional-chain": "off",
+      // "unicorn/consistent-function-scoping": "off",
+      // "unicorn/no-array-callback-reference": "off",
+      // "unicorn/no-useless-collection-argument": "off",
     },
   },
 ]);

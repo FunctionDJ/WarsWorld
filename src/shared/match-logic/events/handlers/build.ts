@@ -1,7 +1,8 @@
-import { DispatchableError } from "shared/DispatchedError";
+import { DispatchableError } from "shared/dispatchable-error";
 import type { BuildAction } from "shared/schemas/action";
 import type { BuildEvent } from "shared/types/events";
-import type { MatchWrapper } from "shared/wrappers/match";
+import type { WWReadOnly } from "shared/types/ww-readonly";
+import type { MatchWrapper } from "shared/wrappers/match/match";
 import type { PlayerSlot } from "../../../schemas/player-slot";
 import type { UnitWithVisibleStats } from "../../../schemas/unit";
 import { unitPropertiesMap } from "../../game-constants/unit-properties";
@@ -101,59 +102,66 @@ const createUnitFromBuildEvent = (
       case "fighter":
       case "battleship":
       case "pipeRunner":
-      case "antiAir":
+      case "antiAir": {
         return {
           type: unitType,
           ...partialUnitWithAmmo,
         };
+      }
       case "stealth":
-      case "sub":
+      case "sub": {
         return {
           type: unitType,
           ...partialUnitWithAmmo,
           hidden: false,
         };
+      }
       case "carrier":
-      case "cruiser":
+      case "cruiser": {
         return {
           type: unitType,
           ...partialUnitWithAmmo,
-          loadedUnit: null,
-          loadedUnit2: null,
+          loadedUnit: undefined,
+          loadedUnit2: undefined,
         };
+      }
     }
   }
 
   switch (unitType) {
     case "infantry":
     case "recon":
-    case "blackBomb":
+    case "blackBomb": {
       return {
         type: unitType,
         ...partialUnit,
       };
+    }
     case "apc":
-    case "transportCopter":
+    case "transportCopter": {
       return {
         type: unitType,
         ...partialUnit,
-        loadedUnit: null,
+        loadedUnit: undefined,
       };
+    }
     case "blackBoat":
-    case "lander":
+    case "lander": {
       return {
         type: unitType,
         ...partialUnit,
-        loadedUnit: null,
-        loadedUnit2: null,
+        loadedUnit: undefined,
+        loadedUnit2: undefined,
       };
-    default:
+    }
+    default: {
       /** TODO only so that typescript doesn't error / break CI, but still a TODO */
       throw new Error("TODO :)");
+    }
   }
 };
 
-export const applyBuildEvent = (match: MatchWrapper, event: BuildEvent): void => {
+export const applyBuildEvent = (match: WWReadOnly<MatchWrapper>, event: BuildEvent): void => {
   const player = match.getCurrentTurnPlayer();
 
   player.data.funds -= unitPropertiesMap[event.unitType].cost;

@@ -4,8 +4,7 @@ import type { Army } from "shared/schemas/army";
 import type { COID } from "shared/schemas/co";
 import type { PlayerSlot } from "shared/schemas/player-slot";
 import type { Position } from "shared/schemas/position";
-import type { PropertyTileType, UnusedSiloTileType } from "shared/schemas/tile";
-import type { PipeSeamTileType } from "../schemas/variable-tiles";
+import type { PipeSeamTile, PropertyTileType, UnusedSiloTileType } from "shared/schemas/tile";
 
 export interface CapturableTile {
   type: PropertyTileType;
@@ -20,20 +19,16 @@ interface LaunchableSiloTile {
   position: Position;
 }
 
-interface PipeSeamTile {
-  type: PipeSeamTileType;
-  hp: number;
-  position: Position;
-}
-
-export type ChangeableTile = CapturableTile | LaunchableSiloTile | PipeSeamTile;
+export type ChangeableTile =
+  | CapturableTile
+  | LaunchableSiloTile
+  | (PipeSeamTile & { position: Position });
 
 export interface PlayerInMatch {
   slot: PlayerSlot;
-  hasCurrentTurn?: boolean;
+  hasCurrentTurn: boolean;
   id: Player["id"];
   name: Player["name"];
-  ready?: boolean;
   coId: COID;
   status: "alive" | "routed" | "captured";
   funds: number;
@@ -43,19 +38,26 @@ export interface PlayerInMatch {
   COPowerState: COPowerState;
 }
 
-export const createNeutralPlayerInMatch: () => PlayerInMatch = () => {
-  return {
-    slot: -1,
-    hasCurrentTurn: false,
-    id: "Neutral",
-    name: "Neutral",
-    ready: true,
-    coId: { name: "adder", version: "AW2" },
-    status: "alive",
-    funds: 0,
-    powerMeter: 0,
-    timesPowerUsed: 0,
-    army: "black-hole",
-    COPowerState: "no-power",
-  };
-};
+export interface PlayerBeforeMatch {
+  slot: PlayerSlot;
+  id: Player["id"];
+  name: Player["name"];
+  ready: boolean;
+  coId?: COID;
+  army?: Army;
+}
+
+export const createNeutralPlayerInMatch: () => PlayerInMatch = () => ({
+  slot: -1,
+  hasCurrentTurn: false,
+  id: "Neutral",
+  name: "Neutral",
+  ready: true,
+  coId: { name: "adder", version: "AW2" },
+  status: "alive",
+  funds: 0,
+  powerMeter: 0,
+  timesPowerUsed: 0,
+  army: "black-hole",
+  COPowerState: "no-power",
+});

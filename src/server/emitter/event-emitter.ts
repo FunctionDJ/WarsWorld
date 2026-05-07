@@ -2,7 +2,8 @@ import { TRPCError } from "@trpc/server";
 import type Emittery from "emittery";
 import type { Match } from "generated/browser";
 import type { Emittable } from "shared/types/events";
-import type { MatchWrapper } from "shared/wrappers/match";
+import type { MatchWrapper } from "shared/wrappers/match/match";
+import type { MatchInSetup } from "shared/wrappers/match/match-in-setup";
 
 type WWEmittery = Emittery<{ emittable: Emittable & { teamId: number } }>;
 
@@ -25,7 +26,10 @@ export const getMatchEmitter = (matchId: Match["id"]): WWEmittery => {
  * for emittables like "player-join" which always get sent to all teams
  * without team-specific modifications.
  */
-export const globalEmittable = async (match: MatchWrapper, emittable: Emittable): Promise<void> => {
+export const globalEmittable = async (
+  match: MatchWrapper | MatchInSetup,
+  emittable: Emittable,
+): Promise<void> => {
   const matchEmitter = getMatchEmitter(match.id);
 
   await Promise.all(

@@ -1,7 +1,7 @@
 import { Container } from "pixi.js";
 import type { RefObject } from "react";
-import type { MatchWrapper } from "../shared/wrappers/match";
-import type { UnitWrapper } from "../shared/wrappers/unit";
+import type { MatchWrapper } from "../shared/wrappers/match/match";
+import type { UnitWrapper } from "../shared/wrappers/unit/unit";
 import { createTilesContainer } from "./interactiveTileFunctions";
 import { getAccessibleNodes, getAttackableTiles } from "./show-pathing";
 

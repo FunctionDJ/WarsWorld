@@ -1,7 +1,7 @@
-import { DispatchableError } from "shared/DispatchedError";
+import { DispatchableError } from "shared/dispatchable-error";
 import type { COPowerAction } from "shared/schemas/action";
 import type { COPowerEvent } from "shared/types/events";
-import type { MatchWrapper } from "shared/wrappers/match";
+import type { MatchWrapper } from "shared/wrappers/match/match";
 import type { COProperties } from "../../co";
 import { getCOProperties } from "../../co";
 import type { MainActionToEvent } from "../handler-types";

@@ -1,20 +1,20 @@
 import type { TileType } from "shared/schemas/tile";
 import type { Weather } from "shared/schemas/weather";
-import type { MovementType } from "./game-constants/unit-properties";
-import { terrainProperties } from "./game-constants/terrain-properties";
 import type { GameVersion } from "../schemas/game-version";
+import { terrainProperties } from "./game-constants/terrain-properties";
+import type { MovementType } from "./game-constants/unit-properties";
 
 export function getBaseMovementCost(
   movementType: MovementType,
   weather: Weather,
   tileType: TileType,
   gameVersion: GameVersion,
-): number | null {
+): number | undefined {
   const clearMovementCost = terrainProperties[tileType].movementCosts[movementType];
 
   // impassible terrain remains impassible regardless of weather
-  if (clearMovementCost === null) {
-    return null;
+  if (clearMovementCost === undefined) {
+    return;
   }
 
   if (gameVersion === "AWDS") {

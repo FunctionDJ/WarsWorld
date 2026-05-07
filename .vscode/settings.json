@@ -11,5 +11,7 @@
     "source.organizeImports": "always"
   },
   "typescript.native-preview.tsdk": "/home/function/git/WarsWorld/node_modules/@typescript/native-preview",
-  
+  "files.associations": {
+    ".fallowrc.json": "jsonc"
+  }
 }

@@ -1,7 +1,7 @@
 import { baseTileSize } from "components/client-only/common";
 import { Container } from "pixi.js";
 import type { RefObject } from "react";
-import { arr } from "shared/arr";
+import { arrayAtOrThrow } from "shared/array-utilities";
 import {
   AvailableSubActions,
   getAvailableSubActions,
@@ -9,10 +9,10 @@ import {
 import { allDirections } from "shared/schemas/direction";
 import { Path } from "shared/schemas/path";
 import { Position } from "shared/schemas/position";
-import type { UnitWrapper } from "shared/wrappers/unit";
+import type { UnitWrapper } from "shared/wrappers/unit/unit";
 import type { MainAction } from "../../shared/schemas/action";
-import type { MatchWrapper } from "../../shared/wrappers/match";
-import type { PlayerInMatchWrapper } from "../../shared/wrappers/player-in-match";
+import type { MatchWrapper } from "../../shared/wrappers/match/match";
+import type { PlayerInMatchWrapper } from "../../shared/wrappers/player/player-in-match";
 import type { LoadedSpriteSheet } from "../load-spritesheet";
 import { renderAttackTiles } from "../renderAttackTiles";
 import { tileConstructor } from "../sprite-constructor";
@@ -25,18 +25,18 @@ export default function subActionMenu(
   player: PlayerInMatchWrapper,
   newPosition: Position,
   unit: UnitWrapper,
-  currentUnitClickedRef: RefObject<UnitWrapper | null>,
-  pathRef: RefObject<Position[] | null>,
+  currentUnitClickedRef: RefObject<UnitWrapper | undefined>,
+  pathRef: RefObject<Position[] | undefined>,
   mapContainer: Container,
   interactiveContainer: Container,
   spriteSheets: LoadedSpriteSheet,
   sendAction: (action: MainAction) => Promise<void>,
 ) {
   const hasMoved =
-    pathRef.current !== null &&
+    pathRef.current !== undefined &&
     !(
       pathRef.current.length === 0 ||
-      (pathRef.current.length === 1 && arr(pathRef.current, 0).isSame(newPosition))
+      (pathRef.current.length === 1 && arrayAtOrThrow(pathRef.current, 0).isSame(newPosition))
     );
 
   const menuOptions = getAvailableSubActions(match, player, unit, newPosition, hasMoved);
@@ -86,7 +86,7 @@ export default function subActionMenu(
               repairTile.eventMode = "static";
 
               repairTile.on("pointerdown", () => {
-                if (currentUnitClickedRef.current !== null) {
+                if (currentUnitClickedRef.current !== undefined) {
                   const path = pathRef.current ?? [currentUnitClickedRef.current.data.position];
 
                   void sendAction({
@@ -98,7 +98,7 @@ export default function subActionMenu(
                     path: new Path(path),
                   });
 
-                  currentUnitClickedRef.current = null;
+                  currentUnitClickedRef.current = undefined;
                   repairTilesContainer.destroy();
                 }
               });
@@ -125,7 +125,7 @@ export default function subActionMenu(
                 //TODO render impact tiles
               });
               hoverableTile.on("pointerdown", () => {
-                if (currentUnitClickedRef.current !== null) {
+                if (currentUnitClickedRef.current !== undefined) {
                   const path = pathRef.current ?? [currentUnitClickedRef.current.data.position];
 
                   void sendAction({
@@ -137,7 +137,7 @@ export default function subActionMenu(
                     path: new Path(path),
                   });
 
-                  currentUnitClickedRef.current = null;
+                  currentUnitClickedRef.current = undefined;
                 }
               });
 
@@ -174,7 +174,7 @@ export default function subActionMenu(
             position: newPosition,
           });
 
-          currentUnitClickedRef.current = null;
+          currentUnitClickedRef.current = undefined;
           break;
         }
 
@@ -194,7 +194,7 @@ export default function subActionMenu(
 
           //The currentUnitClicked has changed (moved, attacked, died), therefore, we delete the previous information as it is not accurate anymore
           //this also helps so when the screen resets, we dont have two copies of a unit
-          currentUnitClickedRef.current = null;
+          currentUnitClickedRef.current = undefined;
           break;
         }
       }

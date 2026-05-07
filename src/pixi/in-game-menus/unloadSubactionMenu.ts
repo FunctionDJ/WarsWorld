@@ -1,14 +1,14 @@
 import { baseTileSize } from "components/client-only/common";
 import { Container } from "pixi.js";
 import type { RefObject } from "react";
-import { arr } from "shared/arr";
-import { getUnloadablePositions } from "shared/match-logic/events/handlers/unload/checkUnloadTiles";
+import { arrayAtOrThrow } from "shared/array-utilities";
+import { getUnloadablePositions } from "shared/match-logic/events/handlers/unload/check-unload-tiles";
 import { Path } from "shared/schemas/path";
 import { type Position } from "shared/schemas/position";
-import type { UnitWrapper } from "shared/wrappers/unit";
+import type { UnitWrapper } from "shared/wrappers/unit/unit";
 import type { MainAction } from "../../shared/schemas/action";
-import type { MatchWrapper } from "../../shared/wrappers/match";
-import type { PlayerInMatchWrapper } from "../../shared/wrappers/player-in-match";
+import type { MatchWrapper } from "../../shared/wrappers/match/match";
+import type { PlayerInMatchWrapper } from "../../shared/wrappers/player/player-in-match";
 import type { LoadedSpriteSheet } from "../load-spritesheet";
 import { tileConstructor } from "../sprite-constructor";
 import { createMenuElementsForUnits } from "./buildUnitMenu";
@@ -20,8 +20,8 @@ export const createUnloadMenu = (
   player: PlayerInMatchWrapper,
   newPosition: Position,
   unit: UnitWrapper,
-  currentUnitClickedRef: RefObject<UnitWrapper | null>,
-  pathRef: RefObject<Position[] | null>,
+  currentUnitClickedRef: RefObject<UnitWrapper | undefined>,
+  pathRef: RefObject<Position[] | undefined>,
   interactiveContainer: Container,
   spriteSheets: LoadedSpriteSheet,
   sendAction: (action: MainAction) => Promise<void>,
@@ -30,7 +30,7 @@ export const createUnloadMenu = (
    */
   firstUnloadInfo?: { unloadedPosition: Position; isFirstUnit: boolean },
 ) => {
-  if (!unit.isTransport() || unit.data.loadedUnit === null) {
+  if (!unit.isTransport() || unit.data.loadedUnit === undefined) {
     throw new Error("Asked to create unlaod menu for unit without loaded units");
   }
 
@@ -41,7 +41,7 @@ export const createUnloadMenu = (
   const infosForMenu = [];
 
   if (!firstUnloadInfo?.isFirstUnit) {
-    unloadPositions1 = getUnloadablePositions(unit, unit.data.loadedUnit, newPosition);
+    unloadPositions1 = getUnloadablePositions(unit, unit.getLoadedUnit(1), newPosition);
 
     if (firstUnloadInfo !== undefined) {
       unloadPositions1.filter((pos) => {
@@ -59,10 +59,10 @@ export const createUnloadMenu = (
 
   if (
     "loadedUnit2" in unit.data &&
-    unit.data.loadedUnit2 !== null &&
+    unit.data.loadedUnit2 !== undefined &&
     (firstUnloadInfo === undefined || firstUnloadInfo.isFirstUnit)
   ) {
-    unloadPositions2 = getUnloadablePositions(unit, unit.data.loadedUnit2, newPosition);
+    unloadPositions2 = getUnloadablePositions(unit, unit.getLoadedUnit(2), newPosition);
 
     if (firstUnloadInfo !== undefined) {
       unloadPositions2.filter((pos) => {
@@ -90,7 +90,7 @@ export const createUnloadMenu = (
   ) => {
     if (canOtherUnitBeUnloaded) {
       //there were no other options (or the only unloadable position for the other unit was this one), commit the unload action
-      if (currentUnitClickedRef.current !== null) {
+      if (currentUnitClickedRef.current !== undefined) {
         const path = pathRef.current ?? [currentUnitClickedRef.current.data.position];
 
         const unloads = [
@@ -113,7 +113,7 @@ export const createUnloadMenu = (
           path: new Path(path),
         });
 
-        currentUnitClickedRef.current = null;
+        currentUnitClickedRef.current = undefined;
       }
     } else {
       const unitSize = baseTileSize / 2;
@@ -151,7 +151,7 @@ export const createUnloadMenu = (
           path: pathRef.current ? new Path(pathRef.current) : new Path([newPosition]),
         });
 
-        currentUnitClickedRef.current = null;
+        currentUnitClickedRef.current = undefined;
         waitOption.parent?.destroy();
       });
 
@@ -165,7 +165,7 @@ export const createUnloadMenu = (
   };
 
   const attachUnloadPositionHandler = (unloadPositions: Position[], index: number) => {
-    arr(menuElements, index).on("pointerdown", () => {
+    arrayAtOrThrow(menuElements, index).on("pointerdown", () => {
       const unloadTilesContainer = new Container();
       unloadTilesContainer.label = "unloadUnitsBox";
 

@@ -1,6 +1,6 @@
 import type { EmittableEvent } from "../../types/events";
 import type { CapturableTile } from "../../types/server-match-state";
-import type { MatchWrapper } from "../../wrappers/match";
+import type { MatchWrapper } from "../../wrappers/match/match";
 
 export const fillDiscoveredUnitsAndProperties = (
   match: MatchWrapper,
@@ -29,7 +29,7 @@ export const fillDiscoveredUnitsAndProperties = (
       return;
     }
 
-    if (team.vision === null) {
+    if (team.vision === undefined) {
       // no fog of war
       return;
     }

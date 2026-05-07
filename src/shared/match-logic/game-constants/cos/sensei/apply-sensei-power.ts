@@ -1,9 +1,9 @@
 import { unitPropertiesMap } from "shared/match-logic/game-constants/unit-properties";
 import { Position } from "shared/schemas/position";
-import type { PlayerInMatchWrapper } from "shared/wrappers/player-in-match";
+import type { MutablePlayerInMatch } from "shared/wrappers/player/mutable-player-in-match";
 
 export function applySenseiPowerSpawn(
-  player: PlayerInMatchWrapper,
+  player: MutablePlayerInMatch,
   unitType: "infantry" | "mech",
 ): void {
   const { match } = player;

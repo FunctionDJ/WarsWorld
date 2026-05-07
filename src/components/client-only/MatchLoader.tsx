@@ -5,7 +5,7 @@ import type { ChangeableTileWithSprite } from "frontend/components/match/types";
 import { trpc } from "frontend/utils/trpc-client";
 import { loadSpritesFromSpriteMap } from "pixi/load-spritesheet";
 import { useEffect, useState } from "react";
-import { MatchWrapper } from "shared/wrappers/match";
+import { MatchWrapper } from "shared/wrappers/match/match";
 import { MatchRenderer } from "./MatchRenderer";
 
 interface Props {
@@ -33,7 +33,7 @@ export function MatchLoader({ matchId, playerId, spritesheetDataByArmy }: Props)
         return new MatchWrapper<ChangeableTileWithSprite, FrontendUnit>(
           match.id,
           match.leagueType,
-          match.changeableTiles.map((tile) => ({ ...tile, sprite: null })),
+          match.changeableTiles.map((tile) => ({ ...tile })),
           match.rules,
           match.status,
           match.map,

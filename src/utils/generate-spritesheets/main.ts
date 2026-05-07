@@ -34,8 +34,7 @@ interface Sprite {
   name: string;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-misused-promises
-nations.forEach(async (nation) => {
+for (const nation of nations) {
   // fetch sprites
   const allSprites = await getAllSprites(nation);
   // generate frames and spritesheet image
@@ -78,15 +77,12 @@ nations.forEach(async (nation) => {
   };
   await fs.writeFile(
     path.resolve(__dirname, outputPath, `${nation}.json`),
+    // eslint-disable-next-line unicorn/no-null
     JSON.stringify(spriteSheetData, null, 2),
   );
-});
+}
 
-function getTexturePath(
-  spriteType: SpriteType,
-  spriteNation: string,
-  spriteName: string | null = null,
-): string {
+function getTexturePath(spriteType: SpriteType, spriteNation: string, spriteName?: string): string {
   return path.resolve(
     __dirname,
     texturesBasePath, // e.g. AWBW-Replay-Player/AWBWApp.Resources/Textures
@@ -154,12 +150,12 @@ async function genFramesAndSpriteSheetImage(
   // build the frames
   const frames: Record<string, SpritesheetFrameData> = {};
 
-  for (const [i, sprite] of allSprites.entries()) {
+  for (const [index, sprite] of allSprites.entries()) {
     const metadata = await sharp(getTexturePath(sprite.type, nation, sprite.name)).metadata();
 
     const frameData = {
-      x: (i % columnsCount) * cellWidth,
-      y: Math.floor(i / columnsCount) * cellHeight,
+      x: (index % columnsCount) * cellWidth,
+      y: Math.floor(index / columnsCount) * cellHeight,
       w: metadata.width,
       h: metadata.height,
     };
@@ -177,16 +173,14 @@ function fetchAnimations(allSprites: Sprite[]): Record<string, string[]> {
       .map((sprite) => {
         const result = animationFrameRegex.exec(sprite.name);
 
-        if (result?.[1] !== undefined) {
-          return {
-            source: sprite.type,
-            name: result[1],
-          };
-        } else {
-          return null;
-        }
+        return result?.[1] === undefined
+          ? undefined
+          : {
+              source: sprite.type,
+              name: result[1],
+            };
       })
-      .filter((animationKey) => animationKey !== null) as { source: string; name: string }[],
+      .filter((animationKey) => animationKey !== undefined) as { source: string; name: string }[],
   );
 
   const animations: Record<string, string[]> = {};

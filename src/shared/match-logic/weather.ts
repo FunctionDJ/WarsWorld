@@ -1,19 +1,25 @@
 import type { Weather } from "shared/schemas/weather";
-import type { MatchWrapper } from "shared/wrappers/match";
-import type { PlayerInMatchWrapper } from "../wrappers/player-in-match";
+import type { WWReadOnly } from "shared/types/ww-readonly";
+import type { MatchWrapper } from "shared/wrappers/match/match";
+import type { PlayerInMatchWrapper } from "../wrappers/player/player-in-match";
+
+type ROMatchWrapper = WWReadOnly<MatchWrapper>;
 
 /**
  * chance of random weather when starting a turn depends on the amount of
  * players present in the match
  */
-function weatherBaseChance(match: MatchWrapper): number {
+function weatherBaseChance(match: WWReadOnly<ROMatchWrapper>): number {
   switch (match.getAllPlayers().length) {
-    case 2:
+    case 2: {
       return 4;
-    case 3:
+    }
+    case 3: {
       return 3;
-    default:
+    }
+    default: {
       return 2;
+    }
   }
 }
 
@@ -58,7 +64,7 @@ export function getRandomWeather(match: MatchWrapper): Weather {
  *
  * sturm and lash are handled with a movementCost hook.
  */
-export const getWeatherSpecialMovement = (player: PlayerInMatchWrapper): Weather => {
+export const getWeatherSpecialMovement = (player: WWReadOnly<PlayerInMatchWrapper>): Weather => {
   const weather = player.match.getCurrentWeather();
 
   switch (player.data.coId.name) {

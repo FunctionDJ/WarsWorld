@@ -1,5 +1,6 @@
+import type { WWReadOnly } from "shared/types/ww-readonly";
 import { z } from "zod";
-import { positionSchema, type Position } from "./position";
+import { Position, positionSchema } from "./position";
 
 export class Path {
   constructor(private readonly data: readonly Position[]) {}
@@ -7,8 +8,8 @@ export class Path {
   /**
    * @throws {TypeError} if the index is out of bounds
    */
-  at(arg: number | "last"): Position {
-    const index = arg === "last" ? -1 : arg;
+  at(readableIndex: number | "last"): WWReadOnly<Position> {
+    const index = readableIndex === "last" ? -1 : readableIndex;
     const pos = this.data.at(index);
 
     if (pos === undefined) {
@@ -37,4 +38,7 @@ export class Path {
   }
 }
 
-export const pathSchema = z.array(positionSchema).transform((positions) => new Path(positions));
+export const pathSchema = z
+  .array(positionSchema)
+  .readonly()
+  .transform((positions) => new Path(positions));

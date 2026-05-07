@@ -1,5 +1,5 @@
-import { DispatchableError } from "shared/DispatchedError";
-import { matchMiddleware, withMatchIdSchema } from "./middleware/match";
+import { DispatchableError } from "shared/dispatchable-error";
+import { matchInSetupMiddleware, matchMiddleware, withMatchIdSchema } from "./middleware/match";
 import { playerMiddleware, withPlayerIdSchema } from "./middleware/player";
 import { t } from "./trpc-init";
 
@@ -21,18 +21,18 @@ export const playerInMatchBaseProcedure = matchBaseProcedure.use(
     // or only "in-game" stuff
 
     //gets us the entire data of the current player (the one logged in)
-    const currentPlayerFull = match.getPlayerById(currentPlayer.id);
+    // const currentPlayerFull = match.getPlayerById(currentPlayer.id);
 
     //the match hasn't started so, having the turn is irrelevant
     //(this is more for setup like changing CO or army, etc)
-    if (match.status === "setup" && currentPlayerFull !== undefined) {
-      return next({
-        ctx: {
-          ...ctx,
-          player: currentPlayerFull,
-        },
-      });
-    }
+    // if (match.state === "setup" && currentPlayerFull !== undefined) {
+    //   return next({
+    //     ctx: {
+    //       ...ctx,
+    //       player: currentPlayerFull,
+    //     },
+    //   });
+    // }
 
     //TODO: What about when match is "finished"/done?
     //so the match isn't in setup, therefore turn matters (maybe?)
@@ -52,3 +52,20 @@ export const playerInMatchBaseProcedure = matchBaseProcedure.use(
     });
   }),
 );
+
+export const matchInSetupBaseProcedure = playerBaseProcedure
+  .input(withMatchIdSchema)
+  .use(matchInSetupMiddleware)
+  .use(
+    matchInSetupMiddleware.unstable_pipe(playerMiddleware).unstable_pipe(({ ctx, next }) => {
+      const { match, currentPlayer } = ctx;
+
+      return next({
+        ctx: {
+          ...ctx,
+          match,
+          currentPlayer,
+        },
+      });
+    }),
+  );

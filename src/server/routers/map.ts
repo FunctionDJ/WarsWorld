@@ -1,10 +1,10 @@
 import { prisma } from "server/prisma/prisma-client";
-import { arr } from "shared/arr";
+import { arrayAtOrThrow } from "shared/array-utilities";
 import type { CreatableMap } from "shared/schemas/map";
 import { mapSchema } from "shared/schemas/map";
 import type { PlayerSlot } from "shared/schemas/player-slot";
-import type { Tile, TileType } from "shared/schemas/tile";
-import { isNotNeutralProperty, isUnitProducingProperty } from "shared/schemas/tile";
+import type { PassableTile, TileType } from "shared/schemas/tile";
+import { isNotNeutralProperty, isUnitProducingProperty } from "shared/schemas/tile-utilities";
 import { publicBaseProcedure, router } from "../trpc/trpc-setup";
 
 export const getPlayerAmountOfMap = (map: CreatableMap): number => {
@@ -48,7 +48,7 @@ export const mapRouter = router({
     const allMaps = await prisma.wWMap.findMany();
 
     return allMaps.map((map) => {
-      const tiles = map.tiles as Tile[][];
+      const tiles = map.tiles as PassableTile[][];
       const tilesFlat = tiles.flat();
 
       return {
@@ -58,7 +58,7 @@ export const mapRouter = router({
         numberOfPlayers: map.numberOfPlayers,
         // TODO which armies exactly?
         size: {
-          width: arr(tiles, 0).length,
+          width: arrayAtOrThrow(tiles, 0).length,
           height: tiles.length,
         },
         propertyStats: propertyTileTypes.reduce<PropertyStatsType>(
@@ -81,7 +81,7 @@ export const mapRouter = router({
 
     const tiles = input.tiles;
 
-    if (tiles.every((row) => row.length === arr(tiles, 0).length)) {
+    if (tiles.every((row) => row.length === arrayAtOrThrow(tiles, 0).length)) {
       throw new Error("All rows of the map must have the same length");
     }
 

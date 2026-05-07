@@ -1,4 +1,5 @@
 import { Path } from "shared/schemas/path";
+import type { WWReadOnly } from "shared/types/ww-readonly";
 import type { Position } from "../../schemas/position";
 import type {
   EmittableEvent,
@@ -8,21 +9,21 @@ import type {
   MoveEventWithoutSubEvent,
   MoveEventWithSubEvent,
 } from "../../types/events";
-import type { MatchWrapper } from "../../wrappers/match";
-import { TeamWrapper } from "../../wrappers/team";
+import type { MatchWrapper } from "../../wrappers/match/match";
+import { Team } from "../../wrappers/team/team";
 import { createEmittableAttackEvent } from "./handlers/attack/attackEventToEmittable";
 
-interface EmittableSubEventWithExtraInfo {
+type EmittableSubEventWithExtraInfo = Readonly<{
   teamIndex: number;
   subEvent: EmittableSubEvent;
   requireLastMovePosition: boolean;
-}
+}>;
 
 const subEventToEmittables = (
   match: MatchWrapper,
   moveEvent: MoveEventWithSubEvent | MoveEventWithoutSubEvent,
 ): EmittableSubEventWithExtraInfo[] => {
-  const spectatorTeam = new TeamWrapper([], match, -1);
+  const spectatorTeam = new Team([], match, -1);
   const teamsWithSpectator = [...match.teams, spectatorTeam];
 
   if (!("subEvent" in moveEvent)) {
@@ -142,8 +143,8 @@ export const mainEventToEmittables = (
   match: MatchWrapper,
   event: MainEventsWithoutSubEvents | MainEventWithSubEvents,
 ): (EmittableEvent | undefined)[] => {
-  const spectatorTeam = new TeamWrapper([], match, -1);
-  const teamsWithSpectator = [...match.teams, spectatorTeam];
+  const spectatorTeam = new Team([], match, -1);
+  const teamsWithSpectator: WWReadOnly<Team[]> = [...match.teams, spectatorTeam];
 
   switch (event.type) {
     case "move": {
@@ -159,7 +160,7 @@ export const mainEventToEmittables = (
         // special visible function for hidden subs and stealth
         const isPositionVisible =
           "hidden" in unit.data && unit.data.hidden
-            ? (position: Position | undefined): position is Position => {
+            ? (position?: Position): position is Position => {
                 if (position === undefined) {
                   return false;
                 }
@@ -172,7 +173,7 @@ export const mainEventToEmittables = (
 
                 return false;
               }
-            : (position: Position | undefined): position is Position =>
+            : (position?: Position): position is Position =>
                 position === undefined ? false : team.isPositionVisible(position);
 
         let shownPath = new Path([]);
@@ -241,7 +242,7 @@ export const mainEventToEmittables = (
             teamIndex: team.index,
           };
         } else {
-          return undefined;
+          return;
         }
       });
     }
@@ -263,7 +264,7 @@ export const mainEventToEmittables = (
             teamIndex: team.index,
           };
         } else {
-          return undefined;
+          return;
         }
       });
     }

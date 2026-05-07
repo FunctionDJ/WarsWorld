@@ -4,7 +4,7 @@
 
 import type { MatchRules } from "shared/schemas/match-rules";
 import type { Preferences } from "shared/schemas/preferences";
-import type { Tile } from "shared/schemas/tile";
+import type { PassableTile } from "shared/schemas/tile";
 import type { UnitWithVisibleStats } from "shared/schemas/unit";
 import type { MainEventWithSubEvents } from "shared/types/events";
 import type { PlayerInMatch } from "shared/types/server-match-state";
@@ -12,7 +12,7 @@ import type { PlayerInMatch } from "shared/types/server-match-state";
 declare global {
   namespace PrismaJson {
     type PrismaPreferences = Preferences;
-    type PrismaTiles = Tile[][];
+    type PrismaTiles = PassableTile[][];
     type PrismaUnits = UnitWithVisibleStats[];
     type PrismaPlayerState = PlayerInMatch[];
     type PrismaEvent = MainEventWithSubEvents;

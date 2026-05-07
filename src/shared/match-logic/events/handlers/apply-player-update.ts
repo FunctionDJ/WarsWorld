@@ -1,5 +1,5 @@
 import type { EmittableAttackEvent } from "shared/types/events";
-import type { MatchWrapper } from "shared/wrappers/match";
+import type { MatchWrapper } from "shared/wrappers/match/match";
 
 export const applyPlayerUpdate = (
   match: MatchWrapper,

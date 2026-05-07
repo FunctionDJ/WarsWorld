@@ -1,6 +1,6 @@
 import type { LuckRoll } from "shared/schemas/co";
-import type { UnitWrapper } from "shared/wrappers/unit";
-import type { CombatProps } from "./co-hooks";
+import type { UnitWrapper } from "shared/wrappers/unit/unit";
+import type { CombatProperties } from "./co-hooks";
 import { getBaseDamage } from "./game-constants/base-damage";
 import { getTerrainDefenseStars } from "./game-constants/terrain-properties";
 
@@ -23,25 +23,26 @@ const _roundUpTo = (value: number, step: number): number => {
  * @see https://awbw.fandom.com/wiki/Damage_Formula
  */
 export const calculateDamage = (
-  { attacker, defender }: CombatProps,
+  { attacker, defender }: CombatProperties,
   luckRoll: LuckRoll,
   isCounterAttack: boolean,
-): number | null => {
+): number | undefined => {
   const baseDamage = getBaseDamage(attacker, defender);
 
-  // null baseDamage = unit can't attack this other unit
-  if (baseDamage === null) {
-    return null;
+  // undefined baseDamage = unit can't attack this other unit
+  if (baseDamage === undefined) {
+    return;
   }
 
   const visualHPOfAttacker = getVisualHPfromHP(attacker.getHP());
   const visualHPOfDefender = getVisualHPfromHP(defender.getHP());
 
-  const hookProps: CombatProps = { attacker, defender };
+  const hookProperties: CombatProperties = { attacker, defender };
 
   // attack and defense multipliers
   const attackHook = attacker.player.getHook("attack");
-  let attackModifier = attackHook?.(hookProps) ?? 100 + attacker.player.getCommtowerAttackBoost();
+  let attackModifier =
+    attackHook?.(hookProperties) ?? 100 + attacker.player.getCommtowerAttackBoost();
 
   if (isCounterAttack) {
     const dCoId = defender.player.data.coId;
@@ -64,7 +65,7 @@ export const calculateDamage = (
   }
 
   const defenseHook = defender.player.getHook("defense");
-  let defenseModifier = defenseHook?.(hookProps) ?? 100;
+  let defenseModifier = defenseHook?.(hookProperties) ?? 100;
 
   if (defender.player.data.COPowerState !== "no-power") {
     defenseModifier = defender.player.getVersionProperties().powerDefenseMod(defenseModifier);
@@ -72,9 +73,9 @@ export const calculateDamage = (
 
   // luck calculations
   const goodLuckHook = attacker.player.getHook("maxGoodLuck");
-  const maxGoodLuck = goodLuckHook?.(hookProps) ?? attackerVersionProperties.baseGoodLuck;
+  const maxGoodLuck = goodLuckHook?.(hookProperties) ?? attackerVersionProperties.baseGoodLuck;
   const badLuckHook = attacker.player.getHook("maxBadLuck");
-  const maxBadLuck = badLuckHook?.(hookProps) ?? attackerVersionProperties.baseBadLuck;
+  const maxBadLuck = badLuckHook?.(hookProperties) ?? attackerVersionProperties.baseBadLuck;
 
   //needs the special case luckRoll == 1 (so maxLuck = 1 gives expected results consistent with floor)
   const goodLuckValue =
@@ -87,7 +88,7 @@ export const calculateDamage = (
 
   const terrainStarsDefenderHook = defender.player.getHook("terrainStars");
   let defenderTerrainStars =
-    terrainStarsDefenderHook?.(baseTerrainStars, hookProps) ?? baseTerrainStars;
+    terrainStarsDefenderHook?.(baseTerrainStars, hookProperties) ?? baseTerrainStars;
 
   if (attacker.player.data.coId.name === "sonja" && attacker.player.data.coId.version === "AWDS") {
     // hmm ackshually, if sonja pops powers before lash, outcome is different than popping after lash
@@ -167,7 +168,7 @@ export const calculateEngagementOutcome = (
 
       defender.setHp(originalHP);
 
-      if (damageByDefender !== null) {
+      if (damageByDefender !== undefined) {
         //return event with counter-attack
         return {
           defenderHP: defender.getHP() - damageByAttacker,

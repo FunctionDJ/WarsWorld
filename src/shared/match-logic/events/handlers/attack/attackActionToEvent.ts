@@ -1,4 +1,4 @@
-import { DispatchableError } from "shared/DispatchedError";
+import { DispatchableError } from "shared/dispatchable-error";
 import { calculateEngagementOutcome } from "shared/match-logic/calculate-damage";
 import {
   createPipeSeamUnitEquivalent,
@@ -10,14 +10,14 @@ import type { AttackEvent } from "shared/types/events";
 import type { SubActionToEvent } from "../../handler-types";
 import { getEliminationReason } from "./getEliminationReason";
 
-type Params = [
+type Parameters = [
   ...Parameters<SubActionToEvent<AttackAction>>,
   unitHasMoved: boolean,
   attackerLuck: LuckRoll,
   defenderLuck: LuckRoll,
 ];
 
-export const attackActionToEvent: (...params: Params) => AttackEvent = (
+export const attackActionToEvent: (...params: Parameters) => AttackEvent = (
   match,
   action,
   fromPosition,
@@ -63,7 +63,7 @@ export const attackActionToEvent: (...params: Params) => AttackEvent = (
       attackedTile.hp,
     );
 
-    if (getBaseDamage(attacker, pipeSeamUnitEquivalent) === null) {
+    if (getBaseDamage(attacker, pipeSeamUnitEquivalent) === undefined) {
       throw new DispatchableError("Unit cannot attack specified pipeseam");
     }
 
@@ -88,7 +88,7 @@ export const attackActionToEvent: (...params: Params) => AttackEvent = (
     throw new DispatchableError("The target unit is not in vision");
   }
 
-  if (getBaseDamage(attacker, defender) === null) {
+  if (getBaseDamage(attacker, defender) === undefined) {
     throw new DispatchableError("This unit cannot attack specified enemy unit");
   }
 

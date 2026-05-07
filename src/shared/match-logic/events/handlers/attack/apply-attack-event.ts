@@ -1,13 +1,13 @@
 import { getVisualHPfromHP } from "shared/match-logic/calculate-damage";
 import type { Position } from "shared/schemas/position";
 import type { AttackEvent, EmittableAttackEvent } from "shared/types/events";
-import type { MatchWrapper } from "shared/wrappers/match";
+import type { MutableMatch } from "shared/wrappers/match/mutable-match";
 import { canAttackWithPrimary } from "./canAttackWithPrimary";
 import { getPowerChargeGain } from "./getPowerChargeGain";
-import { applySashaFundsDamage, handleSashaScopFunds } from "./handleSashaScopFunds";
+import { applySashaFundsDamage, handleSashaScopFunds } from "./handle-sasha-scop-funds";
 
 export const applyAttackEvent = (
-  match: MatchWrapper,
+  match: MutableMatch,
   event: AttackEvent,
   position: Position,
 ): void => {
@@ -76,12 +76,12 @@ export const applyAttackEvent = (
 };
 
 export const applyEmittableAttackEvent = (
-  match: MatchWrapper,
+  match: MutableMatch,
   event: EmittableAttackEvent,
 ): void => {
   if (event.attacker) {
     //power charge
-    if (event.attacker.powerChargeGained != null) {
+    if (event.attacker.powerChargeGained != undefined) {
       const player = match.getPlayerBySlot(event.attacker.playerSlot);
       player?.gainPowerCharge(event.attacker.powerChargeGained);
     }
@@ -90,7 +90,7 @@ export const applyEmittableAttackEvent = (
       const attackerUnit = match.getUnitOrThrow(event.attacker.position);
 
       //HP change
-      if (event.attacker.HP != null) {
+      if (event.attacker.HP != undefined) {
         if (event.attacker.HP === 0) {
           attackerUnit.remove();
         } else {
@@ -105,7 +105,7 @@ export const applyEmittableAttackEvent = (
     }
 
     //special case for Sasha SCOP (damage taken in funds for money)
-    if (event.attacker.damageTakenInFunds != null && event.defender) {
+    if (event.attacker.damageTakenInFunds != undefined && event.defender) {
       const defendingPlayer = match.getPlayerBySlot(event.defender.playerSlot);
 
       if (defendingPlayer) {
@@ -117,7 +117,7 @@ export const applyEmittableAttackEvent = (
 
   if (event.defender) {
     //power charge
-    if (event.defender.powerChargeGained != null) {
+    if (event.defender.powerChargeGained != undefined) {
       const player = match.getPlayerBySlot(event.defender.playerSlot);
       player?.gainPowerCharge(event.defender.powerChargeGained);
     }
@@ -133,13 +133,13 @@ export const applyEmittableAttackEvent = (
           throw new Error("Received pipe seam attack event, but no pipe seam was found");
         }
 
-        if (event.defender.HP != null) {
+        if (event.defender.HP != undefined) {
           //^ should always be true
           pipeTile.hp = event.defender.HP;
         }
       } else {
         //HP change
-        if (event.defender.HP != null) {
+        if (event.defender.HP != undefined) {
           if (event.defender.HP === 0) {
             defenderUnit.remove();
           } else {
@@ -155,7 +155,7 @@ export const applyEmittableAttackEvent = (
     }
 
     //special case for Sasha SCOP (damage taken in funds for money)
-    if (event.defender.damageTakenInFunds != null && event.attacker) {
+    if (event.defender.damageTakenInFunds != undefined && event.attacker) {
       const attackingPlayer = match.getPlayerBySlot(event.attacker.playerSlot);
 
       if (attackingPlayer) {

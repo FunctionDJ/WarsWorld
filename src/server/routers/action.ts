@@ -15,7 +15,7 @@ import type {
   MainEventWithSubEvents,
   SubEvent,
 } from "shared/types/events";
-import type { MatchWrapper } from "shared/wrappers/match";
+import type { MatchWrapper } from "shared/wrappers/match/match";
 import { mainEventToEmittables } from "../../shared/match-logic/events/event-to-emittable";
 import { updateMoveVision } from "../../shared/match-logic/events/handlers/move";
 import { fillDiscoveredUnitsAndProperties } from "../../shared/match-logic/events/vision-update";
@@ -158,7 +158,7 @@ export const actionRouter = router({
 
       // TODO we still need something like the following to handle timeout eliminations.
 
-      // if (playerEliminatedEvent !== null) {
+      // if (playerEliminatedEvent !== undefined) {
       //   applyMainEventToMatch(match, playerEliminatedEvent);
 
       //   const eliminationEventOnDB = await prisma.event.create({

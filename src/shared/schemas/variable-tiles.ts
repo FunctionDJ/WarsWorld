@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const axisConnectionsSchema = z.enum(["right-left", "top-bottom"]);
+export const axisConnectionsSchema = z.enum(["right-left", "top-bottom"]);
 
 const oneWayConnectionsSchema = z.enum(["top", "right", "bottom", "left"]);
 
@@ -32,15 +32,6 @@ const pipeTileSchema = z.object({
   variant: oneWayConnectionsSchema.or(twoWayConnectionsSchema),
 });
 
-const pipeSeamTileSchema = z.object({
-  type: z.literal("pipeSeam"),
-  variant: axisConnectionsSchema,
-  hp: z.number().int().min(1).max(100),
-});
-
-export type PipeSeamTile = z.infer<typeof pipeSeamTileSchema>;
-export type PipeSeamTileType = z.infer<typeof pipeSeamTileSchema>["type"];
-
 const plainTileSchema = z.object({
   type: z.literal("plain"),
   variant: z.enum(["normal", "broken-pipe-right-left", "broken-pipe-top-bottom"]),
@@ -56,7 +47,6 @@ const riverTileSchema = z.object({
 export const variableTileSchema = z.discriminatedUnion("type", [
   roadTileSchema,
   bridgeTileSchema,
-  pipeSeamTileSchema,
   pipeTileSchema,
   riverTileSchema,
   plainTileSchema,

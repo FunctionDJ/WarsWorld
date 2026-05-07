@@ -1,4 +1,4 @@
-import type { UnitWrapper } from "shared/wrappers/unit";
+import type { UnitWrapper } from "shared/wrappers/unit/unit";
 
 export function propertyRepairAndResupply(unit: UnitWrapper): void {
   const { player } = unit;

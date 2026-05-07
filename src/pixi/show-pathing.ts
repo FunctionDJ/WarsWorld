@@ -1,21 +1,21 @@
 import { baseTileSize } from "components/client-only/common";
 import { Container, Sprite } from "pixi.js";
-import { arr } from "shared/arr";
+import { arrayAtOrThrow } from "shared/array-utilities";
 import {
   createPipeSeamUnitEquivalent,
   getBaseDamage,
 } from "shared/match-logic/game-constants/base-damage";
 import { Position } from "shared/schemas/position";
 import type { MapWrapper } from "shared/wrappers/map";
-import type { MatchWrapper } from "shared/wrappers/match";
-import { DispatchableError } from "../shared/DispatchedError";
-import type { UnitWrapper } from "../shared/wrappers/unit";
+import type { MatchWrapper } from "shared/wrappers/match/match";
+import { DispatchableError } from "../shared/dispatchable-error";
+import type { UnitWrapper } from "../shared/wrappers/unit/unit";
 import type { LoadedSpriteSheet } from "./load-spritesheet";
 export interface PathNode {
   //saves distance from origin and parent (to retrieve the shortest path)
   pos: Position;
   dist: number;
-  parent: Position | null;
+  parent: Position | undefined;
 }
 
 const makeVisitedMatrix = (map: MapWrapper) =>
@@ -45,37 +45,37 @@ export const getAccessibleNodes = (
     throw new DispatchableError("Unit has negative movement points, which is not possible");
   }
 
-  firstQueue.push({ pos: unit.data.position, dist: 0, parent: null }); //queues[0] has the origin node, initially
+  firstQueue.push({ pos: unit.data.position, dist: 0, parent: undefined }); //queues[0] has the origin node, initially
 
   const visited = makeVisitedMatrix(match.map);
 
   for (const unit of ownerUnitPlayer.team.getEnemyUnits()) {
     //enemy tiles are impassible
-    arr(visited, unit.data.position.data[0])[unit.data.position.data[1]] = true;
+    arrayAtOrThrow(visited, unit.data.position.data[0])[unit.data.position.data[1]] = true;
   }
 
   let currentDist = 0; //will check from closest to furthest, to find the shortest path
 
   while (currentDist < queues.length) {
-    if (arr(queues, currentDist).length === 0) {
+    if (arrayAtOrThrow(queues, currentDist).length === 0) {
       //increase currentDist if all nodes within that distance have been processed
       ++currentDist;
       continue;
     }
 
-    const currNode = arr(queues, currentDist).pop();
+    const currNode = arrayAtOrThrow(queues, currentDist).pop();
     const currPos = currNode?.pos;
 
     if (
       currNode === undefined ||
       currPos === undefined ||
-      arr(visited, currPos.data[0])[currPos.data[1]]
+      arrayAtOrThrow(visited, currPos.data[0])[currPos.data[1]]
     ) {
       continue;
     }
 
     //update variables to mark as visited and add to result
-    arr(visited, currPos.data[0])[currPos.data[1]] = true;
+    arrayAtOrThrow(visited, currPos.data[0])[currPos.data[1]] = true;
     accessibleTiles.set(currPos, currNode);
 
     for (const pos of currPos.getNeighbours()) {
@@ -85,14 +85,14 @@ export const getAccessibleNodes = (
 
       const movementCost = unit.getMovementCost(pos);
 
-      if (movementCost === null) {
+      if (movementCost === undefined) {
         continue;
       } //skip if unit can't move there
 
       const nodeDist = currNode.dist + movementCost;
 
       if (nodeDist <= unit.getMovementPoints()) {
-        arr(queues, nodeDist - 1).push({
+        arrayAtOrThrow(queues, nodeDist - 1).push({
           pos: pos,
           dist: nodeDist,
           parent: currPos,
@@ -131,7 +131,7 @@ export const getAttackableTiles = (
   } else {
     // Melee unit
     accessibleNodes ??= fromPosition
-      ? new Map([[fromPosition, { pos: fromPosition, dist: 0, parent: null }]]) // Create a minimal node if specific position given
+      ? new Map([[fromPosition, { pos: fromPosition, dist: 0, parent: undefined }]]) // Create a minimal node if specific position given
       : getAccessibleNodes(match, unit);
 
     const visited = makeVisitedMatrix(match.map);
@@ -144,9 +144,9 @@ export const getAttackableTiles = (
 
       for (const adjPos of pos.getNeighbours()) {
         if (!match.map.isOutOfBounds(adjPos)) {
-          if (!arr(visited, adjPos.data[0])[adjPos.data[1]]) {
+          if (!arrayAtOrThrow(visited, adjPos.data[0])[adjPos.data[1]]) {
             attackPositions.push(adjPos);
-            arr(visited, adjPos.data[0])[adjPos.data[1]] = true;
+            arrayAtOrThrow(visited, adjPos.data[0])[adjPos.data[1]] = true;
           }
         }
       }
@@ -166,7 +166,7 @@ export const getAttackTargetTiles = (
   attackableTiles ??= getAttackableTiles(match, unit, fromPosition);
 
   const canAttackPipeseams =
-    getBaseDamage(unit, createPipeSeamUnitEquivalent(match, unit)) !== null;
+    getBaseDamage(unit, createPipeSeamUnitEquivalent(match, unit)) !== undefined;
 
   for (const position of attackableTiles) {
     const enemy = match.getUnit(position);
@@ -176,7 +176,7 @@ export const getAttackTargetTiles = (
         attackTargetPositions.push(position);
       }
     } else {
-      if (enemy.player.team !== unit.player.team && getBaseDamage(unit, enemy) !== null) {
+      if (enemy.player.team !== unit.player.team && getBaseDamage(unit, enemy) !== undefined) {
         attackTargetPositions.push(position);
       }
     }
@@ -192,8 +192,8 @@ export const calculatePathDistance = (unit: UnitWrapper, path: Position[]) => {
     if (index !== 0) {
       const moveCost = unit.getMovementCost(pos); //TODO cache movement costs
 
-      if (moveCost === null) {
-        return null;
+      if (moveCost === undefined) {
+        return;
       }
 
       dist += moveCost;
@@ -229,7 +229,7 @@ export const updatePath = (
       const distanceCovered = calculatePathDistance(unit, path);
 
       //if it doesn't surpass movement restrictions, update current path
-      if (moveCost !== null && moveCost + distanceCovered <= unit.getMovementPoints()) {
+      if (moveCost !== undefined && moveCost + distanceCovered <= unit.getMovementPoints()) {
         path.push(newPos);
         return path;
       }
@@ -254,7 +254,7 @@ export const updatePath = (
   while (currentPathNode !== undefined) {
     newPath.push(currentPathNode.pos);
 
-    if (currentPathNode.parent === null) {
+    if (currentPathNode.parent === undefined) {
       break;
     }
 
@@ -347,7 +347,7 @@ export const showPath = (spriteSheet: LoadedSpriteSheet, path: Position[]) => {
   arrowContainer.eventMode = "static";
 
   const path2 = [...path];
-  path2.push(arr(path, "last")); //to detect the final node
+  path2.push(arrayAtOrThrow(path, "last")); //to detect the final node
 
   for (let i = 0; i < path.length; ++i) {
     let spriteName = "";
@@ -357,13 +357,17 @@ export const showPath = (spriteSheet: LoadedSpriteSheet, path: Position[]) => {
       //special case for original node
       //spriteName = getSpriteName(path2[0], path2[i], path2[i + 1]);
     } else {
-      spriteName = getSpriteName(arr(path2, i - 1), arr(path2, i), arr(path2, i + 1));
+      spriteName = getSpriteName(
+        arrayAtOrThrow(path2, i - 1),
+        arrayAtOrThrow(path2, i),
+        arrayAtOrThrow(path2, i + 1),
+      );
     }
 
     const nodeSprite = new Sprite(spriteSheet.arrow.textures[spriteName + ".png"]);
     nodeSprite.anchor.set(1, 1);
-    nodeSprite.x = (arr(path2, i).data[0] + 1) * baseTileSize;
-    nodeSprite.y = (arr(path2, i).data[1] + 1) * baseTileSize;
+    nodeSprite.x = (arrayAtOrThrow(path2, i).data[0] + 1) * baseTileSize;
+    nodeSprite.y = (arrayAtOrThrow(path2, i).data[1] + 1) * baseTileSize;
     arrowContainer.addChild(nodeSprite);
   }
 

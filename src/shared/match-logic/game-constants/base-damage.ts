@@ -1,7 +1,7 @@
 import { Position } from "shared/schemas/position";
-import type { UnitType, WWUnit } from "shared/schemas/unit";
-import type { MatchWrapper } from "shared/wrappers/match";
-import { UnitWrapper } from "shared/wrappers/unit";
+import type { UnitTypeString, WWUnit } from "shared/schemas/unit";
+import type { MatchWrapper } from "shared/wrappers/match/match";
+import { UnitWrapper } from "shared/wrappers/unit/unit";
 
 export const createPipeSeamUnitEquivalent = (
   match: MatchWrapper,
@@ -21,14 +21,15 @@ export const createPipeSeamUnitEquivalent = (
       ammo: 0,
     },
   };
+
   return new UnitWrapper(unitEquivalent, match);
 };
 
-export const getBaseDamage = (attacker: UnitWrapper, defender: UnitWrapper): number | null => {
+export const getBaseDamage = (attacker: UnitWrapper, defender: UnitWrapper): number | undefined => {
   const damageValues = attacker.player.getVersionProperties().damageChart[attacker.data.type];
 
   if (damageValues === undefined) {
-    return null;
+    return;
   }
 
   // hardcoded: hidden subs / stealth can only be damaged by cruiser+sub / fighter+stealth
@@ -39,7 +40,7 @@ export const getBaseDamage = (attacker: UnitWrapper, defender: UnitWrapper): num
     attacker.data.type !== "sub" &&
     attacker.data.type !== "cruiser"
   ) {
-    return null;
+    return;
   }
 
   if (
@@ -49,17 +50,17 @@ export const getBaseDamage = (attacker: UnitWrapper, defender: UnitWrapper): num
     attacker.data.type !== "stealth" &&
     attacker.data.type !== "fighter"
   ) {
-    return null;
+    return;
   }
 
-  const primaryDamage = damageValues.primary?.[defender.data.type] ?? null;
-  const secondaryDamage = damageValues.secondary?.[defender.data.type] ?? null;
-  const cantUsePrimaryWeapon = attacker.getAmmo() === 0 || attacker.getAmmo() === null;
+  const primaryDamage = damageValues.primary?.[defender.data.type];
+  const secondaryDamage = damageValues.secondary?.[defender.data.type];
+  const cantUsePrimaryWeapon = attacker.getAmmo() === 0 || attacker.getAmmo() === undefined;
 
   return cantUsePrimaryWeapon ? secondaryDamage : (primaryDamage ?? secondaryDamage);
 };
 
-type DamageValues = Partial<Record<UnitType, number>>;
+type DamageValues = Partial<Record<UnitTypeString, number>>;
 
 //secondary = machine gun, infinite ammo.
 //some units don't have primary weapon (like infantry, recon)
@@ -68,7 +69,7 @@ interface Weaponry {
   secondary?: DamageValues;
 }
 
-export type DamageChart = Partial<Record<UnitType, Weaponry>>;
+export type DamageChart = Partial<Record<UnitTypeString, Weaponry>>;
 
 //if no game version is specified, all of them share the same dmg values
 //otherwise, if a version doesn't appear, it uses the newer version (if AW1 is not present, it uses AW2 table)

@@ -1,12 +1,12 @@
 import { renderedTileSize } from "components/client-only/common";
 import { BitmapText, Container, Sprite, Texture } from "pixi.js";
 import { type RefObject } from "react";
-import { arr } from "shared/arr";
+import { arrayAtOrThrow } from "shared/array-utilities";
 import type { MainAction } from "shared/schemas/action";
 import { Path } from "shared/schemas/path";
 import { Position } from "../shared/schemas/position";
-import type { MatchWrapper } from "../shared/wrappers/match";
-import type { UnitWrapper } from "../shared/wrappers/unit";
+import type { MatchWrapper } from "../shared/wrappers/match/match";
+import type { UnitWrapper } from "../shared/wrappers/unit/unit";
 import type { BattleForecast } from "./interactiveTileFunctions";
 import { getBattleForecast } from "./interactiveTileFunctions";
 import type { LoadedSpriteSheet } from "./load-spritesheet";
@@ -17,9 +17,9 @@ import { tileConstructor } from "./sprite-constructor";
 export function renderAttackTiles(
   interactiveContainer: Container,
   match: MatchWrapper,
-  currentUnitClickedRef: RefObject<UnitWrapper | null>,
+  currentUnitClickedRef: RefObject<UnitWrapper | undefined>,
   spriteSheets: LoadedSpriteSheet,
-  pathRef: RefObject<Position[] | null>,
+  pathRef: RefObject<Position[] | undefined>,
   mapContainer: Container,
   sendAction: (action: MainAction) => Promise<void>,
   attackingPosition?: Position,
@@ -29,7 +29,7 @@ export function renderAttackTiles(
   const attackTileContainer = new Container();
   attackTileContainer.name = "preAttackBox";
 
-  if (currentUnitClickedRef.current === null) {
+  if (currentUnitClickedRef.current === undefined) {
     return attackTileContainer;
   }
 
@@ -46,16 +46,18 @@ export function renderAttackTiles(
       const unit1 = currentUnitClickedRef.current;
       const unit2 = match.getUnit(pos);
 
-      if (unit1 !== null && unit2 !== undefined) {
+      if (unit1 !== undefined && unit2 !== undefined) {
         console.log("PATHREF:", pathRef, pathRef.current);
 
         const attackingPos =
-          pathRef.current !== null ? arr(pathRef.current, "last") : unit1.data.position;
+          pathRef.current !== undefined
+            ? arrayAtOrThrow(pathRef.current, "last")
+            : unit1.data.position;
 
         attackTileContainer.addChild(renderProbabilities(unit1, unit2, attackingPos));
 
         if (unit1.isIndirect()) {
-          pathRef.current = null;
+          pathRef.current = undefined;
           mapContainer.getChildByName("pathArrows")?.destroy();
         }
       }
@@ -67,8 +69,8 @@ export function renderAttackTiles(
     });
 
     attackTile.on("pointerdown", () => {
-      if (currentUnitClickedRef.current !== null) {
-        //unit will not move if path is null (= not moving) or if it's indirect
+      if (currentUnitClickedRef.current !== undefined) {
+        //unit will not move if path is undefined (= not moving) or if it's indirect
         const path =
           pathRef.current && !currentUnitClickedRef.current.isIndirect()
             ? pathRef.current
@@ -86,7 +88,7 @@ export function renderAttackTiles(
 
         //The currentUnitClicked has changed (moved, attacked, died), therefore, we delete the previous information as it is not accurate anymore
         //this also helps so when the screen resets, we dont have two copies of a unit
-        currentUnitClickedRef.current = null;
+        currentUnitClickedRef.current = undefined;
       }
     });
 
@@ -106,7 +108,7 @@ export function renderAttackTiles(
     probabilitiesContainer.x = ((defenderPosition.data[0] + 2.5) * renderedTileSize) / 2;
     probabilitiesContainer.y = (defenderPosition.data[1] * renderedTileSize) / 2;
 
-    if (attacker === null) {
+    if (attacker === undefined) {
       return probabilitiesContainer;
     }
 

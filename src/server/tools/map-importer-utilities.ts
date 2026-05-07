@@ -1,6 +1,6 @@
 import type { WWMap } from "generated/client";
-import { arr, obj } from "shared/arr";
-import type { Tile } from "shared/schemas/tile";
+import { arrayAtOrThrow, getFromObjectOrThrow } from "shared/array-utilities";
+import type { PassableTile } from "shared/schemas/tile";
 import { prisma } from "../prisma/prisma-client";
 
 interface AWBWMapImportSchema {
@@ -36,16 +36,18 @@ export const convertAWBWMapToWWMap = (tileDataString: string): WWMap["tiles"] =>
         .map((t) => t.trim()),
     );
   const tileDataFlat = tileData2DM.flat();
-  const row = arr(tileData2DM, 0).length;
+  const row = arrayAtOrThrow(tileData2DM, 0).length;
   const col = tileData2DM.length;
 
-  const parsedArray: Tile[][] = [];
+  const parsedArray: PassableTile[][] = [];
 
   for (let i = 0; i < col; i++) {
-    const emptyArray: Tile[] = [];
+    const emptyArray: PassableTile[] = [];
 
     for (let j = 0; j < row; j++) {
-      emptyArray.push(obj(awbwTileMapping, arr(tileDataFlat, j + i * row)));
+      emptyArray.push(
+        getFromObjectOrThrow(awbwTileMapping, arrayAtOrThrow(tileDataFlat, j + i * row)),
+      );
     }
 
     parsedArray.push(emptyArray);
@@ -54,7 +56,7 @@ export const convertAWBWMapToWWMap = (tileDataString: string): WWMap["tiles"] =>
   return parsedArray;
 };
 
-const awbwTileMapping: Record<string, Tile> = {
+const awbwTileMapping: Record<string, PassableTile> = {
   "1": { type: "plain", variant: "normal" },
   "2": { type: "mountain" },
   "3": { type: "forest" },

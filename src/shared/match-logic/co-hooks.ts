@@ -1,30 +1,27 @@
-import type { UnitType } from "shared/schemas/unit";
-import type { MatchWrapper } from "shared/wrappers/match";
-import type { UnitWrapper } from "shared/wrappers/unit";
+import type { WWReadOnly } from "shared/types/ww-readonly";
+import type { MatchWrapper } from "shared/wrappers/match/match";
+import type { UnitWrapper } from "shared/wrappers/unit/unit";
 
-export interface CombatProps {
+export type CombatProperties = Readonly<{
   attacker: UnitWrapper;
   defender: UnitWrapper;
-}
+}>;
 
 type ReturnValue = number | undefined;
 
 export interface Hooks {
   buildCost: (baseBuildCost: number, match: MatchWrapper) => ReturnValue;
-  movementCost: <T extends UnitType>(baseMovementCost: number, unit: UnitWrapper<T>) => ReturnValue;
-  movementPoints: <T extends UnitType>(
-    baseMovementPoints: number,
-    unit: UnitWrapper<T>,
-  ) => ReturnValue;
+  movementCost: (baseMovementCost: number, unit: WWReadOnly<UnitWrapper>) => ReturnValue;
+  movementPoints: (baseMovementPoints: number, unit: WWReadOnly<UnitWrapper>) => ReturnValue;
   vision: (baseVisionRange: number) => ReturnValue;
 
-  attackRange: (baseRange: number, attacker: UnitWrapper) => ReturnValue;
+  attackRange: (baseRange: number, attacker: WWReadOnly<UnitWrapper>) => ReturnValue;
 
-  terrainStars: (baseTerrainStars: number, combatProps: CombatProps) => ReturnValue;
+  terrainStars: (baseTerrainStars: number, combatProperties: CombatProperties) => ReturnValue;
 
-  attack: (combatProps: CombatProps) => ReturnValue;
-  defense: (combatProps: CombatProps) => ReturnValue;
+  attack: (combatProperties: CombatProperties) => ReturnValue;
+  defense: (combatProperties: CombatProperties) => ReturnValue;
 
-  maxGoodLuck: (combatProps: CombatProps) => ReturnValue;
-  maxBadLuck: (combatProps: CombatProps) => ReturnValue;
+  maxGoodLuck: (combatProperties: CombatProperties) => ReturnValue;
+  maxBadLuck: (combatProperties: CombatProperties) => ReturnValue;
 }

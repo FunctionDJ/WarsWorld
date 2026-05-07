@@ -19,7 +19,7 @@ const mechSchema = withTypeSchema("mech").extend(withAmmoUnitStats).extend(withC
 export const infantryOrMechSchema = infantrySchema.or(mechSchema);
 
 const APCSchema = withTypeSchema("apc").extend(withNoAmmoUnitStats).extend({
-  loadedUnit: infantryOrMechSchema.nullable(),
+  loadedUnit: infantryOrMechSchema.optional(),
 });
 
 const reconSchema = withTypeSchema("recon").extend(withNoAmmoUnitStats);
@@ -41,7 +41,7 @@ const otherLandUnitsWithAmmo = z
 
 //AIR UNITS:
 const transportCopterSchema = withTypeSchema("transportCopter").extend(withNoAmmoUnitStats).extend({
-  loadedUnit: infantryOrMechSchema.nullable(),
+  loadedUnit: infantryOrMechSchema.optional(),
 });
 
 const battleCopterSchema = withTypeSchema("battleCopter").extend(withAmmoUnitStats);
@@ -60,8 +60,8 @@ const blackBoatLoadedUnitSchema = z.discriminatedUnion("type", [infantrySchema, 
 
 //SEA UNITS:
 const blackBoatSchema = withTypeSchema("blackBoat").extend(withNoAmmoUnitStats).extend({
-  loadedUnit: blackBoatLoadedUnitSchema.nullable(),
-  loadedUnit2: blackBoatLoadedUnitSchema.nullable(),
+  loadedUnit: blackBoatLoadedUnitSchema.optional(),
+  loadedUnit2: blackBoatLoadedUnitSchema.optional(),
 });
 
 export const landerLoadedUnitSchema = z.discriminatedUnion("type", [
@@ -73,8 +73,8 @@ export const landerLoadedUnitSchema = z.discriminatedUnion("type", [
 ]);
 
 const landerSchema = withTypeSchema("lander").extend(withNoAmmoUnitStats).extend({
-  loadedUnit: landerLoadedUnitSchema.nullable(),
-  loadedUnit2: landerLoadedUnitSchema.nullable(),
+  loadedUnit: landerLoadedUnitSchema.optional(),
+  loadedUnit2: landerLoadedUnitSchema.optional(),
 });
 
 export const cruiserLoadedUnitSchema = z.discriminatedUnion("type", [
@@ -83,8 +83,8 @@ export const cruiserLoadedUnitSchema = z.discriminatedUnion("type", [
 ]);
 
 const cruiserSchema = withTypeSchema("cruiser").extend(withAmmoUnitStats).extend({
-  loadedUnit: cruiserLoadedUnitSchema.nullable(),
-  loadedUnit2: cruiserLoadedUnitSchema.nullable(),
+  loadedUnit: cruiserLoadedUnitSchema.optional(),
+  loadedUnit2: cruiserLoadedUnitSchema.optional(),
 });
 
 const battleshipSchema = withTypeSchema("battleship").extend(withAmmoUnitStats);
@@ -100,8 +100,8 @@ export const carrierLoadedUnitSchema = z.discriminatedUnion("type", [
 ]);
 
 const carrierSchema = withTypeSchema("carrier").extend(withAmmoUnitStats).extend({
-  loadedUnit: carrierLoadedUnitSchema.nullable(),
-  loadedUnit2: carrierLoadedUnitSchema.nullable(),
+  loadedUnit: carrierLoadedUnitSchema.optional(),
+  loadedUnit2: carrierLoadedUnitSchema.optional(),
 });
 
 export type LoadedUnit = z.infer<
@@ -115,10 +115,12 @@ export type LoadedUnit = z.infer<
   >
 >;
 
+export type LoadedTypeString = LoadedUnit["type"];
+
 //PIPE? UNITS:
 const pipeRunnerSchema = withTypeSchema("pipeRunner").extend(withAmmoUnitStats);
 
-export const unitSchema = z.discriminatedUnion("type", [
+export const visibleUnitSchema = z.discriminatedUnion("type", [
   // this can't be easily mapped
   // because it'd be pushing the limits of zod or typescript i think
   infantrySchema.extend(shared),
@@ -140,31 +142,64 @@ export const unitSchema = z.discriminatedUnion("type", [
   pipeRunnerSchema.extend(shared),
 ]);
 
-export type UnitWithVisibleStats = z.infer<typeof unitSchema>;
+export type UnitWithVisibleStats = z.infer<typeof visibleUnitSchema>;
 
-export type UnitType = UnitWithVisibleStats["type"];
+export type UnitTypeString = UnitWithVisibleStats["type"];
+export type TransportTypeString = Extract<
+  UnitTypeString,
+  "apc" | "transportCopter" | "blackBoat" | "lander" | "carrier"
+>;
+export type IndirectTypeString = Extract<
+  UnitTypeString,
+  "artillery" | "missile" | "battleship" | "carrier" | "pipeRunner" | "rocket"
+>;
+export type InfantryOrMechTypeString = Extract<UnitTypeString, "infantry" | "mech">;
 
 /** not nice to read but the only way to get the type strings as values */
-export const unitTypes = unitSchema.options.flatMap((option) => {
+export const unitTypes = visibleUnitSchema.options.flatMap((option) => {
   // there are also potentially other paths:
   // infantrySchema.shape.type.def.values
   // otherLandUnitsWithAmmo.shape.type.options
   // but i couldn't get this method sort-of-type-safe like the current code.
 
-  const typeDef = option._zod.def.shape.type.def;
+  const typeDefinition = option._zod.def.shape.type.def;
 
-  switch (typeDef.type) {
-    case "literal":
-      return typeDef.values;
-    case "enum":
-      return Object.values(typeDef.entries);
+  switch (typeDefinition.type) {
+    case "literal": {
+      return typeDefinition.values;
+    }
+    case "enum": {
+      return Object.values(typeDefinition.entries);
+    }
   }
 });
 
-export const unitTypeSchema = z.enum(unitTypes as [UnitType, ...UnitType[]]);
+export const unitTypeSchema = z.enum(unitTypes as [UnitTypeString, ...UnitTypeString[]]).readonly();
 
-type UnitWithHiddenStats = Omit<UnitWithVisibleStats, "stats"> & {
+type HiddenFromVisible<Unit extends UnitWithVisibleStats> = Omit<Unit, "stats"> & {
   stats: "hidden";
 };
 
+export type UnitWithHiddenStats = UnitWithVisibleStats extends infer Unit
+  ? Unit extends UnitWithVisibleStats
+    ? HiddenFromVisible<Unit>
+    : never
+  : never;
+
 export type WWUnit = UnitWithHiddenStats | UnitWithVisibleStats;
+
+export type FilterWWUnitByTypeString<
+  TypeStringParameter extends UnitTypeString,
+  UnitType extends WWUnit,
+> = Extract<UnitType, { type: TypeStringParameter }>;
+
+export type Visibility = "visible" | "hidden";
+
+type UnitByVisibility<TVisibility extends Visibility = Visibility> = TVisibility extends "visible"
+  ? UnitWithVisibleStats
+  : UnitWithHiddenStats;
+
+export type UnitByVisibilityAndTypeString<
+  TVisibility extends Visibility = Visibility,
+  TypeString extends UnitTypeString = UnitTypeString,
+> = Extract<UnitByVisibility<TVisibility>, { type: TypeString }>;

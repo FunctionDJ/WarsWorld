@@ -128,7 +128,7 @@ const Match = ({ spriteData }: Props) => {
     const mapHeight = mapData.length * mapScale + mapMargin;
 
     const app = new Application({
-      view: pixiCanvasRef.current ?? undefined,
+      view: pixiCanvasRef.current,
       autoDensity: true,
       resolution: window.devicePixelRatio,
       backgroundColor: "#000b2c",

@@ -1,13 +1,15 @@
-import { DispatchableError } from "shared/DispatchedError";
+import { DispatchableError } from "shared/dispatchable-error";
 import type { AbilityAction } from "shared/schemas/action";
 import { allDirections } from "shared/schemas/direction";
+import type { Visibility } from "shared/schemas/unit";
 import type { AbilityEvent } from "shared/types/events";
 import type { CapturableTile } from "shared/types/server-match-state";
-import type { MatchWrapper } from "shared/wrappers/match";
-import type { UnitWrapper } from "shared/wrappers/unit";
+import type { MatchWrapper } from "shared/wrappers/match/match";
+import type { MutableMatch } from "shared/wrappers/match/mutable-match";
+import type { UnitWrapper } from "shared/wrappers/unit/unit";
 import type { ApplySubEvent, SubActionToEvent } from "../handler-types";
 
-function willCaptureTile(unit: UnitWrapper<"infantry" | "mech">): boolean {
+function willCaptureTile(unit: UnitWrapper<Visibility, "infantry" | "mech">): boolean {
   let capturePoints = unit.data.currentCapturePoints ?? 20;
 
   if (unit.player.data.coId.name === "sami") {
@@ -24,9 +26,9 @@ function willCaptureTile(unit: UnitWrapper<"infantry" | "mech">): boolean {
   return capturePoints <= 0;
 }
 
-function infantryOrMechAbilityToEvent(
+function infantryOrMechAbilityToEvent<TVisibility extends Visibility>(
   match: MatchWrapper,
-  unit: UnitWrapper<"infantry" | "mech">,
+  unit: UnitWrapper<TVisibility, "infantry" | "mech">,
 ): AbilityEvent {
   const capturingTile = unit.getTile();
 
@@ -99,27 +101,26 @@ export const abilityActionToEvent: SubActionToEvent<AbilityAction> = (
   const unit = match.getUnitOrThrow(fromPosition);
   player.ownsOrThrow(unit);
 
+  if (unit.isInfantryOrMech()) {
+    return infantryOrMechAbilityToEvent(match, unit);
+  }
+
   switch (unit.data.type) {
-    case "infantry":
-    case "mech": {
-      // TODO i think there could be an issue here if it's a sonja
-      // unit with hidden stats but theoretically that should never happen.
-      // it doesn't show up as a type error because of the `as UnitWrapper<...>` override i think.
-      return infantryOrMechAbilityToEvent(match, unit as UnitWrapper<"infantry" | "mech">); // override bc lazy
-    }
     case "apc":
     case "blackBomb":
     case "stealth":
-    case "sub":
+    case "sub": {
       break;
-    default:
+    }
+    default: {
       throw new DispatchableError("This unit does not have an ability");
+    }
   }
 
   return action;
 };
 
-const eliminatePlayerByCapture = (match: MatchWrapper, capturingUnit: UnitWrapper): void => {
+const eliminatePlayerByCapture = (match: MutableMatch, capturingUnit: UnitWrapper): void => {
   const capturedTile = capturingUnit.getTile() as CapturableTile; // `as` because lazy
 
   const playerToEliminate = match.getPlayerBySlot(capturedTile.playerSlot);
@@ -213,8 +214,8 @@ export const applyAbilityEvent: ApplySubEvent<AbilityEvent> = (match, event, fro
       break;
     }
     case "apc": {
-      for (const dir of allDirections) {
-        match.getUnit(unit.data.position.addDirection(dir))?.resupply();
+      for (const direction of allDirections) {
+        match.getUnit(unit.data.position.addDirection(direction))?.resupply();
       }
 
       break;

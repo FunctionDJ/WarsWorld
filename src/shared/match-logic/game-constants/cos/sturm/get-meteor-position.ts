@@ -1,8 +1,9 @@
+import type { WWReadOnly } from "shared/types/ww-readonly";
 import { Position } from "../../../../schemas/position";
-import type { PlayerInMatchWrapper } from "../../../../wrappers/player-in-match";
+import type { PlayerInMatchWrapper } from "../../../../wrappers/player/player-in-match";
 
 const getUnitValueMeteorPosition = (
-  sturmPlayer: PlayerInMatchWrapper,
+  sturmPlayer: WWReadOnly<PlayerInMatchWrapper>,
   damage: number,
   canSeeHiddenUnits: boolean, //AW2 sturm can't see units inside fow
 ): Position => {
@@ -39,7 +40,7 @@ const getUnitValueMeteorPosition = (
 };
 
 const getIndirectsMeteorPosition = (
-  sturmPlayer: PlayerInMatchWrapper,
+  sturmPlayer: WWReadOnly<PlayerInMatchWrapper>,
   damage: number,
   canSeeHiddenUnits: boolean,
 ): Position => {
@@ -83,7 +84,7 @@ const getIndirectsMeteorPosition = (
 };
 
 const getMostHPMeteorPosition = (
-  sturmPlayer: PlayerInMatchWrapper,
+  sturmPlayer: WWReadOnly<PlayerInMatchWrapper>,
   damage: number,
   canSeeHiddenUnits: boolean,
 ): Position => {
@@ -117,16 +118,19 @@ const getMostHPMeteorPosition = (
   return bestPosition;
 };
 export const getRandomMeteorPosition = (
-  sturmPlayer: PlayerInMatchWrapper,
+  sturmPlayer: WWReadOnly<PlayerInMatchWrapper>,
   damage: number,
   canSeeHiddenUnits: boolean,
 ): Position => {
   switch (Math.floor(Math.random() * 3)) {
-    case 0:
+    case 0: {
       return getUnitValueMeteorPosition(sturmPlayer, damage, canSeeHiddenUnits);
-    case 1:
+    }
+    case 1: {
       return getIndirectsMeteorPosition(sturmPlayer, damage, canSeeHiddenUnits);
-    default:
+    }
+    default: {
       return getMostHPMeteorPosition(sturmPlayer, damage, canSeeHiddenUnits);
+    }
   }
 };

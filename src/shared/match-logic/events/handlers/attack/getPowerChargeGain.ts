@@ -1,4 +1,4 @@
-import type { UnitWrapper } from "shared/wrappers/unit";
+import type { UnitWrapper } from "shared/wrappers/unit/unit";
 
 export const getPowerChargeGain = (
   attacker: UnitWrapper,

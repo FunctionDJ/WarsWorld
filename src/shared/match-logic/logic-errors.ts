@@ -1,4 +1,4 @@
-import { DispatchableError } from "shared/DispatchedError";
+import { DispatchableError } from "shared/dispatchable-error";
 
 export class UnloadPositionError extends DispatchableError {
   constructor() {

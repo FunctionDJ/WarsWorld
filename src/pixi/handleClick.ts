@@ -5,10 +5,10 @@ import type { RefObject } from "react";
 import { throwIfCantMoveIntoUnit } from "shared/match-logic/events/handlers/move";
 import type { MainAction } from "shared/schemas/action";
 import type { Position } from "shared/schemas/position";
-import type { MatchWrapper } from "shared/wrappers/match";
-import { isUnitProducingProperty } from "../shared/schemas/tile";
-import type { PlayerInMatchWrapper } from "../shared/wrappers/player-in-match";
-import type { UnitWrapper } from "../shared/wrappers/unit";
+import type { MatchWrapper } from "shared/wrappers/match/match";
+import { isUnitProducingProperty } from "../shared/schemas/tile-utilities";
+import type { PlayerInMatchWrapper } from "../shared/wrappers/player/player-in-match";
+import type { UnitWrapper } from "../shared/wrappers/unit/unit";
 import { displayEnemyRange } from "./displayEnemyRange";
 import { buildUnitMenu } from "./in-game-menus/buildUnitMenu";
 import subActionMenu from "./in-game-menus/subActionMenu";
@@ -22,16 +22,16 @@ import { getAccessibleNodes, showPath, updatePath } from "./show-pathing";
 
 export const handleClick = async (
   clickPosition: Position,
-  match: MatchWrapper,
-  player: PlayerInMatchWrapper,
+  match: Readonly<MatchWrapper>,
+  player: Readonly<PlayerInMatchWrapper>,
   mapContainer: Container,
   unitContainer: Container,
   interactiveContainer: Container,
-  currentUnitClickedRef: RefObject<UnitWrapper | null>,
-  moveTilesRef: RefObject<Map<Position, PathNode> | null>,
+  currentUnitClickedRef: RefObject<UnitWrapper | undefined>,
+  moveTilesRef: RefObject<Map<Position, PathNode> | undefined>,
   unitRangeShowRef: RefObject<"attack" | "movement" | "vision">,
-  pathRef: RefObject<Position[] | null>,
-  spriteSheets: LoadedSpriteSheet,
+  pathRef: RefObject<Position[] | undefined>,
+  spriteSheets: Readonly<LoadedSpriteSheet>,
   sendAction: (action: MainAction) => Promise<void>,
 ) => {
   //lets load our font
@@ -54,7 +54,7 @@ export const handleClick = async (
     player.owns(tileClicked) &&
     canTileBuildUnits &&
     match.getCurrentTurnPlayer().data.id === player.data.id &&
-    currentUnitClickedRef.current === null
+    currentUnitClickedRef.current === undefined
   ) {
     resetScreen();
     const buildMenu = buildUnitMenu(
@@ -111,7 +111,7 @@ export const handleClick = async (
               sendAction,
             ),
           );
-          moveTilesRef.current = null;
+          moveTilesRef.current = undefined;
         } else {
           resetScreen();
         }
@@ -163,7 +163,7 @@ export const handleClick = async (
       //if not ready but it's a transport with units and the rules allow to always unload...
       else if (
         unitClicked.isTransport() &&
-        unitClicked.data.loadedUnit !== null &&
+        unitClicked.data.loadedUnit !== undefined &&
         !player.getVersionProperties().unloadOnlyAfterMove
       ) {
         //Show subaction menu of transport to drop off units
@@ -215,9 +215,9 @@ export const handleClick = async (
       }
     }
 
-    moveTilesRef.current = null;
-    currentUnitClickedRef.current = null;
-    pathRef.current = null;
+    moveTilesRef.current = undefined;
+    currentUnitClickedRef.current = undefined;
+    pathRef.current = undefined;
   }
 };
 
@@ -228,10 +228,10 @@ export const handleHover = async (
   mapContainer: Container,
   unitContainer: Container,
   interactiveContainer: Container,
-  currentUnitClickedRef: RefObject<UnitWrapper | null>,
-  moveTilesRef: RefObject<Map<Position, PathNode> | null>,
+  currentUnitClickedRef: RefObject<UnitWrapper | undefined>,
+  moveTilesRef: RefObject<Map<Position, PathNode> | undefined>,
   unitRangeShowRef: RefObject<"attack" | "movement" | "vision">,
-  pathRef: RefObject<Position[] | null>,
+  pathRef: RefObject<Position[] | undefined>,
   spriteSheets: LoadedSpriteSheet,
   _sendAction: (action: MainAction) => Promise<void>, // TODO: unused yet
 ) => {
@@ -242,7 +242,7 @@ export const handleHover = async (
 
   let hoveredMoveTile = false;
 
-  if (moveTiles !== null) {
+  if (moveTiles !== undefined) {
     for (const [key] of moveTiles) {
       if (hoverPosition.isSame(key)) {
         hoveredMoveTile = true;
@@ -250,7 +250,7 @@ export const handleHover = async (
     }
   }
 
-  if (currentUnit != null && moveTiles != null && hoveredMoveTile) {
+  if (currentUnit !== undefined && moveTiles !== undefined && hoveredMoveTile) {
     const newPath = updatePath(
       currentUnit,
       moveTiles,

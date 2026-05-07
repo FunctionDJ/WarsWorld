@@ -1,41 +1,22 @@
 import type { WWMap } from "generated/browser";
+import { arrayAtOrThrow } from "shared/array-utilities";
 import type { Position } from "shared/schemas/position";
-import type { Tile } from "shared/schemas/tile";
+import type { PassableTile } from "shared/schemas/tile";
+import type { WWReadOnly } from "shared/types/ww-readonly";
 
 export class MapWrapper {
-  public width: number;
-  public height: number;
+  public readonly width: number;
+  public readonly height: number;
 
-  constructor(public data: WWMap) {
-    const firstRow = this.data.tiles[0];
-
-    if (firstRow === undefined) {
-      throw new Error(`Unexpected error: map data for map ${this.data.name} has no rows`);
-    }
-
-    this.width = firstRow.length;
+  constructor(public readonly data: WWReadOnly<WWMap>) {
+    this.width = arrayAtOrThrow(this.data.tiles, 0).length;
     this.height = this.data.tiles.length;
   }
 
-  getTile(position: Position): Tile {
+  getTile(position: Position): PassableTile {
     this.throwIfOutOfBounds(position);
-    const row = this.data.tiles[position.data[1]];
-
-    if (row === undefined) {
-      throw new Error(
-        `Unexpected error: row ${String(position.data[1])} does not exist in map data for map ${this.data.name}`,
-      );
-    }
-
-    const tile = row[position.data[0]];
-
-    if (tile === undefined) {
-      throw new Error(
-        `Unexpected error: column ${String(position.data[0])} does not exist in map data for map ${this.data.name}`,
-      );
-    }
-
-    return tile;
+    const row = arrayAtOrThrow(this.data.tiles, position.data[1]);
+    return arrayAtOrThrow(row, position.data[0]);
   }
 
   isOutOfBounds(position: Position): boolean {

@@ -8,6 +8,7 @@ import type { Direction } from "./direction";
 
 export const positionSchema = z
   .tuple([z.number().int().nonnegative(), z.number().int().nonnegative()])
+  .readonly()
   .transform((pos) => new Position(pos));
 
 export class Position {
@@ -39,14 +40,18 @@ export class Position {
 
   addDirection(direction: Direction): Position {
     switch (direction) {
-      case "up":
+      case "up": {
         return new Position([this.data[0], this.data[1] - 1]);
-      case "down":
+      }
+      case "down": {
         return new Position([this.data[0], this.data[1] + 1]);
-      case "left":
+      }
+      case "left": {
         return new Position([this.data[0] - 1, this.data[1]]);
-      case "right":
+      }
+      case "right": {
         return new Position([this.data[0] + 1, this.data[1]]);
+      }
     }
   }
 
@@ -62,7 +67,7 @@ export class Position {
     return yDiff > 0 ? "down" : "up";
   }
 
-  offset({ x, y }: { x: number; y: number }): Position {
+  offset({ x, y }: Readonly<{ x: number; y: number }>): Position {
     return new Position([this.data[0] + x, this.data[1] + y]);
   }
 }

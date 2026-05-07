@@ -1,20 +1,18 @@
 import { baseTileSize, mapBorder } from "components/client-only/common";
-import type { FrontendUnit } from "frontend/components/match/FrontendUnit";
 import type { SpriteAnimationKeys } from "frontend/components/match/getSpritesheetData";
-import type { ChangeableTileWithSprite } from "frontend/components/match/types";
 import { AnimatedSprite, Container, Sprite, Texture } from "pixi.js";
-import { arr } from "shared/arr";
+import { arrayAtOrThrow } from "shared/array-utilities";
 import { Position } from "shared/schemas/position";
-import type { Tile } from "shared/schemas/tile";
+import type { PassableTile } from "shared/schemas/tile";
 import type { ChangeableTile } from "shared/types/server-match-state";
-import type { MatchWrapper } from "shared/wrappers/match";
+import type { MatchWrapper } from "shared/wrappers/match/match";
 import type { LoadedSpriteSheet } from "./load-spritesheet";
 
 type AnimationsProperty = Record<SpriteAnimationKeys, Texture[]>;
 
 function getTileSprite(
   match: MatchWrapper,
-  tile: ChangeableTile | Tile,
+  tile: ChangeableTile | PassableTile,
   spriteSheets: LoadedSpriteSheet,
 ): Sprite {
   if (!("playerSlot" in tile)) {
@@ -35,12 +33,7 @@ function getTileSprite(
     return new Sprite(spriteSheets.neutral.textures[tile.type + "-0.png"]);
   }
 
-  const player = match.getPlayerBySlot(tile.playerSlot);
-
-  if (player === undefined) {
-    throw new Error("Could not find player while rendering tile with playerSlot");
-  }
-
+  const player = match.getPlayerBySlotOrThrow(tile.playerSlot);
   // for some reason pixi's spritesheet type doesn't index the generic properly, hence overwriting.
   const animations = spriteSheets[player.data.army].animations as AnimationsProperty;
   const tileSprite = new AnimatedSprite(animations[tile.type]);
@@ -50,17 +43,14 @@ function getTileSprite(
   return tileSprite;
 }
 
-export function renderMap(
-  match: MatchWrapper<ChangeableTileWithSprite, FrontendUnit>,
-  spriteSheets: LoadedSpriteSheet,
-) {
+export function renderMap(match: MatchWrapper, spriteSheets: LoadedSpriteSheet) {
   const mapContainer = new Container(); // TODO add x,y values for margin/border
   mapContainer.x = mapBorder;
   mapContainer.y = mapBorder;
   const { tiles } = match.map.data;
 
   for (let y = 0; y < tiles.length; y++) {
-    for (let x = 0; x < arr(tiles, y).length; x++) {
+    for (let x = 0; x < arrayAtOrThrow(tiles, y).length; x++) {
       const tile = match.getTile(new Position([x, y]));
 
       const tileSprite = getTileSprite(match, tile, spriteSheets);
@@ -86,7 +76,7 @@ export function renderMap(
 }
 
 export const renderInvisInteractiveTiles = (
-  match: MatchWrapper<ChangeableTileWithSprite, FrontendUnit>,
+  match: MatchWrapper,
   onTileClick: (pos: Position) => Promise<void>,
   onTileHover: (pos: Position) => Promise<void>,
 ) => {
@@ -96,7 +86,7 @@ export const renderInvisInteractiveTiles = (
   const { tiles } = match.map.data;
 
   for (let y = 0; y < tiles.length; y++) {
-    for (let x = 0; x < arr(tiles, y).length; x++) {
+    for (let x = 0; x < arrayAtOrThrow(tiles, y).length; x++) {
       const tileSprite = new Sprite(Texture.EMPTY);
       tileSprite.height = baseTileSize;
       tileSprite.width = baseTileSize;

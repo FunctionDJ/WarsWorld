@@ -1,9 +1,9 @@
 import { baseTileSize } from "components/client-only/common";
 import type { FrontendUnit } from "frontend/components/match/FrontendUnit";
 import { AnimatedSprite, Container, Sprite } from "pixi.js";
-import { obj } from "shared/arr";
+import { getFromObjectOrThrow } from "shared/array-utilities";
 import { Position } from "shared/schemas/position";
-import type { UnitWrapper } from "../shared/wrappers/unit";
+import type { UnitWrapper } from "../shared/wrappers/unit/unit";
 import type { LoadedSpriteSheet } from "./load-spritesheet";
 
 type UnitType = FrontendUnit | UnitWrapper;
@@ -33,7 +33,7 @@ function createIcon(spriteSheet: LoadedSpriteSheet, pos: Position, texture: stri
 export function renderUnitSprite(
   unit: UnitType,
   spriteSheets: LoadedSpriteSheet,
-  newPosition?: Position | null,
+  newPosition?: Position | undefined,
 ): Container {
   const position = newPosition ?? unit.data.position;
   const spritePosition = calculatePosition(position);
@@ -41,7 +41,9 @@ export function renderUnitSprite(
   // Create unit container and sprite
   const unitContainer = new Container();
   const armySpriteSheet = spriteSheets[unit.player.data.army];
-  const unitSprite = new AnimatedSprite(obj(armySpriteSheet.animations, unit.data.type));
+  const unitSprite = new AnimatedSprite(
+    getFromObjectOrThrow(armySpriteSheet.animations, unit.data.type),
+  );
 
   // Configure unit sprite
   unitSprite.x = spritePosition.x;

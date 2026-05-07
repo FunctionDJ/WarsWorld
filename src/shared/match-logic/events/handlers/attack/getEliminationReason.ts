@@ -1,5 +1,5 @@
 import type { AttackEvent } from "shared/types/events";
-import type { PlayerInMatchWrapper } from "shared/wrappers/player-in-match";
+import type { PlayerInMatchWrapper } from "shared/wrappers/player/player-in-match";
 
 export function getEliminationReason({
   attacker,
@@ -20,5 +20,5 @@ export function getEliminationReason({
     return "all-attacker-units-destroyed";
   }
 
-  return undefined;
+  return;
 }

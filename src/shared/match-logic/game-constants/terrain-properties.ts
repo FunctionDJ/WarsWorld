@@ -2,10 +2,10 @@ import type { MovementType } from "shared/match-logic/game-constants/unit-proper
 import type { TileType } from "shared/schemas/tile";
 
 /**
- * A nonzero integer (or null for impassible)
+ * A nonzero integer (or undefined for impassible)
  * for every possible "movement type".
  */
-type TileMovementCosts = Record<MovementType, number | null>;
+type TileMovementCosts = Record<MovementType, number | undefined>;
 
 interface TileProperties {
   movementCosts: TileMovementCosts;
@@ -18,12 +18,12 @@ interface TileProperties {
 
 /** All ocean tiles are impassible for land units. */
 const commonOceanMovementCosts = {
-  foot: null,
-  boots: null,
-  treads: null,
-  tires: null,
+  foot: undefined,
+  boots: undefined,
+  treads: undefined,
+  tires: undefined,
   air: 1,
-  pipe: null,
+  pipe: undefined,
 } satisfies Partial<TileMovementCosts>;
 
 /**
@@ -35,9 +35,9 @@ const commonOceanMovementCosts = {
 const commonLandMovementCosts = {
   boots: 1,
   air: 1,
-  pipe: null,
-  sea: null,
-  lander: null,
+  pipe: undefined,
+  sea: undefined,
+  lander: undefined,
 } satisfies Partial<TileMovementCosts>;
 
 /**
@@ -66,14 +66,14 @@ const buildingTileProperties: TileProperties = {
 const pipeTileProperties: TileProperties = {
   defenseStars: 0,
   movementCosts: {
-    foot: null,
-    boots: null,
-    treads: null,
-    tires: null,
-    air: null,
+    foot: undefined,
+    boots: undefined,
+    treads: undefined,
+    tires: undefined,
+    air: undefined,
     pipe: 1,
-    sea: null,
-    lander: null,
+    sea: undefined,
+    lander: undefined,
   },
 };
 
@@ -85,7 +85,7 @@ const pipeTileProperties: TileProperties = {
  * for example tanks have type "treads".
  * This object shows the amount of movement points which must be spent
  * to *enter* each type of tile, for each "movement type".
- * `null` means impassible terrain.
+ * `undefined` means impassible terrain.
  */
 export const terrainProperties: Record<TileType, TileProperties> = {
   plain: {
@@ -111,8 +111,8 @@ export const terrainProperties: Record<TileType, TileProperties> = {
     movementCosts: {
       ...commonLandMovementCosts,
       foot: 2,
-      treads: null,
-      tires: null,
+      treads: undefined,
+      tires: undefined,
     },
   },
   river: {
@@ -120,8 +120,8 @@ export const terrainProperties: Record<TileType, TileProperties> = {
     movementCosts: {
       ...commonLandMovementCosts,
       foot: 2,
-      treads: null,
-      tires: null,
+      treads: undefined,
+      tires: undefined,
     },
   },
   road: {
@@ -157,7 +157,6 @@ export const terrainProperties: Record<TileType, TileProperties> = {
     },
   },
   pipe: pipeTileProperties,
-  pipeSeam: pipeTileProperties,
   base: {
     defenseStars: buildingTileProperties.defenseStars,
     movementCosts: {

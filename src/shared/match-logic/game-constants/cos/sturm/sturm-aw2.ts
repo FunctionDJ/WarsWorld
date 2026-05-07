@@ -1,4 +1,4 @@
-import { arr } from "shared/arr";
+import { arrayAtOrThrow } from "shared/array-utilities";
 import type { COProperties } from "../../../co";
 import { getRandomMeteorPosition } from "./get-meteor-position";
 
@@ -33,7 +33,7 @@ export const sturmAW2: COProperties = {
         player.match.damageUntil1HPInRadius({
           radius: 2,
           visualHpAmount: 8,
-          epicenter: arr(positions, 0),
+          epicenter: arrayAtOrThrow(positions, 0),
         });
       },
       hooks: {

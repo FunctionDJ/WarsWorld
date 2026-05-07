@@ -1,8 +1,8 @@
-import { DispatchableError } from "shared/DispatchedError";
+import { DispatchableError } from "shared/dispatchable-error";
 import { UnloadPositionError } from "shared/match-logic/logic-errors";
 import type { UnloadNoWaitAction } from "shared/schemas/action";
 import type { UnloadNoWaitEvent } from "shared/types/events";
-import type { MatchWrapper } from "shared/wrappers/match";
+import type { MutableMatch } from "shared/wrappers/match/mutable-match";
 import type { MainActionToEvent } from "../../handler-types";
 
 export const unloadNoWaitActionToEvent: MainActionToEvent<UnloadNoWaitAction> = (match, action) => {
@@ -30,7 +30,7 @@ export const unloadNoWaitActionToEvent: MainActionToEvent<UnloadNoWaitAction> = 
   return action;
 };
 
-export const applyUnloadNoWaitEvent = (match: MatchWrapper, event: UnloadNoWaitEvent): void => {
+export const applyUnloadNoWaitEvent = (match: MutableMatch, event: UnloadNoWaitEvent): void => {
   const unit = match.getUnitOrThrow(event.transportPosition);
 
   if (!unit.isTransport()) {

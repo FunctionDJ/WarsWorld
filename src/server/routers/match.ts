@@ -4,74 +4,77 @@ import { matchStore } from "server/match-store";
 import { pageMatchIndex } from "server/page-match-index";
 import { playerMatchIndex } from "server/player-match-index";
 import { prisma } from "server/prisma/prisma-client";
-import { arr } from "shared/arr";
-import { DispatchableError } from "shared/DispatchedError";
+import { arrayAtOrThrow, mapReadOnly } from "shared/array-utilities";
+import { DispatchableError } from "shared/dispatchable-error";
 import { createMatchStartEvent } from "shared/match-logic/events/handlers/match-start";
-import type { Army } from "shared/schemas/army";
-import { armySchema } from "shared/schemas/army";
+import { armyList, armySchema } from "shared/schemas/army";
 import { coIdSchema } from "shared/schemas/co";
 import { playerSlotForUnitsSchema } from "shared/schemas/player-slot";
 import { positionSchema } from "shared/schemas/position";
 import { z } from "zod";
-import type { PlayerInMatch } from "../../shared/types/server-match-state";
+import type { PlayerBeforeMatch, PlayerInMatch } from "../../shared/types/server-match-state";
 import {
   matchBaseProcedure,
+  matchInSetupBaseProcedure,
   playerBaseProcedure,
   playerInMatchBaseProcedure,
   publicBaseProcedure,
   router,
 } from "../trpc/trpc-setup";
 import { createMatchProcedure } from "./match/create";
-import { allMatchSlotsReady, matchToFrontend, throwIfMatchNotInSetupState } from "./match/util";
+import { matchToFrontend } from "./match/utility";
 
 export const matchRouter = router({
   create: createMatchProcedure,
 
   getAll: publicBaseProcedure
     .input(z.object({ pageNumber: z.number().int().nonnegative() }))
-    .query(({ input: { pageNumber } }) => {
-      return pageMatchIndex.getPage(pageNumber).map(matchToFrontend);
-    }),
+    .query(({ input: { pageNumber } }) =>
+      pageMatchIndex.getPage(pageNumber).map((element) => matchToFrontend(element)),
+    ),
 
   getPlayerMatches: playerBaseProcedure.query(
     ({ ctx: { currentPlayer } }) =>
-      playerMatchIndex.getPlayerMatches(currentPlayer.id)?.map(matchToFrontend) ?? [],
+      playerMatchIndex
+        .getPlayerMatches(currentPlayer.id)
+        ?.map((element) => matchToFrontend(element)) ?? [],
   ),
-  full: matchBaseProcedure.query(({ ctx: { match } }) => ({
-    id: match.id,
-    leagueType: match.leagueType,
-    changeableTiles: match.changeableTiles,
-    currentWeather: match.getCurrentWeather(),
-    map: match.map.data,
-    players: match.getAllPlayers().map((player) => player.data),
-    rules: match.rules,
-    status: match.status,
-    turn: match.turn,
-    units: match.units.map((u) => u.data),
-    // match.getPlayerById(currentPlayer.id)?.team.getEnemyUnitsInVision() ?? []
-  })),
-  join: matchBaseProcedure
+  full: matchBaseProcedure.query(
+    ({ ctx: { match } }) =>
+      ({
+        id: match.id,
+        leagueType: match.leagueType,
+        changeableTiles: match.changeableTiles,
+        currentWeather: match.getCurrentWeather(),
+        map: match.map.data,
+        players: mapReadOnly(match.getAllPlayers(), (player) => player.data),
+        rules: match.rules,
+        state: match.state,
+        turn: match.turn,
+        units: mapReadOnly(match.units, (u) => u.data),
+        // match.getPlayerById(currentPlayer.id)?.team.getEnemyUnitsInVision() ?? []
+      }) as const,
+  ),
+  join: matchInSetupBaseProcedure
     .input(
       z.object({
         selectedCO: coIdSchema,
-        playerSlot: z.number().int().nonnegative().nullable(),
+        playerSlot: z.number().int().nonnegative().optional(),
       }),
     )
     .mutation(async ({ input, ctx: { currentPlayer, match } }) => {
-      throwIfMatchNotInSetupState(match);
-
-      if (match.getPlayerById(currentPlayer.id) !== undefined) {
-        throw new Error("You've already joined this match!");
+      if (match.players.some((p) => p.id === currentPlayer.id)) {
+        throw new DispatchableError("You've already joined this match!");
       }
 
-      // Shouldn't the condition be '<=' not '<'?
-      // If numberOfPlayers is 2, then valid playerSlots are 0 and 1.
-      // input.playerSlot of 2 would bypass this if statement.
-      if (input.playerSlot !== null && match.map.data.numberOfPlayers <= input.playerSlot) {
+      if (input.playerSlot !== undefined && match.players.length <= input.playerSlot) {
         throw new DispatchableError("Invalid player slot given");
       }
 
-      if (input.playerSlot !== null && match.getPlayerBySlot(input.playerSlot) !== undefined) {
+      if (
+        input.playerSlot !== undefined &&
+        match.players.some((p) => p.slot === input.playerSlot)
+      ) {
         throw new DispatchableError("Player slot is occupied");
       }
 
@@ -82,42 +85,35 @@ export const matchRouter = router({
       // When there is not a specified slot to join, loop from 0 until an open slot is found
       let slotToJoin = 0;
 
-      while (match.getPlayerBySlot(slotToJoin) !== undefined) {
+      while (match.players.some((p) => p.slot === slotToJoin)) {
         slotToJoin += 1;
       }
 
       // There should be code earlier in this flow that prevents this if statement from being true.
-      if (match.map.data.numberOfPlayers <= slotToJoin) {
+      if (match.players.length <= slotToJoin) {
         throw new DispatchableError("Match is full");
       }
 
-      const armiesOccupied = match.getAllPlayers().map((player) => player.data.army as string);
-      const availableArmies = Object.keys(armySchema.enum).filter(
-        (army) => !armiesOccupied.includes(army),
-      );
+      const armiesOccupied = new Set(match.players.map((player) => player.army));
 
-      const player = match.addUnwrappedPlayer({
+      const availableArmies = armyList.filter((army) => !armiesOccupied.has(army));
+
+      const player: PlayerBeforeMatch = {
         id: currentPlayer.id,
         slot: input.playerSlot ?? slotToJoin,
         ready: false,
         coId: input.selectedCO,
-        //TODO: Handle funds correctly
-        funds: 10000,
-        timesPowerUsed: 0,
-        powerMeter: 0,
-        status: "alive",
-        hasCurrentTurn: false,
-        army: availableArmies[(Math.random() * availableArmies.length) | 0] as Army,
-        // army: availableArmies[0] as Army, // use this if there are performance concerns with Math.random
-        COPowerState: "no-power",
         name: currentPlayer.name,
-      });
+        army: availableArmies[Math.trunc(Math.random() * availableArmies.length)],
+      };
 
-      playerMatchIndex.onPlayerJoin(player);
+      match.players.push(player);
+      playerMatchIndex.onPlayerJoin(player, match);
       //TODO: Player is already on the team
 
       //lets create a playerState (what the db holds) to send it to the db.
       // playerState is basically a PlayerInMatchWrapper[] (well, at least the properties of it)
+
       const newPlayerState = match.teams.flatMap((team) =>
         team.players.map((teamPlayer) =>
           teamPlayer.data.id === player.data.id ? player.data : teamPlayer.data,
@@ -142,26 +138,28 @@ export const matchRouter = router({
       await globalEmittable(match, {
         type: "player-joined",
         matchId: match.id,
-        playerId: player.data.id,
+        playerId: player.id,
       });
     }),
-  leave: playerInMatchBaseProcedure.mutation(async ({ ctx: { match, player } }) => {
-    throwIfMatchNotInSetupState(match);
-
+  leave: matchInSetupBaseProcedure.mutation(async ({ ctx: { match, player } }) => {
     const { team: teamToRemoveFrom } = player;
 
-    teamToRemoveFrom.players = teamToRemoveFrom.players.filter(
-      (teamPlayer) => teamPlayer.data.slot === player.data.slot,
+    teamToRemoveFrom.players.splice(
+      teamToRemoveFrom.players.findIndex((teamPlayer) => teamPlayer.data.slot === player.data.slot),
+      1,
     );
 
     if (teamToRemoveFrom.players.length === 0) {
-      match.teams = match.teams.filter((team2) => team2 === teamToRemoveFrom);
+      match.teams.splice(
+        match.teams.findIndex((team) => team.index === teamToRemoveFrom.index),
+        1,
+      );
     }
 
     playerMatchIndex.onPlayerLeave(player);
 
     //There is only one player so, we can remove the whole match
-    if (match.teams.length === 1 && arr(match.teams, 0).players.length === 1) {
+    if (match.teams.length === 1 && arrayAtOrThrow(match.teams, 0).players.length === 1) {
       pageMatchIndex.removeMatch(match);
       matchStore.removeMatchFromIndex(match);
       await prisma.match.delete({ where: { id: match.id } });
@@ -176,7 +174,10 @@ export const matchRouter = router({
 
       await prisma.match.update({ where: { id: match.id }, data: { playerState: newPlayerState } });
 
-      match.teams = match.teams.filter((teamToRemove) => teamToRemove.index !== player.team.index);
+      match.teams.splice(
+        match.teams.findIndex((team) => team.index === player.team.index),
+        1,
+      );
 
       await globalEmittable(match, {
         type: "player-left",
@@ -285,7 +286,6 @@ export const matchRouter = router({
 
       // UPDATING STATE
       //lets create a playerState (what the db holds) to send it to the db.
-      // playerState is basically a PlayerInMatchWrapper[] (well, at least the properties of it)
       const newPlayerState = match.teams.flatMap((team) =>
         team.players.map((teamPlayer) =>
           teamPlayer.data.id === player.data.id ? newPlayerData : teamPlayer.data,
@@ -294,7 +294,9 @@ export const matchRouter = router({
 
       //lets update prisma first, if the database updates, then we update memory
       await prisma.match.update({ where: { id: match.id }, data: { playerState: newPlayerState } });
-      player.data = newPlayerData;
+      player.data.coId = newPlayerData.coId;
+      player.data.army = newPlayerData.army;
+      player.data.slot = newPlayerData.slot;
 
       if (input.selectedCO !== undefined) {
         await globalEmittable(match, {

@@ -9,11 +9,10 @@
     "utils/generate-spritesheets/main.ts"
   ],
   "ignoreDependencies": [
-    "@typescript/native-preview"
+    "@typescript/native-preview",
+    "jiti" // loader for eslint with typescript support
   ],
   "duplicates": {
-    "ignore": [
-      "src/shared/match-logic/game-constants/cos/**/*.*"
-    ]
+    "ignore": ["src/shared/match-logic/game-constants/cos/**/*.*"]
   }
 }

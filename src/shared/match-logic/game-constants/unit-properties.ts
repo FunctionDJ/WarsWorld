@@ -25,11 +25,11 @@ type Range = [number, number];
 const directRange: Range = [1, 1];
 
 type UnitPropertiesWithoutAmmo = UnitPropertiesWithoutWeapon & {
-  attackRange: Range;
+  readonly attackRange: Range;
 };
 
 type UnitPropertiesWithAmmo = UnitPropertiesWithoutAmmo & {
-  initialAmmo: number;
+  readonly initialAmmo: number;
 };
 
 const infantry: UnitPropertiesWithoutAmmo = {
@@ -41,7 +41,7 @@ const infantry: UnitPropertiesWithoutAmmo = {
   initialFuel: 99,
   vision: 2,
   attackRange: directRange,
-};
+} as const;
 
 const mech: UnitPropertiesWithAmmo = {
   displayName: "Mech",
@@ -53,7 +53,7 @@ const mech: UnitPropertiesWithAmmo = {
   vision: 2,
   initialAmmo: 3,
   attackRange: directRange,
-};
+} as const;
 
 const recon: UnitPropertiesWithoutAmmo = {
   displayName: "Recon",
@@ -64,7 +64,7 @@ const recon: UnitPropertiesWithoutAmmo = {
   attackRange: directRange,
   movementType: "tires",
   movementPoints: 8,
-};
+} as const;
 
 const apc: UnitPropertiesWithoutWeapon = {
   displayName: "APC",
@@ -74,7 +74,7 @@ const apc: UnitPropertiesWithoutWeapon = {
   vision: 1,
   initialFuel: 70,
   movementType: "treads",
-};
+} as const;
 
 const artillery: UnitPropertiesWithAmmo = {
   displayName: "Artillery",
@@ -86,7 +86,7 @@ const artillery: UnitPropertiesWithAmmo = {
   initialAmmo: 9,
   movementType: "treads",
   movementPoints: 5,
-};
+} as const;
 
 const tank: UnitPropertiesWithAmmo = {
   displayName: "Tank",
@@ -98,7 +98,7 @@ const tank: UnitPropertiesWithAmmo = {
   attackRange: directRange,
   movementType: "treads",
   initialFuel: 70,
-};
+} as const;
 
 const antiAir: UnitPropertiesWithAmmo = {
   displayName: "Anti-Air",
@@ -110,11 +110,11 @@ const antiAir: UnitPropertiesWithAmmo = {
   attackRange: directRange,
   movementPoints: 6,
   initialAmmo: 9,
-};
+} as const;
 
 const missile: UnitPropertiesWithAmmo = {
   displayName: "Missile",
-  cost: 12000,
+  cost: 12_000,
   facility: "base",
   movementType: "tires",
   movementPoints: 4,
@@ -122,11 +122,11 @@ const missile: UnitPropertiesWithAmmo = {
   attackRange: [3, 5],
   vision: 5,
   initialFuel: 50,
-};
+} as const;
 
 const rocket: UnitPropertiesWithAmmo = {
   displayName: "Rocket",
-  cost: 15000,
+  cost: 15_000,
   facility: "base",
   movementType: "tires",
   attackRange: [3, 5],
@@ -134,11 +134,11 @@ const rocket: UnitPropertiesWithAmmo = {
   initialAmmo: 6,
   vision: 1,
   initialFuel: 50,
-};
+} as const;
 
 const mediumTank: UnitPropertiesWithAmmo = {
   displayName: "MdTank",
-  cost: 16000,
+  cost: 16_000,
   facility: "base",
   vision: 1,
   movementPoints: 5,
@@ -146,11 +146,11 @@ const mediumTank: UnitPropertiesWithAmmo = {
   initialAmmo: 8,
   movementType: "treads",
   attackRange: directRange,
-};
+} as const;
 
 const pipeRunner: UnitPropertiesWithAmmo = {
   displayName: "PipeRunner",
-  cost: 20000,
+  cost: 20_000,
   facility: "base",
   attackRange: [2, 5],
   movementType: "pipe",
@@ -158,11 +158,11 @@ const pipeRunner: UnitPropertiesWithAmmo = {
   vision: 4,
   initialAmmo: 9,
   initialFuel: 99,
-};
+} as const;
 
 const neoTank: UnitPropertiesWithAmmo = {
   displayName: "NeoTank",
-  cost: 22000,
+  cost: 22_000,
   facility: "base",
   initialAmmo: 9,
   movementPoints: 6,
@@ -170,11 +170,11 @@ const neoTank: UnitPropertiesWithAmmo = {
   initialFuel: 99,
   movementType: "treads",
   attackRange: directRange,
-};
+} as const;
 
 const megaTank: UnitPropertiesWithAmmo = {
   displayName: "MegaTank",
-  cost: 28000,
+  cost: 28_000,
   facility: "base",
   initialAmmo: 3,
   vision: 1,
@@ -182,7 +182,7 @@ const megaTank: UnitPropertiesWithAmmo = {
   initialFuel: 50,
   movementType: "treads",
   attackRange: directRange,
-};
+} as const;
 
 const transportCopter: UnitPropertiesWithoutWeapon = {
   displayName: "T-Copter",
@@ -192,7 +192,7 @@ const transportCopter: UnitPropertiesWithoutWeapon = {
   facility: "airport",
   movementType: "air",
   initialFuel: 99,
-};
+} as const;
 
 const battleCopter: UnitPropertiesWithAmmo = {
   displayName: "B-Copter",
@@ -204,11 +204,11 @@ const battleCopter: UnitPropertiesWithAmmo = {
   movementPoints: 9000,
   initialAmmo: 6,
   attackRange: directRange,
-};
+} as const;
 
 const fighter: UnitPropertiesWithAmmo = {
   displayName: "Fighter",
-  cost: 20000,
+  cost: 20_000,
   vision: 2,
   initialFuel: 99,
   movementType: "air",
@@ -216,11 +216,11 @@ const fighter: UnitPropertiesWithAmmo = {
   movementPoints: 9,
   initialAmmo: 9,
   attackRange: directRange,
-};
+} as const;
 
 const bomber: UnitPropertiesWithAmmo = {
   displayName: "Bomber",
-  cost: 22000,
+  cost: 22_000,
   vision: 2,
   initialAmmo: 9,
   movementType: "air",
@@ -228,11 +228,11 @@ const bomber: UnitPropertiesWithAmmo = {
   movementPoints: 7,
   initialFuel: 99,
   attackRange: directRange,
-};
+} as const;
 
 const stealth: UnitPropertiesWithAmmo = {
   displayName: "Stealth",
-  cost: 24000,
+  cost: 24_000,
   vision: 4,
   initialFuel: 60,
   movementPoints: 6,
@@ -240,17 +240,17 @@ const stealth: UnitPropertiesWithAmmo = {
   facility: "airport",
   initialAmmo: 6,
   attackRange: directRange,
-};
+} as const;
 
 const blackBomb: UnitPropertiesWithoutWeapon = {
   displayName: "BlackBomb",
-  cost: 25000,
+  cost: 25_000,
   vision: 1,
   movementPoints: 9,
   movementType: "air",
   facility: "airport",
   initialFuel: 45,
-};
+} as const;
 
 const blackBoat: UnitPropertiesWithoutWeapon = {
   displayName: "BlackBoat",
@@ -260,21 +260,21 @@ const blackBoat: UnitPropertiesWithoutWeapon = {
   movementType: "lander",
   facility: "port",
   initialFuel: 60,
-};
+} as const;
 
 const lander: UnitPropertiesWithoutWeapon = {
   displayName: "Lander",
-  cost: 12000,
+  cost: 12_000,
   vision: 1,
   movementType: "lander",
   facility: "port",
   movementPoints: 6,
   initialFuel: 99,
-};
+} as const;
 
 const cruiser: UnitPropertiesWithAmmo = {
   displayName: "Cruiser",
-  cost: 18000,
+  cost: 18_000,
   vision: 3,
   movementPoints: 6,
   movementType: "sea",
@@ -282,11 +282,11 @@ const cruiser: UnitPropertiesWithAmmo = {
   initialAmmo: 9,
   initialFuel: 99,
   attackRange: directRange,
-};
+} as const;
 
 const sub: UnitPropertiesWithAmmo = {
   displayName: "Sub",
-  cost: 20000,
+  cost: 20_000,
   vision: 5,
   movementPoints: 5,
   facility: "port",
@@ -294,11 +294,11 @@ const sub: UnitPropertiesWithAmmo = {
   initialAmmo: 6,
   initialFuel: 60,
   attackRange: directRange,
-};
+} as const;
 
 const battleship: UnitPropertiesWithAmmo = {
   displayName: "Battleship",
-  cost: 28000,
+  cost: 28_000,
   attackRange: [2, 6],
   vision: 2,
   movementType: "sea",
@@ -306,11 +306,11 @@ const battleship: UnitPropertiesWithAmmo = {
   facility: "port",
   initialAmmo: 9,
   initialFuel: 99,
-};
+} as const;
 
 const carrier: UnitPropertiesWithAmmo = {
   displayName: "Carrier",
-  cost: 30000,
+  cost: 30_000,
   attackRange: [3, 8],
   vision: 4,
   movementType: "sea",
@@ -318,7 +318,7 @@ const carrier: UnitPropertiesWithAmmo = {
   movementPoints: 5,
   initialAmmo: 9,
   initialFuel: 99,
-};
+} as const;
 
 export const unitPropertiesMap = {
   infantry,
@@ -346,4 +346,4 @@ export const unitPropertiesMap = {
   sub,
   battleship,
   carrier,
-};
+} as const;

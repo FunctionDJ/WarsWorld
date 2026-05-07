@@ -1,14 +1,15 @@
 import type { Match, WWMap } from "generated/client";
 import { prisma } from "server/prisma/prisma-client";
-import { arr } from "shared/arr";
+import { arrayAtOrThrow } from "shared/array-utilities";
 import { Position } from "shared/schemas/position";
-import { MatchWrapper } from "shared/wrappers/match";
-import { UnitWrapper } from "shared/wrappers/unit";
+import type { MatchInSetup } from "shared/wrappers/match/match-in-setup";
+import { MutableMatch } from "shared/wrappers/match/mutable-match";
+import { MutableUnit } from "shared/wrappers/unit/mutable-unit";
 import {
   applyMainEventToMatch,
   applySubEventToMatch,
 } from "../shared/match-logic/events/apply-event-to-match";
-import { willBeChangeableTile } from "../shared/schemas/tile";
+import { willBeChangeableTile } from "../shared/schemas/tile-utilities";
 import type { ChangeableTile } from "../shared/types/server-match-state";
 import { pageMatchIndex } from "./page-match-index";
 import { playerMatchIndex } from "./player-match-index";
@@ -17,8 +18,8 @@ const getChangeableTilesFromMap = (map: WWMap): ChangeableTile[] => {
   const changeableTiles: ChangeableTile[] = [];
 
   for (let y = 0; y < map.tiles.length; y++) {
-    for (let x = 0; x < arr(map.tiles, y).length; x++) {
-      const tile = arr(arr(map.tiles, y), x);
+    for (let x = 0; x < arrayAtOrThrow(map.tiles, y).length; x++) {
+      const tile = arrayAtOrThrow(arrayAtOrThrow(map.tiles, y), x);
       const position = new Position([x, y]);
 
       if (willBeChangeableTile(tile)) {
@@ -49,10 +50,10 @@ const getChangeableTilesFromMap = (map: WWMap): ChangeableTile[] => {
 };
 
 export class MatchStore {
-  private index = new Map<Match["id"], MatchWrapper>();
+  private index = new Map<Match["id"], MutableMatch | MatchInSetup>();
 
-  createMatchAndIndex(rawMatch: Match, rawMap: WWMap): MatchWrapper {
-    const match = new MatchWrapper(
+  createMatchAndIndex(rawMatch: Match, rawMap: WWMap): MutableMatch {
+    const match = new MutableMatch(
       rawMatch.id,
       rawMatch.leagueType,
       getChangeableTilesFromMap(rawMap),
@@ -61,7 +62,7 @@ export class MatchStore {
       rawMap,
       rawMatch.playerState,
       rawMap.predeployedUnits,
-      UnitWrapper,
+      MutableUnit,
       0,
     );
 
@@ -91,25 +92,25 @@ export class MatchStore {
       },
     });
 
-    rawMatches.forEach((rawMatch) => {
+    for (const rawMatch of rawMatches) {
       const match = this.createMatchAndIndex(rawMatch, rawMatch.map);
-      rawMatch.Event.forEach((dbEvent) => {
-        applyMainEventToMatch(match, dbEvent.content);
+      for (const databaseEvent of rawMatch.Event) {
+        applyMainEventToMatch(match, databaseEvent.content);
 
-        if (dbEvent.content.type === "move") {
-          applySubEventToMatch(match, dbEvent.content);
+        if (databaseEvent.content.type === "move") {
+          applySubEventToMatch(match, databaseEvent.content);
         }
-      });
-    });
+      }
+    }
 
     console.log("Rebuilding server state done.");
   }
 
-  get(matchId: Match["id"]): MatchWrapper | undefined {
+  get(matchId: Match["id"]): MutableMatch | MatchInSetup | undefined {
     return this.index.get(matchId);
   }
 
-  removeMatchFromIndex(match: MatchWrapper): void {
+  removeMatchFromIndex(match: MutableMatch | MatchInSetup): void {
     this.index.delete(match.id);
   }
 }

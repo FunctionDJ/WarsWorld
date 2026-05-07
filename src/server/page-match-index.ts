@@ -1,4 +1,4 @@
-import type { MatchWrapper } from "shared/wrappers/match";
+import type { MatchWrapper } from "shared/wrappers/match/match";
 
 class PageMatchIndex {
   /**

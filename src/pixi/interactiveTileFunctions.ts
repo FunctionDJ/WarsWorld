@@ -2,8 +2,8 @@ import { Container } from "pixi.js";
 import { calculateEngagementOutcome } from "shared/match-logic/calculate-damage";
 import { createPipeSeamUnitEquivalent } from "shared/match-logic/game-constants/base-damage";
 import type { Position } from "shared/schemas/position";
-import type { MatchWrapper } from "shared/wrappers/match";
-import type { UnitWrapper } from "shared/wrappers/unit";
+import type { MatchWrapper } from "shared/wrappers/match/match";
+import type { UnitWrapper } from "shared/wrappers/unit/unit";
 import { tileConstructor } from "./sprite-constructor";
 
 export interface BattleForecast {

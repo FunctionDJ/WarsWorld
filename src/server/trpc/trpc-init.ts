@@ -10,7 +10,7 @@ export const t = initTRPC.context<Context>().create({
     const zodError =
       error.code === "BAD_REQUEST" && error.cause instanceof ZodError
         ? z.treeifyError(error.cause)
-        : null;
+        : undefined;
 
     return {
       ...shape,

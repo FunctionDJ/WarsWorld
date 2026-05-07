@@ -7,7 +7,7 @@ import { createContext, use, useMemo } from "react";
 type UserContext =
   | {
       ownedPlayers: Player[] | undefined;
-      currentPlayerId: string | null;
+      currentPlayerId: string | undefined;
       setCurrentPlayerId: (value: string) => void;
     }
   | undefined;
@@ -20,7 +20,7 @@ export const ProvidePlayers = ({ children }: { children: ReactNode }) => {
     refetchOnWindowFocus: false,
   });
 
-  const [currentPlayerId, setCurrentPlayerId] = useLocalStorage("currentPlayerId", null);
+  const [currentPlayerId, setCurrentPlayerId] = useLocalStorage("currentPlayerId", undefined);
 
   const userContextValue: UserContext = useMemo(
     () => ({

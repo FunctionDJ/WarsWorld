@@ -1,21 +1,23 @@
 import type { Player } from "generated/client";
-import type { MatchWrapper } from "shared/wrappers/match";
-import type { PlayerInMatchWrapper } from "shared/wrappers/player-in-match";
+import type { PlayerBeforeMatch } from "shared/types/server-match-state";
+import type { MatchWrapper } from "shared/wrappers/match/match";
+import type { MatchInSetup } from "shared/wrappers/match/match-in-setup";
+import type { PlayerInMatchWrapper } from "shared/wrappers/player/player-in-match";
 
 class PlayerMatchIndex {
-  private index = new Map<Player["id"], MatchWrapper[]>();
+  private index = new Map<Player["id"], (MatchWrapper | MatchInSetup)[]>();
 
-  getPlayerMatches(playerId: Player["id"]): MatchWrapper[] | undefined {
+  getPlayerMatches(playerId: Player["id"]): (MatchWrapper | MatchInSetup)[] | undefined {
     return this.index.get(playerId);
   }
 
-  onPlayerJoin(player: PlayerInMatchWrapper): void {
-    const playerMatches = this.index.get(player.data.id);
+  onPlayerJoin(player: PlayerBeforeMatch, match: MatchInSetup): void {
+    const playerMatches = this.index.get(player.id);
 
     if (playerMatches === undefined) {
-      this.index.set(player.data.id, [player.match]);
+      this.index.set(player.id, [match]);
     } else {
-      playerMatches.push(player.match);
+      playerMatches.push(match);
     }
   }
 

@@ -1,6 +1,6 @@
 import type { GameVersion } from "../../schemas/game-version";
 import type { Weather } from "../../schemas/weather";
-import type { UnitWrapper } from "../../wrappers/unit";
+import type { UnitWrapper } from "../../wrappers/unit/unit";
 import type { DamageChart } from "./base-damage";
 import { damageChartAW1, damageChartAW2, damageChartAWDS } from "./base-damage";
 

@@ -1,17 +1,18 @@
 import { getRandomWeather } from "shared/match-logic/weather";
 import type { PassTurnAction } from "shared/schemas/action";
 import type { PassTurnEvent, Turn } from "shared/types/events";
-import type { PlayerInMatchWrapper } from "shared/wrappers/player-in-match";
-import type { UnitWrapper } from "shared/wrappers/unit";
+import type { WWReadOnly } from "shared/types/ww-readonly";
+import type { PlayerInMatchWrapper } from "shared/wrappers/player/player-in-match";
+import type { UnitWrapper } from "shared/wrappers/unit/unit";
 import type { ApplyEvent, MainActionToEvent } from "../handler-types";
 import { getTurnFuelConsumption } from "./passTurn/consumeFuelAndCrash";
-import { propertyRepairAndResupply } from "./passTurn/propertyRepairAndResupply";
+import { propertyRepairAndResupply } from "./passTurn/property-repair-and-resupply";
 import { updateWeather } from "./passTurn/updateWeather";
 
-function getNewWeather(nextTurnPlayer: PlayerInMatchWrapper): Turn["newWeather"] {
+function getNewWeather(nextTurnPlayer: WWReadOnly<PlayerInMatchWrapper>): Turn["newWeather"] {
   const { match } = nextTurnPlayer;
 
-  if (match.playerToRemoveWeatherEffect !== null) {
+  if (match.playerToRemoveWeatherEffect !== undefined) {
     if (
       match.playerToRemoveWeatherEffect.data.slot === nextTurnPlayer.data.slot &&
       match.weatherDaysLeft - 1 <= 0
@@ -22,14 +23,14 @@ function getNewWeather(nextTurnPlayer: PlayerInMatchWrapper): Turn["newWeather"]
     }
 
     // weather stays the same when there's a "playerToRemoveWeatherEffect" and it's not clearing
-    return null;
+    return;
   }
 
   if (match.rules.weatherSetting === "random") {
     return getRandomWeather(match);
   }
 
-  return null;
+  return;
 }
 
 export const passTurnActionToEvent: MainActionToEvent<PassTurnAction> = (match, action) => {
@@ -39,7 +40,7 @@ export const passTurnActionToEvent: MainActionToEvent<PassTurnAction> = (match, 
   turnLoop: while (true) {
     const nextTurnPlayer = match.getCurrentTurnPlayer().getNextAlivePlayer();
 
-    if (nextTurnPlayer === null) {
+    if (nextTurnPlayer === undefined) {
       throw new Error("No next alive player");
     }
 
@@ -115,7 +116,7 @@ export const applyPassTurnEvent: ApplyEvent<PassTurnEvent> = (match, event) => {
 
     const nextTurnPlayer = lastTurnPlayer.getNextAlivePlayer();
 
-    if (nextTurnPlayer === null) {
+    if (nextTurnPlayer === undefined) {
       throw new Error("No next alive player");
     }
 

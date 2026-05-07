@@ -1,4 +1,4 @@
-import type { UnitWrapper } from "shared/wrappers/unit";
+import type { UnitWrapper } from "shared/wrappers/unit/unit";
 
 export function getTurnFuelConsumption(unit: UnitWrapper): number {
   let fuelConsumed = 0;

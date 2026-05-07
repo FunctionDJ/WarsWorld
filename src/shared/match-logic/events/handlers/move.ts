@@ -1,4 +1,4 @@
-import { DispatchableError } from "shared/DispatchedError";
+import { DispatchableError } from "shared/dispatchable-error";
 import type { MoveAction } from "shared/schemas/action";
 import { Path } from "shared/schemas/path";
 import {
@@ -9,14 +9,15 @@ import {
   type UnitWithVisibleStats,
 } from "shared/schemas/unit";
 import type { MoveEventWithoutSubEvent, MoveEventWithSubEvent } from "shared/types/events";
-import type { MatchWrapper } from "shared/wrappers/match";
-import type { UnitWrapper } from "../../../wrappers/unit";
+import type { WWReadOnly } from "shared/types/ww-readonly";
+import type { MatchWrapper } from "shared/wrappers/match/match";
+import type { UnitWrapper } from "../../../wrappers/unit/unit";
 
 // we don't use MainActionToEvent here because MoveEvent is special
 // because at this point we don't have the subEvent yet
 // which MainActionToEvent requires.
 export const moveActionToEvent = (
-  match: MatchWrapper,
+  match: WWReadOnly<MatchWrapper>,
   action: MoveAction,
 ): MoveEventWithoutSubEvent => {
   if (action.path.len() === 0) {
@@ -43,11 +44,11 @@ export const moveActionToEvent = (
 
   //Unit is waiting in-place if it's path is only the starting tile
   if (action.path.len() === 1) {
-    result.path = result.path.with(unitPosition);
-    return result;
+    return {
+      ...result,
+      path: new Path([unitPosition]),
+    };
   }
-
-  let remainingMovePoints = unit.getMovementPoints();
 
   if (unit.getFuel() < path.len()) {
     // TODO isn't there AWDS weather or something that makes units burn >1 fuel per tile?
@@ -66,7 +67,7 @@ export const moveActionToEvent = (
       moveCost = 0;
     }
 
-    if (moveCost === null) {
+    if (moveCost === undefined) {
       throw new DispatchableError("Cannot move to a desired position");
     }
 
@@ -81,11 +82,9 @@ export const moveActionToEvent = (
       break;
     }
 
-    if (moveCost > remainingMovePoints) {
+    if (moveCost > unit.getMovementPoints()) {
       throw new DispatchableError("Using more move points than available");
     }
-
-    remainingMovePoints -= moveCost;
 
     if (
       pathIndex === action.path.len() - 1 &&
@@ -103,13 +102,19 @@ export const moveActionToEvent = (
       }
     }
 
-    result.path = result.path.with(action.path.at(pathIndex));
+    return {
+      ...result,
+      path: result.path.with(action.path.at(pathIndex)),
+    };
   }
 
   return result;
 };
 
-export const throwIfCantMoveIntoUnit = (unit: UnitWrapper, unitInPosition: UnitWrapper): void => {
+export const throwIfCantMoveIntoUnit = (
+  unit: WWReadOnly<UnitWrapper>,
+  unitInPosition: WWReadOnly<UnitWrapper>,
+): void => {
   if (unitInPosition.data.type === unit.data.type) {
     // trying to join (same unit type)
     // join logic: if neither unit has loaded units, and the unit at join destination is not 10 hp
@@ -117,11 +122,11 @@ export const throwIfCantMoveIntoUnit = (unit: UnitWrapper, unitInPosition: UnitW
       throw new DispatchableError("Trying to join into a unit at full hp");
     }
 
-    if ("loadedUnit" in unitInPosition.data && unitInPosition.data.loadedUnit !== null) {
+    if ("loadedUnit" in unitInPosition.data && unitInPosition.data.loadedUnit !== undefined) {
       throw new DispatchableError("Trying to join into a unit that has a loaded unit");
     }
 
-    if ("loadedUnit" in unit && unit.loadedUnit !== null) {
+    if ("loadedUnit" in unit && unit.loadedUnit !== undefined) {
       throw new DispatchableError("Trying to join while having a unit loaded");
     }
   } else {
@@ -131,8 +136,8 @@ export const throwIfCantMoveIntoUnit = (unit: UnitWrapper, unitInPosition: UnitW
     }
 
     if (
-      unitInPosition.data.loadedUnit !== null &&
-      (!("loadedUnit2" in unitInPosition.data) || unitInPosition.data.loadedUnit2 !== null)
+      unitInPosition.data.loadedUnit !== undefined &&
+      (!("loadedUnit2" in unitInPosition.data) || unitInPosition.data.loadedUnit2 !== undefined)
     ) {
       throw new DispatchableError("Transport already occupied");
     }
@@ -174,7 +179,8 @@ export const throwIfCantMoveIntoUnit = (unit: UnitWrapper, unitInPosition: UnitW
 };
 
 const loadUnitInto = (
-  unitToLoad: UnitWithVisibleStats,
+  unitToLoad: WWReadOnly<UnitWithVisibleStats>,
+  // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
   transportUnit: UnitWithVisibleStats,
 ): void => {
   switch (transportUnit.type) {
@@ -192,7 +198,7 @@ const loadUnitInto = (
       const loadable = infantryOrMechSchema.safeParse(unitToLoad);
 
       if (loadable.success) {
-        if (transportUnit.loadedUnit === null) {
+        if (transportUnit.loadedUnit === undefined) {
           transportUnit.loadedUnit = loadable.data;
         } else {
           transportUnit.loadedUnit2 = loadable.data;
@@ -205,7 +211,7 @@ const loadUnitInto = (
       const loadable = landerLoadedUnitSchema.safeParse(unitToLoad);
 
       if (loadable.success) {
-        if (transportUnit.loadedUnit === null) {
+        if (transportUnit.loadedUnit === undefined) {
           transportUnit.loadedUnit = loadable.data;
         } else {
           transportUnit.loadedUnit2 = loadable.data;
@@ -218,7 +224,7 @@ const loadUnitInto = (
       const loadable = cruiserLoadedUnitSchema.safeParse(unitToLoad);
 
       if (loadable.success) {
-        if (transportUnit.loadedUnit === null) {
+        if (transportUnit.loadedUnit === undefined) {
           transportUnit.loadedUnit = loadable.data;
         } else {
           transportUnit.loadedUnit2 = loadable.data;
@@ -231,7 +237,7 @@ const loadUnitInto = (
       const loadable = carrierLoadedUnitSchema.safeParse(unitToLoad);
 
       if (loadable.success) {
-        if (transportUnit.loadedUnit === null) {
+        if (transportUnit.loadedUnit === undefined) {
           transportUnit.loadedUnit = loadable.data;
         } else {
           transportUnit.loadedUnit2 = loadable.data;
@@ -241,7 +247,10 @@ const loadUnitInto = (
   }
 };
 
-const getOneTileFuelCost = (match: MatchWrapper, unit: UnitWrapper): number => {
+const getOneTileFuelCost = (
+  match: WWReadOnly<MatchWrapper>,
+  unit: WWReadOnly<UnitWrapper>,
+): number => {
   const gameVersion = match.rules.gameVersion ?? unit.player.data.coId.version;
 
   if (
@@ -255,7 +264,10 @@ const getOneTileFuelCost = (match: MatchWrapper, unit: UnitWrapper): number => {
   return 1;
 };
 
-export const applyMoveEvent = (match: MatchWrapper, event: MoveEventWithoutSubEvent): void => {
+export const applyMoveEvent = (
+  match: WWReadOnly<MatchWrapper>,
+  event: WWReadOnly<MoveEventWithoutSubEvent>,
+): void => {
   //check if unit is moving or just standing still
   if (event.path.len() <= 1) {
     return;
@@ -304,7 +316,10 @@ export const applyMoveEvent = (match: MatchWrapper, event: MoveEventWithoutSubEv
 /**
  * Call this AFTER creating the sub event but BEFORE applying it
  */
-export const updateMoveVision = (match: MatchWrapper, event: MoveEventWithSubEvent): void => {
+export const updateMoveVision = (
+  match: WWReadOnly<MatchWrapper>,
+  event: WWReadOnly<MoveEventWithSubEvent>,
+): void => {
   if (event.path.len() < 2) {
     // if didn't move no vision change
     return;

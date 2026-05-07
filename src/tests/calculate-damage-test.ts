@@ -2,8 +2,8 @@ import type { WWMap } from "generated/browser";
 import { attackActionToEvent } from "shared/match-logic/events/handlers/attack/attackActionToEvent";
 import { Position } from "shared/schemas/position";
 import type { PlayerInMatch } from "shared/types/server-match-state";
-import { MatchWrapper } from "shared/wrappers/match";
-import { UnitWrapper } from "shared/wrappers/unit";
+import { MutableMatch } from "shared/wrappers/match/mutable-match";
+import { MutableUnit } from "shared/wrappers/unit/mutable-unit";
 
 /**
  * TODO add memory usage readouts by reading memory used by process
@@ -73,6 +73,7 @@ const players: PlayerInMatch[] = [
   },
   {
     name: "Incuggarch",
+    hasCurrentTurn: false,
     status: "alive",
     army: "blue-moon",
     coId: {
@@ -88,7 +89,7 @@ const players: PlayerInMatch[] = [
   },
 ];
 
-const match = new MatchWrapper(
+const match = new MutableMatch(
   "",
   "standard",
   [],
@@ -109,12 +110,12 @@ const match = new MatchWrapper(
   map,
   players,
   [],
-  UnitWrapper,
+  MutableUnit,
   0,
 );
 
-const p1 = match.getPlayerBySlot(0)!;
-const p2 = match.getPlayerBySlot(1)!;
+const p1 = match.getPlayerBySlotOrThrow(0);
+const p2 = match.getPlayerBySlotOrThrow(1);
 
 const u1 = p1.addUnwrappedUnit({
   type: "infantry",
