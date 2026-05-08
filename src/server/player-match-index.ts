@@ -11,7 +11,7 @@ class PlayerMatchIndex {
     return this.index.get(playerId);
   }
 
-  onPlayerJoin(player: PlayerBeforeMatch, match: MatchInSetup): void {
+  onPlayerJoin(player: PlayerBeforeMatch, match: MatchWrapper | MatchInSetup): void {
     const playerMatches = this.index.get(player.id);
 
     if (playerMatches === undefined) {

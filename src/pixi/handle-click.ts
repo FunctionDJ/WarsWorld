@@ -5,6 +5,7 @@ import type { RefObject } from "react";
 import { throwIfCantMoveIntoUnit } from "shared/match-logic/events/handlers/move";
 import type { MainAction } from "shared/schemas/action";
 import type { Position } from "shared/schemas/position";
+import type { WWReadOnly } from "shared/types/ww-readonly";
 import type { MatchWrapper } from "shared/wrappers/match/match";
 import { isUnitProducingProperty } from "../shared/schemas/tile-utilities";
 import type { PlayerInMatchWrapper } from "../shared/wrappers/player/player-in-match";
@@ -31,7 +32,7 @@ export const handleClick = async (
   moveTilesRef: RefObject<Map<Position, PathNode> | undefined>,
   unitRangeShowRef: RefObject<"attack" | "movement" | "vision">,
   pathRef: RefObject<Position[] | undefined>,
-  spriteSheets: Readonly<LoadedSpriteSheet>,
+  spriteSheets: WWReadOnly<LoadedSpriteSheet>,
   sendAction: (action: MainAction) => Promise<void>,
 ) => {
   //lets load our font
@@ -232,7 +233,7 @@ export const handleHover = async (
   moveTilesRef: RefObject<Map<Position, PathNode> | undefined>,
   unitRangeShowRef: RefObject<"attack" | "movement" | "vision">,
   pathRef: RefObject<Position[] | undefined>,
-  spriteSheets: LoadedSpriteSheet,
+  spriteSheets: WWReadOnly<LoadedSpriteSheet>,
   _sendAction: (action: MainAction) => Promise<void>, // TODO: unused yet
 ) => {
   await Assets.load("/aw2Font.fnt");

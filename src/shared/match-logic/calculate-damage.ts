@@ -1,5 +1,7 @@
 import type { LuckRoll } from "shared/schemas/co";
-import type { MutableUnit } from "shared/wrappers/unit/mutable-unit";
+import { MutableMatch } from "shared/wrappers/match/mutable-match";
+import { MutableUnit } from "shared/wrappers/unit/mutable-unit";
+import type { UnitWrapper } from "shared/wrappers/unit/unit";
 import type { CombatProperties } from "./co-hooks";
 import { getBaseDamage } from "./game-constants/base-damage";
 import { getTerrainDefenseStars } from "./game-constants/terrain-properties";
@@ -126,8 +128,8 @@ export const calculateDamage = (
 
 //can return negative hp values (useful for damage calculator / displaying damage range)
 export const calculateEngagementOutcome = (
-  attacker: MutableUnit,
-  defender: MutableUnit,
+  attacker: UnitWrapper,
+  defender: UnitWrapper,
   attackerLuck: LuckRoll,
   defenderLuck: LuckRoll,
 ): { defenderHP: number; attackerHP?: number } => {
@@ -159,7 +161,47 @@ export const calculateEngagementOutcome = (
   ) {
     //temporarily subtract hp to calculate counter dmg
     const originalHP = defender.getHP();
-    defender.setHp(originalHP - damageByAttacker);
+
+    // create temporary mutable unit for hp logic
+    // it has a dummy mutablematch, but that shouldn't matter because we only
+    // use this dummy mutableunit for HP calcs, but damageByDefender uses the real unit.
+
+    // actually, it might be easier and less error-prone to extract the HP logic into
+    // it's own class, factory function, or only extract setHP.
+
+    const dummyMutableMatch = new MutableMatch(
+      "0",
+      "standard",
+      [],
+      {
+        bannedUnitTypes: [],
+        captureLimit: 0,
+        dayLimit: 0,
+        fogOfWar: false,
+        fundsPerProperty: 0,
+        gameVersion: "AW1",
+        labUnitTypes: [],
+        teamMapping: [],
+        unitCapPerPlayer: 0,
+        weatherSetting: "clear",
+      },
+      "playing",
+      {
+        id: "0",
+        name: "dummy",
+        createdAt: new Date(),
+        numberOfPlayers: 1,
+        predeployedUnits: [],
+        tiles: [],
+      },
+      [],
+      [],
+      0,
+    );
+
+    const dummyMutableDefender = new MutableUnit(defender.data, dummyMutableMatch);
+
+    dummyMutableDefender.setHp(originalHP - damageByAttacker);
 
     const damageByDefender = calculateDamage(
       {
@@ -169,8 +211,6 @@ export const calculateEngagementOutcome = (
       defenderLuck,
       true,
     );
-
-    defender.setHp(originalHP);
 
     if (damageByDefender !== undefined) {
       //return event with counter-attack

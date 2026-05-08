@@ -41,7 +41,8 @@ export const createUnloadMenu = (
   const infosForMenu = [];
 
   if (!firstUnloadInfo?.isFirstUnit) {
-    unloadPositions1 = getUnloadablePositions(unit, unit.getLoadedUnit(1), newPosition);
+    const loadedUnit = unit.getLoadedUnit(1);
+    unloadPositions1 = getUnloadablePositions(unit, loadedUnit, newPosition);
 
     if (firstUnloadInfo !== undefined) {
       unloadPositions1.filter((pos) => {

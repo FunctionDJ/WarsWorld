@@ -7,9 +7,9 @@ import { passableTileSchema, type PassableTile } from "shared/schemas/tile";
 import type { UnitTypeString, Visibility, WWUnit } from "shared/schemas/unit";
 import type { Weather } from "shared/schemas/weather";
 import {
-    createNeutralPlayerInMatch,
-    type ChangeableTile,
-    type PlayerInMatch,
+  createNeutralPlayerInMatch,
+  type ChangeableTile,
+  type PlayerInMatch,
 } from "shared/types/server-match-state";
 import type { WWReadOnly } from "shared/types/ww-readonly";
 import { MapWrapper } from "../map";
@@ -32,6 +32,7 @@ import { UnitWrapper } from "../unit/unit";
 
 /** TODO: Add favorites, possibly spectators, also a timer */
 export class MatchWrapper {
+  public readonly type = "match-wrapper";
   protected currentWeather: Weather = "clear";
   public playerToRemoveWeatherEffect?: PlayerInMatchWrapper = undefined;
   public weatherDaysLeft = 0;
@@ -64,15 +65,16 @@ export class MatchWrapper {
       return new Team(teamPlayers, this, teamIndex);
     });
 
-    this.units = units.map((unit): UnitWrapper =>
-      unit.type === "apc" ||
-      unit.type === "transportCopter" ||
-      unit.type === "blackBoat" ||
-      unit.type === "lander" ||
-      unit.type === "carrier" ||
-      unit.type === "cruiser"
-        ? new Transport(unit, this)
-        : new UnitWrapper<Visibility, UnitTypeString>(unit, this),
+    this.units = units.map(
+      (unit): UnitWrapper =>
+        unit.type === "apc" ||
+        unit.type === "transportCopter" ||
+        unit.type === "blackBoat" ||
+        unit.type === "lander" ||
+        unit.type === "carrier" ||
+        unit.type === "cruiser"
+          ? new Transport(unit, this)
+          : new UnitWrapper<Visibility, UnitTypeString>(unit, this),
     );
     const neutralPlayerInMatch = createNeutralPlayerInMatch();
     const neutralTeam = new Team([neutralPlayerInMatch], this, -1);

@@ -1,11 +1,11 @@
 import { z } from "zod";
 import {
-    unitInMapSharedProperties as shared,
-    withAmmoUnitStats,
-    withCapturePoints,
-    withHidden,
-    withNoAmmoUnitStats,
-    withTypeSchema,
+  unitInMapSharedProperties as shared,
+  withAmmoUnitStats,
+  withCapturePoints,
+  withHidden,
+  withNoAmmoUnitStats,
+  withTypeSchema,
 } from "./unit-traits";
 
 //LAND UNITS:
@@ -174,7 +174,8 @@ export const unitTypes = visibleUnitSchema.options.flatMap((option) => {
   }
 });
 
-export const unitTypeSchema = z.enum(unitTypes as [UnitTypeString, ...UnitTypeString[]]).readonly();
+// export const unitTypeSchema = z.enum(unitTypes as [UnitTypeString, ...UnitTypeString[]]).readonly();
+export const unitTypeSchema = z.enum(unitTypes).readonly();
 
 type HiddenFromVisible<Unit extends UnitWithVisibleStats> = Omit<Unit, "stats"> & {
   stats: "hidden";

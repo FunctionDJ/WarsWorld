@@ -13,5 +13,10 @@
   "typescript.native-preview.tsdk": "/home/function/git/WarsWorld/node_modules/@typescript/native-preview",
   "files.associations": {
     ".fallowrc.json": "jsonc"
+  },
+  "prettier.useTabs": true,
+  "editor.insertSpaces": false,
+  "eslint.options": {
+    "configFile": "./.config/eslint.config.ts"
   }
 }

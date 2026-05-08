@@ -31,7 +31,7 @@ export const matchMiddleware = t.middleware(async ({ ctx, input, next }) => {
     });
   }
 
-  if (match.state === "setup") {
+  if (match.type === "match-in-setup") {
     throw new DispatchableError("Match is in setup, not in-game");
   }
 
@@ -64,8 +64,8 @@ export const matchInSetupMiddleware = t.middleware(async ({ ctx, input, next }) 
     });
   }
 
-  if (match.state !== "setup") {
-    throw new DispatchableError("Match is not in setup, in-game");
+  if (match.type !== "match-in-setup") {
+    throw new DispatchableError("Match is not in setup");
   }
 
   return next({

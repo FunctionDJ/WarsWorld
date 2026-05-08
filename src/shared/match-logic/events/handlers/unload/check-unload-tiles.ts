@@ -1,30 +1,21 @@
 import type { Position } from "shared/schemas/position";
-import type { Visibility } from "shared/schemas/unit";
+import type { UnitTypeString, Visibility } from "shared/schemas/unit";
 import type { UnitWrapper } from "shared/wrappers/unit/unit";
 
-export const getUnloadablePositions = <TVisibility extends Visibility = Visibility>(
-  transportUnit: UnitWrapper<TVisibility>,
-  unitToUnload: UnitWrapper<TVisibility>,
+export const getUnloadablePositions = <TUnitType extends UnitTypeString>(
+  transportUnit: UnitWrapper,
+  unitToUnload: UnitWrapper<Visibility, TUnitType>,
   newTransportUnitLocation?: Position,
 ): Position[] => {
-  const transportPos = newTransportUnitLocation ?? transportUnit.data.position;
+  const transportPosition = newTransportUnitLocation ?? transportUnit.data.position;
 
-  //unit also has to be able to stand on the tile the transport is standing
-  if (!unitToUnload.canMoveTo(transportPos)) {
-    return [];
-  }
-
-  const unloadablePositions: Position[] = [];
-
-  for (const adjPos of transportPos.getNeighbours()) {
-    if (transportUnit.match.map.isOutOfBounds(adjPos)) {
-      continue;
+  return transportPosition.getNeighbours().filter((neighbourPosition) => {
+    if (transportUnit.match.map.isOutOfBounds(neighbourPosition)) {
+      return false;
     }
 
-    if (unitToUnload.canMoveTo(adjPos)) {
-      unloadablePositions.push(adjPos);
-    }
-  }
-
-  return unloadablePositions;
+    // canMoveTo also checks if unit can move to transportPosition
+    // (AW logic: lander can only unload unit on harbor, not see next to plains)
+    return unitToUnload.canMoveTo(neighbourPosition);
+  });
 };

@@ -1,5 +1,5 @@
 import { Position } from "shared/schemas/position";
-import type { UnitTypeString, WWUnit } from "shared/schemas/unit";
+import type { UnitTypeString, Visibility, WWUnit } from "shared/schemas/unit";
 import type { MatchWrapper } from "shared/wrappers/match/match";
 import { UnitWrapper } from "shared/wrappers/unit/unit";
 
@@ -10,7 +10,7 @@ export const createPipeSeamUnitEquivalent = (
   pipeSeamHp?: number,
 ): UnitWrapper => {
   const usedVersion = match.rules.gameVersion ?? attacker.player.data.coId.version;
-  const unitEquivalent: WWUnit = {
+  const unitEquivalent = {
     type: usedVersion === "AW1" ? "mediumTank" : "neoTank",
     playerSlot: -1,
     position: pipeSeamPosition ?? new Position([0, 0]),
@@ -20,9 +20,9 @@ export const createPipeSeamUnitEquivalent = (
       fuel: 0,
       ammo: 0,
     },
-  };
+  } satisfies WWUnit;
 
-  return new UnitWrapper(unitEquivalent, match);
+  return new UnitWrapper<Visibility, UnitTypeString>(unitEquivalent, match);
 };
 
 export const getBaseDamage = (attacker: UnitWrapper, defender: UnitWrapper): number | undefined => {

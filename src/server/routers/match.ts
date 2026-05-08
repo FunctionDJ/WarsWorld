@@ -11,13 +11,13 @@ import { armyList, armySchema } from "shared/schemas/army";
 import { coIdSchema } from "shared/schemas/co";
 import { playerSlotForUnitsSchema } from "shared/schemas/player-slot";
 import { positionSchema } from "shared/schemas/position";
+import { MutableMatch } from "shared/wrappers/match/mutable-match";
 import { z } from "zod";
 import type { PlayerBeforeMatch, PlayerInMatch } from "../../shared/types/server-match-state";
 import {
   matchBaseProcedure,
   matchInSetupBaseProcedure,
   playerBaseProcedure,
-  playerInMatchBaseProcedure,
   publicBaseProcedure,
   router,
 } from "../trpc/trpc-setup";
@@ -114,11 +114,7 @@ export const matchRouter = router({
       //lets create a playerState (what the db holds) to send it to the db.
       // playerState is basically a PlayerInMatchWrapper[] (well, at least the properties of it)
 
-      const newPlayerState = match.teams.flatMap((team) =>
-        team.players.map((teamPlayer) =>
-          teamPlayer.data.id === player.data.id ? player.data : teamPlayer.data,
-        ),
-      );
+      const newPlayerState = match.players.map((p) => (p.id === player.id ? player : p));
 
       await prisma.$transaction(async (tx) => {
         //TODO: Have to add player to match.Player[]
@@ -141,11 +137,11 @@ export const matchRouter = router({
         playerId: player.id,
       });
     }),
-  leave: matchInSetupBaseProcedure.mutation(async ({ ctx: { match, player } }) => {
+  leave: matchInSetupBaseProcedure.mutation(async ({ ctx: { match, currentPlayer: player } }) => {
     const { team: teamToRemoveFrom } = player;
 
     teamToRemoveFrom.players.splice(
-      teamToRemoveFrom.players.findIndex((teamPlayer) => teamPlayer.data.slot === player.data.slot),
+      teamToRemoveFrom.players.findIndex((teamPlayer) => teamPlayer.data.slot === player.slot),
       1,
     );
 
@@ -164,14 +160,7 @@ export const matchRouter = router({
       matchStore.removeMatchFromIndex(match);
       await prisma.match.delete({ where: { id: match.id } });
     } else {
-      //lets create a playerState (what the db holds) to send it to the db.
-      // playerState is basically a PlayerInMatchWrapper[] (well, at least the properties of it)
-      const newPlayerState = match.teams.flatMap((team) =>
-        team.players
-          .filter((teamPlayer) => teamPlayer.data.id !== player.data.id)
-          .map((teamPlayer) => teamPlayer.data),
-      );
-
+      const newPlayerState = match.players.filter((p) => p.id !== player.id);
       await prisma.match.update({ where: { id: match.id }, data: { playerState: newPlayerState } });
 
       match.teams.splice(
@@ -182,21 +171,19 @@ export const matchRouter = router({
       await globalEmittable(match, {
         type: "player-left",
         matchId: match.id,
-        playerId: player.data.id,
+        playerId: player.id,
       });
     }
   }),
-  setReady: playerInMatchBaseProcedure
+  setReady: matchInSetupBaseProcedure
     .input(
       z.object({
         readyState: z.boolean(),
       }),
     )
-    .mutation(async ({ input, ctx: { match, player } }) => {
-      throwIfMatchNotInSetupState(match);
-
-      const newPlayerData: PlayerInMatch = {
-        ...player.data,
+    .mutation(async ({ input, ctx: { match, currentPlayer: player } }) => {
+      const newPlayerData: PlayerBeforeMatch = {
+        ...player,
         ready: input.readyState,
       };
 
@@ -208,16 +195,25 @@ export const matchRouter = router({
         ),
       );
 
-      player.data.ready = input.readyState;
-
       if (allMatchSlotsReady(match)) {
         /**
          * TODO
          * - give first player funds, maybe we need to everything that passTurn does?
          * - set up timer
          */
-        match.status = "playing";
-        const matchStartEvent = createMatchStartEvent(match);
+        const playingMatch = new MutableMatch(
+          match.id,
+          match.leagueType,
+          [], // TODO changeableTiles
+          match.rules,
+          "playing",
+          match.map,
+          [], // TODO newPlayerState i think
+          match.map.predeployedUnits,
+          0, // unsure if turn 0 is correct, maybe turn 1?
+        );
+
+        const matchStartEvent = createMatchStartEvent(playingMatch);
 
         await prisma.$transaction(async (tx) => {
           await tx.event.create({
@@ -240,7 +236,6 @@ export const matchRouter = router({
       }
       //Both players are NOT ready, therefore match doesnt start
       else {
-        //lets update prisma first, if the database updates, then we update memory
         await prisma.match.update({
           where: { id: match.id },
           data: { playerState: newPlayerState },
@@ -249,12 +244,12 @@ export const matchRouter = router({
         await globalEmittable(match, {
           type: "player-changed-ready-status",
           matchId: match.id,
-          playerId: player.data.id,
+          playerId: player.id,
           ready: input.readyState,
         });
       }
     }),
-  switchOptions: playerInMatchBaseProcedure
+  switchOptions: matchInSetupBaseProcedure
     .input(
       z.object({
         selectedCO: coIdSchema.optional(),
@@ -262,16 +257,14 @@ export const matchRouter = router({
         selectedSlot: playerSlotForUnitsSchema.optional(),
       }),
     )
-    .mutation(async ({ input, ctx: { match, player } }) => {
-      throwIfMatchNotInSetupState(match);
-
+    .mutation(async ({ input, ctx: { match, currentPlayer: player } }) => {
       const newPlayerData: PlayerInMatch = { ...player.data };
       newPlayerData.coId = input.selectedCO ?? newPlayerData.coId;
       newPlayerData.army = input.selectedArmy ?? newPlayerData.army;
       newPlayerData.slot = input.selectedSlot ?? newPlayerData.slot;
 
-      const armiesOccupied = match.getAllPlayers().map((player) => player.data.army as string);
-      const slotsOccupied = match.getAllPlayers().map((player) => player.data.slot);
+      const armiesOccupied = match.players.map((player) => player.army);
+      const slotsOccupied = match.players.map((player) => player.slot);
 
       // ERROR CHECKING
       // make sures that the ARMY picked by the player is different from all other players
@@ -294,16 +287,16 @@ export const matchRouter = router({
 
       //lets update prisma first, if the database updates, then we update memory
       await prisma.match.update({ where: { id: match.id }, data: { playerState: newPlayerState } });
-      player.data.coId = newPlayerData.coId;
-      player.data.army = newPlayerData.army;
-      player.data.slot = newPlayerData.slot;
+      player.coId = newPlayerData.coId;
+      player.army = newPlayerData.army;
+      player.slot = newPlayerData.slot;
 
       if (input.selectedCO !== undefined) {
         await globalEmittable(match, {
           type: "player-picked-co",
           coId: input.selectedCO,
           matchId: match.id,
-          playerId: player.data.id,
+          playerId: player.id,
         });
       }
 
@@ -312,7 +305,7 @@ export const matchRouter = router({
           type: "player-picked-army",
           army: input.selectedArmy,
           matchId: match.id,
-          playerId: player.data.id,
+          playerId: player.id,
         });
       }
 
@@ -321,7 +314,7 @@ export const matchRouter = router({
           type: "player-picked-slot",
           slot: input.selectedSlot,
           matchId: match.id,
-          playerId: player.data.id,
+          playerId: player.id,
         });
       }
     }),

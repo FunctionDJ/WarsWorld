@@ -1,3 +1,4 @@
+import { DispatchableError } from "shared/dispatchable-error";
 import {
   createPipeSeamUnitEquivalent,
   getBaseDamage,
@@ -172,6 +173,10 @@ export const getAvailableSubActions = (
 
   //check for unload
   if (player.getVersionProperties().unloadOnlyAfterMove && unit.isTransport()) {
+    if (tile.type === "pipeSeam") {
+      throw new DispatchableError("Can't unload from pipe seam (this should be impossible)");
+    }
+
     let addUnloadSubaction = false;
 
     const getAddUnloadSubaction = (unit: UnitWrapper, loadedUnit: LoadedUnit): boolean => {
@@ -182,20 +187,30 @@ export const getAvailableSubActions = (
         match.rules.gameVersion ?? unit.player.data.coId.version,
       );
 
-      if (baseMovementCost !== undefined) {
-        for (const adjacentPosition of newPosition.getNeighbours()) {
-          if (!match.map.isOutOfBounds(adjacentPosition)) {
-            const adjacentBaseMovementCost = getBaseMovementCost(
-              unitPropertiesMap[loadedUnit.type].movementType,
-              getWeatherSpecialMovement(unit.player),
-              match.getTile(adjacentPosition).type,
-              match.rules.gameVersion ?? unit.player.data.coId.version,
-            );
+      if (baseMovementCost === undefined) {
+        return false;
+      }
 
-            if (adjacentBaseMovementCost !== undefined) {
-              return true;
-            }
-          }
+      for (const adjacentPosition of newPosition.getNeighbours()) {
+        if (match.map.isOutOfBounds(adjacentPosition)) {
+          continue;
+        }
+
+        const adjacentTile = match.getTile(adjacentPosition);
+
+        if (adjacentTile.type === "pipeSeam") {
+          continue;
+        }
+
+        const adjacentBaseMovementCost = getBaseMovementCost(
+          unitPropertiesMap[loadedUnit.type].movementType,
+          getWeatherSpecialMovement(unit.player),
+          adjacentTile.type,
+          match.rules.gameVersion ?? unit.player.data.coId.version,
+        );
+
+        if (adjacentBaseMovementCost !== undefined) {
+          return true;
         }
       }
 

@@ -20,7 +20,8 @@
     "start:next": "next start",
     "start:server": "cross-env NODE_ENV=production \"npm run prisma:push &&  node dist/server/main-production.mjs\"",
     "start": "concurrently \\\"npm:start:*\\\"\"",
-    "fallow": "fallow"
+    "fallow": "fallow",
+    "lint": "eslint -c ./.config/eslint.config.ts"
   },
   "prettier": {
     "singleQuote": false,

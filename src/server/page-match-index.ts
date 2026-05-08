@@ -1,4 +1,5 @@
 import type { MatchWrapper } from "shared/wrappers/match/match";
+import type { MatchInSetup } from "shared/wrappers/match/match-in-setup";
 
 class PageMatchIndex {
   /**
@@ -17,7 +18,7 @@ class PageMatchIndex {
     this.list.push(match);
   }
 
-  removeMatch(match: MatchWrapper): void {
+  removeMatch(match: MatchWrapper | MatchInSetup): void {
     const listIndex = this.list.findIndex((m) => m.id === match.id);
 
     if (listIndex === -1) {

@@ -1,5 +1,6 @@
 import type { Application } from "pixi.js";
 import type { Position } from "shared/schemas/position";
+import type { WWReadOnly } from "shared/types/ww-readonly";
 import type { MatchWrapper } from "shared/wrappers/match/match";
 import type { LoadedSpriteSheet } from "./load-spritesheet";
 import { renderInvisInteractiveTiles, renderMap } from "./render-map";
@@ -9,7 +10,7 @@ export function setupApp(
   app: Application,
   match: MatchWrapper,
   renderMultiplier: number,
-  spriteSheets: LoadedSpriteSheet,
+  spriteSheets: WWReadOnly<LoadedSpriteSheet>,
   onTileClick: (pos: Position) => Promise<void>,
   onTileHover: (pos: Position) => Promise<void>,
 ) {

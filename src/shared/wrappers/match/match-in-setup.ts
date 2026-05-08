@@ -4,6 +4,7 @@ import type { PlayerBeforeMatch } from "shared/types/server-match-state";
 import type { WWReadOnly } from "shared/types/ww-readonly";
 
 export class MatchInSetup {
+  public readonly type = "match-in-setup";
   public readonly state = "setup";
 
   constructor(

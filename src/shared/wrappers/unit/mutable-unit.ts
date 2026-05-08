@@ -1,8 +1,8 @@
 import { clamp } from "shared/math-utilities";
 import type {
-    UnitByVisibilityAndTypeString,
-    UnitTypeString,
-    Visibility,
+  UnitByVisibilityAndTypeString,
+  UnitTypeString,
+  Visibility,
 } from "shared/schemas/unit";
 import type { MutableMatch } from "../match/mutable-match";
 import type { MutablePlayerInMatch } from "../player/mutable-player-in-match";
@@ -138,5 +138,13 @@ export class MutableUnit<
     }
 
     this.match.units.splice(index, 1);
+  }
+
+  getNeighbouringUnits(): MutableUnit<TVisibility>[] {
+    const neighbourPositions = this.data.position.getNeighbours();
+
+    return this.match.units.filter((unit) =>
+      neighbourPositions.some((p) => p.isSame(unit.data.position)),
+    );
   }
 }

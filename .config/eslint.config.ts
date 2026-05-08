@@ -5,7 +5,7 @@ import nextTs from "eslint-config-next/typescript";
 import unicorn from "eslint-plugin-unicorn";
 import { defineConfig, globalIgnores } from "eslint/config";
 import typescript from "typescript-eslint";
-import local from "./src/eslint/local-rules";
+import local from "../src/eslint/local-rules";
 
 const banPixiPattern = {
   group: ["**pixi**"],
@@ -133,8 +133,28 @@ export default defineConfig([
     },
   },
   {
-    files: ["src/pages/**/*.tsx", "src/components/**/*.tsx", "src/frontend/**/*.tsx"],
+    files: ["src/**/*.tsx", "src/**/use-*.ts"],
     rules: {
+      "unicorn/prevent-abbreviations": [
+        "warn",
+        {
+          allowList: {
+            Props: true,
+            Ref: true,
+          },
+        },
+      ],
+    },
+  },
+  {
+    files: ["src/**/*.tsx"],
+    rules: {
+      "unicorn/filename-case": [
+        "error",
+        {
+          case: "pascalCase",
+        },
+      ],
       "@typescript-eslint/explicit-function-return-type": "off",
       "@typescript-eslint/explicit-module-boundary-types": "off",
     },
@@ -173,28 +193,6 @@ export default defineConfig([
           patterns: [banPixiPattern, banNonSharedPattern],
         },
       ],
-    },
-  },
-  {
-    files: ["eslint/local-rules.ts"],
-    rules: {
-      "local/no-redundant-type-wrapper": "off",
-      "@typescript-eslint/no-unsafe-assignment": "off",
-      "@typescript-eslint/no-unsafe-member-access": "off",
-      "@typescript-eslint/no-unsafe-call": "off",
-      "@typescript-eslint/no-unsafe-return": "off",
-      "@typescript-eslint/no-unsafe-argument": "off",
-      "@typescript-eslint/no-explicit-any": "off",
-      "@typescript-eslint/no-unnecessary-condition": "off",
-      "@typescript-eslint/consistent-type-definitions": "off",
-      "@typescript-eslint/array-type": "off",
-      "@typescript-eslint/strict-boolean-expressions": "off",
-      "@typescript-eslint/explicit-function-return-type": "off",
-      "@typescript-eslint/explicit-module-boundary-types": "off",
-      "@typescript-eslint/prefer-optional-chain": "off",
-      // "unicorn/consistent-function-scoping": "off",
-      // "unicorn/no-array-callback-reference": "off",
-      // "unicorn/no-useless-collection-argument": "off",
     },
   },
 ]);

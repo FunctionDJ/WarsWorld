@@ -29,11 +29,11 @@ export class MutableMatch extends MatchWrapper {
     id: Match["id"],
     leagueType: LeagueType,
     changeableTiles: readonly ChangeableTile[], //TODO change to map from position to changeableTile for better performance
-    public readonly rules: MatchRules,
+    public readonly rules: WWReadOnly<MatchRules>,
     public state: MatchStatus,
     map: WWReadOnly<WWMap>,
     players: readonly PlayerInMatch[],
-    units: WWUnit[],
+    units: WWReadOnly<WWUnit[]>,
     public turn: number,
   ) {
     super(id, leagueType, changeableTiles, rules, state, map, players, units, turn);

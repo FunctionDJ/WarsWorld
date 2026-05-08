@@ -8,13 +8,13 @@ import { applyBuildEvent } from "shared/match-logic/events/handlers/build";
 import { applyMoveEvent } from "shared/match-logic/events/handlers/move";
 import { applyPassTurnEvent } from "shared/match-logic/events/handlers/pass-turn";
 import type { EmittableAttackEvent, EmittableMoveEvent } from "shared/types/events";
-import type { MatchWrapper } from "shared/wrappers/match/match";
-import type { PlayerInMatchWrapper } from "shared/wrappers/player/player-in-match";
+import type { MutableMatch } from "shared/wrappers/match/mutable-match";
+import type { MutablePlayerInMatch } from "shared/wrappers/player/mutable-player-in-match";
 import { usePixi } from "./use-pixi";
 
 interface Props {
-  match: MatchWrapper;
-  player: PlayerInMatchWrapper;
+  match: MutableMatch;
+  player: MutablePlayerInMatch;
   spriteSheets: LoadedSpriteSheet;
   turn: boolean;
   setTurn: React.Dispatch<React.SetStateAction<boolean>>;
@@ -28,7 +28,7 @@ export function MatchRenderer({ match, player, spriteSheets, turn, setTurn }: Pr
       setTurn(isPlayerTurn);
     },
     //Adding all dependencies here causes an infinite loop
-    /* eslint-disable */ [],
+    [],
   );
 
   const { pixiCanvasRef } = usePixi(match, spriteSheets, player);
@@ -86,6 +86,7 @@ export function MatchRenderer({ match, player, spriteSheets, turn, setTurn }: Pr
     <>
       <p>Your Funds: {player.data.funds}</p>
       <button
+        type="button"
         className="btn tw:select-none"
         onClick={() => {
           passTurnMutation
@@ -94,8 +95,8 @@ export function MatchRenderer({ match, player, spriteSheets, turn, setTurn }: Pr
               playerId: player.data.id,
               matchId: match.id,
             })
-            .catch((err) => {
-              console.log(err);
+            .catch((error: unknown) => {
+              console.log(error);
             });
         }}
       >

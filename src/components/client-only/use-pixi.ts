@@ -7,8 +7,8 @@ import { useEffect, useRef } from "react";
 import type { MainAction } from "shared/schemas/action";
 import type { Position } from "shared/schemas/position";
 import type { WWReadOnly } from "shared/types/ww-readonly";
-import type { MatchWrapper } from "shared/wrappers/match/match";
-import type { PlayerInMatchWrapper } from "shared/wrappers/player/player-in-match";
+import type { MutableMatch } from "shared/wrappers/match/mutable-match";
+import type { MutablePlayerInMatch } from "shared/wrappers/player/mutable-player-in-match";
 import { handleClick, handleHover } from "../../pixi/handle-click";
 import type { PathNode } from "../../pixi/show-pathing";
 import { trpcActions } from "../../pixi/trpc-actions";
@@ -16,11 +16,11 @@ import type { UnitWrapper } from "../../shared/wrappers/unit/unit";
 import { renderedTileSize, renderMultiplier } from "./common";
 
 export const usePixi = (
-  match: WWReadOnly<MatchWrapper>,
+  match: MutableMatch,
   spriteSheets: WWReadOnly<LoadedSpriteSheet>,
-  player: WWReadOnly<PlayerInMatchWrapper>,
+  player: MutablePlayerInMatch,
 ): {
-  pixiCanvasRef: React.RefObject<HTMLCanvasElement | undefined>;
+  pixiCanvasRef: React.RefObject<HTMLCanvasElement>;
   mapContainerRef: React.RefObject<Container | undefined>;
 } => {
   //containers holding pixi elements

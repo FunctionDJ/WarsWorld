@@ -4,13 +4,15 @@ import type {
   SpritesheetDataByArmy,
 } from "frontend/components/match/get-spritesheet-data";
 import { ImageSource, Spritesheet, Texture } from "pixi.js";
+import type { WWReadOnly } from "shared/types/ww-readonly";
 
-export type LoadedSpriteSheet = Record<SheetNames, Spritesheet<ArmySpritesheetData>>;
+export type MutableLoadedSpriteSheet = Record<SheetNames, Spritesheet<ArmySpritesheetData>>;
+export type LoadedSpriteSheet = WWReadOnly<MutableLoadedSpriteSheet>;
 
 export async function loadSpritesFromSpriteMap(
   spriteMap: SpritesheetDataByArmy,
 ): Promise<LoadedSpriteSheet> {
-  const pixiSpriteSheets: Partial<LoadedSpriteSheet> = {};
+  const pixiSpriteSheets: Partial<MutableLoadedSpriteSheet> = {};
 
   for (const sheetName in spriteMap) {
     const rawSpriteSheet = spriteMap[sheetName as SheetNames];

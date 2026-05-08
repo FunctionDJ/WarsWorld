@@ -4,7 +4,6 @@ import { arrayAtOrThrow } from "shared/array-utilities";
 import { Position } from "shared/schemas/position";
 import type { MatchInSetup } from "shared/wrappers/match/match-in-setup";
 import { MutableMatch } from "shared/wrappers/match/mutable-match";
-import { MutableUnit } from "shared/wrappers/unit/mutable-unit";
 import {
   applyMainEventToMatch,
   applySubEventToMatch,
@@ -29,12 +28,12 @@ const getChangeableTilesFromMap = (map: WWMap): ChangeableTile[] => {
             position,
             fired: false,
           });
-        } else if (tile.type === "pipeSeam") {
-          changeableTiles.push({
-            type: tile.type,
-            position,
-            hp: 99,
-          });
+          // } else if (tile.type === "pipeSeam") {
+          //   changeableTiles.push({
+          //     type: tile.type,
+          //     position,
+          //     hp: 99,
+          //   });
         } else {
           changeableTiles.push({
             type: tile.type,
@@ -62,14 +61,22 @@ export class MatchStore {
       rawMap,
       rawMatch.playerState,
       rawMap.predeployedUnits,
-      MutableUnit,
       0,
     );
 
     this.index.set(match.id, match);
 
     for (const player of match.getAllPlayers()) {
-      playerMatchIndex.onPlayerJoin(player);
+      playerMatchIndex.onPlayerJoin(
+        {
+          id: player.data.id,
+          name: player.data.name,
+          ready: false,
+          coId: player.data.coId,
+          slot: player.data.slot,
+        },
+        match,
+      );
     }
 
     pageMatchIndex.addMatch(match);
