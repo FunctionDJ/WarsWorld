@@ -16,7 +16,7 @@ export const createEmittableAttackEvent = (
     playerUpdate: match.getAllPlayers().map((p) => p.data),
   };
 
-  const defender = match.getUnit(attackEvent.defenderPosition);
+  const defender = match.getUnit(attackEvent.defenderPosition, "dont-throw");
 
   const attackerHPDiff =
     attackEvent.attackerHP !== undefined

@@ -4,6 +4,7 @@ import type {
   UnitTypeString,
   Visibility,
 } from "shared/schemas/unit";
+import { safeRemoveFromArray } from "shared/types/throw-helper";
 import type { MutableMatch } from "../match/mutable-match";
 import type { MutablePlayerInMatch } from "../player/mutable-player-in-match";
 import type { MutableTransport } from "./mutable-transport";
@@ -20,13 +21,7 @@ export class MutableUnit<
     public match: MutableMatch,
   ) {
     super(data, match);
-
     const player = match.getPlayerBySlot(data.playerSlot);
-
-    if (player === undefined) {
-      throw new Error(`Could not find player by slot ${String(data.playerSlot)}`);
-    }
-
     this.player = player;
   }
 
@@ -131,13 +126,8 @@ export class MutableUnit<
   remove(): void {
     this.player.team.vision?.removeUnitVision(this);
 
-    const index = this.match.units.findIndex((u) => u.data.position.isSame(this.data.position));
-
-    if (index === -1) {
-      throw new Error("Tried to remove unit that does not exist in match");
-    }
-
-    this.match.units.splice(index, 1);
+    // TODO maybe `u => u === this` could work ..?
+    safeRemoveFromArray(this.match.units, (u) => u.data.position.isSame(this.data.position));
   }
 
   getNeighbouringUnits(): MutableUnit<TVisibility>[] {

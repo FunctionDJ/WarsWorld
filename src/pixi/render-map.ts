@@ -33,7 +33,7 @@ function getTileSprite(
     return new Sprite(spriteSheets.neutral.textures[tile.type + "-0.png"]);
   }
 
-  const player = match.getPlayerBySlotOrThrow(tile.playerSlot);
+  const player = match.getPlayerBySlot(tile.playerSlot);
   // for some reason pixi's spritesheet type doesn't index the generic properly, hence overwriting.
   const animations = spriteSheets[player.data.army].animations as AnimationsProperty;
   const tileSprite = new AnimatedSprite(animations[tile.type]);

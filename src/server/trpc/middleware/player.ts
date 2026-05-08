@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import type { Player } from "generated/browser";
 import { prisma } from "server/prisma/prisma-client";
+import { findOrThrow } from "shared/types/throw-helper";
 import { z } from "zod";
 import { t } from "../trpc-init";
 
@@ -23,17 +24,8 @@ export const playerMiddleware = t.middleware(async ({ ctx, next, input }) => {
   }
 
   const { playerId } = parseResult.data;
-
   const ownedPlayers = await prisma.player.findMany();
-
-  const currentPlayer = ownedPlayers.find((p) => p.id === playerId);
-
-  if (currentPlayer === undefined) {
-    throw new TRPCError({
-      code: "FORBIDDEN",
-      message: `You used playerId ${playerId} but you don't own that player.`,
-    });
-  }
+  const currentPlayer = findOrThrow(ownedPlayers, (p) => p.id === playerId);
 
   return next({
     ctx: {

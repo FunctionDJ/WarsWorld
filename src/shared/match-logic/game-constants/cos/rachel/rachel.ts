@@ -28,7 +28,7 @@ export const rachelAWDS: COProperties = {
       calculatePositions: (player) => getMissilePositions(player),
       instantEffect(player, positions) {
         if (positions?.length !== 3) {
-          throw new Error("Did not get missile positions");
+          throw new Error("Did not get 3 missile positions");
         }
 
         player.match.damageUntil1HPInRadius({

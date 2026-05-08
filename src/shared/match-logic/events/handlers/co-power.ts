@@ -1,6 +1,7 @@
 import { DispatchableError } from "shared/dispatchable-error";
 import type { COPowerAction } from "shared/schemas/action";
 import type { COPowerEvent } from "shared/types/events";
+import { throwIfUndefined } from "shared/types/throw-helper";
 import type { MutableMatch } from "shared/wrappers/match/mutable-match";
 import type { COProperties } from "../../co";
 import { getCOProperties } from "../../co";
@@ -15,11 +16,11 @@ export const coPowerActionToEvent: MainActionToEvent<COPowerAction> = (match, ac
   }
 
   const coProperties = getCOProperties(player.data.coId);
-  const power = coProperties.powers[powerType];
 
-  if (power === undefined) {
-    throw new DispatchableError(`Your CO (${coProperties.displayName}) doesn't have ${powerType}`);
-  }
+  const power = throwIfUndefined(
+    coProperties.powers[powerType],
+    `Your CO (${coProperties.displayName}) doesn't have ${powerType}`,
+  );
 
   const powerCost = power.stars * player.getPowerStarCost();
 
@@ -41,13 +42,7 @@ export const applyCOPowerEvent = (match: MutableMatch, event: COPowerEvent): voi
   const player = match.getCurrentTurnPlayer();
   const COProperties = getCOProperties(player.data.coId);
   const powerType: keyof COProperties["powers"] = event.isSuper ? "superCOPower" : "COPower";
-  const power = COProperties.powers[powerType];
-
-  if (power === undefined) {
-    throw new Error(
-      `Unexpectedly didn't find power ${powerType} on CO ${COProperties.displayName}`,
-    );
-  }
+  const power = throwIfUndefined(COProperties.powers[powerType]);
 
   // applying all match rules, read doc of variables for details
   if (player.getVersionProperties().raisePowerCostBeforeUsing) {

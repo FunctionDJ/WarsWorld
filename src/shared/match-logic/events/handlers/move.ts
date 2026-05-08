@@ -9,6 +9,7 @@ import {
   type UnitWithVisibleStats,
 } from "shared/schemas/unit";
 import type { MoveEventWithoutSubEvent, MoveEventWithSubEvent } from "shared/types/events";
+import { throwIfUndefined } from "shared/types/throw-helper";
 import type { WWReadOnly } from "shared/types/ww-readonly";
 import type { MatchWrapper } from "shared/wrappers/match/match";
 import type { MutableMatch } from "shared/wrappers/match/mutable-match";
@@ -28,7 +29,7 @@ export const moveActionToEvent = (
   const unitPosition = action.path.at(0);
   const path = action.path.tail();
   const player = match.getCurrentTurnPlayer();
-  const unit = match.getUnitOrThrow(unitPosition);
+  const unit = match.getUnit(unitPosition);
   player.ownsOrThrow(unit);
 
   console.log("Unit trying to move:", unit.data);
@@ -68,22 +69,20 @@ export const moveActionToEvent = (
       moveCost = 0;
     }
 
-    if (moveCost === undefined) {
-      throw new DispatchableError("Cannot move to a desired position");
-    }
+    const definedMoveCost = throwIfUndefined(moveCost, "Can't move to a desired position");
 
     if (result.path.contains(position)) {
       throw new DispatchableError("The given path passes through the same position twice");
     }
 
-    const unitInPosition = match.getUnit(position);
+    const unitInPosition = match.getUnit(position, "dont-throw");
 
     if (unitInPosition !== undefined && unitInPosition.data.playerSlot !== unit.data.playerSlot) {
       result.trap = true;
       break;
     }
 
-    if (moveCost > unit.getMovementPoints()) {
+    if (definedMoveCost > unit.getMovementPoints()) {
       throw new DispatchableError("Using more move points than available");
     }
 
@@ -148,6 +147,13 @@ export const throwIfCantMoveIntoUnit = (
       case "transportCopter":
       case "apc":
       case "blackBoat": {
+        // TODO
+        /**
+         * i bet there's a way to use some typescript magic
+         * to get the [transport]LoadedUnitSchema based on the transport type and
+         * short-cut this switch statement.
+         */
+
         if (!unit.isInfantryOrMech()) {
           throw new DispatchableError("Can't load non-soldier in apc / transport / black boat");
         }
@@ -273,7 +279,7 @@ export const applyMoveEvent = (
     return;
   }
 
-  const unit = match.getUnitOrThrow(event.path.at(0));
+  const unit = match.getUnit(event.path.at(0));
 
   unit.data.isReady = false;
 
@@ -283,7 +289,7 @@ export const applyMoveEvent = (
   }
 
   unit.drainFuel((event.path.len() - 1) * getOneTileFuelCost(match, unit));
-  const unitAtDestination = match.getUnit(event.path.at("last"));
+  const unitAtDestination = match.getUnit(event.path.at("last"), "dont-throw");
 
   if (unitAtDestination === undefined) {
     unit.data.position = event.path.at("last");
@@ -325,7 +331,7 @@ export const updateMoveVision = (
     return;
   }
 
-  const movedUnit = match.getUnitOrThrow(event.path.at("last"));
+  const movedUnit = match.getUnit(event.path.at("last"));
 
   movedUnit.data.position = event.path.at(0); // temporarily revert position
   movedUnit.player.team.vision?.removeUnitVision(movedUnit); // remove vision from previous position

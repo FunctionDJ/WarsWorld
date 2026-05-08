@@ -39,7 +39,7 @@ export const handleClick = async (
   await Assets.load("/aw2Font.fnt");
 
   //Check if there is a unit in the tile/position clicked
-  const unitClicked = match.getUnit(clickPosition);
+  const unitClicked = match.getUnit(clickPosition, "dont-throw");
 
   //Check what tile is in the tile/position clicked
   const tileClicked = match.getTile(clickPosition);
@@ -80,7 +80,7 @@ export const handleClick = async (
     for (const [pos] of moveTilesRef.current) {
       //we found the path / user clicked on a legal path
       if (clickPosition.isSame(pos)) {
-        const unitInTile = match.getUnit(clickPosition);
+        const unitInTile = match.getUnit(clickPosition, "dont-throw");
 
         let canUnitMoveIntoOther = false;
 
@@ -207,7 +207,7 @@ export const handleClick = async (
     if (currentUnitClickedRef.current) {
       //lets add the original unit back to its original position only if the original doesnt exist
       if (
-        match.getUnit(currentUnitClickedRef.current.data.position) &&
+        match.getUnit(currentUnitClickedRef.current.data.position, "dont-throw") &&
         !unitContainer.getChildByName(
           `unit-${String(currentUnitClickedRef.current.data.position.data[0])}-${String(currentUnitClickedRef.current.data.position.data[1])}`,
         )

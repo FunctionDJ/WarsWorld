@@ -7,6 +7,7 @@ import {
 import type { AttackAction } from "shared/schemas/action";
 import type { LuckRoll } from "shared/schemas/co";
 import type { AttackEvent } from "shared/types/events";
+import { throwIfUndefined } from "shared/types/throw-helper";
 import type { SubActionToEvent } from "../../handler-types";
 import { getEliminationReason } from "./get-elimination-reason";
 
@@ -29,15 +30,11 @@ export const attackActionToEvent: (
 ) => {
   const player = match.getCurrentTurnPlayer();
 
-  const attacker = match.getUnitOrThrow(fromPosition);
+  const attacker = match.getUnit(fromPosition);
   player.ownsOrThrow(attacker);
 
   //check if unit is in range
   const attackRange = attacker.getAttackRange();
-
-  if (attackRange === undefined) {
-    throw new DispatchableError("Unit cannot attack");
-  }
 
   if (attackRange.minRange > 1 && unitHasMoved) {
     throw new DispatchableError("Trying to move and attack with an indirect unit");
@@ -49,7 +46,7 @@ export const attackActionToEvent: (
     throw new DispatchableError("Unit is not in range to attack");
   }
 
-  const defender = match.getUnit(action.defenderPosition);
+  const defender = match.getUnit(action.defenderPosition, "dont-throw");
 
   if (defender === undefined) {
     const attackedTile = match.getTile(action.defenderPosition);
@@ -65,9 +62,10 @@ export const attackActionToEvent: (
       attackedTile.hp,
     );
 
-    if (getBaseDamage(attacker, pipeSeamUnitEquivalent) === undefined) {
-      throw new DispatchableError("Unit cannot attack specified pipeseam");
-    }
+    throwIfUndefined(
+      getBaseDamage(attacker, pipeSeamUnitEquivalent),
+      "Unit cannot attack specified pipeseam",
+    );
 
     const result = calculateEngagementOutcome(
       attacker,
@@ -86,13 +84,19 @@ export const attackActionToEvent: (
     throw new DispatchableError("The target unit is from your own team");
   }
 
+  // TODO
+  // i think we need to make this check a lot earlier.
+  // maybe just use team.vision to see if the targeted position is visible.
+  // the way this code reads right now could expose info to players if the target position has a unit or not.
+
   if (!attacker.player.team.canSeeUnitAtPosition(defender.data.position)) {
     throw new DispatchableError("The target unit is not in vision");
   }
 
-  if (getBaseDamage(attacker, defender) === undefined) {
-    throw new DispatchableError("This unit cannot attack specified enemy unit");
-  }
+  throwIfUndefined(
+    getBaseDamage(attacker, defender),
+    "This unit cannot attack specified enemy unit",
+  );
 
   // sonja scop exception (she attacks first when attacked)
   if (

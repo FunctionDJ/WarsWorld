@@ -42,7 +42,7 @@ const subEventToEmittables = (
 
   switch (subEvent.type) {
     case "attack": {
-      const attacker = match.getUnitOrThrow(fromPosition);
+      const attacker = match.getUnit(fromPosition);
 
       //TODO why is this here?
       switch (subEvent.eliminationReason) {
@@ -51,7 +51,7 @@ const subEventToEmittables = (
           break;
         }
         case "all-defender-units-destroyed": {
-          const defender = match.getUnitOrThrow(subEvent.defenderPosition);
+          const defender = match.getUnit(subEvent.defenderPosition);
           defender.player.data.status = "routed";
           break;
         }
@@ -72,7 +72,7 @@ const subEventToEmittables = (
             requireLastMovePosition: false,
           };
         } else if (
-          match.getUnitOrThrow(fromPosition).data.type === "apc" &&
+          match.getUnit(fromPosition).data.type === "apc" &&
           (team.isPositionVisible(fromPosition.addDirection("up")) ||
             team.isPositionVisible(fromPosition.addDirection("down")) ||
             team.isPositionVisible(fromPosition.addDirection("left")) ||
@@ -154,7 +154,7 @@ export const mainEventToEmittables = (
         ...event,
       });
 
-      const unit = match.getUnitOrThrow(event.path.at("last"));
+      const unit = match.getUnit(event.path.at("last"));
 
       return teamsWithSpectator.map((team) => {
         // special visible function for hidden subs and stealth
@@ -166,7 +166,7 @@ export const mainEventToEmittables = (
                 }
 
                 for (const pos of position.getNeighbours()) {
-                  if (match.getUnit(pos)?.player.team.index === team.index) {
+                  if (match.getUnit(pos, "dont-throw")?.player.team.index === team.index) {
                     return true;
                   }
                 }
@@ -224,7 +224,7 @@ export const mainEventToEmittables = (
           appearingUnit:
             shownPath.len() == 0 || team.isPositionVisible(event.path.at(0))
               ? undefined
-              : match.getUnitOrThrow(event.path.at("last")).data,
+              : match.getUnit(event.path.at("last")).data,
         };
 
         return result;

@@ -26,6 +26,7 @@ export class Position {
   }
 
   getNeighbours(): Position[] {
+    // TODO filter neighbour positions that are out of bounds ? (but then we would need map dimensions here)
     return [
       new Position([this.data[0] + 1, this.data[1]]),
       new Position([this.data[0] - 1, this.data[1]]),

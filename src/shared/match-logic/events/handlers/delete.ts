@@ -1,18 +1,11 @@
 import type { MutableMatch } from "shared/wrappers/match/mutable-match";
-import { DispatchableError } from "../../../dispatchable-error";
 import type { DeleteAction } from "../../../schemas/action";
 import type { DeleteEvent } from "../../../types/events";
 import type { MainActionToEvent } from "../handler-types";
 
 export const deleteActionToEvent: MainActionToEvent<DeleteAction> = (match, action) => {
   const player = match.getCurrentTurnPlayer();
-
   const deletedUnit = match.getUnit(action.position);
-
-  if (deletedUnit === undefined) {
-    throw new DispatchableError("No unit to delete was selected");
-  }
-
   player.ownsOrThrow(deletedUnit);
 
   if (player.getUnits().length <= 1) {
@@ -26,5 +19,5 @@ export const deleteActionToEvent: MainActionToEvent<DeleteAction> = (match, acti
 };
 
 export const applyDeleteEvent = (match: MutableMatch, event: DeleteEvent): void => {
-  match.getUnitOrThrow(event.position).remove();
+  match.getUnit(event.position).remove();
 };

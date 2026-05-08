@@ -25,7 +25,7 @@ export const vonBoltAWDS: COProperties = {
       },
       instantEffect(player, positions) {
         if (positions?.length !== 1) {
-          throw new Error("Did not get a bolt position");
+          throw new Error("Did not get exactly 1 bolt position");
         }
 
         for (const unit of player.team.getEnemyUnits()) {

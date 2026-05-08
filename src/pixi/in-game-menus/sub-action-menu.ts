@@ -9,6 +9,7 @@ import {
 import { allDirections } from "shared/schemas/direction";
 import { Path } from "shared/schemas/path";
 import { Position } from "shared/schemas/position";
+import { throwIfUndefined } from "shared/types/throw-helper";
 import type { UnitWrapper } from "shared/wrappers/unit/unit";
 import type { MainAction } from "../../shared/schemas/action";
 import type { MatchWrapper } from "../../shared/wrappers/match/match";
@@ -74,12 +75,14 @@ export default function subActionMenu(
           const repairTilesContainer = new Container();
           repairTilesContainer.label = "repairUnitsBox";
 
+          // TODO maybe we can use unit.getNeighbours() here
+
           for (const dir of allDirections) {
             if (match.map.isOutOfBounds(unit.data.position.addDirection(dir))) {
               continue;
             }
 
-            const unitToRepair = match.getUnit(unit.data.position.addDirection(dir));
+            const unitToRepair = match.getUnit(unit.data.position.addDirection(dir), "dont-throw");
 
             if (unitToRepair?.player.data.slot === unit.player.data.slot) {
               const repairTile = tileConstructor(unit.data.position.addDirection(dir), "#43d9e4");
@@ -179,16 +182,11 @@ export default function subActionMenu(
         }
 
         default: {
-          if (subAction === undefined) {
-            throw new Error(
-              "Received undefined subAction from menu option that doesn't require further interaction: " +
-                String(name),
-            );
-          }
+          const definedSubAction = throwIfUndefined(subAction);
 
           void sendAction({
             type: "move",
-            subAction: subAction,
+            subAction: definedSubAction,
             path: new Path(pathRef.current ?? [newPosition]),
           });
 

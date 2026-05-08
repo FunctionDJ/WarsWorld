@@ -1,3 +1,4 @@
+import { throwIfUndefined } from "./types/throw-helper";
 import type { WWReadOnly } from "./types/ww-readonly";
 
 /**
@@ -7,13 +8,11 @@ import type { WWReadOnly } from "./types/ww-readonly";
  */
 export const arrayAtOrThrow = <T>(array: readonly T[], key: number | "last"): T => {
   const index = key === "last" ? array.length - 1 : key;
-  const item = array[index];
 
-  if (item === undefined) {
-    throw new TypeError(`Tried indexing an array with ${String(key)} but result was undefined`);
-  }
-
-  return item;
+  return throwIfUndefined(
+    array[index],
+    `Tried indexing an array with ${String(key)} but result was undefined`,
+  );
 };
 
 // TODO can this be merged with arrayAtOrThrow() ?
@@ -23,11 +22,10 @@ export const getFromObjectOrThrow = <T extends object, K extends keyof T>(
 ): T[K] => {
   const value = object[key];
 
-  if (value === undefined) {
-    throw new TypeError(`Tried indexing an object with ${String(key)} but result was undefined`);
-  }
-
-  return value;
+  return throwIfUndefined(
+    value,
+    `Tried indexing an object with ${String(key)} but result was undefined`,
+  );
 };
 
 /** maps an array while preserving/adding readonly */

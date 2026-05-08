@@ -12,7 +12,7 @@ export const unloadNoWaitActionToEvent: MainActionToEvent<UnloadNoWaitAction> = 
     throw new DispatchableError("This type of unload is illegal in this version/setting");
   }
 
-  const transportUnit = match.getUnitOrThrow(action.transportPosition);
+  const transportUnit = match.getUnit(action.transportPosition);
   player.ownsOrThrow(transportUnit);
 
   if (!transportUnit.isTransport()) {
@@ -31,7 +31,7 @@ export const unloadNoWaitActionToEvent: MainActionToEvent<UnloadNoWaitAction> = 
 };
 
 export const applyUnloadNoWaitEvent = (match: MutableMatch, event: UnloadNoWaitEvent): void => {
-  const unit = match.getUnitOrThrow(event.transportPosition);
+  const unit = match.getUnit(event.transportPosition);
 
   if (!unit.isTransport()) {
     throw new DispatchableError("Trying to apply unload event to a unit that isn't a transport");

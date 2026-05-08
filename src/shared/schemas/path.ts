@@ -1,3 +1,4 @@
+import { throwIfUndefined } from "shared/types/throw-helper";
 import type { WWReadOnly } from "shared/types/ww-readonly";
 import { z } from "zod";
 import { Position, positionSchema } from "./position";
@@ -10,13 +11,11 @@ export class Path {
    */
   at(readableIndex: number | "last"): WWReadOnly<Position> {
     const index = readableIndex === "last" ? -1 : readableIndex;
-    const pos = this.data.at(index);
 
-    if (pos === undefined) {
-      throw new TypeError(`Could not get position at index ${String(index)} of path`);
-    }
-
-    return pos;
+    return throwIfUndefined(
+      this.data.at(index),
+      `Could not get position at index ${String(readableIndex)} of path`,
+    );
   }
 
   len(): number {

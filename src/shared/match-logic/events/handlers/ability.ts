@@ -1,6 +1,5 @@
 import { DispatchableError } from "shared/dispatchable-error";
 import type { AbilityAction } from "shared/schemas/action";
-import { allDirections } from "shared/schemas/direction";
 import type { Visibility } from "shared/schemas/unit";
 import type { AbilityEvent } from "shared/types/events";
 import type { CapturableTile } from "shared/types/server-match-state";
@@ -57,7 +56,7 @@ function infantryOrMechAbilityToEvent<TVisibility extends Visibility>(
     };
   }
 
-  const previousOwner = match.getPlayerBySlot(capturingTile.playerSlot);
+  const previousOwner = match.getPlayerBySlot(capturingTile.playerSlot, "dont-throw");
 
   if (previousOwner === undefined) {
     return basicEvent; // should only happen when capturing tiles owned by neutral (slot = -1)
@@ -98,7 +97,7 @@ export const abilityActionToEvent: SubActionToEvent<AbilityAction> = (
   fromPosition,
 ) => {
   const player = match.getCurrentTurnPlayer();
-  const unit = match.getUnitOrThrow(fromPosition);
+  const unit = match.getUnit(fromPosition);
   player.ownsOrThrow(unit);
 
   if (unit.isInfantryOrMech()) {
@@ -125,12 +124,6 @@ const eliminatePlayerByCapture = (match: MutableMatch, capturingUnit: UnitWrappe
 
   const playerToEliminate = match.getPlayerBySlot(capturedTile.playerSlot);
 
-  if (playerToEliminate === undefined) {
-    throw new Error(
-      `Could not eliminate player by slot ${String(capturedTile.playerSlot)} because they could not be found`,
-    );
-  }
-
   const newOwnerSlot = capturingUnit.data.playerSlot;
 
   for (const changeableTile of match.changeableTiles) {
@@ -153,7 +146,7 @@ const eliminatePlayerByCapture = (match: MutableMatch, capturingUnit: UnitWrappe
 };
 
 export const applyAbilityEvent: ApplySubEvent<AbilityEvent> = (match, event, fromPosition) => {
-  const unit = match.getUnitOrThrow(fromPosition);
+  const unit = match.getUnit(fromPosition);
 
   switch (unit.data.type) {
     case "infantry":
@@ -214,8 +207,8 @@ export const applyAbilityEvent: ApplySubEvent<AbilityEvent> = (match, event, fro
       break;
     }
     case "apc": {
-      for (const direction of allDirections) {
-        match.getUnit(unit.data.position.addDirection(direction))?.resupply();
+      for (const neighbour of unit.getNeighbouringUnits().filter((u) => unit.player.owns(u))) {
+        neighbour.resupply();
       }
 
       break;

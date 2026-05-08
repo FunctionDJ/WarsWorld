@@ -2,6 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import type { SpritesheetData, SpritesheetFrameData } from "pixi.js";
+import { throwIfUndefined } from "shared/types/throw-helper";
 import sharp from "sharp";
 import yargs from "yargs";
 
@@ -54,14 +55,13 @@ for (const nation of nations) {
           );
         }
 
-        if (name === undefined) {
-          throw new Error(
-            `can't handle this frame key for compositing the file, name: ${String(name)}`,
-          );
-        }
+        const definedName = throwIfUndefined(
+          name,
+          `can't handle this frame key for compositing the file, name is undefined`,
+        );
 
         return {
-          input: getTexturePath(source, nation, name + ".png"),
+          input: getTexturePath(source, nation, definedName + ".png"),
           left: frame.x,
           top: frame.y,
         };

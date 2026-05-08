@@ -1,6 +1,5 @@
 import type { LeagueType, Match, MatchStatus, Player, WWMap } from "generated/browser";
 import { arrayAtOrThrow } from "shared/array-utilities";
-import { DispatchableError } from "shared/dispatchable-error";
 import type { MatchRules } from "shared/schemas/match-rules";
 import type { PlayerSlot } from "shared/schemas/player-slot";
 import type { Position } from "shared/schemas/position";
@@ -11,6 +10,12 @@ import {
   type ChangeableTile,
   type PlayerInMatch,
 } from "shared/types/server-match-state";
+import {
+  findOrThrow,
+  throwIfUndefined,
+  throwIfUndefinedUnlessAccepted,
+  type DontThrow,
+} from "shared/types/throw-helper";
 import type { WWReadOnly } from "shared/types/ww-readonly";
 import { MutablePlayerInMatch } from "../player/mutable-player-in-match";
 import { getTeamPlayers } from "../team/get-team-players";
@@ -65,22 +70,15 @@ export class MutableMatch extends MatchWrapper {
       .toSorted((p1, p2) => p1.data.slot - p2.data.slot);
   }
 
-  getPlayerBySlot(playerSlot: PlayerSlot): MutablePlayerInMatch | undefined {
+  getPlayerBySlot(playerSlot: PlayerSlot): MutablePlayerInMatch;
+  getPlayerBySlot(playerSlot: PlayerSlot, dontThrow: DontThrow): MutablePlayerInMatch | undefined;
+  getPlayerBySlot(playerSlot: PlayerSlot, dontThrow?: DontThrow): MutablePlayerInMatch | undefined {
     if (playerSlot < 0) {
       return this.neutralPlayer;
     }
 
-    return this.getAllPlayers().find((p) => p.data.slot === playerSlot);
-  }
-
-  getPlayerBySlotOrThrow(playerSlot: PlayerSlot): MutablePlayerInMatch {
-    const player = this.getPlayerBySlot(playerSlot);
-
-    if (player === undefined) {
-      throw new Error(`Could not find player by slot ${String(playerSlot)}`);
-    }
-
-    return player;
+    const player = this.getAllPlayers().find((p) => p.data.slot === playerSlot);
+    return throwIfUndefinedUnlessAccepted(player, dontThrow);
   }
 
   setWeather(weather: Weather, duration: number): void {
@@ -97,14 +95,7 @@ export class MutableMatch extends MatchWrapper {
   }
 
   addUnwrappedPlayer(player: PlayerInMatch): MutablePlayerInMatch {
-    const teamIndex = this.rules.teamMapping[player.slot];
-
-    if (teamIndex === undefined) {
-      throw new Error(
-        `Player slot ${String(player.slot)} does not have a corresponding team in the team mapping.`,
-      );
-    }
-
+    const teamIndex = throwIfUndefined(this.rules.teamMapping[player.slot]);
     const foundTeam = this.teams.find((team) => team.index === teamIndex);
 
     if (foundTeam === undefined) {
@@ -137,31 +128,18 @@ export class MutableMatch extends MatchWrapper {
     }
   }
 
-  getUnit(position: Position): MutableUnit | undefined {
-    return this.units.find((u) => position.isSame(u.data.position));
+  getUnit(position: Position): MutableUnit;
+  getUnit(position: Position, dontThrow: DontThrow): MutableUnit | undefined;
+  getUnit(position: Position, dontThrow?: DontThrow): MutableUnit | undefined {
+    const unit = this.units.find((u) => position.isSame(u.data.position));
+    return throwIfUndefinedUnlessAccepted(unit, dontThrow);
   }
 
-  getUnitOrThrow(position: Position): MutableUnit {
-    const unit = this.getUnit(position);
-
-    if (unit === undefined) {
-      throw new DispatchableError(`No unit found at ${JSON.stringify(position)}`);
-    }
-
-    return unit;
-  }
-
-  getPlayerById(playerId: Player["id"]): MutablePlayerInMatch | undefined {
-    return this.getAllPlayers().find((p) => p.data.id === playerId);
+  getPlayerById(playerId: Player["id"]): MutablePlayerInMatch {
+    return findOrThrow(this.getAllPlayers(), (p) => p.data.id === playerId);
   }
 
   getCurrentTurnPlayer(): MutablePlayerInMatch {
-    const player = this.getAllPlayers().find((p) => p.data.hasCurrentTurn);
-
-    if (player === undefined) {
-      throw new Error("No player with current turn was found");
-    }
-
-    return player;
+    return findOrThrow(this.getAllPlayers(), (p) => p.data.hasCurrentTurn);
   }
 }

@@ -1,6 +1,8 @@
 import type { Config } from "tailwindcss";
 // import { fontFamily } from "tailwindcss/defaultTheme";
 
+// TODO this config file might be for tailwind v3 only (?)
+
 export default {
   prefix: "@",
   content: ["./src/**/*.{ts,tsx}"],

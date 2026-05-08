@@ -11,7 +11,7 @@ export const launchMissileActionToEvent: SubActionToEvent<LaunchMissileAction> =
   fromPosition,
 ) => {
   const player = match.getCurrentTurnPlayer();
-  const unit = match.getUnitOrThrow(fromPosition);
+  const unit = match.getUnit(fromPosition);
   player.ownsOrThrow(unit);
 
   const tile = match.getTile(fromPosition);

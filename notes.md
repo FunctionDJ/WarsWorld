@@ -1,4 +1,3 @@
-- replace `null` with `undefined` across code base
 - work on issues reported by fallow
 - work on TODOs and // [foo] comments, tweak todo tree extension to pick up those patterns
 - consider "WWUnit" naming scheme that avoids conflicts with other package imports

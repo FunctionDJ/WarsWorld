@@ -67,18 +67,19 @@ export class PlayerInMatchWrapper<TVisibility extends Visibility = Visibility> {
   /**
    * gets the next player, looping back around to index 0
    * if needed until current player slot.
-   * cant be readonly.
    */
-  getNextAlivePlayer(): PlayerInMatchWrapper | undefined {
+  getNextAlivePlayer(): PlayerInMatchWrapper {
     const nextSlot = (n: number): number => (n + 1) % this.match.map.data.numberOfPlayers;
 
     for (let index = nextSlot(this.data.slot); index !== this.data.slot; index = nextSlot(index)) {
       const player = this.match.getPlayerBySlot(index);
 
-      if (player?.data.status === "alive") {
+      if (player.data.status === "alive") {
         return player;
       }
     }
+
+    throw new DispatchableError("No next alive player");
   }
 
   getPowerStarCost(): number {

@@ -1,4 +1,5 @@
 import type { Position } from "shared/schemas/position";
+import { throwIfUndefined } from "shared/types/throw-helper";
 import type { UnitWrapper } from "../unit/unit";
 import { getUnitVisionRange } from "./get-unit-vision-range";
 
@@ -11,11 +12,7 @@ export const changeVision = (
   undiscoveredPositions: Position[],
 ): void => {
   const index = position.data[1] * mapWidth + position.data[0];
-  const currentVision = visionArray[index];
-
-  if (currentVision === undefined) {
-    throw new Error("Position for vision update is out of bounds");
-  }
+  const currentVision = throwIfUndefined(visionArray[index], "Position is out of bounds");
 
   if (addVision) {
     visionArray[index] = currentVision + 1;

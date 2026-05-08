@@ -1,4 +1,5 @@
 import type { WWMap } from "generated/browser";
+import { DispatchableError } from "shared/dispatchable-error";
 import type { PlayerBeforeMatch, PlayerInMatch } from "shared/types/server-match-state";
 import type { WWReadOnly } from "shared/types/ww-readonly";
 import type { MapWrapper } from "shared/wrappers/map";
@@ -49,10 +50,10 @@ export const matchToFrontend = (
 
 export function getNextAvailableSlot(match: MatchWrapper): number {
   for (let index = 0; index < match.map.data.numberOfPlayers; index++) {
-    if (match.getPlayerBySlot(index) === undefined) {
+    if (match.getPlayerBySlot(index, "dont-throw") === undefined) {
       return index;
     }
   }
 
-  throw new Error("No player slots available (game full)");
+  throw new DispatchableError("No player slots available (game full)");
 }

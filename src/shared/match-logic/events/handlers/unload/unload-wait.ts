@@ -4,6 +4,7 @@ import { UnloadPositionError } from "shared/match-logic/logic-errors";
 import type { UnloadWaitAction } from "shared/schemas/action";
 import type { Position } from "shared/schemas/position";
 import type { UnloadWaitEvent } from "shared/types/events";
+import { throwIfUndefined } from "shared/types/throw-helper";
 import type { MutableMatch } from "shared/wrappers/match/mutable-match";
 import type { SubActionToEvent } from "../../handler-types";
 
@@ -18,7 +19,7 @@ export const unloadWaitActionToEvent: SubActionToEvent<UnloadWaitAction> = (
     throw new DispatchableError("This type of unload is illegal in this version/setting");
   }
 
-  const transportUnit = match.getUnitOrThrow(fromPosition);
+  const transportUnit = match.getUnit(fromPosition);
   player.ownsOrThrow(transportUnit);
 
   if (action.unloads.length === 0) {
@@ -29,14 +30,9 @@ export const unloadWaitActionToEvent: SubActionToEvent<UnloadWaitAction> = (
     throw new DispatchableError("Trying to unload from a unit that can't load units");
   }
 
-  if (transportUnit.data.loadedUnit === undefined) {
-    throw new DispatchableError("Transport doesn't currently have a loaded unit");
-  }
-
+  throwIfUndefined(transportUnit.data.loadedUnit, "Transport doesn't currently have a loaded unit");
   const unloadPosition = fromPosition.addDirection(arrayAtOrThrow(action.unloads, 0).direction);
-
   match.map.throwIfOutOfBounds(unloadPosition);
-
   const modifiedUnloads = [...action.unloads];
 
   if (action.unloads.length === 1) {
@@ -100,28 +96,20 @@ export const applyUnloadWaitEvent = (
   event: UnloadWaitEvent,
   transportPosition: Position,
 ): void => {
-  const unit = match.getUnitOrThrow(transportPosition);
+  const unit = match.getUnit(transportPosition);
 
   if (event.unloads.length === 1) {
     if (arrayAtOrThrow(event.unloads, 0).isSecondUnit && "loadedUnit2" in unit.data) {
-      if (unit.data.loadedUnit2 === undefined) {
-        throw new Error("Can't unload from empty slot 2");
-      }
-
       unit.player.addUnwrappedUnit({
-        ...unit.data.loadedUnit2,
+        ...throwIfUndefined(unit.data.loadedUnit2),
         isReady: false,
         position: transportPosition.addDirection(arrayAtOrThrow(event.unloads, 1).direction),
       });
 
       unit.data.loadedUnit2 = undefined;
     } else if (!arrayAtOrThrow(event.unloads, 0).isSecondUnit && unit.isTransport()) {
-      if (unit.data.loadedUnit === undefined) {
-        throw new Error("Can't unload from empty slot 1");
-      }
-
       unit.player.addUnwrappedUnit({
-        ...unit.data.loadedUnit,
+        ...throwIfUndefined(unit.data.loadedUnit),
         isReady: false,
         position: transportPosition.addDirection(arrayAtOrThrow(event.unloads, 0).direction),
       });
@@ -137,18 +125,17 @@ export const applyUnloadWaitEvent = (
 
   //unload all. unloads[0] refers to 1st unit, unloads[1] refers to 2nd unit
   if (event.unloads.length === 2 && "loadedUnit" in unit.data && "loadedUnit2" in unit.data) {
-    if (unit.data.loadedUnit === undefined || unit.data.loadedUnit2 === undefined) {
-      throw new Error("Tried to unload a unit from an empty loadedUnit slot");
-    }
+    const loadedUnit = throwIfUndefined(unit.data.loadedUnit);
+    const loadedUnit2 = throwIfUndefined(unit.data.loadedUnit2);
 
     unit.player.addUnwrappedUnit({
-      ...unit.data.loadedUnit,
+      ...loadedUnit,
       isReady: false,
       position: transportPosition.addDirection(arrayAtOrThrow(event.unloads, 0).direction),
     });
 
     unit.player.addUnwrappedUnit({
-      ...unit.data.loadedUnit2,
+      ...loadedUnit2,
       isReady: false,
       position: transportPosition.addDirection(arrayAtOrThrow(event.unloads, 1).direction),
     });

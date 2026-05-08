@@ -45,7 +45,7 @@ const getIsJoinOrLoad = (
 
   const { path } = mainEventWithoutSubEvent;
 
-  if (match.getUnit(path.at("last")) === undefined) {
+  if (match.getUnit(path.at("last"), "dont-throw") === undefined) {
     return false;
   }
 

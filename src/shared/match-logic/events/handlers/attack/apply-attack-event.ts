@@ -11,8 +11,8 @@ export const applyAttackEvent = (
   event: AttackEvent,
   position: Position,
 ): void => {
-  const attacker = match.getUnitOrThrow(position);
-  const defender = match.getUnit(event.defenderPosition);
+  const attacker = match.getUnit(position);
+  const defender = match.getUnit(event.defenderPosition, "dont-throw");
 
   if (defender === undefined) {
     // pipe seam
@@ -83,11 +83,11 @@ export const applyEmittableAttackEvent = (
     //power charge
     if (event.attacker.powerChargeGained != undefined) {
       const player = match.getPlayerBySlot(event.attacker.playerSlot);
-      player?.gainPowerCharge(event.attacker.powerChargeGained);
+      player.gainPowerCharge(event.attacker.powerChargeGained);
     }
 
     if (event.attacker.position) {
-      const attackerUnit = match.getUnitOrThrow(event.attacker.position);
+      const attackerUnit = match.getUnit(event.attacker.position);
 
       //HP change
       if (event.attacker.HP != undefined) {
@@ -108,10 +108,8 @@ export const applyEmittableAttackEvent = (
     if (event.attacker.damageTakenInFunds != undefined && event.defender) {
       const defendingPlayer = match.getPlayerBySlot(event.defender.playerSlot);
 
-      if (defendingPlayer) {
-        //^ should always be true
-        applySashaFundsDamage(defendingPlayer, event.attacker.damageTakenInFunds);
-      }
+      //^ should always be true
+      applySashaFundsDamage(defendingPlayer, event.attacker.damageTakenInFunds);
     }
   }
 
@@ -119,11 +117,11 @@ export const applyEmittableAttackEvent = (
     //power charge
     if (event.defender.powerChargeGained != undefined) {
       const player = match.getPlayerBySlot(event.defender.playerSlot);
-      player?.gainPowerCharge(event.defender.powerChargeGained);
+      player.gainPowerCharge(event.defender.powerChargeGained);
     }
 
     if (event.defender.position) {
-      const defenderUnit = match.getUnit(event.defender.position);
+      const defenderUnit = match.getUnit(event.defender.position, "dont-throw");
 
       if (defenderUnit === undefined) {
         //pipe seam
@@ -157,11 +155,7 @@ export const applyEmittableAttackEvent = (
     //special case for Sasha SCOP (damage taken in funds for money)
     if (event.defender.damageTakenInFunds != undefined && event.attacker) {
       const attackingPlayer = match.getPlayerBySlot(event.attacker.playerSlot);
-
-      if (attackingPlayer) {
-        //^ should always be true
-        applySashaFundsDamage(attackingPlayer, event.defender.damageTakenInFunds);
-      }
+      applySashaFundsDamage(attackingPlayer, event.defender.damageTakenInFunds);
     }
   }
 };

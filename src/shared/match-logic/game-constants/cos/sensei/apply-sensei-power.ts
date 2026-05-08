@@ -26,7 +26,11 @@ export function applySenseiPowerSpawn(
       const position = new Position([x, y]);
       const tile = match.getTile(position);
 
-      if (tile.type !== "city" || !player.owns(tile) || match.getUnit(position) !== undefined) {
+      if (
+        tile.type !== "city" ||
+        !player.owns(tile) ||
+        match.getUnit(position, "dont-throw") !== undefined
+      ) {
         continue;
       }
 

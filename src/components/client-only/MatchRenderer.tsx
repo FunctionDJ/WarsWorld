@@ -54,9 +54,7 @@ export function MatchRenderer({ match, player, spriteSheets, turn, setTurn }: Pr
             break;
           }
           case "move": {
-            const pw = event.path;
-
-            if (event.path.len() === 0 || !match.getUnit(pw.at(0))) {
+            if (event.path.len() === 0 || !match.getUnit(event.path.at(0), "dont-throw")) {
               break;
             }
 
@@ -68,7 +66,7 @@ export function MatchRenderer({ match, player, spriteSheets, turn, setTurn }: Pr
                 break;
               }
               case "ability": {
-                applyAbilityEvent(match, event.subEvent, pw.at("last"));
+                applyAbilityEvent(match, event.subEvent, event.path.at("last"));
                 break;
               }
             }

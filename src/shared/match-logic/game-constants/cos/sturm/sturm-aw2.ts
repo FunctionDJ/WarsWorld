@@ -27,7 +27,7 @@ export const sturmAW2: COProperties = {
       calculatePositions: (player) => [getRandomMeteorPosition(player, 8, false)],
       instantEffect(player, positions) {
         if (positions?.length !== 1) {
-          throw new Error("Did not get a meteor position");
+          throw new Error("Did not get exactly 1 meteor position");
         }
 
         player.match.damageUntil1HPInRadius({

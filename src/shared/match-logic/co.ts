@@ -1,6 +1,7 @@
 import type { CO, COID } from "shared/schemas/co";
 import type { GameVersion } from "shared/schemas/game-version";
 import type { Position } from "shared/schemas/position";
+import { throwIfUndefined } from "shared/types/throw-helper";
 import type { MutablePlayerInMatch } from "shared/wrappers/player/mutable-player-in-match";
 import type { PlayerInMatchWrapper } from "shared/wrappers/player/player-in-match";
 import type { Hooks } from "./co-hooks";
@@ -158,12 +159,5 @@ const COIndex: Record<GameVersion, Map<CO, COProperties>> = {
 
 export function getCOProperties(id: COID): COProperties {
   const map = COIndex[id.version];
-
-  const coProperties = map.get(id.name);
-
-  if (coProperties === undefined) {
-    throw new Error(`CO ${JSON.stringify(id)} is not in the COIndex. (e.g. not implemented/added)`);
-  }
-
-  return coProperties;
+  return throwIfUndefined(map.get(id.name));
 }

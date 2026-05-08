@@ -1,3 +1,4 @@
+import { safeRemoveFromArray } from "shared/types/throw-helper";
 import type { MatchWrapper } from "shared/wrappers/match/match";
 import type { MatchInSetup } from "shared/wrappers/match/match-in-setup";
 
@@ -19,13 +20,7 @@ class PageMatchIndex {
   }
 
   removeMatch(match: MatchWrapper | MatchInSetup): void {
-    const listIndex = this.list.findIndex((m) => m.id === match.id);
-
-    if (listIndex === -1) {
-      throw new Error(`Tried to remove match ${match.id} from idIndex but wasn't found`);
-    }
-
-    this.list.splice(listIndex, 1);
+    safeRemoveFromArray(this.list, (m) => m.id === match.id);
   }
 }
 

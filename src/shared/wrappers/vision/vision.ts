@@ -1,4 +1,5 @@
 import { Position } from "shared/schemas/position";
+import { throwIfUndefined } from "shared/types/throw-helper";
 import type { Team } from "../team/team";
 import { buildVisionArray } from "./vision-builder";
 
@@ -34,7 +35,7 @@ export class Vision {
 
         if (
           ("playerSlot" in tile &&
-            team.match.getPlayerBySlot(tile.playerSlot)?.team.index === team.index) ||
+            team.match.getPlayerBySlot(tile.playerSlot).team.index === team.index) ||
           tile.type === "pipeSeam"
         ) {
           visionBuilder.addOwnedProperty(position);
@@ -76,13 +77,7 @@ export class Vision {
    * Returns is a position is visible, !supposing fog of war is activated!
    */
   isPositionVisible(position: Position): boolean {
-    const result: number | undefined =
-      this.visionArray[position.data[1] * this.mapWidth + position.data[0]];
-
-    if (result === undefined) {
-      throw new Error("Position for visible check is out of bounds");
-    }
-
-    return result > 0;
+    const result = this.visionArray[position.data[1] * this.mapWidth + position.data[0]];
+    return throwIfUndefined(result, `Position ${position.toString()} is out of bounds`) > 0;
   }
 }

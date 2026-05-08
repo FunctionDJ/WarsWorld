@@ -17,7 +17,7 @@ export const getBattleForecast = (
   newUnitPosition: Position,
   attackingAtPosition: Position,
 ): BattleForecast => {
-  let defender = match.getUnit(attackingAtPosition);
+  let defender = match.getUnit(attackingAtPosition, "dont-throw");
   const isPipeSeamAttack = defender === undefined;
 
   if (!defender) {

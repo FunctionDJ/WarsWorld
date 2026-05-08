@@ -49,7 +49,7 @@ export class Team {
 
   canSeeUnitAtPosition(position: Position): boolean {
     const tile = this.match.getTile(position);
-    const unit = this.match.getUnit(position);
+    const unit = this.match.getUnit(position, "dont-throw");
 
     if (unit === undefined) {
       return false; //no unit in specified position

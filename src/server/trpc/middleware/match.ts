@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { matchStore } from "server/match-store";
 import { DispatchableError } from "shared/dispatchable-error";
+import { throwIfUndefined } from "shared/types/throw-helper";
 import { z } from "zod";
 import { t } from "../trpc-init";
 
@@ -21,15 +22,7 @@ export const matchMiddleware = t.middleware(async ({ ctx, input, next }) => {
   }
 
   const { matchId } = parseResult.data;
-
-  const match = matchStore.get(matchId);
-
-  if (match === undefined) {
-    throw new TRPCError({
-      code: "NOT_FOUND",
-      message: `Match with id ${matchId} not found`,
-    });
-  }
+  const match = throwIfUndefined(matchStore.get(matchId), `Match with id ${matchId} not found`);
 
   if (match.type === "match-in-setup") {
     throw new DispatchableError("Match is in setup, not in-game");
@@ -54,15 +47,7 @@ export const matchInSetupMiddleware = t.middleware(async ({ ctx, input, next }) 
   }
 
   const { matchId } = parseResult.data;
-
-  const match = matchStore.get(matchId);
-
-  if (match === undefined) {
-    throw new TRPCError({
-      code: "NOT_FOUND",
-      message: `Match with id ${matchId} not found`,
-    });
-  }
+  const match = throwIfUndefined(matchStore.get(matchId), `Match with id ${matchId} not found`);
 
   if (match.type !== "match-in-setup") {
     throw new DispatchableError("Match is not in setup");

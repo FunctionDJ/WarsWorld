@@ -39,10 +39,6 @@ export const passTurnActionToEvent: MainActionToEvent<PassTurnAction> = (match, 
   turnLoop: while (true) {
     const nextTurnPlayer = match.getCurrentTurnPlayer().getNextAlivePlayer();
 
-    if (nextTurnPlayer === undefined) {
-      throw new Error("No next alive player");
-    }
-
     unitLoop: for (const unit of nextTurnPlayer.getUnits()) {
       if (unit.properties.facility === "base") {
         // land units can't crash
@@ -108,20 +104,11 @@ export const applyPassTurnEvent: ApplyEvent<PassTurnEvent> = (match, event) => {
     // TODO when we pass multiple turns, getCurrentTurnPlayer relies on the just eliminated / previous player still having a turn
     // i'm just marking this in case this doesn't work as planned.
     const lastTurnPlayer = match.getCurrentTurnPlayer();
-
     unwaitUnits(lastTurnPlayer);
-
     lastTurnPlayer.data.hasCurrentTurn = false;
-
     const nextTurnPlayer = lastTurnPlayer.getNextAlivePlayer();
-
-    if (nextTurnPlayer === undefined) {
-      throw new Error("No next alive player");
-    }
-
     nextTurnPlayer.data.hasCurrentTurn = true;
     nextTurnPlayer.data.COPowerState = "no-power";
-
     updateWeather(nextTurnPlayer, turn.newWeather);
     nextTurnPlayer.data.funds += nextTurnPlayer.getFundsPerTurn();
 

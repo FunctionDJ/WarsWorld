@@ -112,8 +112,8 @@ const match = new MutableMatch(
   0,
 );
 
-const p1 = match.getPlayerBySlotOrThrow(0);
-const p2 = match.getPlayerBySlotOrThrow(1);
+const p1 = match.getPlayerBySlot(0);
+const p2 = match.getPlayerBySlot(1);
 
 const u1 = p1.addUnwrappedUnit({
   type: "infantry",

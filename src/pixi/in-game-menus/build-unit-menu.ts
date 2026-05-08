@@ -6,6 +6,7 @@ import { unitPropertiesMap } from "shared/match-logic/game-constants/unit-proper
 import type { MainAction } from "shared/schemas/action";
 import type { Position } from "shared/schemas/position";
 import { unitTypes, type UnitTypeString } from "shared/schemas/unit";
+import { throwIfUndefined } from "shared/types/throw-helper";
 import type { MatchWrapper } from "../../shared/wrappers/match/match";
 import type { PlayerInMatchWrapper } from "../../shared/wrappers/player/player-in-match";
 import { createInGameMenu } from "./menu-template";
@@ -46,11 +47,7 @@ export const createMenuElementsForUnits = (
     menuElement.addChild(unitBG);
 
     //the unit sprite we see on the menu
-    const spriteOptions = spriteSheet.animations[unitType];
-
-    if (spriteOptions === undefined) {
-      throw new Error(`Sprite options for unit type ${String(unitType)} not found in spritesheet.`);
-    }
+    const spriteOptions = throwIfUndefined(spriteSheet.animations[unitType]);
 
     const unitSprite = new AnimatedSprite(spriteOptions);
     unitSprite.y = yValue;
@@ -150,11 +147,7 @@ export const buildUnitMenu = (
   );
 
   for (const [i, menuElement] of menuElements.entries()) {
-    const unitType = buildableUnitTypes[i];
-
-    if (unitType === undefined) {
-      throw new Error(`Unit type for menu element index ${i} is undefined.`);
-    }
+    const unitType = throwIfUndefined(buildableUnitTypes[i]);
 
     if (!(player.data.funds >= unitPropertiesMap[unitType].cost)) {
       continue; //if not selectable because no funds, don't implement click behaviour

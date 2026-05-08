@@ -12,7 +12,7 @@ export const repairActionToEvent: SubActionToEvent<RepairAction> = (
   fromPosition,
 ) => {
   const player = match.getCurrentTurnPlayer();
-  const unit = match.getUnitOrThrow(fromPosition);
+  const unit = match.getUnit(fromPosition);
   player.ownsOrThrow(unit);
 
   // TESTED: if trying to repair but no funds, unit will get resupplied but not repaired
@@ -23,13 +23,8 @@ export const repairActionToEvent: SubActionToEvent<RepairAction> = (
 
   const repairPosition = fromPosition.addDirection(action.direction);
   match.map.throwIfOutOfBounds(repairPosition);
-
-  const repairedUnit = match.getUnitOrThrow(repairPosition);
-
-  if (!player.owns(repairedUnit)) {
-    throw new DispatchableError("You don't own the repaired unit");
-  }
-
+  const repairedUnit = match.getUnit(repairPosition);
+  player.ownsOrThrow(repairedUnit);
   return action;
 };
 
@@ -39,9 +34,7 @@ export const applyRepairEvent = (
   fromPosition: Position,
 ): void => {
   const player = match.getCurrentTurnPlayer();
-
-  const repairedUnit = match.getUnitOrThrow(fromPosition.addDirection(event.direction));
-
+  const repairedUnit = match.getUnit(fromPosition.addDirection(event.direction));
   repairedUnit.resupply();
 
   //heal for free if visual hp is 10

@@ -38,7 +38,7 @@ export const fillDiscoveredUnitsAndProperties = (
     const discoveredProperties: CapturableTile[] = [];
 
     for (const position of team.vision.getDiscoveredPositionsAndClear()) {
-      const unit = match.getUnit(position);
+      const unit = match.getUnit(position, "dont-throw");
       const tile = match.getTile(position);
 
       if (unit !== undefined) {

@@ -52,9 +52,12 @@ export const getAvailableSubActions = (
   //check for wait / join / load (move validity
   // already checked somewhere else)
   //if loading / joining, there is only one menu option
-  if (match.getUnit(newPosition) === undefined || newPosition.isSame(unit.data.position)) {
+  if (
+    match.getUnit(newPosition, "dont-throw") === undefined ||
+    newPosition.isSame(unit.data.position)
+  ) {
     menuOptions.set(AvailableSubActions.Wait, { type: "wait" });
-  } else if (match.getUnit(newPosition)?.data.type === unit.data.type) {
+  } else if (match.getUnit(newPosition, "dont-throw")?.data.type === unit.data.type) {
     menuOptions.set(AvailableSubActions.Join, { type: "wait" });
     return menuOptions;
   } else {
@@ -87,7 +90,7 @@ export const getAvailableSubActions = (
               addAttackSubaction = true;
             }
 
-            const attackableUnit = match.getUnit(pos);
+            const attackableUnit = match.getUnit(pos, "dont-throw");
 
             if (
               attackableUnit &&

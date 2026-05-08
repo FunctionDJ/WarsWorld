@@ -34,15 +34,12 @@ export const buildActionToEvent: MainActionToEvent<BuildAction> = (match, action
     throw new DispatchableError("You don't have enough funds to build this unit");
   }
 
-  if (match.getUnit(action.position) !== undefined) {
+  if (match.getUnit(action.position, "dont-throw") !== undefined) {
     throw new DispatchableError("Can't build where there's a unit already");
   }
 
   const tile = match.getTile(action.position);
-
-  if (!player.owns(tile)) {
-    throw new DispatchableError("You don't own this tile or this tile cannot be owned");
-  }
+  player.ownsOrThrow(tile);
 
   const hachiScopLandUnit =
     facility === "base" &&

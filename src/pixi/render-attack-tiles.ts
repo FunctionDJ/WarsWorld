@@ -44,7 +44,7 @@ export function renderAttackTiles(
       attackTileContainer.getChildByName("probabilities")?.destroy();
 
       const unit1 = currentUnitClickedRef.current;
-      const unit2 = match.getUnit(pos);
+      const unit2 = match.getUnit(pos, "dont-throw");
 
       if (unit1 !== undefined && unit2 !== undefined) {
         console.log("PATHREF:", pathRef, pathRef.current);

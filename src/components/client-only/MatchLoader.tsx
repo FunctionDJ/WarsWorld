@@ -63,10 +63,6 @@ export function MatchLoader({ matchId, playerId, spritesheetDataByArmy }: Props)
 
   const player = fullMatchQuery.data.getPlayerById(playerId);
 
-  if (player === undefined) {
-    throw new Error("Could not find player by playerId in match wrapper in MatchLoader");
-  }
-
   return (
     <div className="tw:w-full tw:h-full tw:flex tw:flex-col tw:items-center tw:justify-center tw:py-4">
       <MatchRenderer

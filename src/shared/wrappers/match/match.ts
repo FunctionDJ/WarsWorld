@@ -1,5 +1,4 @@
 import type { LeagueType, Match, MatchStatus, Player, WWMap } from "generated/browser";
-import { DispatchableError } from "shared/dispatchable-error";
 import { type MatchRules } from "shared/schemas/match-rules";
 import type { PlayerSlot } from "shared/schemas/player-slot";
 import type { Position } from "shared/schemas/position";
@@ -11,6 +10,11 @@ import {
   type ChangeableTile,
   type PlayerInMatch,
 } from "shared/types/server-match-state";
+import {
+  findOrThrow,
+  throwIfUndefinedUnlessAccepted,
+  type DontThrow,
+} from "shared/types/throw-helper";
 import type { WWReadOnly } from "shared/types/ww-readonly";
 import { MapWrapper } from "../map";
 import { PlayerInMatchWrapper } from "../player/player-in-match";
@@ -136,13 +140,7 @@ export class MatchWrapper {
 
   // PLAYER STUFF **************************************************************
   getCurrentTurnPlayer(): PlayerInMatchWrapper {
-    const player = this.getAllPlayers().find((p) => p.data.hasCurrentTurn);
-
-    if (player === undefined) {
-      throw new Error("No player with current turn was found");
-    }
-
-    return player;
+    return findOrThrow(this.getAllPlayers(), (p) => p.data.hasCurrentTurn);
   }
 
   getAllPlayers(): readonly PlayerInMatchWrapper[] {
@@ -151,40 +149,25 @@ export class MatchWrapper {
       .toSorted((p1, p2) => p1.data.slot - p2.data.slot);
   }
 
-  getPlayerById(playerId: Player["id"]): WWReadOnly<PlayerInMatchWrapper> | undefined {
-    return this.getAllPlayers().find((p) => p.data.id === playerId);
+  getPlayerById(playerId: Player["id"]): WWReadOnly<PlayerInMatchWrapper> {
+    return findOrThrow(this.getAllPlayers(), (p) => p.data.id === playerId);
   }
 
-  getPlayerBySlot(playerSlot: PlayerSlot): PlayerInMatchWrapper | undefined {
+  getPlayerBySlot(playerSlot: PlayerSlot, dontThrow: DontThrow): PlayerInMatchWrapper | undefined;
+  getPlayerBySlot(playerSlot: PlayerSlot): PlayerInMatchWrapper;
+  getPlayerBySlot(playerSlot: PlayerSlot, dontThrow?: DontThrow): PlayerInMatchWrapper | undefined {
     if (playerSlot === -1) {
       return this.neutralPlayer;
     }
 
-    return this.getAllPlayers().find((p) => p.data.slot === playerSlot);
+    const player = this.getAllPlayers().find((p) => p.data.slot === playerSlot);
+    return throwIfUndefinedUnlessAccepted(player, dontThrow);
   }
 
-  getPlayerBySlotOrThrow(playerSlot: PlayerSlot): PlayerInMatchWrapper {
-    const player = this.getPlayerBySlot(playerSlot);
-
-    if (player === undefined) {
-      throw new Error(`Could not find player by slot ${String(playerSlot)}`);
-    }
-
-    return player;
-  }
-
-  // UNIT STUFF ****************************************************************
-  getUnit(position: Position): UnitWrapper | undefined {
-    return this.units.find((u) => position.isSame(u.data.position));
-  }
-
-  getUnitOrThrow(position: Position): UnitWrapper {
-    const unit = this.getUnit(position);
-
-    if (unit === undefined) {
-      throw new DispatchableError(`No unit found at ${JSON.stringify(position)}`);
-    }
-
-    return unit;
+  getUnit(position: Position): UnitWrapper;
+  getUnit(position: Position, dontThrow: DontThrow): UnitWrapper | undefined;
+  getUnit(position: Position, dontThrow?: DontThrow): UnitWrapper | undefined {
+    const unit = this.units.find((u) => position.isSame(u.data.position));
+    return throwIfUndefinedUnlessAccepted(unit, dontThrow);
   }
 }

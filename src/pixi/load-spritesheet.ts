@@ -4,6 +4,7 @@ import type {
   SpritesheetDataByArmy,
 } from "frontend/components/match/get-spritesheet-data";
 import { ImageSource, Spritesheet, Texture } from "pixi.js";
+import { throwIfUndefined } from "shared/types/throw-helper";
 import type { WWReadOnly } from "shared/types/ww-readonly";
 
 export type MutableLoadedSpriteSheet = Record<SheetNames, Spritesheet<ArmySpritesheetData>>;
@@ -16,13 +17,10 @@ export async function loadSpritesFromSpriteMap(
 
   for (const sheetName in spriteMap) {
     const rawSpriteSheet = spriteMap[sheetName as SheetNames];
-
-    if (rawSpriteSheet.meta.image === undefined) {
-      throw new Error(`No spritesheet image found for ${sheetName}`);
-    }
+    const metaImage = throwIfUndefined(rawSpriteSheet.meta.image);
 
     const image = new Image();
-    image.src = `/img/spriteSheet/${rawSpriteSheet.meta.image}`;
+    image.src = `/img/spriteSheet/${metaImage}`;
 
     await new Promise((resolve, reject) => {
       image.onload = resolve;

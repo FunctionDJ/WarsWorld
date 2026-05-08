@@ -30,10 +30,6 @@ export const getAccessibleNodes = (
 ): Map<Position, PathNode> => {
   const ownerUnitPlayer = match.getPlayerBySlot(unit.data.playerSlot);
 
-  if (ownerUnitPlayer === undefined) {
-    throw new DispatchableError("This unit doesn't have an owner");
-  }
-
   const accessibleTiles = new Map<Position, PathNode>(); //return variable
 
   //queues[a] has current queued nodes with distance a from origin (technically a "stack", not a queue, but the result doesn't change)
@@ -115,7 +111,7 @@ export const getAttackableTiles = (
 
   const attackRange = unit.getAttackRange();
 
-  if (unit.isIndirect() && attackRange !== undefined) {
+  if (unit.isIndirect()) {
     // Ranged unit (2nd condition is for typescript)
 
     for (let x = 0; x < match.map.width; x++) {
@@ -137,7 +133,7 @@ export const getAttackableTiles = (
     const visited = makeVisitedMatrix(match.map);
 
     for (const [pos] of accessibleNodes.entries()) {
-      if (match.getUnit(pos) !== undefined && !pos.isSame(unit.data.position)) {
+      if (match.getUnit(pos, "dont-throw") !== undefined && !pos.isSame(unit.data.position)) {
         //another unit occupies this spot so we can't move to it to attack
         continue;
       }
@@ -169,7 +165,7 @@ export const getAttackTargetTiles = (
     getBaseDamage(unit, createPipeSeamUnitEquivalent(match, unit)) !== undefined;
 
   for (const position of attackableTiles) {
-    const enemy = match.getUnit(position);
+    const enemy = match.getUnit(position, "dont-throw");
 
     if (enemy === undefined) {
       if (match.getTile(position).type === "pipeSeam" && canAttackPipeseams) {
@@ -339,7 +335,7 @@ const getSpriteName = (a: Position, b: Position, c: Position): string => {
 };
 
 export const showPath = (spriteSheet: LoadedSpriteSheet, path: Position[]) => {
-  if (path.length < 1) {
+  if (path.length === 0) {
     throw new Error("Empty path!");
   }
 

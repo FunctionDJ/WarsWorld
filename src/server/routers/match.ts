@@ -11,6 +11,7 @@ import { armyList, armySchema } from "shared/schemas/army";
 import { coIdSchema } from "shared/schemas/co";
 import { playerSlotForUnitsSchema } from "shared/schemas/player-slot";
 import { positionSchema } from "shared/schemas/position";
+import { safeRemoveFromArray } from "shared/types/throw-helper";
 import { MutableMatch } from "shared/wrappers/match/mutable-match";
 import { z } from "zod";
 import type { PlayerBeforeMatch, PlayerInMatch } from "../../shared/types/server-match-state";
@@ -140,16 +141,13 @@ export const matchRouter = router({
   leave: matchInSetupBaseProcedure.mutation(async ({ ctx: { match, currentPlayer: player } }) => {
     const { team: teamToRemoveFrom } = player;
 
-    teamToRemoveFrom.players.splice(
-      teamToRemoveFrom.players.findIndex((teamPlayer) => teamPlayer.data.slot === player.slot),
-      1,
+    safeRemoveFromArray(
+      teamToRemoveFrom.players,
+      (teamPlayer) => teamPlayer.data.slot === player.slot,
     );
 
     if (teamToRemoveFrom.players.length === 0) {
-      match.teams.splice(
-        match.teams.findIndex((team) => team.index === teamToRemoveFrom.index),
-        1,
-      );
+      safeRemoveFromArray(match.teams, (team) => team.index === teamToRemoveFrom.index);
     }
 
     playerMatchIndex.onPlayerLeave(player);
@@ -162,11 +160,7 @@ export const matchRouter = router({
     } else {
       const newPlayerState = match.players.filter((p) => p.id !== player.id);
       await prisma.match.update({ where: { id: match.id }, data: { playerState: newPlayerState } });
-
-      match.teams.splice(
-        match.teams.findIndex((team) => team.index === player.team.index),
-        1,
-      );
+      safeRemoveFromArray(match.teams, (team) => team.index === player.team.index);
 
       await globalEmittable(match, {
         type: "player-left",
@@ -195,7 +189,7 @@ export const matchRouter = router({
         ),
       );
 
-      if (allMatchSlotsReady(match)) {
+      if (match.players.every((p) => p.ready)) {
         /**
          * TODO
          * - give first player funds, maybe we need to everything that passTurn does?
@@ -233,9 +227,7 @@ export const matchRouter = router({
           ...matchStartEvent,
           teamIndex: 0, // TODO idk if this is correct
         });
-      }
-      //Both players are NOT ready, therefore match doesnt start
-      else {
+      } else {
         await prisma.match.update({
           where: { id: match.id },
           data: { playerState: newPlayerState },
@@ -324,7 +316,7 @@ export const matchRouter = router({
       // TODO if ctx.user doesn't have the permissions to do this (e.g. isn't an admin)
       // then throw a tRPC error for unauthorized
 
-      const unit = ctx.match.getUnitOrThrow(input.position);
+      const unit = ctx.match.getUnit(input.position);
 
       if (unit.data.isReady) {
         throw new TRPCError({

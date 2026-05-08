@@ -1,14 +1,15 @@
+import { DispatchableError } from "shared/dispatchable-error";
 import { unitPropertiesMap } from "shared/match-logic/game-constants/unit-properties";
 import type { Position } from "shared/schemas/position";
 import type { PassableTile } from "shared/schemas/tile";
 import type {
-    IndirectTypeString,
-    InfantryOrMechTypeString,
-    LoadedTypeString,
-    TransportTypeString,
-    UnitByVisibilityAndTypeString,
-    UnitTypeString,
-    Visibility,
+  IndirectTypeString,
+  InfantryOrMechTypeString,
+  LoadedTypeString,
+  TransportTypeString,
+  UnitByVisibilityAndTypeString,
+  UnitTypeString,
+  Visibility,
 } from "shared/schemas/unit";
 import { getBaseMovementCost } from "../../match-logic/movement-cost";
 import { getWeatherSpecialMovement } from "../../match-logic/weather";
@@ -32,11 +33,6 @@ export class UnitWrapper<
     public match: MatchWrapper,
   ) {
     const player = match.getPlayerBySlot(data.playerSlot);
-
-    if (player === undefined) {
-      throw new Error(`Could not find player by slot ${String(data.playerSlot)}`);
-    }
-
     this.player = player;
     this.properties = unitPropertiesMap[data.type];
   }
@@ -133,11 +129,11 @@ export class UnitWrapper<
     return this.properties.attackRange[1] > 1;
   }
 
-  getAttackRange(): { minRange: number; maxRange: number } | undefined {
+  getAttackRange(): { minRange: number; maxRange: number } {
     const unitProperties = unitPropertiesMap[this.data.type];
 
     if (!("attackRange" in unitProperties)) {
-      return;
+      throw new DispatchableError("Unit cannot attack");
     }
 
     let maximumAttackRange =

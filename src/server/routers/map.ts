@@ -1,5 +1,6 @@
 import { prisma } from "server/prisma/prisma-client";
 import { arrayAtOrThrow } from "shared/array-utilities";
+import { DispatchableError } from "shared/dispatchable-error";
 import type { CreatableMap } from "shared/schemas/map";
 import { mapSchema } from "shared/schemas/map";
 import type { PlayerSlot } from "shared/schemas/player-slot";
@@ -76,13 +77,13 @@ export const mapRouter = router({
     const numberOfPlayers = getPlayerAmountOfMap(input);
 
     if (numberOfPlayers > 2) {
-      throw new Error("Map must be playable by at least 2 players");
+      throw new DispatchableError("Map must be playable by at least 2 players");
     }
 
     const tiles = input.tiles;
 
-    if (tiles.every((row) => row.length === arrayAtOrThrow(tiles, 0).length)) {
-      throw new Error("All rows of the map must have the same length");
+    if (tiles.some((row) => row.length !== arrayAtOrThrow(tiles, 0).length)) {
+      throw new DispatchableError("All rows of the map must have the same length");
     }
 
     return prisma.wWMap.create({

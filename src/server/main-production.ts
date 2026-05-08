@@ -1,6 +1,7 @@
 import next from "next";
 import http from "node:http";
 import { parse } from "node:url";
+import { throwIfUndefined } from "shared/types/throw-helper";
 import { createTRPCwebSocketServer } from "./common-server";
 import { matchStore } from "./match-store";
 
@@ -13,9 +14,7 @@ void (async (): Promise<void> => {
   await app.prepare();
 
   const server = http.createServer((req, res) => {
-    if (req.url === undefined) {
-      throw new Error("Request url is undefined");
-    }
+    const url = throwIfUndefined(req.url);
 
     if (req.headers["x-forwarded-proto"] === "http") {
       if (req.headers.host === undefined || typeof req.headers.url !== "string") {
@@ -57,7 +56,7 @@ void (async (): Promise<void> => {
     // prevents cross origin script loading
     res.setHeader("Referrer-Policy", "same-origin");
 
-    const parsedUrl = parse(req.url, true);
+    const parsedUrl = parse(url, true);
     void handler(req, res, parsedUrl);
   });
 
