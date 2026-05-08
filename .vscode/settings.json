@@ -17,6 +17,6 @@
   "prettier.useTabs": true,
   "editor.insertSpaces": false,
   "eslint.options": {
-    "configFile": "./.config/eslint.config.ts"
+    "overrideConfigFile": "./.config/eslint.config.ts"
   }
 }
