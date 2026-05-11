@@ -9,8 +9,8 @@ export function getEliminationReason({
 }: {
   attacker: PlayerInMatchWrapper;
   defender: PlayerInMatchWrapper;
-  attackerHP: number | undefined;
-  defenderHP: number | undefined;
+  attackerHP?: number;
+  defenderHP?: number;
 }): AttackEvent["eliminationReason"] {
   if (defenderHP === 0 && defender.getUnits().length - 1 <= 0) {
     return "all-defender-units-destroyed";

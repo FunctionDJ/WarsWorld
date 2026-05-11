@@ -9,9 +9,9 @@ export const andyAW1: COProperties = {
       description: "All units heal 2 HP.",
       stars: 3,
       instantEffect(player) {
-        player.getUnits().forEach((unit) => {
+        for (const unit of player.getUnits()) {
           unit.heal(2);
-        });
+        }
       },
     },
   },

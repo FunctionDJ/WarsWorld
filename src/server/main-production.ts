@@ -5,65 +5,63 @@ import { throwIfUndefined } from "shared/types/throw-helper";
 import { createTRPCwebSocketServer } from "./common-server";
 import { matchStore } from "./match-store";
 
-const port = parseInt(process.env.PORT ?? "3001", 10);
+const port = Number.parseInt(process.env.PORT ?? "3001", 10);
 const app = next({ dev: false });
 const handler = app.getRequestHandler();
 
-void (async (): Promise<void> => {
-  await matchStore.rebuild();
-  await app.prepare();
+await matchStore.rebuild();
+await app.prepare();
 
-  const server = http.createServer((req, res) => {
-    const url = throwIfUndefined(req.url);
+const server = http.createServer((request, response) => {
+  const url = throwIfUndefined(request.url);
 
-    if (req.headers["x-forwarded-proto"] === "http") {
-      if (req.headers.host === undefined || typeof req.headers.url !== "string") {
-        throw new Error("Headers are incorrect");
-      }
-
-      // redirect to ssl
-      res.writeHead(303, {
-        location: `https://` + req.headers.host + req.headers.url,
-      });
-      res.end();
-
-      return;
+  if (request.headers["x-forwarded-proto"] === "http") {
+    if (request.headers.host === undefined || typeof request.headers.url !== "string") {
+      throw new Error("Headers are incorrect");
     }
 
-    if (req.method === "OPTIONS") {
-      res.writeHead(204, {
-        "Access-Control-Allow-Origin": "http://localhost:3000",
-        "Access-Control-Allow-Credentials": "true",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization",
-        "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
-      });
-      res.end();
-      return;
-    }
+    // redirect to ssl
+    response.writeHead(303, {
+      location: `https://` + request.headers.host + request.headers.url,
+    });
+    response.end();
 
-    res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
-    res.setHeader("Access-Control-Allow-Credentials", "true");
+    return;
+  }
 
-    // set browsers to deny framing into an iframe (framebusting)
-    res.setHeader("X-Frame-Options", "DENY");
+  if (request.method === "OPTIONS") {
+    response.writeHead(204, {
+      "Access-Control-Allow-Origin": "http://localhost:3000",
+      "Access-Control-Allow-Credentials": "true",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
+    });
+    response.end();
+    return;
+  }
 
-    // set content security policy
-    res.setHeader("Content-Security-Policy", "frame-ancestors 'self'");
+  response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+  response.setHeader("Access-Control-Allow-Credentials", "true");
 
-    // prevent MIME sniffing
-    res.setHeader("X-Content-Type-Options", "nosniff");
+  // set browsers to deny framing into an iframe (framebusting)
+  response.setHeader("X-Frame-Options", "DENY");
 
-    // prevents cross origin script loading
-    res.setHeader("Referrer-Policy", "same-origin");
+  // set content security policy
+  response.setHeader("Content-Security-Policy", "frame-ancestors 'self'");
 
-    const parsedUrl = parse(url, true);
-    void handler(req, res, parsedUrl);
-  });
+  // prevent MIME sniffing
+  response.setHeader("X-Content-Type-Options", "nosniff");
 
-  createTRPCwebSocketServer({ server });
-  server.listen(port);
+  // prevents cross origin script loading
+  response.setHeader("Referrer-Policy", "same-origin");
 
-  console.log(
-    `Production mode: Server listening at ${String(process.env.NEXT_PUBLIC_WS_URL)}${String(port)}`,
-  );
-})();
+  const parsedUrl = parse(url, true);
+  void handler(request, response, parsedUrl);
+});
+
+createTRPCwebSocketServer({ server });
+server.listen(port);
+
+console.log(
+  `Production mode: Server listening at ${String(process.env.NEXT_PUBLIC_WS_URL)}${String(port)}`,
+);

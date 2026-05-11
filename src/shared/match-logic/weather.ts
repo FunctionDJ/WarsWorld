@@ -67,6 +67,7 @@ export function getRandomWeather(match: MatchWrapper): Weather {
 export const getWeatherSpecialMovement = (player: WWReadOnly<PlayerInMatchWrapper>): Weather => {
   const weather = player.match.getCurrentWeather();
 
+  // eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
   switch (player.data.coId.name) {
     case "drake": {
       if (weather === "rain") {

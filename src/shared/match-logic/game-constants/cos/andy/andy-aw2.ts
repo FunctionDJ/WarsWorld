@@ -11,9 +11,9 @@ export const andyAW2: COProperties = {
       description: "All units heal 5 HP, and gain 20% firepower and 1 movement.",
       stars: 6,
       instantEffect(player) {
-        player.getUnits().forEach((unit) => {
+        for (const unit of player.getUnits()) {
           unit.heal(5);
-        });
+        }
       },
       hooks: {
         movementPoints: (value) => value + 1,

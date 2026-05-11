@@ -1,36 +1,10 @@
-export type MovementType =
-  | "foot"
-  | "boots"
-  | "treads"
-  | "tires"
-  | "air"
-  | "sea"
-  | "lander"
-  | "pipe";
-
-export type Facility = "base" | "airport" | "port";
-
-interface UnitPropertiesWithoutWeapon {
-  displayName: string;
-  cost: number;
-  facility: Facility;
-  movementType: MovementType;
-  movementPoints: number;
-  initialFuel: number;
-  vision: number;
-}
-
-type Range = [number, number];
-
-const directRange: Range = [1, 1];
-
-type UnitPropertiesWithoutAmmo = UnitPropertiesWithoutWeapon & {
-  readonly attackRange: Range;
-};
-
-type UnitPropertiesWithAmmo = UnitPropertiesWithoutAmmo & {
-  readonly initialAmmo: number;
-};
+/* eslint-disable max-lines */
+import {
+  type UnitPropertiesWithAmmo,
+  type UnitPropertiesWithoutAmmo,
+  type UnitPropertiesWithoutWeapon,
+  directRange,
+} from "./unit-properties-utilities";
 
 const infantry: UnitPropertiesWithoutAmmo = {
   displayName: "Infantry",

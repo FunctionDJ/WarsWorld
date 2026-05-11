@@ -8,11 +8,14 @@ export const eagleAW2: COProperties = {
       "Air units have +15% firepower and +10% defense, and consume -2 fuel per day. Naval units have -30% firepower.",
     hooks: {
       attack({ attacker }) {
+        // eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
         switch (attacker.properties.facility) {
-          case "airport":
+          case "airport": {
             return 115;
-          case "port":
+          }
+          case "port": {
             return 70;
+          }
         }
       },
       defense({ attacker }) {
@@ -46,12 +49,9 @@ export const eagleAW2: COProperties = {
         "Air units gain +15% firepower and +10% defense. All non-footsoldier units may move and fire again, even if built this turn.",
       stars: 9,
       instantEffect(player) {
-        player
-          .getUnits()
-          .filter((unit) => !unit.isInfantryOrMech())
-          .forEach((unit) => {
-            unit.data.isReady = true;
-          });
+        for (const playerUnit of player.getUnits().filter((unit) => !unit.isInfantryOrMech())) {
+          playerUnit.data.isReady = true;
+        }
       },
       hooks: {
         attack({ attacker }) {

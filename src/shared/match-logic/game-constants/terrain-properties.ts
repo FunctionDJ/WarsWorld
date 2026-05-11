@@ -1,5 +1,5 @@
-import type { MovementType } from "shared/match-logic/game-constants/unit-properties";
 import type { TileType } from "shared/schemas/tile";
+import type { MovementType } from "./unit-properties-utilities";
 
 /**
  * A nonzero integer (or undefined for impassible)

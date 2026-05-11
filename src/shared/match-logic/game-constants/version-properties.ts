@@ -71,7 +71,7 @@ const AW1Properties: VersionProperties = {
   existingWeathers: ["clear", "rain", "snow"],
   damageChart: damageChartAW1,
   unloadOnlyAfterMove: true,
-  baseStarValue: 10000, // to make an equivalent, arbitrary
+  baseStarValue: 10_000, // to make an equivalent, arbitrary
   powerMeterScaling: 0.2,
   raisePowerCostBeforeUsing: true,
   offensivePowerGenMult: 0.25,
@@ -108,42 +108,55 @@ const AWDSProperties: VersionProperties = {
   raisePowerCostBeforeUsing: true,
   offensivePowerGenMult: 0.5,
   powerMeterIncreasePerHP: (affectedUnit) => {
+    // TODO Switch is not exhaustive. Cases not matched: "antiAir" | "carrier"
+    // eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
     switch (affectedUnit.data.type) {
       case "infantry":
-      case "mech":
+      case "mech": {
         return 2;
-      case "blackBomb":
+      }
+      case "blackBomb": {
         return 3;
-      case "apc":
+      }
+      case "apc": {
         return 4;
+      }
       case "recon":
       case "artillery":
       case "tank":
       case "transportCopter":
-      case "blackBoat":
+      case "blackBoat": {
         return 5;
+      }
       case "battleCopter":
-      case "lander":
+      case "lander": {
         return 6;
+      }
       case "missile":
-      case "rocket":
+      case "rocket": {
         return 7;
+      }
       case "mediumTank":
-      case "cruiser":
+      case "cruiser": {
         return 8;
+      }
       case "neoTank":
       case "bomber":
       case "fighter":
-      case "sub":
+      case "sub": {
         return 9;
+      }
       case "pipeRunner":
-      case "stealth":
+      case "stealth": {
         return 10;
+      }
       case "megaTank":
-      case "battleship":
+      case "battleship": {
         return 11;
-      default:
+      }
+      default: {
         return 0;
+      }
     }
   },
   powerFirepowerMod: (baseFirepower) => baseFirepower + 10,
@@ -151,6 +164,7 @@ const AWDSProperties: VersionProperties = {
 };
 
 // as proof of concept:
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const _AWBWProperties: VersionProperties = {
   gameVersion: "AW2", // not accurate
   baseGoodLuck: 10,

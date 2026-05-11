@@ -32,4 +32,5 @@ export const getFromObjectOrThrow = <T extends object, K extends keyof T>(
 export const mapReadOnly = <T, U>(
   array: readonly T[],
   callback: (value: WWReadOnly<T>, index: number, array: readonly T[]) => U,
-): readonly WWReadOnly<U>[] => array.map((value, index, array) => callback(value, index, array));
+): readonly WWReadOnly<U>[] =>
+  array.map((value, index, arrayParameter) => callback(value, index, arrayParameter));

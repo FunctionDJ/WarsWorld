@@ -126,6 +126,7 @@ export const actionRouter = router({
 
         /* 7. Apply sub event to match and update sub event vision */
         applySubEventToMatch(match, mainEventWithSubEvent);
+        // eslint-disable-next-line @typescript-eslint/prefer-destructuring
         subEvent = mainEventWithSubEvent.subEvent;
       } else {
         emittableEvents = mainEventToEmittables(match, mainEventWithoutSubEvent);

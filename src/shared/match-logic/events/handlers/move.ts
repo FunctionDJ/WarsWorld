@@ -4,9 +4,7 @@ import { Path } from "shared/schemas/path";
 import {
   carrierLoadedUnitSchema,
   cruiserLoadedUnitSchema,
-  infantryOrMechSchema,
   landerLoadedUnitSchema,
-  type UnitWithVisibleStats,
 } from "shared/schemas/unit";
 import type { MoveEventWithoutSubEvent, MoveEventWithSubEvent } from "shared/types/events";
 import { throwIfUndefined } from "shared/types/throw-helper";
@@ -14,6 +12,7 @@ import type { WWReadOnly } from "shared/types/ww-readonly";
 import type { MatchWrapper } from "shared/wrappers/match/match";
 import type { MutableMatch } from "shared/wrappers/match/mutable-match";
 import type { UnitWrapper } from "../../../wrappers/unit/unit";
+import { loadUnitInto } from "./move/load-unit-into";
 
 // we don't use MainActionToEvent here because MoveEvent is special
 // because at this point we don't have the subEvent yet
@@ -180,74 +179,6 @@ export const throwIfCantMoveIntoUnit = (
         }
 
         break;
-      }
-    }
-  }
-};
-
-const loadUnitInto = (
-  unitToLoad: WWReadOnly<UnitWithVisibleStats>,
-  transportUnit: UnitWithVisibleStats,
-): void => {
-  switch (transportUnit.type) {
-    case "transportCopter":
-    case "apc": {
-      const loadable = infantryOrMechSchema.safeParse(unitToLoad);
-
-      if (loadable.success) {
-        transportUnit.loadedUnit = loadable.data;
-      }
-
-      break;
-    }
-    case "blackBoat": {
-      const loadable = infantryOrMechSchema.safeParse(unitToLoad);
-
-      if (loadable.success) {
-        if (transportUnit.loadedUnit === undefined) {
-          transportUnit.loadedUnit = loadable.data;
-        } else {
-          transportUnit.loadedUnit2 = loadable.data;
-        }
-      }
-
-      break;
-    }
-    case "lander": {
-      const loadable = landerLoadedUnitSchema.safeParse(unitToLoad);
-
-      if (loadable.success) {
-        if (transportUnit.loadedUnit === undefined) {
-          transportUnit.loadedUnit = loadable.data;
-        } else {
-          transportUnit.loadedUnit2 = loadable.data;
-        }
-      }
-
-      break;
-    }
-    case "cruiser": {
-      const loadable = cruiserLoadedUnitSchema.safeParse(unitToLoad);
-
-      if (loadable.success) {
-        if (transportUnit.loadedUnit === undefined) {
-          transportUnit.loadedUnit = loadable.data;
-        } else {
-          transportUnit.loadedUnit2 = loadable.data;
-        }
-      }
-
-      break;
-    }
-    case "carrier": {
-      const loadable = carrierLoadedUnitSchema.safeParse(unitToLoad);
-
-      if (loadable.success) {
-        if (transportUnit.loadedUnit === undefined) {
-          transportUnit.loadedUnit = loadable.data;
-        } else {
-          transportUnit.loadedUnit2 = loadable.data;
-        }
       }
     }
   }

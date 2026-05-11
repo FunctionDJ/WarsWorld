@@ -28,9 +28,9 @@ export const olafAWDS: COProperties = {
       description: "All enemy units lose 2 HP, and causes it to snow for the next 2 days.",
       stars: 6,
       instantEffect(player) {
-        player.team.getEnemyUnits().forEach((unit) => {
+        for (const unit of player.team.getEnemyUnits()) {
           unit.damageUntil1HP(2);
-        });
+        }
 
         player.match.setWeather("snow", 2);
       },

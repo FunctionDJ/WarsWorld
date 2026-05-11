@@ -26,8 +26,8 @@ export function MatchRenderer({ match, player, spriteSheets, turn, setTurn }: Pr
       const isPlayerTurn = match.getCurrentTurnPlayer().data.id === player.data.id;
       setTurn(isPlayerTurn);
     },
-    //Adding all dependencies here causes an infinite loop
-    [],
+    // TODO Adding all dependencies here causes an infinite loop
+    [match, player.data.id, setTurn],
   );
 
   const { pixiCanvasRef } = usePixi(match, spriteSheets, player);

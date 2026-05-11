@@ -18,26 +18,31 @@ const threeWayConnectionSchema = z.enum([
 const fourWayConnectionSchema = z.literal("top-right-bottom-left");
 
 const roadTileSchema = z.object({
+  category: z.literal("variable"),
   type: z.literal("road"),
   variant: twoWayConnectionsSchema.or(threeWayConnectionSchema).or(fourWayConnectionSchema),
 });
 
 const bridgeTileSchema = z.object({
+  category: z.literal("variable"),
   type: z.literal("bridge"),
   variant: axisConnectionsSchema,
 });
 
 const pipeTileSchema = z.object({
+  category: z.literal("variable"),
   type: z.literal("pipe"),
   variant: oneWayConnectionsSchema.or(twoWayConnectionsSchema),
 });
 
 const plainTileSchema = z.object({
+  category: z.literal("variable"),
   type: z.literal("plain"),
   variant: z.enum(["normal", "broken-pipe-right-left", "broken-pipe-top-bottom"]),
 });
 
 const riverTileSchema = z.object({
+  category: z.literal("variable"),
   type: z.literal("river"),
   // TODO rivers have MANY more variants with flow direction and all
   // the question is: do we want to support them for map creation?

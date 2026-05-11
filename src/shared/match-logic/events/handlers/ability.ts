@@ -2,7 +2,6 @@ import { DispatchableError } from "shared/dispatchable-error";
 import type { AbilityAction } from "shared/schemas/action";
 import type { Visibility } from "shared/schemas/unit";
 import type { AbilityEvent } from "shared/types/events";
-import type { CapturableTile } from "shared/types/server-match-state";
 import type { MatchWrapper } from "shared/wrappers/match/match";
 import type { MutableMatch } from "shared/wrappers/match/mutable-match";
 import type { UnitWrapper } from "shared/wrappers/unit/unit";
@@ -120,7 +119,15 @@ export const abilityActionToEvent: SubActionToEvent<AbilityAction> = (
 };
 
 const eliminatePlayerByCapture = (match: MutableMatch, capturingUnit: UnitWrapper): void => {
-  const capturedTile = capturingUnit.getTile() as CapturableTile; // `as` because lazy
+  const capturedTile = capturingUnit.getTile();
+
+  if (capturedTile.category !== "property") {
+    throw new TypeError(
+      `Tried to eliminate player by capture, but tile at ${JSON.stringify(
+        capturingUnit.data.position.data,
+      )} is not capturable (should never happen i think)`,
+    );
+  }
 
   const playerToEliminate = match.getPlayerBySlot(capturedTile.playerSlot);
 
@@ -197,9 +204,7 @@ export const applyAbilityEvent: ApplySubEvent<AbilityEvent> = (match, event, fro
           );
         }
 
-        match
-          .getPlayerBySlot(tile.playerSlot)
-          ?.team.vision?.removeOwnedProperty(unit.data.position);
+        match.getPlayerBySlot(tile.playerSlot).team.vision?.removeOwnedProperty(unit.data.position);
         tile.playerSlot = unit.data.playerSlot;
         unit.player.team.vision?.addOwnedProperty(unit.data.position);
       }

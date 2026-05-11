@@ -1,6 +1,6 @@
 import { initTRPC } from "@trpc/server";
 import superjson from "superjson";
-import z, { ZodError } from "zod";
+import { z, ZodError } from "zod";
 import type { Context } from "./trpc-context";
 
 // Use the .create() pattern directly to avoid the type inference issues

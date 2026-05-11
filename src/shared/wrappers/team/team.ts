@@ -65,7 +65,7 @@ export class Team {
 
     // sub or stealth ability
     if ("hidden" in unit.data && unit.data.hidden) {
-      return unit.getNeighbouringUnits().some((unit) => this.owns(unit));
+      return unit.getNeighbouringUnits().some((neighbour) => this.owns(neighbour));
     }
 
     return this.isPositionVisible(unit.data.position);

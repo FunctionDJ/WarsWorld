@@ -46,7 +46,7 @@ export const buildActionToEvent: MainActionToEvent<BuildAction> = (match, action
     player.data.coId.name === "hachi" &&
     player.data.COPowerState === "super-co-power";
 
-  if (tile.type !== facility && !(hachiScopLandUnit && tile.type === "city")) {
+  if (tile.type !== facility && (!hachiScopLandUnit || tile.type !== "city")) {
     throw new DispatchableError("You can't build this unit in this facility");
   }
 

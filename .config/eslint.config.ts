@@ -1,10 +1,14 @@
 import react from "@eslint-react/eslint-plugin";
 import eslint from "@eslint/js";
-import nextVitals from "eslint-config-next/core-web-vitals";
-import nextTs from "eslint-config-next/typescript";
+import * as nextPlugin from "@next/eslint-plugin-next";
+import tanstackQuery from "@tanstack/eslint-plugin-query";
+import * as deMorganBooleanLogic from "eslint-plugin-de-morgan";
+import * as importX from "eslint-plugin-import-x";
+import reactCompilerPlugin from "eslint-plugin-react-compiler";
+import reactRefreshPlugin from "eslint-plugin-react-refresh";
 import unicorn from "eslint-plugin-unicorn";
 import { defineConfig, globalIgnores } from "eslint/config";
-import typescript from "typescript-eslint";
+import * as typescript from "typescript-eslint";
 import local from "../src/eslint/local-rules";
 
 const banPixiPattern = {
@@ -31,8 +35,6 @@ const banNonSharedPattern = {
  */
 
 export default defineConfig([
-  ...nextVitals,
-  ...nextTs,
   globalIgnores([
     ".next/**",
     /**
@@ -51,13 +53,20 @@ export default defineConfig([
     "src/frontend/**", // TODO temporarily
   ]),
   eslint.configs.recommended,
+  importX.flatConfigs.recommended,
+  importX.flatConfigs.typescript,
+  ...tanstackQuery.configs["flat/recommended-strict"],
   typescript.configs.strictTypeChecked,
   typescript.configs.stylisticTypeChecked,
   unicorn.configs.recommended,
+  reactCompilerPlugin.configs.recommended,
+  reactRefreshPlugin.configs.recommended,
+  deMorganBooleanLogic.configs.recommended,
   react.configs["strict-type-checked"],
   {
     plugins: {
       local,
+      "@next/next": nextPlugin,
     },
     settings: {
       react: {
@@ -68,10 +77,14 @@ export default defineConfig([
     },
     languageOptions: {
       parserOptions: {
-        projectService: true,
+        projectService: {
+          allowDefaultProject: ["eslint.config.ts", "prisma.ts", "tailwind.config.ts"],
+        },
       },
     },
     rules: {
+      ...nextPlugin.configs["core-web-vitals"].rules,
+      ...nextPlugin.configs.recommended.rules,
       curly: "error",
       "unicorn/no-null": "error",
       "@typescript-eslint/no-non-null-assertion": "off",
@@ -79,6 +92,19 @@ export default defineConfig([
       "@typescript-eslint/explicit-module-boundary-types": "warn",
       "@typescript-eslint/consistent-type-imports": "warn",
       "@typescript-eslint/strict-boolean-expressions": "error",
+      "@typescript-eslint/default-param-last": "error",
+      "@typescript-eslint/no-import-type-side-effects": "error",
+      "@typescript-eslint/no-loop-func": "error",
+      "@typescript-eslint/no-shadow": "error",
+      "@typescript-eslint/no-unsafe-type-assertion": "error",
+      "@typescript-eslint/prefer-destructuring": "error",
+      "@typescript-eslint/prefer-ts-expect-error": "error",
+      "@typescript-eslint/prefer-optional-chain": "error",
+      "@typescript-eslint/strict-void-return": "error",
+      "@typescript-eslint/switch-exhaustiveness-check": "warn",
+      "@typescript-eslint/restrict-template-expressions": "off",
+      "@typescript-eslint/no-confusing-void-expression": "off",
+      "@typescript-eslint/method-signature-style": "error",
       "@typescript-eslint/prefer-readonly": "warn",
       "@typescript-eslint/consistent-type-assertions": [
         "error",
@@ -166,8 +192,8 @@ export default defineConfig([
     },
   },
   {
-    // next.js dynamic paths
-    files: ["src/**/\\[*\\].tsx"],
+    // next.js dynamic paths and _app
+    files: [String.raw`src/**/\[*\].tsx`, "src/pages/_app.tsx"],
     rules: {
       "unicorn/filename-case": "off",
     },

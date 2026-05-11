@@ -121,10 +121,10 @@ export class MutableMatch extends MatchWrapper {
     visualHpAmount: number;
     epicenter: Position;
   }>): void {
-    for (const unit of this.units.filter(
+    for (const unitInRadius of this.units.filter(
       (unit) => unit.data.position.getDistance(epicenter) <= radius,
     )) {
-      unit.damageUntil1HP(visualHpAmount);
+      unitInRadius.damageUntil1HP(visualHpAmount);
     }
   }
 

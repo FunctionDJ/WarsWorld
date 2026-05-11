@@ -8,11 +8,14 @@ export const eagleAW1: COProperties = {
       "Air units have +15% firepower and +10% defense, and consume -2 fuel per day. Naval units have -20% firepower.",
     hooks: {
       attack({ attacker }) {
+        // eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
         switch (attacker.properties.facility) {
-          case "airport":
+          case "airport": {
             return 115;
-          case "port":
+          }
+          case "port": {
             return 80;
+          }
         }
       },
       defense({ attacker }) {
@@ -29,22 +32,23 @@ export const eagleAW1: COProperties = {
         "All non-footsoldier units may move and fire again, even if built this turn. All units (including footsoldiers) are affected with -20% damage and -30% defense (including power boost).",
       stars: 5,
       instantEffect(player) {
-        player
-          .getUnits()
-          .filter((unit) => !unit.isInfantryOrMech())
-          .forEach((unit) => {
-            unit.data.isReady = true;
-          });
+        for (const playerUnit of player.getUnits().filter((unit) => !unit.isInfantryOrMech())) {
+          playerUnit.data.isReady = true;
+        }
       },
       hooks: {
         attack({ attacker }) {
+          // eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
           switch (attacker.properties.facility) {
-            case "airport":
-              return 85; //115 + (-10 - 20) = 85, -10 to counteract the passive +10, which is not +10 in aw1 but whatever power boost
-            case "port":
+            case "airport": {
+              return 85;
+            } //115 + (-10 - 20) = 85, -10 to counteract the passive +10, which is not +10 in aw1 but whatever power boost
+            case "port": {
               return 50;
-            default:
+            }
+            default: {
               return 70;
+            }
           }
         },
         defense({ attacker }) {

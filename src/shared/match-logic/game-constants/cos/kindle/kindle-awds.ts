@@ -49,11 +49,7 @@ export const kindleAWDS: COProperties = {
             }
           }
 
-          if (attacker.getTile().type === "city") {
-            return 220 + bonusFirepower;
-          } else {
-            return 100 + bonusFirepower;
-          }
+          return attacker.getTile().type === "city" ? 220 + bonusFirepower : 100 + bonusFirepower;
         },
       },
     },

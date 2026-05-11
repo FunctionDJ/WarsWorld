@@ -32,10 +32,10 @@ export const drakeAW2: COProperties = {
       instantEffect(player) {
         const enemyUnits = player.team.getEnemyUnits();
 
-        enemyUnits.forEach((unit) => {
+        for (const unit of enemyUnits) {
           unit.drainFuel(Math.floor(unit.getFuel() / 2)); // half fuel till 0 and round down
           unit.damageUntil1HP(1);
-        });
+        }
       },
     },
     superCOPower: {
@@ -46,10 +46,10 @@ export const drakeAW2: COProperties = {
       instantEffect(player) {
         const enemyUnits = player.team.getEnemyUnits();
 
-        enemyUnits.forEach((unit) => {
+        for (const unit of enemyUnits) {
           unit.drainFuel(Math.floor(unit.getFuel() / 2)); // half fuel till 0 and round down
           unit.damageUntil1HP(2);
-        });
+        }
 
         player.match.setWeather("rain", 1);
       },

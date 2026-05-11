@@ -7,8 +7,8 @@ export const fillDiscoveredUnitsAndProperties = (
   emittableEvents: (EmittableEvent | undefined)[],
 ): void => {
   // emittableEvents.length = math.teams.length + 1, since it has "no team" in the end
-  for (const [i, team] of match.teams.entries()) {
-    const emittableEvent = emittableEvents[i]; // have to save it in a variable cause typescript is too dumb
+  for (const [index, team] of match.teams.entries()) {
+    const emittableEvent = emittableEvents[index]; // have to save it in a variable cause typescript is too dumb
 
     if (emittableEvent === undefined) {
       continue;

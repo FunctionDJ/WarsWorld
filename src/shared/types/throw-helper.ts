@@ -1,17 +1,19 @@
-export type DontThrow = "dont-throw";
+const dontThrowString = "dont-throw" as const;
 
-export const throwIfUndefinedUnlessAccepted = <T, DontThrow extends "dont-throw" | undefined>(
-  value: T | undefined,
+export type DontThrow = typeof dontThrowString;
+
+export const throwIfUndefinedUnlessAccepted = <T>(
+  value?: T,
   dontThrow?: DontThrow,
 ): T | undefined => {
-  if (dontThrow !== "dont-throw") {
+  if (dontThrow !== dontThrowString) {
     return throwIfUndefined(value);
   }
 
   return value;
 };
 
-export const throwIfUndefined = <T>(value: T | undefined, message?: string): T => {
+export const throwIfUndefined = <T>(value?: T, message?: string): T => {
   if (value === undefined) {
     throw new TypeError(
       message ??
@@ -23,13 +25,13 @@ export const throwIfUndefined = <T>(value: T | undefined, message?: string): T =
 };
 
 export const findOrThrow = <T>(array: readonly T[], predicate: (item: T) => boolean): T => {
-  const item = array.find(predicate);
+  const item = array.find((element) => predicate(element));
   return throwIfUndefined(item);
 };
 
 /** throws if internal .findIndex returns -1 */
 const findIndexOrThrow = <T>(array: readonly T[], predicate: (item: T) => boolean): number => {
-  const index = array.findIndex(predicate);
+  const index = array.findIndex((element) => predicate(element));
 
   if (index === -1) {
     throw new TypeError("findIndexOrThrow: No item found");
@@ -39,7 +41,7 @@ const findIndexOrThrow = <T>(array: readonly T[], predicate: (item: T) => boolea
 };
 
 /** throws if item not found and uses `.splice` */
-export const safeRemoveFromArray = <T>(list: T[], predicate: (item: T) => boolean) => {
+export const safeRemoveFromArray = <T>(list: T[], predicate: (item: T) => boolean): void => {
   const index = findIndexOrThrow(list, predicate);
   list.splice(index, 1);
 };

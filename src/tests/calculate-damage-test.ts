@@ -42,10 +42,12 @@ const map: WWMap = {
   tiles: [
     [
       {
+        category: "variable",
         type: "road",
         variant: "right-left",
       },
       {
+        category: "variable",
         type: "road",
         variant: "right-left",
       },

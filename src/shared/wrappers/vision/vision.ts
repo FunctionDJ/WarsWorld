@@ -78,6 +78,6 @@ export class Vision {
    */
   isPositionVisible(position: Position): boolean {
     const result = this.visionArray[position.data[1] * this.mapWidth + position.data[0]];
-    return throwIfUndefined(result, `Position ${position.toString()} is out of bounds`) > 0;
+    return throwIfUndefined(result, `Position ${position.data.toString()} is out of bounds`) > 0;
   }
 }

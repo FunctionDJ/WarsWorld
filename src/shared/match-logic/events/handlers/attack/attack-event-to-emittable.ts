@@ -19,11 +19,11 @@ export const createEmittableAttackEvent = (
   const defender = match.getUnit(attackEvent.defenderPosition, "dont-throw");
 
   const attackerHPDiff =
-    attackEvent.attackerHP !== undefined
-      ? attacker.getVisualHP() - Math.ceil(attackEvent.attackerHP / 10)
-      : 0;
+    attackEvent.attackerHP === undefined
+      ? 0
+      : attacker.getVisualHP() - Math.ceil(attackEvent.attackerHP / 10);
   const defenderHPDiff =
-    defender !== undefined ? defender.getVisualHP() - Math.ceil(attackEvent.defenderHP / 10) : 0;
+    defender === undefined ? 0 : defender.getVisualHP() - Math.ceil(attackEvent.defenderHP / 10);
 
   const powerChargeGain = defender
     ? getPowerChargeGain(attacker, attackerHPDiff, defender, defenderHPDiff)

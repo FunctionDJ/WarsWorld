@@ -11,12 +11,10 @@ export const userRouter = router({
   me: publicBaseProcedure
     // .use(authMiddleware)
     .use(playerWithoutCurrentMiddleware)
-    .query(({ ctx }) => {
-      return {
-        // user: ctx.user,
-        ownedPlayers: ctx.ownedPlayers,
-      };
-    }), // TODO session exposed in FE dangerous? 😳
+    .query(({ ctx }) => ({
+      // user: ctx.user,
+      ownedPlayers: ctx.ownedPlayers,
+    })), // TODO session exposed in FE dangerous? 😳
   updatePreferences: playerBaseProcedure.input(preferencesSchema).mutation(
     async ({ input, ctx }) =>
       await prisma.player.update({

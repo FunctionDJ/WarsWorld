@@ -39,6 +39,7 @@ export const validateMainActionAndToEvent = (
     }
     default: {
       /** this would only run for bad data from DB because of zod when validating user data */
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       throw new DispatchableError(`Can't handle action type ${(action as MainAction).type}`);
     }
   }

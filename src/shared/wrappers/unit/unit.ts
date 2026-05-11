@@ -17,7 +17,7 @@ import type { MatchWrapper } from "../match/match";
 import type { PlayerInMatchWrapper } from "../player/player-in-match";
 
 export interface TransportMethods {
-  getLoadedUnit(slot: 1 | 2): UnitWrapper<Visibility, LoadedTypeString>;
+  getLoadedUnit: (slot: 1 | 2) => UnitWrapper<Visibility, LoadedTypeString>;
 }
 
 export class UnitWrapper<

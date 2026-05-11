@@ -5,7 +5,8 @@
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../../generated/client";
 
-const prismaGlobal = global as typeof global & {
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+const prismaGlobal = globalThis as typeof globalThis & {
   prisma?: PrismaClient;
 };
 

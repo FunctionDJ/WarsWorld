@@ -22,8 +22,8 @@ export const switchOptions = matchInSetupBaseProcedure
     newPlayerData.army = input.selectedArmy ?? newPlayerData.army;
     newPlayerData.slot = input.selectedSlot ?? newPlayerData.slot;
 
-    const armiesOccupied = match.getAllPlayers().map((player) => player.army);
-    const slotsOccupied = match.getAllPlayers().map((player) => player.slot);
+    const armiesOccupied = match.getAllPlayers().map((matchPlayer) => matchPlayer.army);
+    const slotsOccupied = match.getAllPlayers().map((matchPlayer) => matchPlayer.slot);
 
     // ERROR CHECKING
     // make sures that the ARMY picked by the player is different from all other players

@@ -1,11 +1,11 @@
 import type { Plugin } from "@eslint/core";
 import { ESLintUtils } from "@typescript-eslint/utils";
 import type { RuleFix } from "@typescript-eslint/utils/ts-eslint";
-import ts from "typescript";
+import * as ts from "typescript";
 
 type Options = [
   {
-    wrappers?: string[];
+    wrappers?: string[] | undefined;
     requireWrappedTypeEffectivelyReadonlyFor?: string[];
   },
 ];
@@ -90,7 +90,7 @@ const noRedundantTypeWrapperRule = ESLintUtils.RuleCreator.withoutDocs<
           if (
             requireWrappedTypeEffectivelyReadonlyFor !== undefined &&
             requireWrappedTypeEffectivelyReadonlyFor.includes(wrapperText) &&
-            !isEffectivelyReadonly(candidateType, undefined, checker)
+            !isEffectivelyReadonly(candidateType, checker)
           ) {
             return false;
           }
@@ -141,8 +141,8 @@ const isReadonlyDeclaration = (declaration: ts.Declaration): boolean => {
 
 const isEffectivelyReadonly = (
   type: ts.Type,
-  seen = new Set<ts.Type>(),
   checker: ts.TypeChecker,
+  seen = new Set<ts.Type>(),
 ): boolean => {
   if (seen.has(type)) {
     return true;
@@ -151,7 +151,7 @@ const isEffectivelyReadonly = (
   seen.add(type);
 
   if (type.isUnionOrIntersection()) {
-    return type.types.every((member: ts.Type) => isEffectivelyReadonly(member, seen, checker));
+    return type.types.every((member: ts.Type) => isEffectivelyReadonly(member, checker, seen));
   }
 
   for (const property of type.getProperties()) {
@@ -169,7 +169,7 @@ const isEffectivelyReadonly = (
       return false;
     }
 
-    const firstDeclaration = declarations[0];
+    const [firstDeclaration] = declarations;
 
     if (!firstDeclaration) {
       return false;
@@ -177,7 +177,7 @@ const isEffectivelyReadonly = (
 
     const propertyType = checker.getTypeOfSymbolAtLocation(property, firstDeclaration);
 
-    if (!isEffectivelyReadonly(propertyType, seen, checker)) {
+    if (!isEffectivelyReadonly(propertyType, checker)) {
       return false;
     }
   }
@@ -188,7 +188,6 @@ const isEffectivelyReadonly = (
 const localPlugin: Plugin = {
   rules: {
     // @ts-expect-error [upstream] https://github.com/typescript-eslint/typescript-eslint/issues/11543
-
     "no-redundant-type-wrapper": noRedundantTypeWrapperRule,
   },
 };

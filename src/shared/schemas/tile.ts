@@ -3,6 +3,7 @@ import { playerSlotForPropertiesSchema } from "./player-slot";
 import { axisConnectionsSchema, variableTileSchema } from "./variable-tiles";
 
 const propertyTileSchema = z.object({
+  category: z.literal("property"),
   type: z.enum(["base", "airport", "port", "hq", "lab", "commtower", "city"]),
   playerSlot: playerSlotForPropertiesSchema,
 });
@@ -20,6 +21,7 @@ export type PipeSeamTile = z.infer<typeof pipeSeamTileSchema>;
 
 const unusedSiloTileSchema = z
   .object({
+    category: z.literal("simple"),
     type: z.literal("unusedSilo"),
   })
   .readonly();
@@ -28,6 +30,7 @@ export type UnusedSiloTileType = z.infer<typeof unusedSiloTileSchema>["type"];
 
 const simpleTileSchema = z
   .object({
+    category: z.literal("simple"),
     type: z.enum(["shoal", "sea", "forest", "mountain", "reef", "usedSilo"]),
   })
   .or(unusedSiloTileSchema);

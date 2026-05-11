@@ -23,6 +23,14 @@
     "/^bunx tsc --noEmit$/": {
       "approve": true,
       "matchCommandLine": true
+    },
+    "/^bun lint$/": {
+      "approve": true,
+      "matchCommandLine": true
+    },
+    "/^bunx tsc$/": {
+      "approve": true,
+      "matchCommandLine": true
     }
   }
 }

@@ -10,10 +10,12 @@ export const eagleAWDS: COProperties = {
       // fuel consumption handled in pass turn event
       attack({ attacker }) {
         switch (attacker.properties.facility) {
-          case "airport":
+          case "airport": {
             return 120;
-          case "port":
+          }
+          case "port": {
             return 90;
+          }
         }
       },
     },
@@ -25,23 +27,25 @@ export const eagleAWDS: COProperties = {
       description:
         "All non-footsoldier units may move and fire again, even if built this turn. Firepower is reduced to 70% for air units, 60% for vehicles and 55% for naval units (including power boost)",
       instantEffect(player) {
-        player
+        for (const nonInfantryOrMech of player
           .getUnits()
-          .filter((unit) => !unit.isInfantryOrMech())
-          .forEach((unit) => {
-            unit.data.isReady = true;
-          });
+          .filter((unit) => !unit.isInfantryOrMech())) {
+          nonInfantryOrMech.data.isReady = true;
+        }
       },
       hooks: {
         //after applying passive power boost, firepower is going to be just as the description says
         attack({ attacker }) {
           switch (attacker.properties.facility) {
-            case "airport":
+            case "airport": {
               return 60;
-            case "port":
+            }
+            case "port": {
               return 45;
-            default:
+            }
+            default: {
               return 50;
+            }
           }
         },
       },
@@ -51,12 +55,9 @@ export const eagleAWDS: COProperties = {
       description: "All non-footsoldier units may move and fire again, even if built this turn.",
       stars: 9,
       instantEffect(player) {
-        player
-          .getUnits()
-          .filter((unit) => !unit.isInfantryOrMech())
-          .forEach((unit) => {
-            unit.data.isReady = true;
-          });
+        for (const infantryOrMech of player.getUnits().filter((unit) => !unit.isInfantryOrMech())) {
+          infantryOrMech.data.isReady = true;
+        }
       },
     },
   },

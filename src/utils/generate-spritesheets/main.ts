@@ -7,6 +7,7 @@ import sharp from "sharp";
 import yargs from "yargs";
 
 // configurable parameters
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions, @typescript-eslint/no-unsafe-type-assertion
 const { texturesBasePath, outputPath } = yargs(process.argv.slice(2))
   .option("texturesBasePath", {
     alias: "t", // -t
@@ -49,7 +50,7 @@ for (const nation of nations) {
       Object.entries(frames).map(([key, { frame }]) => {
         const [source, name] = key.split(".");
 
-        if (!(source === "map" || source === "unit")) {
+        if (source !== "map" && source !== "unit") {
           throw new Error(
             `can't handle this frame key for compositing the file, source: ${String(source)}`,
           );
@@ -100,6 +101,7 @@ async function getAllSprites(nation: string): Promise<Sprite[]> {
    */
   const allSprites: Sprite[] = [];
 
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions, @typescript-eslint/no-unsafe-type-assertion
   for (const spriteType of Object.keys(spriteSources) as SpriteType[]) {
     // TODO a better way to do this
     const sprites = await fs.readdir(getTexturePath(spriteType, nation));
@@ -169,6 +171,7 @@ async function genFramesAndSpriteSheetImage(
 function fetchAnimations(allSprites: Sprite[]): Record<string, string[]> {
   const animationFrameRegex = /^(.*)-\d+\.png$/i; // capture pattern "Airport-1.png"
   const animationKeys = new Set(
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     allSprites
       .map((sprite) => {
         const result = animationFrameRegex.exec(sprite.name);

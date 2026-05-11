@@ -86,19 +86,19 @@ const subEventToEmittables = (
             subEvent,
             requireLastMovePosition: true,
           };
-        } else if (subEvent.eliminationReason !== undefined) {
+        } else if (subEvent.eliminationReason === undefined) {
+          return {
+            teamIndex: team.index,
+            subEvent: { type: "wait" },
+            requireLastMovePosition: false,
+          };
+        } else {
           // if it's an hp / lab capture, we have to send the event to everyone,
           // and send the last position as well to reveal which team captured it
           return {
             teamIndex: team.index,
             subEvent,
             requireLastMovePosition: true,
-          };
-        } else {
-          return {
-            teamIndex: team.index,
-            subEvent: { type: "wait" },
-            requireLastMovePosition: false,
           };
         }
       });
@@ -231,20 +231,16 @@ export const mainEventToEmittables = (
       });
     }
     case "unloadNoWait": {
-      return teamsWithSpectator.map((team) => {
+      return teamsWithSpectator.map((team) =>
         // if either the transport or the unloaded unit is visible, send the event
-        if (
-          team.isPositionVisible(event.transportPosition) ||
-          team.isPositionVisible(event.transportPosition.addDirection(event.unloads.direction))
-        ) {
-          return {
-            ...event,
-            teamIndex: team.index,
-          };
-        } else {
-          return;
-        }
-      });
+        team.isPositionVisible(event.transportPosition) ||
+        team.isPositionVisible(event.transportPosition.addDirection(event.unloads.direction))
+          ? {
+              ...event,
+              teamIndex: team.index,
+            }
+          : undefined,
+      );
     }
     case "build": {
       // NOTE: THIS IS JUST FOR TESTING
@@ -256,17 +252,15 @@ export const mainEventToEmittables = (
       }));
     }
     case "delete": {
-      return teamsWithSpectator.map((team) => {
+      return teamsWithSpectator.map((team) =>
         // slight inaccuracy: we send the delete position that causes the player to lose
-        if (team.isPositionVisible(event.position) || event.eliminationReason !== undefined) {
-          return {
-            ...event,
-            teamIndex: team.index,
-          };
-        } else {
-          return;
-        }
-      });
+        team.isPositionVisible(event.position) || event.eliminationReason !== undefined
+          ? {
+              ...event,
+              teamIndex: team.index,
+            }
+          : undefined,
+      );
     }
     default: {
       return teamsWithSpectator.map((team) => ({

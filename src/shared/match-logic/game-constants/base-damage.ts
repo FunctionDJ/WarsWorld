@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import { Position } from "shared/schemas/position";
 import type { UnitTypeString, Visibility, WWUnit } from "shared/schemas/unit";
 import type { MatchWrapper } from "shared/wrappers/match/match";

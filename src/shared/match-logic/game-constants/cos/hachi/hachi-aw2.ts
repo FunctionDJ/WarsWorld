@@ -6,9 +6,7 @@ export const hachiAW2: COProperties = {
   dayToDay: {
     description: "Units cost 10% less to build.",
     hooks: {
-      buildCost: (baseCost) => {
-        return baseCost * 0.9;
-      },
+      buildCost: (baseCost) => baseCost * 0.9,
     },
   },
   powers: {
@@ -17,9 +15,7 @@ export const hachiAW2: COProperties = {
       description: "Unit cost is reduced to 50%.",
       stars: 3,
       hooks: {
-        buildCost: (baseCost) => {
-          return baseCost * 0.5;
-        },
+        buildCost: (baseCost) => baseCost * 0.5,
       },
     },
     superCOPower: {
@@ -28,9 +24,7 @@ export const hachiAW2: COProperties = {
       stars: 5,
       hooks: {
         //building in cities is handled somewhere else (build action / event)
-        buildCost: (baseCost) => {
-          return baseCost * 0.5;
-        },
+        buildCost: (baseCost) => baseCost * 0.5,
       },
     },
   },

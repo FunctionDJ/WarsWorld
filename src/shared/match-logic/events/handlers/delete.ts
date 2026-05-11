@@ -8,14 +8,12 @@ export const deleteActionToEvent: MainActionToEvent<DeleteAction> = (match, acti
   const deletedUnit = match.getUnit(action.position);
   player.ownsOrThrow(deletedUnit);
 
-  if (player.getUnits().length <= 1) {
-    return {
-      ...action,
-      eliminationReason: "all-units-destroyed",
-    };
-  } else {
-    return action;
-  }
+  return player.getUnits().length <= 1
+    ? {
+        ...action,
+        eliminationReason: "all-units-destroyed",
+      }
+    : action;
 };
 
 export const applyDeleteEvent = (match: MutableMatch, event: DeleteEvent): void => {

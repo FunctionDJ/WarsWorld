@@ -1,5 +1,5 @@
 import type { LeagueType, Match, MatchStatus, Player, WWMap } from "generated/browser";
-import { type MatchRules } from "shared/schemas/match-rules";
+import type { MatchRules } from "shared/schemas/match-rules";
 import type { PlayerSlot } from "shared/schemas/player-slot";
 import type { Position } from "shared/schemas/position";
 import { passableTileSchema, type PassableTile } from "shared/schemas/tile";
@@ -114,6 +114,7 @@ export class MatchWrapper {
         }
 
         return {
+          category: "variable",
           type: "plain",
           variant: `broken-pipe-${tile.variant === "top-bottom" ? "top-bottom" : "right-left"}`,
         };

@@ -46,8 +46,8 @@ export const getAvailableSubActions = (
   //This grabs the neighboring units in the new position, units.getNeighboringUnits() gets them in the old position
   const neighbourPositions = newPosition.getNeighbours();
 
-  const neighbourUnitsInNewPosition = match.units.filter((unit) =>
-    neighbourPositions.some((p) => unit.data.position.isSame(p)),
+  const neighbourUnitsInNewPosition = match.units.filter((matchUnit) =>
+    neighbourPositions.some((p) => matchUnit.data.position.isSame(p)),
   );
 
   //check for wait / join / load (move validity
@@ -183,12 +183,12 @@ export const getAvailableSubActions = (
 
     let addUnloadSubaction = false;
 
-    const getAddUnloadSubaction = (unit: UnitWrapper, loadedUnit: LoadedUnit): boolean => {
+    const getAddUnloadSubaction = (passedUnit: UnitWrapper, loadedUnit: LoadedUnit): boolean => {
       const baseMovementCost = getBaseMovementCost(
         unitPropertiesMap[loadedUnit.type].movementType,
-        getWeatherSpecialMovement(unit.player),
+        getWeatherSpecialMovement(passedUnit.player),
         tile.type,
-        match.rules.gameVersion ?? unit.player.data.coId.version,
+        match.rules.gameVersion ?? passedUnit.player.data.coId.version,
       );
 
       if (baseMovementCost === undefined) {
@@ -208,9 +208,9 @@ export const getAvailableSubActions = (
 
         const adjacentBaseMovementCost = getBaseMovementCost(
           unitPropertiesMap[loadedUnit.type].movementType,
-          getWeatherSpecialMovement(unit.player),
+          getWeatherSpecialMovement(passedUnit.player),
           adjacentTile.type,
-          match.rules.gameVersion ?? unit.player.data.coId.version,
+          match.rules.gameVersion ?? passedUnit.player.data.coId.version,
         );
 
         if (adjacentBaseMovementCost !== undefined) {

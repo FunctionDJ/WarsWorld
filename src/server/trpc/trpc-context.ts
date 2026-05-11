@@ -2,14 +2,14 @@ import type { CreateHTTPContextOptions } from "@trpc/server/adapters/standalone"
 import type { CreateWSSContextFnOptions } from "@trpc/server/adapters/ws";
 import type { IncomingMessage } from "node:http";
 
-export function createContext(opts: CreateHTTPContextOptions | CreateWSSContextFnOptions): {
-  req: IncomingMessage | undefined;
+export function createContext(options: CreateHTTPContextOptions | CreateWSSContextFnOptions): {
+  req?: IncomingMessage;
 } {
-  const req = "req" in opts ? opts.req : undefined;
+  const request = "req" in options ? options.req : undefined;
 
   return {
     // session,
-    req,
+    req: request,
     // Include res for Next.js API routes
     // res: "res" in opts ? opts.res : undefined,
   };
