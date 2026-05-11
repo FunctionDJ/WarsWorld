@@ -7,7 +7,6 @@ import { applyEmittableAttackEvent } from "shared/match-logic/events/handlers/at
 import { applyBuildEvent } from "shared/match-logic/events/handlers/build";
 import { applyMoveEvent } from "shared/match-logic/events/handlers/move";
 import { applyPassTurnEvent } from "shared/match-logic/events/handlers/pass-turn";
-import type { EmittableAttackEvent, EmittableMoveEvent } from "shared/types/events";
 import type { MutableMatch } from "shared/wrappers/match/mutable-match";
 import type { MutablePlayerInMatch } from "shared/wrappers/player/mutable-player-in-match";
 import { usePixi } from "./use-pixi";
@@ -58,11 +57,11 @@ export function MatchRenderer({ match, player, spriteSheets, turn, setTurn }: Pr
               break;
             }
 
-            applyMoveEvent(match, event as EmittableMoveEvent);
+            applyMoveEvent(match, event);
 
             switch (event.subEvent.type) {
               case "attack": {
-                applyEmittableAttackEvent(match, event.subEvent as EmittableAttackEvent);
+                applyEmittableAttackEvent(match, event.subEvent);
                 break;
               }
               case "ability": {

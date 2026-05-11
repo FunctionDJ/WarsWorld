@@ -1,30 +1,29 @@
 "use client";
+import { trpc } from "frontend/utils/trpc-client";
 import type { Container } from "pixi.js";
 import { Application } from "pixi.js";
 import type { LoadedSpriteSheet } from "pixi/load-spritesheet";
 import { setupApp } from "pixi/setup-app";
 import { useEffect, useRef } from "react";
-import type { MainAction } from "shared/schemas/action";
+import type { MainActionInput } from "shared/schemas/action";
 import type { Position } from "shared/schemas/position";
-import type { WWReadOnly } from "shared/types/ww-readonly";
 import type { MutableMatch } from "shared/wrappers/match/mutable-match";
 import type { MutablePlayerInMatch } from "shared/wrappers/player/mutable-player-in-match";
 import { handleClick, handleHover } from "../../pixi/handle-click";
 import type { PathNode } from "../../pixi/show-pathing";
-import { trpcActions } from "../../pixi/trpc-actions";
 import type { UnitWrapper } from "../../shared/wrappers/unit/unit";
 import { renderedTileSize, renderMultiplier } from "./common";
 
 export const usePixi = (
   match: MutableMatch,
-  spriteSheets: WWReadOnly<LoadedSpriteSheet>,
+  spriteSheets: LoadedSpriteSheet,
   player: MutablePlayerInMatch,
 ): {
-  pixiCanvasRef: React.RefObject<HTMLCanvasElement>;
+  pixiCanvasRef: React.RefObject<HTMLCanvasElement | null>;
   mapContainerRef: React.RefObject<Container | undefined>;
 } => {
   //containers holding pixi elements
-  const pixiCanvasRef = useRef<HTMLCanvasElement | undefined>(undefined);
+  const pixiCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const mapContainerRef = useRef<Container | undefined>(undefined);
   const unitContainerRef = useRef<Container | undefined>(undefined);
   const interactiveContainerRef = useRef<Container | undefined>(undefined);
@@ -40,14 +39,14 @@ export const usePixi = (
 
   const pathRef = useRef<Position[] | undefined>(undefined);
 
-  const { actionMutation } = trpcActions();
+  const actionMutation = trpc.action.send.useMutation();
 
   useEffect(() => {
     const app = new Application();
 
     void app
       .init({
-        view: pixiCanvasRef.current,
+        view: pixiCanvasRef.current ?? undefined,
         autoDensity: true,
         resolution: window.devicePixelRatio,
         backgroundColor: "#000b2c",
@@ -55,7 +54,7 @@ export const usePixi = (
         height: match.map.height * renderedTileSize + renderedTileSize,
       })
       .then(() => {
-        const sendAction = async (action: MainAction): Promise<void> => {
+        const sendAction = async (action: MainActionInput): Promise<void> => {
           await actionMutation.mutateAsync({
             playerId: player.data.id,
             matchId: match.id,

@@ -2,8 +2,7 @@ import { renderedTileSize } from "components/client-only/common";
 import { BitmapText, Container, Sprite, Texture } from "pixi.js";
 import { type RefObject } from "react";
 import { arrayAtOrThrow } from "shared/array-utilities";
-import type { MainAction } from "shared/schemas/action";
-import { Path } from "shared/schemas/path";
+import type { MainActionInput } from "shared/schemas/action";
 import { Position } from "../shared/schemas/position";
 import type { MatchWrapper } from "../shared/wrappers/match/match";
 import type { UnitWrapper } from "../shared/wrappers/unit/unit";
@@ -21,7 +20,7 @@ export function renderAttackTiles(
   spriteSheets: LoadedSpriteSheet,
   pathRef: RefObject<Position[] | undefined>,
   mapContainer: Container,
-  sendAction: (action: MainAction) => Promise<void>,
+  sendAction: (action: MainActionInput) => Promise<void>,
   attackingPosition?: Position,
 ) {
   interactiveContainer.getChildByName("preAttackBox")?.destroy();
@@ -81,9 +80,9 @@ export function renderAttackTiles(
           type: "move",
           subAction: {
             type: "attack",
-            defenderPosition: pos,
+            defenderPosition: pos.toSerializable(),
           },
-          path: new Path(path),
+          path: path.map((p) => p.toSerializable()),
         });
 
         //The currentUnitClicked has changed (moved, attacked, died), therefore, we delete the previous information as it is not accurate anymore

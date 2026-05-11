@@ -153,6 +153,7 @@ export class UnitWrapper<
     return this.data.type === "infantry" || this.data.type === "mech";
   }
 
+  // TODO this is Transport (?)
   isTransport(): this is UnitWrapper<TVisibility, TransportTypeString> & TransportMethods {
     return (
       this.data.type === "apc" ||

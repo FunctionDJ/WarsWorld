@@ -3,7 +3,7 @@ import type { Container } from "pixi.js";
 import { Assets } from "pixi.js";
 import type { RefObject } from "react";
 import { throwIfCantMoveIntoUnit } from "shared/match-logic/events/handlers/move";
-import type { MainAction } from "shared/schemas/action";
+import type { MainActionInput } from "shared/schemas/action";
 import type { Position } from "shared/schemas/position";
 import type { WWReadOnly } from "shared/types/ww-readonly";
 import type { MatchWrapper } from "shared/wrappers/match/match";
@@ -32,8 +32,8 @@ export const handleClick = async (
   moveTilesRef: RefObject<Map<Position, PathNode> | undefined>,
   unitRangeShowRef: RefObject<"attack" | "movement" | "vision">,
   pathRef: RefObject<Position[] | undefined>,
-  spriteSheets: WWReadOnly<LoadedSpriteSheet>,
-  sendAction: (action: MainAction) => Promise<void>,
+  spriteSheets: LoadedSpriteSheet,
+  sendAction: (action: MainActionInput) => Promise<void>,
 ) => {
   //lets load our font
   await Assets.load("/aw2Font.fnt");
@@ -234,7 +234,7 @@ export const handleHover = async (
   unitRangeShowRef: RefObject<"attack" | "movement" | "vision">,
   pathRef: RefObject<Position[] | undefined>,
   spriteSheets: WWReadOnly<LoadedSpriteSheet>,
-  _sendAction: (action: MainAction) => Promise<void>, // TODO: unused yet
+  _sendAction: (action: MainActionInput) => Promise<void>, // TODO: unused yet
 ) => {
   await Assets.load("/aw2Font.fnt");
 

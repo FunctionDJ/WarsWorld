@@ -18,5 +18,11 @@
   "eslint.options": {
     "overrideConfigFile": ".config/eslint.config.ts"
   },
-  "fallow.configPath": ".config/fallow.json"
+  "fallow.configPath": ".config/fallow.json",
+  "chat.tools.terminal.autoApprove": {
+    "/^bunx tsc --noEmit$/": {
+      "approve": true,
+      "matchCommandLine": true
+    }
+  }
 }

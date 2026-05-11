@@ -71,4 +71,8 @@ export class Position {
   offset({ x, y }: Readonly<{ x: number; y: number }>): Position {
     return new Position([this.data[0] + x, this.data[1] + y]);
   }
+
+  toSerializable(): z.input<typeof positionSchema> {
+    return this.data;
+  }
 }

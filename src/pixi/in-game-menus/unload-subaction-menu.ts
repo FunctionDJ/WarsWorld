@@ -3,10 +3,9 @@ import { Container } from "pixi.js";
 import type { RefObject } from "react";
 import { arrayAtOrThrow } from "shared/array-utilities";
 import { getUnloadablePositions } from "shared/match-logic/events/handlers/unload/check-unload-tiles";
-import { Path } from "shared/schemas/path";
 import { type Position } from "shared/schemas/position";
 import type { UnitWrapper } from "shared/wrappers/unit/unit";
-import type { MainAction } from "../../shared/schemas/action";
+import type { MainActionInput } from "../../shared/schemas/action";
 import type { MatchWrapper } from "../../shared/wrappers/match/match";
 import type { PlayerInMatchWrapper } from "../../shared/wrappers/player/player-in-match";
 import type { LoadedSpriteSheet } from "../load-spritesheet";
@@ -24,7 +23,7 @@ export const createUnloadMenu = (
   pathRef: RefObject<Position[] | undefined>,
   interactiveContainer: Container,
   spriteSheets: LoadedSpriteSheet,
-  sendAction: (action: MainAction) => Promise<void>,
+  sendAction: (action: MainActionInput) => Promise<void>,
   /**
    * Function can be called as 2nd unload. In this case, this variable will have the info of the first unload
    */
@@ -111,7 +110,7 @@ export const createUnloadMenu = (
             type: "unloadWait",
             unloads: unloads,
           },
-          path: new Path(path),
+          path: path.map((p) => p.toSerializable()),
         });
 
         currentUnitClickedRef.current = undefined;
@@ -149,7 +148,9 @@ export const createUnloadMenu = (
               { isSecondUnit: !isFirstUnit, direction: newPosition.getDirectionTo(unloadPos) },
             ],
           },
-          path: pathRef.current ? new Path(pathRef.current) : new Path([newPosition]),
+          path: pathRef.current
+            ? pathRef.current.map((p) => p.toSerializable())
+            : [newPosition.toSerializable()],
         });
 
         currentUnitClickedRef.current = undefined;

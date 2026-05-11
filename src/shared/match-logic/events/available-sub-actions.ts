@@ -6,7 +6,7 @@ import {
 import { unitPropertiesMap } from "shared/match-logic/game-constants/unit-properties";
 import { getBaseMovementCost } from "shared/match-logic/movement-cost";
 import { getWeatherSpecialMovement } from "shared/match-logic/weather";
-import type { SubAction } from "shared/schemas/action";
+import type { SubActionInput } from "shared/schemas/action";
 import { Position } from "shared/schemas/position";
 import type { LoadedUnit } from "shared/schemas/unit";
 import type { MatchWrapper } from "shared/wrappers/match/match";
@@ -35,11 +35,12 @@ export const getAvailableSubActions = (
   unit: UnitWrapper,
   newPosition: Position,
   hasMoved: boolean,
-): Map<AvailableSubActions, SubAction | undefined> => {
-  const menuOptions: Map<AvailableSubActions, SubAction | undefined> = new Map<
+): Map<AvailableSubActions, SubActionInput | undefined> => {
+  const menuOptions: Map<AvailableSubActions, SubActionInput | undefined> = new Map<
     AvailableSubActions,
-    SubAction | undefined
+    SubActionInput | undefined
   >();
+
   const tile = match.getTile(newPosition);
 
   //This grabs the neighboring units in the new position, units.getNeighboringUnits() gets them in the old position

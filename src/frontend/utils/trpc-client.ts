@@ -42,7 +42,9 @@ const getEndingLink = (ctx: NextPageContext | undefined) => {
 };
 
 export const trpc = createTRPCNext<AppRouter>({
-  config({ ctx }) {
+  config(config) {
+    const { ctx } = config;
+
     return {
       links: [
         loggerLink({

@@ -5,6 +5,7 @@ import type { COID } from "shared/schemas/co";
 import type { PlayerSlot } from "shared/schemas/player-slot";
 import type { Position } from "shared/schemas/position";
 import type { PipeSeamTile, PropertyTileType, UnusedSiloTileType } from "shared/schemas/tile";
+import type { WWReadOnly } from "./ww-readonly";
 
 export interface CapturableTile {
   type: PropertyTileType;
@@ -29,7 +30,7 @@ export interface PlayerInMatch {
   hasCurrentTurn: boolean;
   id: Player["id"];
   name: Player["name"];
-  coId: COID;
+  readonly coId: WWReadOnly<COID>;
   status: "alive" | "routed" | "captured";
   funds: number;
   powerMeter: number;

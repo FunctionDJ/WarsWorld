@@ -3,6 +3,7 @@ import type { FrontendUnit } from "frontend/components/match/frontend-unit";
 import { AnimatedSprite, Container, Sprite } from "pixi.js";
 import { getFromObjectOrThrow } from "shared/array-utilities";
 import { Position } from "shared/schemas/position";
+import type { WWReadOnly } from "shared/types/ww-readonly";
 import type { UnitWrapper } from "../shared/wrappers/unit/unit";
 import type { LoadedSpriteSheet } from "./load-spritesheet";
 
@@ -19,7 +20,11 @@ function calculatePosition(position: Position, offset = 8): SpritePosition {
   };
 }
 
-function createIcon(spriteSheet: LoadedSpriteSheet, pos: Position, texture: string): Sprite {
+function createIcon(
+  spriteSheet: WWReadOnly<LoadedSpriteSheet>,
+  pos: Position,
+  texture: string,
+): Sprite {
   const icon = new Sprite(spriteSheet.icons.textures[texture]);
   icon.x = pos.data[0];
   icon.y = pos.data[1];

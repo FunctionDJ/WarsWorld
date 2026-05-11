@@ -7,9 +7,9 @@ class PageMatchIndex {
    * a list of matches sorted by createMatchAndStore call order
    * (should always be from oldest created to newest)
    */
-  private list: MatchWrapper[] = [];
+  private readonly list: MatchWrapper[] = [];
 
-  getPage(pageNumber: number): MatchWrapper[] {
+  getPage(pageNumber: number): readonly MatchWrapper[] {
     //this.list is a list of matches, it returns 50 matches
     const start = pageNumber * 50;
     return this.list.slice(start, start + 50);

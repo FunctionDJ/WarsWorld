@@ -2,6 +2,7 @@ import type { Match, WWMap } from "generated/client";
 import { prisma } from "server/prisma/prisma-client";
 import { arrayAtOrThrow } from "shared/array-utilities";
 import { Position } from "shared/schemas/position";
+import { throwIfUndefined } from "shared/types/throw-helper";
 import type { MatchInSetup } from "shared/wrappers/match/match-in-setup";
 import { MutableMatch } from "shared/wrappers/match/mutable-match";
 import {
@@ -13,7 +14,7 @@ import type { ChangeableTile } from "../shared/types/server-match-state";
 import { pageMatchIndex } from "./page-match-index";
 import { playerMatchIndex } from "./player-match-index";
 
-const getChangeableTilesFromMap = (map: WWMap): ChangeableTile[] => {
+const getChangeableTilesFromMap = (map: WWMap): readonly ChangeableTile[] => {
   const changeableTiles: ChangeableTile[] = [];
 
   for (let y = 0; y < map.tiles.length; y++) {
@@ -49,7 +50,7 @@ const getChangeableTilesFromMap = (map: WWMap): ChangeableTile[] => {
 };
 
 export class MatchStore {
-  private index = new Map<Match["id"], MutableMatch | MatchInSetup>();
+  private readonly index = new Map<Match["id"], MutableMatch | MatchInSetup>();
 
   createMatchAndIndex(rawMatch: Match, rawMap: WWMap): MutableMatch {
     const match = new MutableMatch(
@@ -59,10 +60,33 @@ export class MatchStore {
       rawMatch.rules,
       rawMatch.status,
       rawMap,
-      rawMatch.playerState,
+      rawMatch.playerState.type === "players-in-match" ? rawMatch.playerState.players : [],
       rawMap.predeployedUnits,
       0,
     );
+
+    if (rawMatch.playerState.type === "players-in-setup") {
+      for (const player of rawMatch.playerState.players) {
+        // TODO this check needs to happen on set-read or something
+        // and we may need a different type that expresses the state of "players in setup but everything selected like coId"
+        const definedCoId = throwIfUndefined(player.coId, "Player in setup missing coId");
+        const definedArmy = throwIfUndefined(player.army, "Player in setup missing army");
+
+        match.addUnwrappedPlayer({
+          id: player.id,
+          name: player.name,
+          coId: definedCoId,
+          slot: player.slot,
+          COPowerState: "no-power",
+          army: definedArmy,
+          funds: 0,
+          hasCurrentTurn: false,
+          powerMeter: 0,
+          status: "alive",
+          timesPowerUsed: 0,
+        });
+      }
+    }
 
     this.index.set(match.id, match);
 

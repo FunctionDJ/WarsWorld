@@ -141,7 +141,9 @@ export const mainActionSchema = z
   .readonly();
 
 export type MainAction = z.infer<typeof mainActionSchema>;
+export type MainActionInput = z.input<typeof mainActionSchema>;
 export type SubAction = z.infer<typeof subActionSchema>;
+export type SubActionInput = z.input<typeof subActionSchema>;
 
 export type BuildAction = z.infer<typeof buildActionSchema>;
 export type DeleteAction = z.infer<typeof deleteActionSchema>;

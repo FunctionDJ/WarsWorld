@@ -7,11 +7,10 @@ import {
   getAvailableSubActions,
 } from "shared/match-logic/events/available-sub-actions";
 import { allDirections } from "shared/schemas/direction";
-import { Path } from "shared/schemas/path";
 import { Position } from "shared/schemas/position";
 import { throwIfUndefined } from "shared/types/throw-helper";
 import type { UnitWrapper } from "shared/wrappers/unit/unit";
-import type { MainAction } from "../../shared/schemas/action";
+import type { MainActionInput } from "../../shared/schemas/action";
 import type { MatchWrapper } from "../../shared/wrappers/match/match";
 import type { PlayerInMatchWrapper } from "../../shared/wrappers/player/player-in-match";
 import type { LoadedSpriteSheet } from "../load-spritesheet";
@@ -31,7 +30,7 @@ export default function subActionMenu(
   mapContainer: Container,
   interactiveContainer: Container,
   spriteSheets: LoadedSpriteSheet,
-  sendAction: (action: MainAction) => Promise<void>,
+  sendAction: (action: MainActionInput) => Promise<void>,
 ) {
   const hasMoved =
     pathRef.current !== undefined &&
@@ -98,7 +97,7 @@ export default function subActionMenu(
                       type: "repair",
                       direction: dir,
                     },
-                    path: new Path(path),
+                    path: path.map((p) => p.toSerializable()),
                   });
 
                   currentUnitClickedRef.current = undefined;
@@ -135,9 +134,9 @@ export default function subActionMenu(
                     type: "move",
                     subAction: {
                       type: "launchMissile",
-                      targetPosition: pos,
+                      targetPosition: pos.toSerializable(),
                     },
-                    path: new Path(path),
+                    path: path.map((p) => p.toSerializable()),
                   });
 
                   currentUnitClickedRef.current = undefined;
@@ -174,7 +173,7 @@ export default function subActionMenu(
         case AvailableSubActions.Delete: {
           void sendAction({
             type: "delete",
-            position: newPosition,
+            position: newPosition.toSerializable(),
           });
 
           currentUnitClickedRef.current = undefined;
@@ -187,7 +186,7 @@ export default function subActionMenu(
           void sendAction({
             type: "move",
             subAction: definedSubAction,
-            path: new Path(pathRef.current ?? [newPosition]),
+            path: (pathRef.current ?? [newPosition]).map((p) => p.toSerializable()),
           });
 
           //The currentUnitClicked has changed (moved, attacked, died), therefore, we delete the previous information as it is not accurate anymore

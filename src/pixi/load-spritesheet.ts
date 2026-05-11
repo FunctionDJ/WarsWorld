@@ -5,10 +5,9 @@ import type {
 } from "frontend/components/match/get-spritesheet-data";
 import { ImageSource, Spritesheet, Texture } from "pixi.js";
 import { throwIfUndefined } from "shared/types/throw-helper";
-import type { WWReadOnly } from "shared/types/ww-readonly";
 
 export type MutableLoadedSpriteSheet = Record<SheetNames, Spritesheet<ArmySpritesheetData>>;
-export type LoadedSpriteSheet = WWReadOnly<MutableLoadedSpriteSheet>;
+export type LoadedSpriteSheet = MutableLoadedSpriteSheet;
 
 export async function loadSpritesFromSpriteMap(
   spriteMap: SpritesheetDataByArmy,

@@ -5,6 +5,7 @@ import { arrayAtOrThrow } from "shared/array-utilities";
 import { Position } from "shared/schemas/position";
 import type { PassableTile } from "shared/schemas/tile";
 import type { ChangeableTile } from "shared/types/server-match-state";
+import type { WWReadOnly } from "shared/types/ww-readonly";
 import type { MatchWrapper } from "shared/wrappers/match/match";
 import type { LoadedSpriteSheet } from "./load-spritesheet";
 
@@ -13,7 +14,7 @@ type AnimationsProperty = Record<SpriteAnimationKeys, Texture[]>;
 function getTileSprite(
   match: MatchWrapper,
   tile: ChangeableTile | PassableTile,
-  spriteSheets: LoadedSpriteSheet,
+  spriteSheets: WWReadOnly<LoadedSpriteSheet>,
 ): Sprite {
   if (!("playerSlot" in tile)) {
     let spriteName: string = tile.type;
@@ -43,7 +44,7 @@ function getTileSprite(
   return tileSprite;
 }
 
-export function renderMap(match: MatchWrapper, spriteSheets: LoadedSpriteSheet) {
+export function renderMap(match: MatchWrapper, spriteSheets: WWReadOnly<LoadedSpriteSheet>) {
   const mapContainer = new Container(); // TODO add x,y values for margin/border
   mapContainer.x = mapBorder;
   mapContainer.y = mapBorder;

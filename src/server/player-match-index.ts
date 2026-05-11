@@ -6,9 +6,9 @@ import type { MatchInSetup } from "shared/wrappers/match/match-in-setup";
 import type { PlayerInMatchWrapper } from "shared/wrappers/player/player-in-match";
 
 class PlayerMatchIndex {
-  private index = new Map<Player["id"], (MatchWrapper | MatchInSetup)[]>();
+  private readonly index = new Map<Player["id"], (MatchWrapper | MatchInSetup)[]>();
 
-  getPlayerMatches(playerId: Player["id"]): (MatchWrapper | MatchInSetup)[] | undefined {
+  getPlayerMatches(playerId: Player["id"]): readonly (MatchWrapper | MatchInSetup)[] | undefined {
     return this.index.get(playerId);
   }
 
@@ -22,17 +22,22 @@ class PlayerMatchIndex {
     }
   }
 
-  onPlayerLeave(player: PlayerInMatchWrapper): void {
+  onPlayerLeave(
+    player: PlayerInMatchWrapper | { matchId: string; player: PlayerBeforeMatch },
+  ): void {
+    const playerId = "data" in player ? player.data.id : player.player.id;
+    const matchId = "data" in player ? player.match.id : player.matchId;
+
     //Lets get all the matches this player is on
     const playerMatches = throwIfUndefined(
-      this.index.get(player.data.id),
-      `Tried to get matches for player ${player.data.id} from playerIdIndex but index entry wasn't found`,
+      this.index.get(playerId),
+      `Tried to get matches for player ${playerId} from playerIdIndex but index entry wasn't found`,
     );
 
-    safeRemoveFromArray(playerMatches, (m) => m.id === player.match.id);
+    safeRemoveFromArray(playerMatches, (m) => m.id === matchId);
 
     if (playerMatches.length === 0) {
-      this.index.delete(player.data.id);
+      this.index.delete(playerId);
     }
   }
 }

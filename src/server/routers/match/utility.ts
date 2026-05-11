@@ -29,13 +29,13 @@ export const matchToFrontend = (
 ): {
   id: string;
   map: ReturnType<typeof mapToFrontend>;
-  players: PlayerInMatch[] | PlayerBeforeMatch[];
+  players: readonly (PlayerInMatch | PlayerBeforeMatch)[];
   state: string;
   turn: number;
 } => {
   const players =
     match.type === "match-in-setup"
-      ? match.players
+      ? match.getAllPlayers()
       : match.getAllPlayers().map((player) => player.data);
   const turn = match.type === "match-in-setup" ? 0 : match.turn;
 
@@ -43,7 +43,7 @@ export const matchToFrontend = (
     id: match.id,
     map: mapToFrontend(match.map),
     players,
-    state: match.state,
+    state: match.type === "match-in-setup" ? "setup" : match.state,
     turn,
   };
 };

@@ -58,8 +58,15 @@ export class MutableTransport<TVisibility extends Visibility = Visibility> exten
   }
 
   unload({ slot, direction }: Readonly<{ slot: 1 | 2; direction: Direction }>): void {
-    this.player.addUnwrappedUnit({
-      ...this.getLoadedUnit(slot).data,
+    const { playerSlot: _playerSlot, ...loadedUnitData } = this.getLoadedUnit(slot).data;
+    void _playerSlot;
+
+    // TODO fix type system to make `this.player.addUnwrappedUnit` possible instead of having to go through `this.match.getPlayerBySlot` again
+
+    const player = this.match.getPlayerBySlot(this.data.playerSlot);
+
+    player.addUnwrappedUnit({
+      ...loadedUnitData,
       isReady: false,
       position: this.data.position.addDirection(direction),
     });

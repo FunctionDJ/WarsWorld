@@ -1,4 +1,4 @@
-import { /* AnimatedSprite,*/ Container } from "pixi.js";
+import { Container } from "pixi.js";
 import type { MatchWrapper } from "shared/wrappers/match/match";
 import type { LoadedSpriteSheet } from "./load-spritesheet";
 import { renderUnitSprite } from "./render-unit-sprite";

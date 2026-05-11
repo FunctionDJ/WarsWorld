@@ -25,6 +25,11 @@ const banNonSharedPattern = {
   allowTypeImports: true,
 };
 
+// TODO
+/**
+ * idea: rule that highlights functions/methods that return an array that's not marked as readonly
+ */
+
 export default defineConfig([
   ...nextVitals,
   ...nextTs,
@@ -74,6 +79,7 @@ export default defineConfig([
       "@typescript-eslint/explicit-module-boundary-types": "warn",
       "@typescript-eslint/consistent-type-imports": "warn",
       "@typescript-eslint/strict-boolean-expressions": "error",
+      "@typescript-eslint/prefer-readonly": "warn",
       "@typescript-eslint/consistent-type-assertions": [
         "error",
         {
@@ -99,11 +105,8 @@ export default defineConfig([
             "AssignmentExpression[left.type='MemberExpression'][right.type='FunctionExpression'], AssignmentExpression[left.type='MemberExpression'][right.type='ArrowFunctionExpression']",
           message: "Do not reassign methods/functions on object properties.",
         },
-        {
-          selector: "TSTypeReference[typeName.name='ReadonlyDeep']",
-          message: "Use WWReadOnly<T>",
-        },
       ],
+      "max-lines": "warn",
       "max-len": [
         "error",
         {
@@ -115,6 +118,7 @@ export default defineConfig([
           ignoreTemplateLiterals: true,
         },
       ],
+      // we need to disable eslint built-in `no-restricted-imports` in order to use the typescript version of it
       "no-restricted-imports": "off",
       "local/no-redundant-type-wrapper": [
         "off", // TODO doesnt work like i want to yet
@@ -133,6 +137,7 @@ export default defineConfig([
     },
   },
   {
+    // react components and custom hooks
     files: ["src/**/*.tsx", "src/**/use-*.ts"],
     rules: {
       "unicorn/prevent-abbreviations": [
@@ -147,6 +152,7 @@ export default defineConfig([
     },
   },
   {
+    // react components
     files: ["src/**/*.tsx"],
     rules: {
       "unicorn/filename-case": [
@@ -157,6 +163,13 @@ export default defineConfig([
       ],
       "@typescript-eslint/explicit-function-return-type": "off",
       "@typescript-eslint/explicit-module-boundary-types": "off",
+    },
+  },
+  {
+    // next.js dynamic paths
+    files: ["src/**/\\[*\\].tsx"],
+    rules: {
+      "unicorn/filename-case": "off",
     },
   },
   {

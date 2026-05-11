@@ -149,8 +149,9 @@ const awbwTileMapping: Record<string, PassableTile> = {
   "110": { type: "pipe", variant: "left" },
   "111": { type: "unusedSilo" },
   "112": { type: "usedSilo" },
-  "113": { type: "pipeSeam", variant: "right-left", hp: 100 },
-  "114": { type: "pipeSeam", variant: "top-bottom", hp: 100 },
+  // TODO figure out what the heck is wrong with pipeSeams, like their role in the system (variable? changingTile?)
+  // "113": { type: "pipeSeam", variant: "right-left", hp: 100 },
+  // "114": { type: "pipeSeam", variant: "top-bottom", hp: 100 },
   "115": { type: "plain", variant: "broken-pipe-right-left" },
   "116": { type: "plain", variant: "broken-pipe-top-bottom" },
   "117": { type: "base", playerSlot: 8 },

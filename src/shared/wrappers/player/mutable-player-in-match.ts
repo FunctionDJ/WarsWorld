@@ -1,5 +1,10 @@
 import { DispatchableError } from "shared/dispatchable-error";
-import type { UnitWithVisibleStats, Visibility, WWUnit } from "shared/schemas/unit";
+import type {
+  UnitByVisibility,
+  UnitByVisibilityAndTypeString,
+  UnitTypeString,
+  Visibility,
+} from "shared/schemas/unit";
 import type { PlayerInMatch } from "shared/types/server-match-state";
 import type { MutableMatch } from "../match/mutable-match";
 import type { MutableTeam } from "../team/mutable-team";
@@ -28,19 +33,35 @@ export class MutablePlayerInMatch<
     this.data.powerMeter = Math.min(value, this.getMaxPowerMeter());
   }
 
-  // TODO i don't really understand yet why WWUnit isn't compatible with
-  // Omit<UnitWithVisibleStats, "playerSlot"> by default,
-  // which is why it's currently explicitly listed.
-  addUnwrappedUnit(
-    rawUnit: Omit<UnitWithVisibleStats, "playerSlot"> | WWUnit,
+  addUnwrappedUnit<UnitType extends UnitTypeString>(
+    rawUnit: Omit<UnitByVisibilityAndTypeString<TVisibility, UnitType>, "playerSlot"> & {
+      type: UnitType;
+    },
+  ): UnitWrapper<TVisibility, UnitType> {
+    return this.addUnwrappedUnitWithSlot({
+      ...rawUnit,
+      playerSlot: this.data.slot,
+    });
+  }
+
+  private addUnwrappedUnitWithSlot<UnitType extends UnitTypeString>(
+    rawUnit:
+      | UnitByVisibilityAndTypeString<TVisibility, UnitType>
+      | (Omit<UnitByVisibilityAndTypeString<TVisibility, UnitType>, "playerSlot"> & {
+          playerSlot: number;
+        }),
+  ): UnitWrapper<TVisibility, UnitType>;
+  private addUnwrappedUnitWithSlot(
+    rawUnit: UnitByVisibility<TVisibility>,
+  ): UnitWrapper<TVisibility>;
+  private addUnwrappedUnitWithSlot(
+    rawUnit: UnitByVisibility<TVisibility>,
   ): UnitWrapper<TVisibility> {
-    const unit = new MutableUnit<TVisibility>(
-      { ...rawUnit, playerSlot: this.data.slot },
-      this.match,
-    );
+    const unit = new MutableUnit<TVisibility>(rawUnit, this.match);
 
     this.match.units.push(unit);
     this.team.vision?.addUnitVision(unit);
+
     return unit;
   }
 

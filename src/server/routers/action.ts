@@ -138,14 +138,17 @@ export const actionRouter = router({
       // TODO @function either this function gets a list of emittables, or we iterate through them here.
       //  undefined means that team shouldn't receive the event
       //  emittableEvents[i] is from match.teams[i]. emittableEvents has one extra "no team"(spectator) at the end
-      emittableEvents.forEach((emittableEvent: EmittableEvent | undefined) => {
-        if (emittableEvent) {
-          void matchEmitter.emit("emittable", {
-            ...emittableEvent,
-            teamId: emittableEvent.teamIndex,
-          });
+
+      for (const event of emittableEvents) {
+        if (event === undefined) {
+          continue;
         }
-      });
+
+        await matchEmitter.emit("emittable", {
+          ...event,
+          teamId: event.teamIndex,
+        });
+      }
 
       /* 10. Save event */
       // const eventOnDB = await prisma.event.create({
@@ -177,16 +180,16 @@ export const actionRouter = router({
       //   emit(emittableEliminationEvent)
       // }
     }),
-  onEvent: matchBaseProcedure.subscription(async function* (opts) {
+  onEvent: matchBaseProcedure.subscription(async function* ({ input, signal }) {
     // TODO https://trpc.io/docs/server/subscriptions#tracked
 
     // TODO how to subscribe with specific currentPlayer.id ?
     // or filter the events/emittables otherwise for the observing player/viewer?
 
-    const matchEmitter = getMatchEmitter(opts.input.matchId);
+    const matchEmitter = getMatchEmitter(input.matchId);
 
     for await (const { data } of matchEmitter.events("emittable", {
-      signal: opts.signal,
+      signal,
     })) {
       yield data;
     }

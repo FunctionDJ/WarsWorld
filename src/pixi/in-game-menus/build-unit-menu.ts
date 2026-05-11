@@ -3,7 +3,7 @@ import type { ArmySpritesheetData } from "frontend/components/match/get-spritesh
 import type { Spritesheet } from "pixi.js";
 import { AnimatedSprite, BitmapText, Container, Sprite, Texture } from "pixi.js";
 import { unitPropertiesMap } from "shared/match-logic/game-constants/unit-properties";
-import type { MainAction } from "shared/schemas/action";
+import type { MainActionInput } from "shared/schemas/action";
 import type { Position } from "shared/schemas/position";
 import { unitTypes, type UnitTypeString } from "shared/schemas/unit";
 import { throwIfUndefined } from "shared/types/throw-helper";
@@ -48,7 +48,6 @@ export const createMenuElementsForUnits = (
 
     //the unit sprite we see on the menu
     const spriteOptions = throwIfUndefined(spriteSheet.animations[unitType]);
-
     const unitSprite = new AnimatedSprite(spriteOptions);
     unitSprite.y = yValue;
     unitSprite.width = unitSize;
@@ -122,7 +121,7 @@ export const buildUnitMenu = (
   match: MatchWrapper,
   player: PlayerInMatchWrapper,
   position: Position,
-  sendAction: (action: MainAction) => Promise<void>,
+  sendAction: (action: MainActionInput) => Promise<void>,
 ) => {
   const allowedUnits = unitTypes.filter((t) => !match.rules.bannedUnitTypes.includes(t));
   const facility = match.getTile(position).type;
@@ -156,7 +155,7 @@ export const buildUnitMenu = (
     menuElement.on("pointerdown", () => {
       void sendAction({
         type: "build",
-        position,
+        position: position.toSerializable(),
         unitType,
       });
 

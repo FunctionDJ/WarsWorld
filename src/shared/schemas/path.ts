@@ -1,7 +1,7 @@
 import { throwIfUndefined } from "shared/types/throw-helper";
 import type { WWReadOnly } from "shared/types/ww-readonly";
 import { z } from "zod";
-import { Position, positionSchema } from "./position";
+import { type Position, positionSchema } from "./position";
 
 export class Path {
   constructor(private readonly data: readonly Position[]) {}
@@ -35,7 +35,13 @@ export class Path {
   contains(position: Position): boolean {
     return this.data.some((pos) => pos.isSame(position));
   }
+
+  toSerializable(): z.input<typeof pathSchema> {
+    return this.data.map((pos) => [pos.data[0], pos.data[1]]);
+  }
 }
+
+// TODO try out integrating the schema into the class as a static property
 
 export const pathSchema = z
   .array(positionSchema)

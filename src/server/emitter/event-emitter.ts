@@ -32,8 +32,10 @@ export const globalEmittable = async (
 ): Promise<void> => {
   const matchEmitter = getMatchEmitter(match.id);
 
+  const teams = match.type === "match-in-setup" ? match.getTeams() : match.teams;
+
   await Promise.all(
-    match.teams.map((team) =>
+    teams.map((team) =>
       matchEmitter.emit("emittable", {
         ...emittable,
         teamId: team.index,
