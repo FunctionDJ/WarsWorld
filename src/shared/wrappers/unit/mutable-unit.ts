@@ -13,7 +13,7 @@ import { UnitWrapper } from "./unit";
 export class MutableUnit<
   TVisibility extends Visibility = Visibility,
   Type extends UnitTypeString = UnitTypeString,
-> extends UnitWrapper<TVisibility> {
+> extends UnitWrapper<TVisibility, Type> {
   public player: MutablePlayerInMatch<TVisibility>;
 
   constructor(

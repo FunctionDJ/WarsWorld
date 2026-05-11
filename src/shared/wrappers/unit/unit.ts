@@ -29,7 +29,7 @@ export class UnitWrapper<
   public properties: (typeof unitPropertiesMap)[Type];
 
   constructor(
-    public data: UnitByVisibilityAndTypeString<TVisibility, Type>,
+    public readonly data: UnitByVisibilityAndTypeString<TVisibility, Type>,
     public match: MatchWrapper,
   ) {
     const player = match.getPlayerBySlot(data.playerSlot);

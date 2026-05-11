@@ -189,16 +189,10 @@ export type UnitWithHiddenStats = UnitWithVisibleStats extends infer Unit
 
 export type WWUnit = UnitWithHiddenStats | UnitWithVisibleStats;
 
-export type FilterWWUnitByTypeString<
-  TypeStringParameter extends UnitTypeString,
-  UnitType extends WWUnit,
-> = Extract<UnitType, { type: TypeStringParameter }>;
-
 export type Visibility = "visible" | "hidden";
 
-type UnitByVisibility<TVisibility extends Visibility = Visibility> = TVisibility extends "visible"
-  ? UnitWithVisibleStats
-  : UnitWithHiddenStats;
+export type UnitByVisibility<TVisibility extends Visibility = Visibility> =
+  TVisibility extends "visible" ? UnitWithVisibleStats : UnitWithHiddenStats;
 
 export type UnitByVisibilityAndTypeString<
   TVisibility extends Visibility = Visibility,
