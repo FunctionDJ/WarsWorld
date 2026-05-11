@@ -59,6 +59,7 @@ export default defineConfig([
   typescript.configs.strictTypeChecked,
   typescript.configs.stylisticTypeChecked,
   unicorn.configs.recommended,
+  // eslint-disable-next-line import-x/no-named-as-default-member
   reactCompilerPlugin.configs.recommended,
   reactRefreshPlugin.configs.recommended,
   deMorganBooleanLogic.configs.recommended,
@@ -101,7 +102,8 @@ export default defineConfig([
       "@typescript-eslint/prefer-ts-expect-error": "error",
       "@typescript-eslint/prefer-optional-chain": "error",
       "@typescript-eslint/strict-void-return": "error",
-      "@typescript-eslint/switch-exhaustiveness-check": "warn",
+      // TODO
+      // "@typescript-eslint/switch-exhaustiveness-check": "warn",
       "@typescript-eslint/restrict-template-expressions": "off",
       "@typescript-eslint/no-confusing-void-expression": "off",
       "@typescript-eslint/method-signature-style": "error",
@@ -112,6 +114,7 @@ export default defineConfig([
           assertionStyle: "never",
         },
       ],
+      // TODO
       // "@typescript-eslint/prefer-readonly-parameter-types": [
       //   "error",
       //   {
@@ -230,6 +233,17 @@ export default defineConfig([
         {
           paths: [banPrismaClientPath],
           patterns: [banPixiPattern, banNonSharedPattern],
+        },
+      ],
+    },
+  },
+  {
+    files: ["src/shared/wrappers/**/*.ts"],
+    rules: {
+      "@typescript-eslint/prefer-readonly-parameter-types": [
+        "error",
+        {
+          treatMethodsAsReadonly: true,
         },
       ],
     },

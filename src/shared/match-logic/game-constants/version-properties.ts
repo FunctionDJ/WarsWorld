@@ -109,7 +109,6 @@ const AWDSProperties: VersionProperties = {
   offensivePowerGenMult: 0.5,
   powerMeterIncreasePerHP: (affectedUnit) => {
     // TODO Switch is not exhaustive. Cases not matched: "antiAir" | "carrier"
-    // eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
     switch (affectedUnit.data.type) {
       case "infantry":
       case "mech": {

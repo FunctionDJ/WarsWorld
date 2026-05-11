@@ -21,7 +21,6 @@ export function getBaseMovementCost(
     return clearMovementCost; // weather doesn't inflict move penalties in awds
   }
 
-  // eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
   switch (weather) {
     case "rain": {
       if (["plain", "forest"].includes(tileType) && ["treads", "tires"].includes(movementType)) {

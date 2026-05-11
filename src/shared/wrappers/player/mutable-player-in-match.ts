@@ -18,7 +18,7 @@ export class MutablePlayerInMatch<
   public readonly match: MutableMatch;
 
   constructor(
-    data: PlayerInMatch,
+    public data: PlayerInMatch,
     readonly team: MutableTeam,
   ) {
     super(data, team);

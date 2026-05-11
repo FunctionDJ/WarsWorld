@@ -54,7 +54,8 @@ export class MatchWrapper {
   constructor(
     public readonly id: Match["id"],
     public readonly leagueType: LeagueType,
-    public readonly changeableTiles: readonly ChangeableTile[], //TODO change to map from position to changeableTile for better performance
+    //TODO change to map from position to changeableTile for better performance
+    public readonly changeableTiles: readonly WWReadOnly<ChangeableTile>[],
     public readonly rules: MatchRules,
     public state: MatchStatus,
     map: WWReadOnly<WWMap>,

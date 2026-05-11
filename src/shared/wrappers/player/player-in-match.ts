@@ -20,7 +20,7 @@ export class PlayerInMatchWrapper<TVisibility extends Visibility = Visibility> {
   public readonly match: MatchWrapper;
 
   constructor(
-    public data: PlayerInMatch,
+    public readonly data: WWReadOnly<PlayerInMatch>,
     public readonly team: Team,
   ) {
     this.match = team.match;

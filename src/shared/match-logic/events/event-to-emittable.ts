@@ -44,18 +44,18 @@ const subEventToEmittables = (
     case "attack": {
       const attacker = match.getUnit(fromPosition);
 
-      //TODO why is this here?
-      switch (subEvent.eliminationReason) {
-        case "all-attacker-units-destroyed": {
-          attacker.player.data.status = "routed";
-          break;
-        }
-        case "all-defender-units-destroyed": {
-          const defender = match.getUnit(subEvent.defenderPosition);
-          defender.player.data.status = "routed";
-          break;
-        }
-      }
+      //TODO why was this here?
+      // switch (subEvent.eliminationReason) {
+      //   case "all-attacker-units-destroyed": {
+      //     attacker.player.data.status = "routed";
+      //     break;
+      //   }
+      //   case "all-defender-units-destroyed": {
+      //     const defender = match.getUnit(subEvent.defenderPosition);
+      //     defender.player.data.status = "routed";
+      //     break;
+      //   }
+      // }
 
       return teamsWithSpectator.map((team) => ({
         teamIndex: team.index,

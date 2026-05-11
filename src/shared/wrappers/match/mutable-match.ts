@@ -33,7 +33,7 @@ export class MutableMatch extends MatchWrapper {
   constructor(
     id: Match["id"],
     leagueType: LeagueType,
-    changeableTiles: readonly ChangeableTile[], //TODO change to map from position to changeableTile for better performance
+    public readonly changeableTiles: readonly ChangeableTile[], //TODO change to map from position to changeableTile for better performance
     public readonly rules: WWReadOnly<MatchRules>,
     public state: MatchStatus,
     map: WWReadOnly<WWMap>,

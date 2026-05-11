@@ -8,7 +8,6 @@ export const eagleAW2: COProperties = {
       "Air units have +15% firepower and +10% defense, and consume -2 fuel per day. Naval units have -30% firepower.",
     hooks: {
       attack({ attacker }) {
-        // eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
         switch (attacker.properties.facility) {
           case "airport": {
             return 115;
