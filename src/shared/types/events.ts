@@ -60,7 +60,7 @@ export type AttackEvent = {
 
 export type COPowerEvent = COPowerAction & {
   /** used for rachel, von-bolt and sturm SCOPs */
-  positions?: Position[];
+  positions?: readonly Position[];
 };
 
 interface WithPlayer {

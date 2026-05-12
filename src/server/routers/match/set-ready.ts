@@ -15,6 +15,11 @@ export const setReady = matchInSetupBaseProcedure
     const playerBeforeMatch = match.findPlayerById(player.id);
     playerBeforeMatch.ready = input.readyState;
 
+    // TODO i think we might not want to do this.
+    // we don't have any check for if the match is even "playable" (e.g. this code would start the match when there's 1 player and they click ready)
+    // maybe we'll just split the "start match" logic into a separate procedure that can only be called by the host
+    // which would have "playability" logic.
+
     if (match.getAllPlayers().some((p) => !p.ready)) {
       await prisma.match.update({
         where: { id: match.id },

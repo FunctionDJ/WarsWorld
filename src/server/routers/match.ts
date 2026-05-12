@@ -58,6 +58,8 @@ export const matchRouter = router({
       // TODO if ctx.user doesn't have the permissions to do this (e.g. isn't an admin)
       // then throw a tRPC error for unauthorized
 
+      // TODO i guess we need a new action and event for this so that it can be broadcasted
+
       const unit = ctx.match.getUnit(input.position);
 
       if (unit.data.isReady) {

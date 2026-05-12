@@ -29,26 +29,9 @@ const banNonSharedPattern = {
   allowTypeImports: true,
 };
 
-// TODO
-/**
- * idea: rule that highlights functions/methods that return an array that's not marked as readonly
- */
-
 export default defineConfig([
   globalIgnores([
     ".next/**",
-    // TODO
-    /**
-     * old comment:
-     *
-     * even though "dist" is already excluded through tsconfig.json, eslint will
-     * lint the "dist" folder without this `ignorePatterns`.
-     * i suspect that's because there's another eslint config generated at `./dist/.eslintrc.cjs`.
-     * maybe there's a cleaner way by telling typescript to typecheck `./.eslintrc.js` but not transpile it to `./dist`.
-     *
-     * ^ this comment is old but might still be valid.
-     */
-    "dist/**",
     "src/generated/**",
     "src/pixi/**/*.*", // TODO temporarily
     "src/frontend/**", // TODO temporarily
@@ -80,7 +63,12 @@ export default defineConfig([
     languageOptions: {
       parserOptions: {
         projectService: {
-          allowDefaultProject: ["eslint.config.ts", "prisma.ts", "tailwind.config.ts"],
+          allowDefaultProject: [
+            "eslint.config.ts",
+            "prisma.ts",
+            "tailwind.config.ts",
+            "../postcss.config.mjs",
+          ],
         },
       },
     },
@@ -123,7 +111,7 @@ export default defineConfig([
       //   },
       // ],
       "no-restricted-syntax": [
-        "error",
+        "warn",
         {
           selector:
             ":matches(Identifier.params, TSPropertySignature, PropertyDefinition)[optional=false] > TSTypeAnnotation > TSUnionType:has(TSUndefinedKeyword)",
@@ -134,6 +122,10 @@ export default defineConfig([
           selector:
             "AssignmentExpression[left.type='MemberExpression'][right.type='FunctionExpression'], AssignmentExpression[left.type='MemberExpression'][right.type='ArrowFunctionExpression']",
           message: "Do not reassign methods/functions on object properties.",
+        },
+        {
+          selector: "TSFunctionType > TSTypeAnnotation > TSArrayType",
+          message: "Return readonly T[] instead of T[]",
         },
       ],
       "max-lines": "warn",
@@ -156,8 +148,8 @@ export default defineConfig([
           requireWrappedTypeEffectivelyReadonlyFor: ["WWReadOnly", "Readonly"],
         },
       ],
+      // TODO
       /**
-       * TODO
        * we haven't decided yet if we want to use next.js' <Image> or just
        * go with <img> yet. when a conclusion is made, one or the other
        * should be banned through linting.
@@ -247,6 +239,12 @@ export default defineConfig([
           treatMethodsAsReadonly: true,
         },
       ],
+    },
+  },
+  {
+    files: ["next-env.d.ts"],
+    rules: {
+      "unicorn/prevent-abbreviations": "off",
     },
   },
 ]);

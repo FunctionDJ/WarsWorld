@@ -22,7 +22,7 @@ type EmittableSubEventWithExtraInfo = Readonly<{
 const subEventToEmittables = (
   match: MatchWrapper,
   moveEvent: MoveEventWithSubEvent | MoveEventWithoutSubEvent,
-): EmittableSubEventWithExtraInfo[] => {
+): readonly EmittableSubEventWithExtraInfo[] => {
   const spectatorTeam = new Team([], match, -1);
   const teamsWithSpectator = [...match.teams, spectatorTeam];
 
@@ -142,7 +142,7 @@ const subEventToEmittables = (
 export const mainEventToEmittables = (
   match: MatchWrapper,
   event: MainEventsWithoutSubEvents | MainEventWithSubEvents,
-): (EmittableEvent | undefined)[] => {
+): readonly (EmittableEvent | undefined)[] => {
   const spectatorTeam = new Team([], match, -1);
   const teamsWithSpectator: RO<Team[]> = [...match.teams, spectatorTeam];
 

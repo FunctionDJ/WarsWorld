@@ -38,11 +38,11 @@ export class Team {
     return true;
   }
 
-  getUnits(): UnitWrapper[] {
+  getUnits(): readonly UnitWrapper[] {
     return this.players.flatMap((player) => player.getUnits());
   }
 
-  getEnemyUnits(): UnitWrapper[] {
+  getEnemyUnits(): readonly UnitWrapper[] {
     return this.match.units.filter((unit) => !this.owns(unit));
   }
 
@@ -74,7 +74,7 @@ export class Team {
     return this.isPositionVisible(unit.data.position);
   }
 
-  getEnemyUnitsInVision(): WWUnit[] {
+  getEnemyUnitsInVision(): readonly WWUnit[] {
     return this.getEnemyUnits()
       .filter((enemy) => {
         const tile = enemy.getTile();

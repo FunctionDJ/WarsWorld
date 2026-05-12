@@ -10,7 +10,7 @@ export class MutableTeam extends Team {
   public readonly players: MutablePlayerInMatch[];
 
   constructor(
-    players: PlayerInMatch[],
+    players: readonly PlayerInMatch[],
     public readonly match: MutableMatch,
     index: number,
   ) {
@@ -24,7 +24,7 @@ export class MutableTeam extends Team {
     return playerWrapper;
   }
 
-  getEnemyUnits(): MutableUnit[] {
+  getEnemyUnits(): readonly MutableUnit[] {
     return this.match.units.filter((unit) => !this.owns(unit));
   }
 }

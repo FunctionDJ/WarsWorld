@@ -1,6 +1,6 @@
 @import "tailwindcss" prefix(tw);
 
-@config '../../../tailwind.config.ts';
+@config '../../../.config/tailwind.config.ts';
 
 /*
   from @tailwindcss/upgrade:

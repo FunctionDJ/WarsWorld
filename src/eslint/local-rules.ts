@@ -114,7 +114,7 @@ const noRedundantTypeWrapperRule = ESLintUtils.RuleCreator.withoutDocs<
           suggest: [
             {
               messageId: "unwrap",
-              fix(fixer): RuleFix[] {
+              fix(fixer): readonly RuleFix[] {
                 return [fixer.replaceText(typeReferenceNode, wrappedTypeText)];
               },
             },

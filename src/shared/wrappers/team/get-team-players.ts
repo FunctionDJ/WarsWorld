@@ -6,7 +6,7 @@ export const getTeamPlayers = (
   teamIndex: number,
   rules: MatchRules,
   players: readonly RO<PlayerInMatch>[],
-): PlayerInMatch[] => {
+): readonly PlayerInMatch[] => {
   // get all keys of teamMapping with value of teamIndex
   const playerSlotsInTeam = new Set(
     rules.teamMapping

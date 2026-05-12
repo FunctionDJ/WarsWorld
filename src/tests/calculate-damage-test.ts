@@ -147,12 +147,12 @@ const { attackerHP, defenderHP } = attackActionToEvent(
   u1.data.position,
   true,
   {
-    goodLuck: 50,
-    badLuck: 50,
+    goodLuck: 0.5,
+    badLuck: 0.5,
   },
   {
-    goodLuck: 50,
-    badLuck: 50,
+    goodLuck: 0.5,
+    badLuck: 0.5,
   },
 );
 

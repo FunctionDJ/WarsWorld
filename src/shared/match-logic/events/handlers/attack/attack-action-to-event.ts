@@ -124,6 +124,7 @@ export const attackActionToEvent: (
   }
 
   const result = calculateEngagementOutcome(attacker, defender, attackerLuck, defenderLuck);
+
   return {
     ...action,
     defenderHP: Math.max(0, result.defenderHP),

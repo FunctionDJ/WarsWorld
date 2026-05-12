@@ -57,7 +57,7 @@ export class Vision {
    * Returns new discovered positions until now, and resets the array.
    * Does NOT work when recalculateVision() is called!
    */
-  getDiscoveredPositionsAndClear(): Position[] {
+  getDiscoveredPositionsAndClear(): readonly Position[] {
     const discoveredPositions = [...this.discoveredPositions];
     this.discoveredPositions = [];
     return discoveredPositions;
@@ -67,7 +67,7 @@ export class Vision {
    * Returns new undiscovered positions until now, and resets the array.
    * Does NOT work when recalculateVision() is called!
    */
-  getUndiscoveredPositionsAndClear(): Position[] {
+  getUndiscoveredPositionsAndClear(): readonly Position[] {
     const undiscoveredPositions = [...this.undiscoveredPositions];
     this.undiscoveredPositions = [];
     return undiscoveredPositions;

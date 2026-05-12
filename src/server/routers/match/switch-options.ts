@@ -18,6 +18,8 @@ export const switchOptions = matchInSetupBaseProcedure
   )
   .mutation(async ({ input, ctx: { match, currentPlayer: player } }) => {
     const newPlayerData = match.findPlayerById(player.id);
+
+    // TODO i think these 3 lines need to run after the checks
     newPlayerData.coId = input.selectedCO ?? newPlayerData.coId;
     newPlayerData.army = input.selectedArmy ?? newPlayerData.army;
     newPlayerData.slot = input.selectedSlot ?? newPlayerData.slot;

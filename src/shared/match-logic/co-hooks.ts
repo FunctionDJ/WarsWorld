@@ -3,8 +3,8 @@ import type { MatchWrapper } from "shared/wrappers/match/match";
 import type { UnitWrapper } from "shared/wrappers/unit/unit";
 
 export type CombatProperties = Readonly<{
-  attacker: UnitWrapper;
-  defender: UnitWrapper;
+  attacker: RO<UnitWrapper>;
+  defender: RO<UnitWrapper>;
 }>;
 
 type ReturnValue = number | undefined;

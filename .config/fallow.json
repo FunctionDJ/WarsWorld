@@ -1,7 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/fallow-rs/fallow/main/schema.json",
   "entry": [
-    "src/server/main*.ts",
     "src/frontend/components/calculator/Calculator.tsx",
     "src/shared/match-logic/events/handlers/attack/applyEmittableAttackEvent.ts",
     "src/shared/match-logic/game-constants/cos/sturm/sturm-aw1-campaign.ts",
@@ -10,7 +9,10 @@
   ],
   "ignoreDependencies": [
     "@typescript/native-preview",
-    "jiti" // loader for eslint with typescript support
+    // loader for eslint with typescript support
+    "jiti",
+    // peer dependency, not directly imported in our code, type stuff will fail without it like createTRPCNext (iirc)
+    "@tanstack/react-query"
   ],
   "duplicates": {
     "ignore": ["src/shared/match-logic/game-constants/cos/**/*.*"]

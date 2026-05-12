@@ -6,7 +6,7 @@ export const getUnloadablePositions = <TUnitType extends UnitTypeString>(
   transportUnit: UnitWrapper,
   unitToUnload: UnitWrapper<Visibility, TUnitType>,
   newTransportUnitLocation?: Position,
-): Position[] => {
+): readonly Position[] => {
   const transportPosition = newTransportUnitLocation ?? transportUnit.data.position;
 
   return transportPosition.getNeighbours().filter((neighbourPosition) => {

@@ -33,8 +33,8 @@ export const createUnloadMenu = (
     throw new Error("Asked to create unlaod menu for unit without loaded units");
   }
 
-  let unloadPositions1: Position[] | undefined = undefined;
-  let unloadPositions2: Position[] | undefined = undefined;
+  let unloadPositions1: readonly Position[] | undefined = undefined;
+  let unloadPositions2: readonly Position[] | undefined = undefined;
   let menuInfo1 = undefined;
   let menuInfo2 = undefined;
   const infosForMenu = [];
@@ -166,7 +166,7 @@ export const createUnloadMenu = (
     }
   };
 
-  const attachUnloadPositionHandler = (unloadPositions: Position[], index: number) => {
+  const attachUnloadPositionHandler = (unloadPositions: readonly Position[], index: number) => {
     arrayAtOrThrow(menuElements, index).on("pointerdown", () => {
       const unloadTilesContainer = new Container();
       unloadTilesContainer.label = "unloadUnitsBox";

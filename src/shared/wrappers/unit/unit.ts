@@ -75,7 +75,7 @@ export class UnitWrapper<
     return this.match.getPassableTile(this.data.position);
   }
 
-  getNeighbouringUnits(): UnitWrapper<TVisibility>[] {
+  getNeighbouringUnits(): readonly UnitWrapper<TVisibility>[] {
     const neighbourPositions = this.data.position.getNeighbours();
 
     return this.match.units.filter((unit: UnitWrapper<TVisibility>) =>

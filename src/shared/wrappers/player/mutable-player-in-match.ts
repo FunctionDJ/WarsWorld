@@ -65,7 +65,7 @@ export class MutablePlayerInMatch<
     return unit;
   }
 
-  getUnits(): MutableUnit<TVisibility>[] {
+  getUnits(): readonly MutableUnit<TVisibility>[] {
     return this.match.units.filter((unit) => this.owns(unit));
   }
 

@@ -45,7 +45,7 @@ export class PlayerInMatchWrapper<TVisibility extends Visibility = Visibility> {
    * maybe units should be owned by at least the team, but player is probably more convenient
    * (then units of a specific player are contracted to the players TVisibility)
    */
-  getUnits(): UnitWrapper<TVisibility>[] {
+  getUnits(): readonly UnitWrapper<TVisibility>[] {
     return this.match.units.filter((unit) => this.owns(unit));
   }
 

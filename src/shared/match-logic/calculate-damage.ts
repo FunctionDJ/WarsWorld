@@ -1,4 +1,5 @@
 import type { LuckRoll } from "shared/schemas/co";
+import type { RO } from "shared/types/ww-readonly";
 import { MutableMatch } from "shared/wrappers/match/mutable-match";
 import { MutableUnit } from "shared/wrappers/unit/mutable-unit";
 import type { UnitWrapper } from "shared/wrappers/unit/unit";
@@ -8,13 +9,6 @@ import { getTerrainDefenseStars } from "./game-constants/terrain-properties";
 
 /** @returns 1-10, whole numbers */
 export const getVisualHPfromHP = (hp: number): number => Math.ceil(hp / 10);
-
-// TODO unused yet
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const _roundUpTo = (value: number, step: number): number => {
-  const scalingFactor = 1 / step;
-  return Math.ceil(value * scalingFactor) / scalingFactor;
-};
 
 /**
  * @param luckRoll contains goodLuck roll and badLuck roll
@@ -83,6 +77,7 @@ export const calculateDamage = (
   //needs the special case luckRoll == 1 (so maxLuck = 1 gives expected results consistent with floor)
   const goodLuckValue =
     luckRoll.goodLuck === 1 ? maxGoodLuck - 1 : Math.floor(luckRoll.goodLuck * maxGoodLuck);
+
   const badLuckValue =
     luckRoll.badLuck === 1 ? maxBadLuck - 1 : Math.floor(luckRoll.badLuck * maxBadLuck);
 
@@ -115,7 +110,9 @@ export const calculateDamage = (
   // damage formula application
 
   const luckModifier = goodLuckValue - badLuckValue;
+
   const attackFactor = Math.max(0, Math.floor(baseDamage * (attackModifier / 100) + luckModifier));
+
   const attackHPFactor = Math.floor(attackFactor * (visualHPOfAttacker / 10));
 
   const defenseFactor =
@@ -128,9 +125,9 @@ export const calculateDamage = (
 
 //can return negative hp values (useful for damage calculator / displaying damage range)
 export const calculateEngagementOutcome = (
-  attacker: UnitWrapper,
-  defender: UnitWrapper,
-  attackerLuck: LuckRoll,
+  attacker: RO<UnitWrapper>,
+  defender: RO<UnitWrapper>,
+  attackerLuck: RO<LuckRoll>, // TODO if defenderLuck has no lint error, attackerLuck should have a lint error because of redundant RO<T>
   defenderLuck: LuckRoll,
 ): { defenderHP: number; attackerHP?: number } => {
   let damageByAttacker = calculateDamage(
@@ -169,34 +166,18 @@ export const calculateEngagementOutcome = (
     // actually, it might be easier and less error-prone to extract the HP logic into
     // it's own class, factory function, or only extract setHP.
 
+    const { match } = attacker;
+
     const dummyMutableMatch = new MutableMatch(
-      "0",
-      "standard",
-      [],
-      {
-        bannedUnitTypes: [],
-        captureLimit: 0,
-        dayLimit: 0,
-        fogOfWar: false,
-        fundsPerProperty: 0,
-        gameVersion: "AW1",
-        labUnitTypes: [],
-        teamMapping: [],
-        unitCapPerPlayer: 0,
-        weatherSetting: "clear",
-      },
-      "playing",
-      {
-        id: "0",
-        name: "dummy",
-        createdAt: new Date(),
-        numberOfPlayers: 1,
-        predeployedUnits: [],
-        tiles: [],
-      },
-      [],
-      [],
-      0,
+      match.id,
+      match.leagueType,
+      match.changeableTiles,
+      match.rules,
+      match.state,
+      match.map.data,
+      match.getAllPlayers().map((p) => p.data),
+      [], // specifying attackerMatch.units doesn't work right now for some reason
+      match.turn,
     );
 
     const dummyMutableDefender = new MutableUnit(defender.data, dummyMutableMatch);
@@ -213,7 +194,7 @@ export const calculateEngagementOutcome = (
     );
 
     if (damageByDefender !== undefined) {
-      //return event with counter-attack
+      // return event with counter-attack
       return {
         defenderHP: defender.getHP() - damageByAttacker,
         attackerHP: attacker.getHP() - damageByDefender,

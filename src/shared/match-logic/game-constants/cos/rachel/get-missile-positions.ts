@@ -8,7 +8,9 @@ import type { PlayerInMatchWrapper } from "../../../../wrappers/player/player-in
  * 2) Value
  * 3) HP
  */
-export const getMissilePositions = (rachelPlayer: RO<PlayerInMatchWrapper>): Position[] => {
+export const getMissilePositions = (
+  rachelPlayer: RO<PlayerInMatchWrapper>,
+): readonly Position[] => {
   // !!! mechs do count as infantry
   // apparently, this missile is in fact 1x normal hp, 2x infantry hp, 8x capturing infantry hp
   let bestPositionInf = new Position([0, 0]);

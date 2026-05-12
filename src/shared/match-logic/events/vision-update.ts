@@ -4,7 +4,7 @@ import type { MatchWrapper } from "../../wrappers/match/match";
 
 export const fillDiscoveredUnitsAndProperties = (
   match: MatchWrapper,
-  emittableEvents: (EmittableEvent | undefined)[],
+  emittableEvents: readonly (EmittableEvent | undefined)[],
 ): void => {
   // emittableEvents.length = math.teams.length + 1, since it has "no team" in the end
   for (const [index, team] of match.teams.entries()) {
@@ -25,7 +25,7 @@ export const fillDiscoveredUnitsAndProperties = (
           match.getCurrentTurnPlayer().data.coId.name === "drake"));
 
     if (recalculateVision) {
-      emittableEvent.discoveredUnits = team.getEnemyUnitsInVision();
+      emittableEvent.discoveredUnits = [...team.getEnemyUnitsInVision()];
       return;
     }
 

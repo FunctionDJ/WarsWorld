@@ -141,7 +141,6 @@ const Match = ({ spriteData }: Props) => {
     app.stage.scale.set(scale, scale);
 
     //let render our game cursor
-    //TODO: Cursor stops working on second screen on google chrome (works on firefox).
     app.renderer.events.cursorStyles.default = {
       animation: "gameCursor 1200ms infinite",
     } as CSSStyleDeclaration;

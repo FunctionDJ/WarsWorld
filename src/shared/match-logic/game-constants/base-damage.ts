@@ -1,6 +1,7 @@
 /* eslint-disable max-lines */
 import { Position } from "shared/schemas/position";
 import type { UnitTypeString, Visibility, WWUnit } from "shared/schemas/unit";
+import type { RO } from "shared/types/ww-readonly";
 import type { MatchWrapper } from "shared/wrappers/match/match";
 import { UnitWrapper } from "shared/wrappers/unit/unit";
 
@@ -26,7 +27,10 @@ export const createPipeSeamUnitEquivalent = (
   return new UnitWrapper<Visibility, UnitTypeString>(unitEquivalent, match);
 };
 
-export const getBaseDamage = (attacker: UnitWrapper, defender: UnitWrapper): number | undefined => {
+export const getBaseDamage = (
+  attacker: RO<UnitWrapper>,
+  defender: RO<UnitWrapper>,
+): number | undefined => {
   const damageValues = attacker.player.getVersionProperties().damageChart[attacker.data.type];
 
   if (damageValues === undefined) {

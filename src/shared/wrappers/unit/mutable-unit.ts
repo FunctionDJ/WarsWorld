@@ -130,7 +130,7 @@ export class MutableUnit<
     safeRemoveFromArray(this.match.units, (u) => u.data.position.isSame(this.data.position));
   }
 
-  getNeighbouringUnits(): MutableUnit<TVisibility>[] {
+  getNeighbouringUnits(): readonly MutableUnit<TVisibility>[] {
     const neighbourPositions = this.data.position.getNeighbours();
 
     return this.match.units.filter((unit) =>

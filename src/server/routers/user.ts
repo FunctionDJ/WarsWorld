@@ -48,7 +48,6 @@ export const userRouter = router({
 
     const hashedPassword = await hashPassword(input.password);
 
-    // Write user to the database
     const user = await prisma.user.create({
       data: {
         name: input.name,

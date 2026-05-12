@@ -69,8 +69,9 @@ interface COPower {
   name: string;
   description: string;
   stars: number; //Stars are 9k value for AW2 and AWDS, 10k value for AW1
+  // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
   instantEffect?: (player: MutablePlayerInMatch, positions?: readonly Position[]) => void;
-  calculatePositions?: (player: RO<PlayerInMatchWrapper>) => Position[];
+  calculatePositions?: (player: RO<PlayerInMatchWrapper>) => readonly Position[];
   hooks?: Partial<Hooks>;
 }
 

@@ -1,5 +1,6 @@
 import type { LeagueType, Match, MatchStatus, Player, WWMap } from "generated/browser";
 import { arrayAtOrThrow } from "shared/array-utilities";
+import { DispatchableError } from "shared/dispatchable-error";
 import type { MatchRules } from "shared/schemas/match-rules";
 import type { PlayerSlot } from "shared/schemas/player-slot";
 import type { Position } from "shared/schemas/position";
@@ -47,6 +48,14 @@ export class MutableMatch extends MatchWrapper {
     units: RO<WWUnit[]>,
     public turn: number,
   ) {
+    if (rules.teamMapping.length === 0) {
+      throw new DispatchableError("rules.teamMapping must have at least one team");
+    }
+
+    if (map.tiles.length === 0) {
+      throw new DispatchableError("map must have at least one tile row");
+    }
+
     super(id, leagueType, changeableTiles, rules, state, map, players, units, turn);
     this.units = units.map(
       (unit): MutableUnit =>

@@ -97,7 +97,7 @@ export const actionRouter = router({
        * because we stop about here and don't store/emit.
        */
 
-      let emittableEvents: (EmittableEvent | undefined)[]; // undefined means that team doesn't receive the event
+      let emittableEvents: readonly (EmittableEvent | undefined)[]; // undefined means that team doesn't receive the event
 
       // having this subEvent variable is shitty code but it's type-safe and good enough for now.
       let subEvent: SubEvent = { type: "wait" };

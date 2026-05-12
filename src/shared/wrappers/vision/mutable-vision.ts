@@ -105,7 +105,7 @@ export class MutableVision extends Vision {
    * Used for vision powers (and expiring powers) and rain activation / deactivation.
    * Does NOT update new discovered / undiscovered positions.
    */
-  recalculateVision(units: UnitWrapper[]): void {
+  recalculateVision(units: readonly UnitWrapper[]): void {
     this.visionArray.fill(0);
 
     for (const property of this.ownedProperties.values()) {
