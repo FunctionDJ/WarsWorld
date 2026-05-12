@@ -1,5 +1,4 @@
 import { DispatchableError } from "shared/dispatchable-error";
-import { unitPropertiesMap } from "shared/match-logic/game-constants/unit-properties";
 import type { Direction } from "shared/schemas/direction";
 import type {
   LoadedTypeString,
@@ -26,7 +25,6 @@ export class MutableTransport<TVisibility extends Visibility = Visibility> exten
     super(data, match);
     const player = match.getPlayerBySlot(data.playerSlot);
     this.player = player;
-    this.properties = unitPropertiesMap[data.type];
   }
 
   getLoadedUnit(slot: 1 | 2): UnitWrapper<Visibility, LoadedTypeString> {

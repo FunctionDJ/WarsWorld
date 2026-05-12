@@ -12,7 +12,6 @@ export class MutableVision extends Vision {
     super(team);
 
     const { map } = team.match;
-    this.mapWidth = map.width;
     const visionArraySize = this.mapWidth * map.height;
     this.visionArray = new Uint16Array(visionArraySize);
   }

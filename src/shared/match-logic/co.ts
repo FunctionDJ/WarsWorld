@@ -2,6 +2,7 @@ import type { CO, COID } from "shared/schemas/co";
 import type { GameVersion } from "shared/schemas/game-version";
 import type { Position } from "shared/schemas/position";
 import { throwIfUndefined } from "shared/types/throw-helper";
+import type { RO } from "shared/types/ww-readonly";
 import type { MutablePlayerInMatch } from "shared/wrappers/player/mutable-player-in-match";
 import type { PlayerInMatchWrapper } from "shared/wrappers/player/player-in-match";
 import type { Hooks } from "./co-hooks";
@@ -69,7 +70,7 @@ interface COPower {
   description: string;
   stars: number; //Stars are 9k value for AW2 and AWDS, 10k value for AW1
   instantEffect?: (player: MutablePlayerInMatch, positions?: readonly Position[]) => void;
-  calculatePositions?: (player: PlayerInMatchWrapper) => Position[];
+  calculatePositions?: (player: RO<PlayerInMatchWrapper>) => Position[];
   hooks?: Partial<Hooks>;
 }
 

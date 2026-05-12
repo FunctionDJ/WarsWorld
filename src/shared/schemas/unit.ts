@@ -178,10 +178,10 @@ export const unitTypes = visibleUnitSchema.options.flatMap((option) => {
 export const unitTypeSchema = z.enum(unitTypes).readonly();
 
 type HiddenFromVisible<Unit extends UnitWithVisibleStats> = Omit<Unit, "stats"> & {
-  stats: "hidden";
+  readonly stats: "hidden";
 };
 
-export type UnitWithHiddenStats = UnitWithVisibleStats extends infer Unit
+type UnitWithHiddenStats = UnitWithVisibleStats extends infer Unit
   ? Unit extends UnitWithVisibleStats
     ? HiddenFromVisible<Unit>
     : never

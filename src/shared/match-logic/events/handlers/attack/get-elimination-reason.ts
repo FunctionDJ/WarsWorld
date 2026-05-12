@@ -1,4 +1,5 @@
 import type { AttackEvent } from "shared/types/events";
+import type { RO } from "shared/types/ww-readonly";
 import type { PlayerInMatchWrapper } from "shared/wrappers/player/player-in-match";
 
 export function getEliminationReason({
@@ -7,8 +8,8 @@ export function getEliminationReason({
   attackerHP,
   defenderHP,
 }: {
-  attacker: PlayerInMatchWrapper;
-  defender: PlayerInMatchWrapper;
+  attacker: RO<PlayerInMatchWrapper>;
+  defender: RO<PlayerInMatchWrapper>;
   attackerHP?: number;
   defenderHP?: number;
 }): AttackEvent["eliminationReason"] {

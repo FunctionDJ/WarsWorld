@@ -10,7 +10,7 @@ export type MovementType =
 
 export type Facility = "base" | "airport" | "port";
 
-export interface UnitPropertiesWithoutWeapon {
+export type UnitPropertiesWithoutWeapon = Readonly<{
   displayName: string;
   cost: number;
   facility: Facility;
@@ -18,11 +18,11 @@ export interface UnitPropertiesWithoutWeapon {
   movementPoints: number;
   initialFuel: number;
   vision: number;
-}
+}>;
 
-type Range = [number, number];
+type Range = readonly [number, number];
 
-export const directRange: Range = [1, 1];
+export const directRange = [1, 1] as const satisfies Range;
 
 export type UnitPropertiesWithoutAmmo = UnitPropertiesWithoutWeapon & {
   readonly attackRange: Range;

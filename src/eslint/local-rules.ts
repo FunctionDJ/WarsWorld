@@ -187,7 +187,8 @@ const isEffectivelyReadonly = (
 
 const localPlugin: Plugin = {
   rules: {
-    // @ts-expect-error [upstream] https://github.com/typescript-eslint/typescript-eslint/issues/11543
+    // [upstream] https://github.com/typescript-eslint/typescript-eslint/issues/11543
+    // @ts-expect-error see previous line
     "no-redundant-type-wrapper": noRedundantTypeWrapperRule,
   },
 };

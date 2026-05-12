@@ -94,7 +94,7 @@ export function renderAttackTiles(
     attackTileContainer.addChild(attackTile);
   });
 
-  //todo: at some point maybe refactor all the numbers that are over the place here
+  // TODO: at some point maybe refactor all the numbers that are over the place here
   //into somethinc clean and consistent
   function renderProbabilities(
     attacker: UnitWrapper,

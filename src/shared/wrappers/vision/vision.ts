@@ -7,11 +7,11 @@ import { buildVisionArray } from "./vision-builder";
  * Only used for when fog of war!
  */
 export class Vision {
-  protected visionArray: Uint16Array; // i put 16 cause 2^8 = 256 and we *could* go over 256, in theory
-  protected mapWidth: number;
+  protected readonly visionArray: Uint16Array; // i put 16 cause 2^8 = 256 and we *could* go over 256, in theory
+  protected readonly mapWidth: number;
 
   // TODO does a set make sense here? maybe we need a more sophisticated data structure to deduplicate positions.
-  protected ownedProperties: Set<Position>;
+  protected readonly ownedProperties: Set<Position>;
 
   // used for temporary information storage. does not guarantee that a position is not in both at the same time
   // (but making discovered have priority over undiscovered works for all current events)

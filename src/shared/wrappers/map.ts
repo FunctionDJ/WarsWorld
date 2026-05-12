@@ -2,13 +2,13 @@ import type { WWMap } from "generated/browser";
 import { arrayAtOrThrow } from "shared/array-utilities";
 import type { Position } from "shared/schemas/position";
 import type { PassableTile } from "shared/schemas/tile";
-import type { WWReadOnly } from "shared/types/ww-readonly";
+import type { RO } from "shared/types/ww-readonly";
 
 export class MapWrapper {
   public readonly width: number;
   public readonly height: number;
 
-  constructor(public readonly data: WWReadOnly<WWMap>) {
+  constructor(public readonly data: RO<WWMap>) {
     this.width = arrayAtOrThrow(this.data.tiles, 0).length;
     this.height = this.data.tiles.length;
   }

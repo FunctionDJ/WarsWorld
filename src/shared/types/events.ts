@@ -83,7 +83,7 @@ interface WithElimination<Reason extends string> {
   eliminationReason?: Reason;
 }
 
-/** TODO maybe add the turn/day number */
+// TODO maybe add the turn/day number
 export type Turn = WithElimination<"all-units-crashed"> & {
   newWeather?: Weather;
 };

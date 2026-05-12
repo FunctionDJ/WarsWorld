@@ -1,3 +1,5 @@
+import type { RO } from "./ww-readonly";
+
 const dontThrowString = "dont-throw" as const;
 
 export type DontThrow = typeof dontThrowString;
@@ -24,8 +26,9 @@ export const throwIfUndefined = <T>(value?: T, message?: string): T => {
   return value;
 };
 
-export const findOrThrow = <T>(array: readonly T[], predicate: (item: T) => boolean): T => {
-  const item = array.find((element) => predicate(element));
+export const findOrThrow = <T>(array: readonly T[], predicate: (item: RO<T>) => boolean): T => {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions, @typescript-eslint/no-unsafe-type-assertion
+  const item = array.find((element) => predicate(element as RO<T>));
   return throwIfUndefined(item);
 };
 

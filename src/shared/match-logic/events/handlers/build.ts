@@ -151,7 +151,7 @@ const createUnitFromBuildEvent = (
       };
     }
     default: {
-      /** TODO only so that typescript doesn't error / break CI, but still a TODO */
+      // TODO only so that typescript doesn't error / break CI, but still a TODO
       throw new Error("TODO :)");
     }
   }

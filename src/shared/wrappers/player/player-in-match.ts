@@ -7,7 +7,7 @@ import type { GameVersion } from "shared/schemas/game-version";
 import type { PassableTile } from "shared/schemas/tile";
 import type { Visibility } from "shared/schemas/unit";
 import type { ChangeableTile, PlayerInMatch } from "shared/types/server-match-state";
-import type { WWReadOnly } from "shared/types/ww-readonly";
+import type { RO } from "shared/types/ww-readonly";
 import {
   versionPropertiesMap,
   type VersionProperties,
@@ -17,11 +17,11 @@ import type { Team } from "../team/team";
 import type { UnitWrapper } from "../unit/unit";
 
 export class PlayerInMatchWrapper<TVisibility extends Visibility = Visibility> {
-  public readonly match: MatchWrapper;
+  public readonly match: MatchWrapper; // [RO trigger]
 
   constructor(
-    public readonly data: WWReadOnly<PlayerInMatch>,
-    public readonly team: Team,
+    public readonly data: RO<PlayerInMatch>,
+    public readonly team: Team, // [RO trigger]
   ) {
     this.match = team.match;
   }
@@ -40,6 +40,11 @@ export class PlayerInMatchWrapper<TVisibility extends Visibility = Visibility> {
     return this.match.changeableTiles.some((tile) => tile.type === "lab" && this.owns(tile));
   }
 
+  // TODO
+  /**
+   * maybe units should be owned by at least the team, but player is probably more convenient
+   * (then units of a specific player are contracted to the players TVisibility)
+   */
   getUnits(): UnitWrapper<TVisibility>[] {
     return this.match.units.filter((unit) => this.owns(unit));
   }
@@ -68,7 +73,7 @@ export class PlayerInMatchWrapper<TVisibility extends Visibility = Visibility> {
    * gets the next player, looping back around to index 0
    * if needed until current player slot.
    */
-  getNextAlivePlayer(): PlayerInMatchWrapper {
+  getNextAlivePlayer(): RO<PlayerInMatchWrapper> {
     const nextSlot = (n: number): number => (n + 1) % this.match.map.data.numberOfPlayers;
 
     for (let index = nextSlot(this.data.slot); index !== this.data.slot; index = nextSlot(index)) {
@@ -104,7 +109,7 @@ export class PlayerInMatchWrapper<TVisibility extends Visibility = Visibility> {
     return 0;
   }
 
-  owns(tileOrUnit: PassableTile | WWReadOnly<ChangeableTile> | UnitWrapper): boolean {
+  owns(tileOrUnit: PassableTile | RO<ChangeableTile> | UnitWrapper): boolean {
     if ("playerSlot" in tileOrUnit && tileOrUnit.playerSlot === this.data.slot) {
       return true;
     }
@@ -121,7 +126,7 @@ export class PlayerInMatchWrapper<TVisibility extends Visibility = Visibility> {
   }
 
   /** @throws {DispatchableError} */
-  ownsOrThrow(tileOrUnit: PassableTile | WWReadOnly<ChangeableTile> | UnitWrapper): void {
+  ownsOrThrow(tileOrUnit: PassableTile | RO<ChangeableTile> | UnitWrapper): void {
     if (!this.owns(tileOrUnit)) {
       throw new DispatchableError("Invalid action on tile or unit not owned by player");
     }

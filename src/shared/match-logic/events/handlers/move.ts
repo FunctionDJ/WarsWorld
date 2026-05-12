@@ -8,7 +8,7 @@ import {
 } from "shared/schemas/unit";
 import type { MoveEventWithoutSubEvent, MoveEventWithSubEvent } from "shared/types/events";
 import { throwIfUndefined } from "shared/types/throw-helper";
-import type { WWReadOnly } from "shared/types/ww-readonly";
+import type { RO } from "shared/types/ww-readonly";
 import type { MatchWrapper } from "shared/wrappers/match/match";
 import type { MutableMatch } from "shared/wrappers/match/mutable-match";
 import type { UnitWrapper } from "../../../wrappers/unit/unit";
@@ -18,7 +18,7 @@ import { loadUnitInto } from "./move/load-unit-into";
 // because at this point we don't have the subEvent yet
 // which MainActionToEvent requires.
 export const moveActionToEvent = (
-  match: WWReadOnly<MatchWrapper>,
+  match: RO<MatchWrapper>,
   action: MoveAction,
 ): MoveEventWithoutSubEvent => {
   if (action.path.len() === 0) {
@@ -111,8 +111,8 @@ export const moveActionToEvent = (
 };
 
 export const throwIfCantMoveIntoUnit = (
-  unit: WWReadOnly<UnitWrapper>,
-  unitInPosition: WWReadOnly<UnitWrapper>,
+  unit: RO<UnitWrapper>,
+  unitInPosition: RO<UnitWrapper>,
 ): void => {
   if (unitInPosition.data.type === unit.data.type) {
     // trying to join (same unit type)
@@ -184,10 +184,7 @@ export const throwIfCantMoveIntoUnit = (
   }
 };
 
-const getOneTileFuelCost = (
-  match: WWReadOnly<MatchWrapper>,
-  unit: WWReadOnly<UnitWrapper>,
-): number => {
+const getOneTileFuelCost = (match: RO<MatchWrapper>, unit: RO<UnitWrapper>): number => {
   const gameVersion = match.rules.gameVersion ?? unit.player.data.coId.version;
 
   if (
@@ -201,10 +198,7 @@ const getOneTileFuelCost = (
   return 1;
 };
 
-export const applyMoveEvent = (
-  match: MutableMatch,
-  event: WWReadOnly<MoveEventWithoutSubEvent>,
-): void => {
+export const applyMoveEvent = (match: MutableMatch, event: RO<MoveEventWithoutSubEvent>): void => {
   //check if unit is moving or just standing still
   if (event.path.len() <= 1) {
     return;
@@ -253,10 +247,7 @@ export const applyMoveEvent = (
 /**
  * Call this AFTER creating the sub event but BEFORE applying it
  */
-export const updateMoveVision = (
-  match: MutableMatch,
-  event: WWReadOnly<MoveEventWithSubEvent>,
-): void => {
+export const updateMoveVision = (match: MutableMatch, event: RO<MoveEventWithSubEvent>): void => {
   if (event.path.len() < 2) {
     // if didn't move no vision change
     return;

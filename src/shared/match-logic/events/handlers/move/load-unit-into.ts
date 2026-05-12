@@ -5,10 +5,10 @@ import {
   landerLoadedUnitSchema,
   type UnitWithVisibleStats,
 } from "shared/schemas/unit";
-import type { WWReadOnly } from "shared/types/ww-readonly";
+import type { RO } from "shared/types/ww-readonly";
 
 export const loadUnitInto = (
-  unitToLoad: WWReadOnly<UnitWithVisibleStats>,
+  unitToLoad: RO<UnitWithVisibleStats>,
   transportUnit: UnitWithVisibleStats,
 ): void => {
   switch (transportUnit.type) {

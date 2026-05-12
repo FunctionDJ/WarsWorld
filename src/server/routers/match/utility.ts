@@ -1,13 +1,13 @@
 import type { WWMap } from "generated/browser";
 import { DispatchableError } from "shared/dispatchable-error";
 import type { PlayerBeforeMatch, PlayerInMatch } from "shared/types/server-match-state";
-import type { WWReadOnly } from "shared/types/ww-readonly";
+import type { RO } from "shared/types/ww-readonly";
 import type { MapWrapper } from "shared/wrappers/map";
 import type { MatchWrapper } from "shared/wrappers/match/match";
 import type { MatchInSetup } from "shared/wrappers/match/match-in-setup";
 
 const mapToFrontend = (
-  map: MapWrapper | WWReadOnly<WWMap>,
+  map: MapWrapper | RO<WWMap>,
 ): { id: string; name: string; numberOfPlayers: number } => {
   if ("data" in map) {
     return {

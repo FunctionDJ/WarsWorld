@@ -15,7 +15,7 @@ import {
   throwIfUndefinedUnlessAccepted,
   type DontThrow,
 } from "shared/types/throw-helper";
-import type { WWReadOnly } from "shared/types/ww-readonly";
+import type { RO } from "shared/types/ww-readonly";
 import { MapWrapper } from "../map";
 import { PlayerInMatchWrapper } from "../player/player-in-match";
 import { getTeamPlayers } from "../team/get-team-players";
@@ -37,31 +37,32 @@ import { UnitWrapper } from "../unit/unit";
 /** TODO: Add favorites, possibly spectators, also a timer */
 export class MatchWrapper {
   public readonly type = "match-wrapper";
-  protected currentWeather: Weather = "clear";
-  public playerToRemoveWeatherEffect?: PlayerInMatchWrapper = undefined;
-  public weatherDaysLeft = 0;
-  public readonly teams: Team[] = [];
-  protected neutralPlayer: PlayerInMatchWrapper;
+  protected readonly currentWeather: Weather = "clear";
+  public readonly weatherDaysLeft: number = 0;
+  public readonly teams: Team[] = []; // [RO trigger]
+  protected readonly neutralPlayer: PlayerInMatchWrapper; // [RO trigger]
+  public readonly playerToRemoveWeatherEffect?: PlayerInMatchWrapper = undefined;
+
   /**
    * TODO
    *
    * this property is a candidate for ArrayBuffer / IntArray optimization
    * just like Vision currently has.
    */
-  public units: UnitWrapper[];
-  public map: MapWrapper;
+  public readonly units: UnitWrapper[]; // [RO trigger]
+  public readonly map: MapWrapper;
 
   constructor(
     public readonly id: Match["id"],
     public readonly leagueType: LeagueType,
     //TODO change to map from position to changeableTile for better performance
-    public readonly changeableTiles: readonly WWReadOnly<ChangeableTile>[],
+    public readonly changeableTiles: readonly RO<ChangeableTile>[],
     public readonly rules: MatchRules,
-    public state: MatchStatus,
-    map: WWReadOnly<WWMap>,
-    players: readonly PlayerInMatch[],
-    units: readonly WWUnit[],
-    public turn: number,
+    public readonly state: MatchStatus,
+    map: RO<WWMap>,
+    players: readonly RO<PlayerInMatch>[],
+    units: readonly RO<WWUnit>[],
+    public readonly turn: number,
   ) {
     this.map = new MapWrapper(map);
 
@@ -141,7 +142,7 @@ export class MatchWrapper {
   }
 
   // PLAYER STUFF **************************************************************
-  getCurrentTurnPlayer(): PlayerInMatchWrapper {
+  getCurrentTurnPlayer(): RO<PlayerInMatchWrapper> {
     return findOrThrow(this.getAllPlayers(), (p) => p.data.hasCurrentTurn);
   }
 
@@ -151,7 +152,7 @@ export class MatchWrapper {
       .toSorted((p1, p2) => p1.data.slot - p2.data.slot);
   }
 
-  getPlayerById(playerId: Player["id"]): WWReadOnly<PlayerInMatchWrapper> {
+  getPlayerById(playerId: Player["id"]): PlayerInMatchWrapper {
     return findOrThrow(this.getAllPlayers(), (p) => p.data.id === playerId);
   }
 

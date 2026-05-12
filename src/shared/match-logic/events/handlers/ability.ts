@@ -30,7 +30,7 @@ function infantryOrMechAbilityToEvent<TVisibility extends Visibility>(
 ): AbilityEvent {
   const capturingTile = unit.getTile();
 
-  //todo: bugs out, tile is already captured when this triggers so it always believes property cannot be captured
+  // TODO: bugs out, tile is already captured when this triggers so it always believes property cannot be captured
   if (!("playerSlot" in capturingTile) /* || unit.player.owns(capturingTile)*/) {
     throw new DispatchableError("This tile can not be captured");
   }

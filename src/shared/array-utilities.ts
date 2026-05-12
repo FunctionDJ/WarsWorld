@@ -1,5 +1,4 @@
 import { throwIfUndefined } from "./types/throw-helper";
-import type { WWReadOnly } from "./types/ww-readonly";
 
 /**
  * small utility to get an element from an array
@@ -31,6 +30,6 @@ export const getFromObjectOrThrow = <T extends object, K extends keyof T>(
 /** maps an array while preserving/adding readonly */
 export const mapReadOnly = <T, U>(
   array: readonly T[],
-  callback: (value: WWReadOnly<T>, index: number, array: readonly T[]) => U,
-): readonly WWReadOnly<U>[] =>
+  callback: (value: T, index: number, array: readonly T[]) => U,
+): readonly U[] =>
   array.map((value, index, arrayParameter) => callback(value, index, arrayParameter));

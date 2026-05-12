@@ -24,13 +24,12 @@ export class UnitWrapper<
   TVisibility extends Visibility = Visibility,
   Type extends UnitTypeString = UnitTypeString,
 > {
-  public player: PlayerInMatchWrapper<TVisibility>;
-
-  public properties: (typeof unitPropertiesMap)[Type];
+  public readonly player: PlayerInMatchWrapper<TVisibility>; // [RO trigger]
+  public readonly properties: (typeof unitPropertiesMap)[Type];
 
   constructor(
     public readonly data: UnitByVisibilityAndTypeString<TVisibility, Type>,
-    public match: MatchWrapper,
+    public readonly match: MatchWrapper, // [RO trigger]
   ) {
     const player = match.getPlayerBySlot(data.playerSlot);
     this.player = player;
@@ -84,15 +83,12 @@ export class UnitWrapper<
     );
   }
 
-  /** TODO checking fuel twice? */
+  // TODO checking fuel twice?
   getMovementPoints(): number {
     const { movementPoints, initialFuel } = this.properties;
-
     const movementPointsHook = this.player.getHook("movementPoints");
     const modifiedMovement = movementPointsHook?.(movementPoints, this) ?? movementPoints;
-
     const fuel = this.data.stats === "hidden" ? initialFuel : this.data.stats.fuel;
-
     return Math.min(modifiedMovement, fuel);
   }
 

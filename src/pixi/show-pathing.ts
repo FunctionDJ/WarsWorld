@@ -6,7 +6,7 @@ import {
   getBaseDamage,
 } from "shared/match-logic/game-constants/base-damage";
 import { Position } from "shared/schemas/position";
-import type { WWReadOnly } from "shared/types/ww-readonly";
+import type { RO } from "shared/types/ww-readonly";
 import type { MapWrapper } from "shared/wrappers/map";
 import type { MatchWrapper } from "shared/wrappers/match/match";
 import { DispatchableError } from "../shared/dispatchable-error";
@@ -335,7 +335,7 @@ const getSpriteName = (a: Position, b: Position, c: Position): string => {
   }
 };
 
-export const showPath = (spriteSheet: WWReadOnly<LoadedSpriteSheet>, path: Position[]) => {
+export const showPath = (spriteSheet: RO<LoadedSpriteSheet>, path: Position[]) => {
   if (path.length === 0) {
     throw new Error("Empty path!");
   }

@@ -1,11 +1,11 @@
 import type { MatchRules } from "shared/schemas/match-rules";
 import type { PlayerInMatch } from "shared/types/server-match-state";
-import type { WWReadOnly } from "shared/types/ww-readonly";
+import type { RO } from "shared/types/ww-readonly";
 
 export const getTeamPlayers = (
   teamIndex: number,
   rules: MatchRules,
-  players: readonly WWReadOnly<PlayerInMatch>[],
+  players: readonly RO<PlayerInMatch>[],
 ): PlayerInMatch[] => {
   // get all keys of teamMapping with value of teamIndex
   const playerSlotsInTeam = new Set(

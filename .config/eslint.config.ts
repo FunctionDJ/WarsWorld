@@ -37,8 +37,9 @@ const banNonSharedPattern = {
 export default defineConfig([
   globalIgnores([
     ".next/**",
+    // TODO
     /**
-     * TODO old comment:
+     * old comment:
      *
      * even though "dist" is already excluded through tsconfig.json, eslint will
      * lint the "dist" folder without this `ignorePatterns`.
@@ -238,10 +239,10 @@ export default defineConfig([
     },
   },
   {
-    files: ["src/shared/wrappers/**/*.ts"],
+    files: ["src/shared/**/*.ts"],
     rules: {
       "@typescript-eslint/prefer-readonly-parameter-types": [
-        "error",
+        "warn",
         {
           treatMethodsAsReadonly: true,
         },

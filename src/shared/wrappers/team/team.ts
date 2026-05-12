@@ -1,7 +1,7 @@
 import type { PassableTile } from "shared/schemas/tile";
 import type { WWUnit } from "shared/schemas/unit";
 import type { ChangeableTile, PlayerInMatch } from "shared/types/server-match-state";
-import type { WWReadOnly } from "shared/types/ww-readonly";
+import type { RO } from "shared/types/ww-readonly";
 import type { Position } from "../../schemas/position";
 import type { MatchWrapper } from "../match/match";
 import { PlayerInMatchWrapper } from "../player/player-in-match";
@@ -9,13 +9,13 @@ import type { UnitWrapper } from "../unit/unit";
 import { Vision } from "../vision/vision";
 
 export class Team {
-  public readonly players: PlayerInMatchWrapper[];
-  public vision?: Vision = undefined; // changes from undefined to vision to undefined when it rains / clear in awds
+  public readonly players: PlayerInMatchWrapper[]; // [RO trigger]
+  public readonly vision?: Vision = undefined; // [RO trigger] | changes from undefined to vision to undefined when it rains / clear in awds
 
   constructor(
-    players: PlayerInMatch[],
-    public match: MatchWrapper,
-    public index: number,
+    players: readonly RO<PlayerInMatch>[],
+    public readonly match: MatchWrapper, // [RO trigger]
+    public readonly index: number,
   ) {
     this.players = players.map((p) => new PlayerInMatchWrapper(p, this));
 
@@ -27,8 +27,11 @@ export class Team {
   // TODO type predicate would be useful, but locks the false-branch into position being incorrectly typed as "undefined"
   isPositionVisible(position?: Position): boolean {
     if (this.match.isFogOfWar()) {
-      this.vision ??= new Vision(this); // vision being nullish here should never happen, but whatever
-      return position !== undefined && this.vision.isPositionVisible(position);
+      if (position === undefined) {
+        return false;
+      }
+
+      return this.vision?.isPositionVisible(position) ?? false;
     }
 
     // in clear weather all positions are visible
@@ -43,7 +46,7 @@ export class Team {
     return this.match.units.filter((unit) => !this.owns(unit));
   }
 
-  owns(tileOrUnit: PassableTile | WWReadOnly<ChangeableTile> | UnitWrapper): boolean {
+  owns(tileOrUnit: PassableTile | RO<ChangeableTile> | UnitWrapper): boolean {
     return this.players.some((player) => player.owns(tileOrUnit));
   }
 

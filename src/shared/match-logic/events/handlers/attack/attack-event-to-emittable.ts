@@ -1,4 +1,5 @@
 import type { AttackEvent, EmittableAttackEvent } from "shared/types/events";
+import type { RO } from "shared/types/ww-readonly";
 import type { MatchWrapper } from "shared/wrappers/match/match";
 import type { Team } from "shared/wrappers/team/team";
 import type { UnitWrapper } from "shared/wrappers/unit/unit";
@@ -9,7 +10,7 @@ export const createEmittableAttackEvent = (
   match: MatchWrapper,
   attacker: UnitWrapper, //assume updated after move
   attackEvent: AttackEvent,
-  teamWitness: Team,
+  teamWitness: RO<Team>,
 ): EmittableAttackEvent => {
   const emittableEvent: EmittableAttackEvent = {
     type: "attack",

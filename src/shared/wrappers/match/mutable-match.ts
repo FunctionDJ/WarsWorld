@@ -16,29 +16,35 @@ import {
   throwIfUndefinedUnlessAccepted,
   type DontThrow,
 } from "shared/types/throw-helper";
-import type { WWReadOnly } from "shared/types/ww-readonly";
+import type { RO } from "shared/types/ww-readonly";
 import { MutablePlayerInMatch } from "../player/mutable-player-in-match";
 import { getTeamPlayers } from "../team/get-team-players";
 import { MutableTeam } from "../team/mutable-team";
 import { MutableTransport } from "../unit/mutable-transport";
 import { MutableUnit } from "../unit/mutable-unit";
+import type { UnitWrapper } from "../unit/unit";
 import { MutableVision } from "../vision/mutable-vision";
 import { MatchWrapper } from "./match";
 
 export class MutableMatch extends MatchWrapper {
   public readonly units: MutableUnit[];
+  protected currentWeather: Weather = "clear";
+  public weatherDaysLeft = 0;
+
   public readonly teams: MutableTeam[];
   protected neutralPlayer: MutablePlayerInMatch;
+  public playerToRemoveWeatherEffect?: MutablePlayerInMatch = undefined;
 
   constructor(
     id: Match["id"],
     leagueType: LeagueType,
-    public readonly changeableTiles: readonly ChangeableTile[], //TODO change to map from position to changeableTile for better performance
-    public readonly rules: WWReadOnly<MatchRules>,
+    //TODO change to map from position to changeableTile for better performance
+    public readonly changeableTiles: readonly ChangeableTile[],
+    public readonly rules: RO<MatchRules>,
     public state: MatchStatus,
-    map: WWReadOnly<WWMap>,
+    map: RO<WWMap>,
     players: readonly PlayerInMatch[],
-    units: WWReadOnly<WWUnit[]>,
+    units: RO<WWUnit[]>,
     public turn: number,
   ) {
     super(id, leagueType, changeableTiles, rules, state, map, players, units, turn);
@@ -94,7 +100,7 @@ export class MutableMatch extends MatchWrapper {
     }
   }
 
-  addUnwrappedPlayer(player: PlayerInMatch): MutablePlayerInMatch {
+  addUnwrappedPlayer(player: RO<PlayerInMatch>): MutablePlayerInMatch {
     const teamIndex = throwIfUndefined(this.rules.teamMapping[player.slot]);
     const foundTeam = this.teams.find((team) => team.index === teamIndex);
 
@@ -122,7 +128,7 @@ export class MutableMatch extends MatchWrapper {
     epicenter: Position;
   }>): void {
     for (const unitInRadius of this.units.filter(
-      (unit) => unit.data.position.getDistance(epicenter) <= radius,
+      (unit: RO<UnitWrapper>) => unit.data.position.getDistance(epicenter) <= radius,
     )) {
       unitInRadius.damageUntil1HP(visualHpAmount);
     }

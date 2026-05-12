@@ -4,8 +4,9 @@ import { Position } from "shared/schemas/position";
 import type { PlayerInMatch } from "shared/types/server-match-state";
 import { MutableMatch } from "shared/wrappers/match/mutable-match";
 
+// TODO
 /**
- * TODO add memory usage readouts by reading memory used by process
+ * add memory usage readouts by reading memory used by process
  * before creating the match, before generating the event, and after
  * generating the event, and then printing the total mem used as well as
  * the differences between these points.

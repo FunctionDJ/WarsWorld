@@ -1,5 +1,4 @@
 import { throwIfUndefined } from "shared/types/throw-helper";
-import type { WWReadOnly } from "shared/types/ww-readonly";
 import { z } from "zod";
 import { type Position, positionSchema } from "./position";
 
@@ -9,7 +8,7 @@ export class Path {
   /**
    * @throws {TypeError} if the index is out of bounds
    */
-  at(readableIndex: number | "last"): WWReadOnly<Position> {
+  at(readableIndex: number | "last"): Position {
     const index = readableIndex === "last" ? -1 : readableIndex;
 
     return throwIfUndefined(

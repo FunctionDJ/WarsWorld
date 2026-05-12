@@ -4,8 +4,8 @@
     "node": "^25.0.0"
   },
   "scripts": {
-    "db:up": "docker compose up -d -f ./.config/docker-compose.yml",
-    "db:destroy": "docker compose down --volumes --remove-orphans -f ./.config/docker-compose.yml",
+    "db:up": "docker compose up -d -f .config/docker-compose.yml",
+    "db:destroy": "docker compose down --volumes --remove-orphans -f .config/docker-compose.yml",
     "prisma:push": "bunx --bun prisma db push",
     "prisma:seed": "bunx --bun ../prisma/db seed",
     "prisma:reset": "bunx --bun prisma migrate reset",
@@ -19,8 +19,8 @@
     "build": "concurrently \"npm:build:*\"",
     "start:next": "next start",
     "start:server": "cross-env NODE_ENV=production \"npm run prisma:push &&  node dist/server/main-production.mjs\"",
-    "lint": "eslint -c ./.config/eslint.config.ts",
-    "lintro": "eslint -c ./.config/eslint.config.ts --rule '@typescript-eslint/prefer-readonly-parameter-types: off'",
+    "lint": "eslint -c .config/eslint.config.ts",
+    "lintro": "eslint -c .config/eslint.config.ts --rule '@typescript-eslint/prefer-readonly-parameter-types: off'",
     "cur": "bunx tsc && bun lintro"
   },
   "prettier": {
@@ -80,6 +80,7 @@
     "postcss": "^8.5.14",
     "prisma": "^7.8.0",
     "tailwindcss": "^4.3.0",
+    "type-fest": "^5.6.0",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.59.2"
   },

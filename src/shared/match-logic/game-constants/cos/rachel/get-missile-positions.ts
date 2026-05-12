@@ -1,4 +1,4 @@
-import type { WWReadOnly } from "shared/types/ww-readonly";
+import type { RO } from "shared/types/ww-readonly";
 import { Position } from "../../../../schemas/position";
 import type { PlayerInMatchWrapper } from "../../../../wrappers/player/player-in-match";
 
@@ -8,7 +8,7 @@ import type { PlayerInMatchWrapper } from "../../../../wrappers/player/player-in
  * 2) Value
  * 3) HP
  */
-export const getMissilePositions = (rachelPlayer: WWReadOnly<PlayerInMatchWrapper>): Position[] => {
+export const getMissilePositions = (rachelPlayer: RO<PlayerInMatchWrapper>): Position[] => {
   // !!! mechs do count as infantry
   // apparently, this missile is in fact 1x normal hp, 2x infantry hp, 8x capturing infantry hp
   let bestPositionInf = new Position([0, 0]);

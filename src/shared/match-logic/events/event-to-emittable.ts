@@ -1,5 +1,5 @@
 import { Path } from "shared/schemas/path";
-import type { WWReadOnly } from "shared/types/ww-readonly";
+import type { RO } from "shared/types/ww-readonly";
 import type { Position } from "../../schemas/position";
 import type {
   EmittableEvent,
@@ -144,7 +144,7 @@ export const mainEventToEmittables = (
   event: MainEventsWithoutSubEvents | MainEventWithSubEvents,
 ): (EmittableEvent | undefined)[] => {
   const spectatorTeam = new Team([], match, -1);
-  const teamsWithSpectator: WWReadOnly<Team[]> = [...match.teams, spectatorTeam];
+  const teamsWithSpectator: RO<Team[]> = [...match.teams, spectatorTeam];
 
   switch (event.type) {
     case "move": {

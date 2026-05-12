@@ -1,12 +1,12 @@
 import type { MainAction, SubAction } from "shared/schemas/action";
 import type { Position } from "shared/schemas/position";
 import type { MainEventWithSubEvents, SubEvent } from "shared/types/events";
-import type { WWReadOnly } from "shared/types/ww-readonly";
+import type { RO } from "shared/types/ww-readonly";
 import type { MatchWrapper } from "shared/wrappers/match/match";
 import type { MutableMatch } from "shared/wrappers/match/mutable-match";
 
 export type MainActionToEvent<T extends MainAction> = (
-  match: WWReadOnly<MatchWrapper>,
+  match: RO<MatchWrapper>,
   action: T,
 ) => Extract<MainEventWithSubEvents, { type: T["type"] }>;
 

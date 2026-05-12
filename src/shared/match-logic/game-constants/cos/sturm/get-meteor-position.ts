@@ -1,9 +1,9 @@
-import type { WWReadOnly } from "shared/types/ww-readonly";
+import type { RO } from "shared/types/ww-readonly";
 import { Position } from "../../../../schemas/position";
 import type { PlayerInMatchWrapper } from "../../../../wrappers/player/player-in-match";
 
 const getUnitValueMeteorPosition = (
-  sturmPlayer: WWReadOnly<PlayerInMatchWrapper>,
+  sturmPlayer: RO<PlayerInMatchWrapper>,
   damage: number,
   canSeeHiddenUnits: boolean, //AW2 sturm can't see units inside fow
 ): Position => {
@@ -40,7 +40,7 @@ const getUnitValueMeteorPosition = (
 };
 
 const getIndirectsMeteorPosition = (
-  sturmPlayer: WWReadOnly<PlayerInMatchWrapper>,
+  sturmPlayer: RO<PlayerInMatchWrapper>,
   damage: number,
   canSeeHiddenUnits: boolean,
 ): Position => {
@@ -84,7 +84,7 @@ const getIndirectsMeteorPosition = (
 };
 
 const getMostHPMeteorPosition = (
-  sturmPlayer: WWReadOnly<PlayerInMatchWrapper>,
+  sturmPlayer: RO<PlayerInMatchWrapper>,
   damage: number,
   canSeeHiddenUnits: boolean,
 ): Position => {
@@ -118,7 +118,7 @@ const getMostHPMeteorPosition = (
   return bestPosition;
 };
 export const getRandomMeteorPosition = (
-  sturmPlayer: WWReadOnly<PlayerInMatchWrapper>,
+  sturmPlayer: RO<PlayerInMatchWrapper>,
   damage: number,
   canSeeHiddenUnits: boolean,
 ): Position => {

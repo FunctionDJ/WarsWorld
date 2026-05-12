@@ -9,13 +9,13 @@ const basicUnitStatsSchema = z.object({
 
 export const withNoAmmoUnitStats = {
   stats: basicUnitStatsSchema,
-};
+} as const;
 
 export const withAmmoUnitStats = {
   stats: basicUnitStatsSchema.extend({
     ammo: z.number().int().min(0),
   }),
-};
+} as const;
 
 export const unitInMapSharedProperties = {
   playerSlot: playerSlotForPropertiesSchema,
