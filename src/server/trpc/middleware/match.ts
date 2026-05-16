@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { matchStore } from "server/match-store";
-import { DispatchableError } from "shared/dispatchable-error";
-import { throwIfUndefined } from "shared/types/throw-helper";
+import { DispatchableError } from "shared/errors";
+import { throwIfUndefined } from "shared/throw-helper";
 import { z } from "zod";
 import { t } from "../trpc-init";
 

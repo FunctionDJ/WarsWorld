@@ -1,11 +1,11 @@
 import { globalEmittable } from "server/emitter/event-emitter";
 import { playerMatchIndex } from "server/player-match-index";
 import { prisma } from "server/prisma/prisma-client";
-import { DispatchableError } from "shared/dispatchable-error";
-import { armyList } from "shared/schemas/army";
+import { DispatchableError } from "shared/errors";
+import { armySchema } from "shared/schemas/army";
 import { coIdSchema } from "shared/schemas/co";
 import { z } from "zod";
-import type { PlayerBeforeMatch } from "../../../shared/types/server-match-state";
+import type { PlayerInSetup } from "../../../shared/server-match-state";
 import { matchInSetupBaseProcedure } from "../../trpc/trpc-setup";
 
 export const joinMatch = matchInSetupBaseProcedure
@@ -34,9 +34,10 @@ export const joinMatch = matchInSetupBaseProcedure
     // this might not be necessary to do here but on switchCO
 
     const armiesOccupied = new Set(match.getAllPlayers().map((player) => player.army));
-    const availableArmies = armyList.filter((army) => !armiesOccupied.has(army));
+    const availableArmies = armySchema.options.filter((army) => !armiesOccupied.has(army));
 
-    const player: PlayerBeforeMatch = {
+    const player: PlayerInSetup = {
+      type: "player-in-setup",
       id: currentPlayer.id,
       slot: input.playerSlot,
       ready: false,
@@ -45,7 +46,12 @@ export const joinMatch = matchInSetupBaseProcedure
       army: availableArmies[Math.trunc(Math.random() * availableArmies.length)],
     };
 
+    // TODO
+    /**
+     * this call doesn't count for fallow.
+     */
     match.addPlayer(player, input.teamIndex);
+
     playerMatchIndex.onPlayerJoin(player, match);
 
     await prisma.$transaction(async (tx) => {

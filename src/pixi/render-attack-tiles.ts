@@ -4,8 +4,8 @@ import { type RefObject } from "react";
 import { arrayAtOrThrow } from "shared/array-utilities";
 import type { MainActionInput } from "shared/schemas/action";
 import { Position } from "../shared/schemas/position";
-import type { MatchWrapper } from "../shared/wrappers/match/match";
-import type { UnitWrapper } from "../shared/wrappers/unit/unit";
+import type { MatchWrapper } from "../shared/wrappers/match";
+import type { Unit } from "../shared/wrappers/unit";
 import type { BattleForecast } from "./interactive-tile-functions";
 import { getBattleForecast } from "./interactive-tile-functions";
 import type { LoadedSpriteSheet } from "./load-spritesheet";
@@ -16,7 +16,7 @@ import { tileConstructor } from "./sprite-constructor";
 export function renderAttackTiles(
   interactiveContainer: Container,
   match: MatchWrapper,
-  currentUnitClickedRef: RefObject<UnitWrapper | undefined>,
+  currentUnitClickedRef: RefObject<Unit | undefined>,
   spriteSheets: LoadedSpriteSheet,
   pathRef: RefObject<Position[] | undefined>,
   mapContainer: Container,
@@ -96,11 +96,7 @@ export function renderAttackTiles(
 
   // TODO: at some point maybe refactor all the numbers that are over the place here
   //into somethinc clean and consistent
-  function renderProbabilities(
-    attacker: UnitWrapper,
-    defender: UnitWrapper,
-    attackingPos: Position,
-  ) {
+  function renderProbabilities(attacker: Unit, defender: Unit, attackingPos: Position) {
     const defenderPosition = defender.data.position;
     const probabilitiesContainer = new Container();
     probabilitiesContainer.name = "probabilities";

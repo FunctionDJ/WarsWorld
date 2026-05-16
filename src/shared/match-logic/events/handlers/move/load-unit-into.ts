@@ -1,35 +1,27 @@
 import {
   carrierLoadedUnitSchema,
   cruiserLoadedUnitSchema,
-  infantryOrMechSchema,
   landerLoadedUnitSchema,
-  type UnitWithVisibleStats,
-} from "shared/schemas/unit";
-import type { RO } from "shared/types/ww-readonly";
+  type UnitData,
+} from "shared/schemas/unit-schemas";
+import type { RO } from "shared/ww-readonly";
 
-export const loadUnitInto = (
-  unitToLoad: RO<UnitWithVisibleStats>,
-  transportUnit: UnitWithVisibleStats,
-): void => {
+export const loadUnitInto = (unitToLoad: RO<UnitData>, transportUnit: UnitData): void => {
   switch (transportUnit.type) {
     case "transportCopter":
     case "apc": {
-      const loadable = infantryOrMechSchema.safeParse(unitToLoad);
-
-      if (loadable.success) {
-        transportUnit.loadedUnit = loadable.data;
+      if (unitToLoad.type === "infantry" || unitToLoad.type === "mech") {
+        transportUnit.loadedUnits = [unitToLoad];
       }
 
       break;
     }
     case "blackBoat": {
-      const loadable = infantryOrMechSchema.safeParse(unitToLoad);
-
-      if (loadable.success) {
-        if (transportUnit.loadedUnit === undefined) {
-          transportUnit.loadedUnit = loadable.data;
+      if (unitToLoad.type === "infantry" || unitToLoad.type === "mech") {
+        if (transportUnit.loadedUnits[0] === undefined) {
+          transportUnit.loadedUnits[0] = unitToLoad;
         } else {
-          transportUnit.loadedUnit2 = loadable.data;
+          transportUnit.loadedUnits[1] = unitToLoad;
         }
       }
 
@@ -39,10 +31,10 @@ export const loadUnitInto = (
       const loadable = landerLoadedUnitSchema.safeParse(unitToLoad);
 
       if (loadable.success) {
-        if (transportUnit.loadedUnit === undefined) {
-          transportUnit.loadedUnit = loadable.data;
+        if (transportUnit.loadedUnits[0] === undefined) {
+          transportUnit.loadedUnits[0] = loadable.data;
         } else {
-          transportUnit.loadedUnit2 = loadable.data;
+          transportUnit.loadedUnits[1] = loadable.data;
         }
       }
 
@@ -52,10 +44,10 @@ export const loadUnitInto = (
       const loadable = cruiserLoadedUnitSchema.safeParse(unitToLoad);
 
       if (loadable.success) {
-        if (transportUnit.loadedUnit === undefined) {
-          transportUnit.loadedUnit = loadable.data;
+        if (transportUnit.loadedUnits[0] === undefined) {
+          transportUnit.loadedUnits[0] = loadable.data;
         } else {
-          transportUnit.loadedUnit2 = loadable.data;
+          transportUnit.loadedUnits[1] = loadable.data;
         }
       }
 
@@ -65,10 +57,10 @@ export const loadUnitInto = (
       const loadable = carrierLoadedUnitSchema.safeParse(unitToLoad);
 
       if (loadable.success) {
-        if (transportUnit.loadedUnit === undefined) {
-          transportUnit.loadedUnit = loadable.data;
+        if (transportUnit.loadedUnits[0] === undefined) {
+          transportUnit.loadedUnits[0] = loadable.data;
         } else {
-          transportUnit.loadedUnit2 = loadable.data;
+          transportUnit.loadedUnits[1] = loadable.data;
         }
       }
     }

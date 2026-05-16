@@ -20,5 +20,3 @@ export const armySchema = z.enum([
 ]);
 
 export type Army = z.infer<typeof armySchema>;
-
-export const armyList = armySchema.options;

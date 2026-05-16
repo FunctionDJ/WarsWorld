@@ -2,18 +2,18 @@
 import { trpc } from "frontend/utils/trpc-client";
 import type { LoadedSpriteSheet } from "pixi/load-spritesheet";
 import { useEffect, useState } from "react";
-import { applyAbilityEvent } from "shared/match-logic/events/handlers/ability";
 import { applyEmittableAttackEvent } from "shared/match-logic/events/handlers/attack/apply-attack-event";
 import { applyBuildEvent } from "shared/match-logic/events/handlers/build";
-import { applyMoveEvent } from "shared/match-logic/events/handlers/move";
+import { applyAbilityEvent } from "shared/match-logic/events/handlers/move/ability";
+import { applyMoveEvent } from "shared/match-logic/events/handlers/move/move";
 import { applyPassTurnEvent } from "shared/match-logic/events/handlers/pass-turn";
-import type { MutableMatch } from "shared/wrappers/match/mutable-match";
-import type { MutablePlayerInMatch } from "shared/wrappers/player/mutable-player-in-match";
+import type { MatchWrapper } from "shared/wrappers/match";
+import type { PlayerInMatchWrapper } from "shared/wrappers/player-in-match";
 import { usePixi } from "./use-pixi";
 
 interface Props {
-  match: MutableMatch;
-  player: MutablePlayerInMatch;
+  match: MatchWrapper;
+  player: PlayerInMatchWrapper;
   spriteSheets: LoadedSpriteSheet;
   turn: boolean;
   setTurn: React.Dispatch<React.SetStateAction<boolean>>;

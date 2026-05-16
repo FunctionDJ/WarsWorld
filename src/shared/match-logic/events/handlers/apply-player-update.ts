@@ -1,8 +1,8 @@
-import type { EmittableAttackEvent } from "shared/types/events";
-import type { MutableMatch } from "shared/wrappers/match/mutable-match";
+import type { EmittableAttackEvent } from "shared/events";
+import type { MatchWrapper } from "shared/wrappers/match";
 
 export const applyPlayerUpdate = (
-  match: MutableMatch,
+  match: MatchWrapper,
   playerUpdate: EmittableAttackEvent["playerUpdate"],
 ): void => {
   for (const playerInUpdate of playerUpdate) {

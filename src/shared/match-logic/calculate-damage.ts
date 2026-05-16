@@ -1,14 +1,9 @@
 import type { LuckRoll } from "shared/schemas/co";
-import type { RO } from "shared/types/ww-readonly";
-import { MutableMatch } from "shared/wrappers/match/mutable-match";
-import { MutableUnit } from "shared/wrappers/unit/mutable-unit";
-import type { UnitWrapper } from "shared/wrappers/unit/unit";
+import type { Unit } from "shared/wrappers/unit";
+import type { RO } from "shared/ww-readonly";
 import type { CombatProperties } from "./co-hooks";
 import { getBaseDamage } from "./game-constants/base-damage";
 import { getTerrainDefenseStars } from "./game-constants/terrain-properties";
-
-/** @returns 1-10, whole numbers */
-export const getVisualHPfromHP = (hp: number): number => Math.ceil(hp / 10);
 
 /**
  * @param luckRoll contains goodLuck roll and badLuck roll
@@ -29,9 +24,6 @@ export const calculateDamage = (
   if (baseDamage === undefined) {
     return;
   }
-
-  const visualHPOfAttacker = getVisualHPfromHP(attacker.getHP());
-  const visualHPOfDefender = getVisualHPfromHP(defender.getHP());
 
   const hookProperties: CombatProperties = { attacker, defender };
 
@@ -85,11 +77,16 @@ export const calculateDamage = (
   const baseTerrainStars = getTerrainDefenseStars(defender.getTile().type);
 
   const terrainStarsDefenderHook = defender.player.getHook("terrainStars");
+
   let defenderTerrainStars =
     terrainStarsDefenderHook?.(baseTerrainStars, hookProperties) ?? baseTerrainStars;
 
   if (attacker.player.data.coId.name === "sonja" && attacker.player.data.coId.version === "AWDS") {
     // hmm ackshually, if sonja pops powers before lash, outcome is different than popping after lash
+
+    // TODO ahhhh f*ck... the previous comment thing derails the entire system i think
+    // because to reproduce that, we'd need to store baked modifier values
+    // for each day or something, like the game probably does.
     switch (attacker.player.data.COPowerState) {
       case "no-power": {
         defenderTerrainStars = Math.max(0, defenderTerrainStars - 1);
@@ -113,10 +110,10 @@ export const calculateDamage = (
 
   const attackFactor = Math.max(0, Math.floor(baseDamage * (attackModifier / 100) + luckModifier));
 
-  const attackHPFactor = Math.floor(attackFactor * (visualHPOfAttacker / 10));
+  const attackHPFactor = Math.floor(attackFactor * (attacker.getVisualHP() / 10));
 
   const defenseFactor =
-    Math.floor(200 - (defenseModifier + defenderTerrainStars * visualHPOfDefender)) / 100;
+    Math.floor(200 - (defenseModifier + defenderTerrainStars * defender.getVisualHP())) / 100;
 
   const damageAsPercentage = Math.floor(attackHPFactor * defenseFactor);
 
@@ -125,8 +122,8 @@ export const calculateDamage = (
 
 //can return negative hp values (useful for damage calculator / displaying damage range)
 export const calculateEngagementOutcome = (
-  attacker: RO<UnitWrapper>,
-  defender: RO<UnitWrapper>,
+  attacker: Unit,
+  defender: Unit,
   attackerLuck: RO<LuckRoll>, // TODO if defenderLuck has no lint error, attackerLuck should have a lint error because of redundant RO<T>
   defenderLuck: LuckRoll,
 ): { defenderHP: number; attackerHP?: number } => {
@@ -142,9 +139,9 @@ export const calculateEngagementOutcome = (
   damageByAttacker ??= 0; // this is necessary cause sonja scop reverses attacker and defender
 
   //check if ded
-  if (damageByAttacker >= defender.getHP()) {
+  if (damageByAttacker >= (defender.data.hp === "sonja-hidden" ? 100 : defender.data.hp)) {
     return {
-      defenderHP: defender.getHP() - damageByAttacker,
+      defenderHP: (defender.data.hp === "sonja-hidden" ? 100 : defender.data.hp) - damageByAttacker,
       attackerHP: undefined,
     };
   }
@@ -157,32 +154,18 @@ export const calculateEngagementOutcome = (
     defender.properties.attackRange[1] === 1
   ) {
     //temporarily subtract hp to calculate counter dmg
-    const originalHP = defender.getHP();
+    const originalHP = defender.data.hp;
 
-    // create temporary mutable unit for hp logic
-    // it has a dummy mutablematch, but that shouldn't matter because we only
-    // use this dummy mutableunit for HP calcs, but damageByDefender uses the real unit.
+    /**
+     * attention! unlike all other action-to-event code, we actually mutate server state here
+     * for convenience for HP calculations *before* applying the event.
+     * that's why it's obviously critical to reset the defender's HP back to originalHP after calculation.
+     * maybe we can clean this up later.
+     * ideally we'd clone the defender unit or something in a way that assures no server state is mutated,
+     * because all other action-to-event code doesn't (or at least shouldn't) mutate server state.
+     */
 
-    // actually, it might be easier and less error-prone to extract the HP logic into
-    // it's own class, factory function, or only extract setHP.
-
-    const { match } = attacker;
-
-    const dummyMutableMatch = new MutableMatch(
-      match.id,
-      match.leagueType,
-      match.changeableTiles,
-      match.rules,
-      match.state,
-      match.map.data,
-      match.getAllPlayers().map((p) => p.data),
-      [], // specifying attackerMatch.units doesn't work right now for some reason
-      match.turn,
-    );
-
-    const dummyMutableDefender = new MutableUnit(defender.data, dummyMutableMatch);
-
-    dummyMutableDefender.setHp(originalHP - damageByAttacker);
+    defender.setHp((originalHP === "sonja-hidden" ? 100 : originalHP) - damageByAttacker);
 
     const damageByDefender = calculateDamage(
       {
@@ -193,17 +176,21 @@ export const calculateEngagementOutcome = (
       true,
     );
 
+    defender.data.hp = originalHP; // <-- important
+
     if (damageByDefender !== undefined) {
       // return event with counter-attack
       return {
-        defenderHP: defender.getHP() - damageByAttacker,
-        attackerHP: attacker.getHP() - damageByDefender,
+        defenderHP:
+          (defender.data.hp === "sonja-hidden" ? 100 : defender.data.hp) - damageByAttacker,
+        attackerHP:
+          (attacker.data.hp === "sonja-hidden" ? 100 : attacker.data.hp) - damageByDefender,
       };
     }
   }
 
   return {
-    defenderHP: defender.getHP() - damageByAttacker,
+    defenderHP: (defender.data.hp === "sonja-hidden" ? 100 : defender.data.hp) - damageByAttacker,
     attackerHP: undefined,
   };
 };

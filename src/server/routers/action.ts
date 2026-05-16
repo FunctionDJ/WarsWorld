@@ -1,5 +1,11 @@
 import { getMatchEmitter } from "server/emitter/event-emitter";
 import { prisma } from "server/prisma/prisma-client";
+import type {
+  EmittableEvent,
+  MainEventsWithoutSubEvents,
+  MainEventWithSubEvents,
+  SubEvent,
+} from "shared/events";
 import {
   validateMainActionAndToEvent,
   validateSubActionAndToEvent,
@@ -9,15 +15,9 @@ import {
   applySubEventToMatch,
 } from "shared/match-logic/events/apply-event-to-match";
 import { mainActionSchema } from "shared/schemas/action";
-import type {
-  EmittableEvent,
-  MainEventsWithoutSubEvents,
-  MainEventWithSubEvents,
-  SubEvent,
-} from "shared/types/events";
-import type { MatchWrapper } from "shared/wrappers/match/match";
+import type { MatchWrapper } from "shared/wrappers/match";
 import { mainEventToEmittables } from "../../shared/match-logic/events/event-to-emittable";
-import { updateMoveVision } from "../../shared/match-logic/events/handlers/move";
+import { updateMoveVision } from "../../shared/match-logic/events/handlers/move/move";
 import { fillDiscoveredUnitsAndProperties } from "../../shared/match-logic/events/vision-update";
 import { matchBaseProcedure, playerInMatchBaseProcedure, router } from "../trpc/trpc-setup";
 

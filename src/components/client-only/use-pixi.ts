@@ -7,17 +7,17 @@ import { setupApp } from "pixi/setup-app";
 import { useEffect, useRef } from "react";
 import type { MainActionInput } from "shared/schemas/action";
 import type { Position } from "shared/schemas/position";
-import type { MutableMatch } from "shared/wrappers/match/mutable-match";
-import type { MutablePlayerInMatch } from "shared/wrappers/player/mutable-player-in-match";
+import type { MatchWrapper } from "shared/wrappers/match";
+import type { PlayerInMatchWrapper } from "shared/wrappers/player-in-match";
 import { handleClick, handleHover } from "../../pixi/handle-click";
 import type { PathNode } from "../../pixi/show-pathing";
-import type { UnitWrapper } from "../../shared/wrappers/unit/unit";
+import type { Unit } from "../../shared/wrappers/unit";
 import { renderedTileSize, renderMultiplier } from "./common";
 
 export const usePixi = (
-  match: MutableMatch,
+  match: MatchWrapper,
   spriteSheets: LoadedSpriteSheet,
-  player: MutablePlayerInMatch,
+  player: PlayerInMatchWrapper,
 ): {
   pixiCanvasRef: React.RefObject<HTMLCanvasElement | null>;
   mapContainerRef: React.RefObject<Container | undefined>;
@@ -29,7 +29,7 @@ export const usePixi = (
   const interactiveContainerRef = useRef<Container | undefined>(undefined);
 
   // the unit we've clicked (the one that will be seeing sub action menu), we keep it here to reference it later on
-  const currentUnitClickedRef = useRef<UnitWrapper | undefined>(undefined);
+  const currentUnitClickedRef = useRef<Unit | undefined>(undefined);
 
   // when user clicks an unit, we need a variable to determine if we show them unit's movement range, attack range or vision (for fog)
   const unitRangeShowRef = useRef<"attack" | "movement" | "vision">("movement");

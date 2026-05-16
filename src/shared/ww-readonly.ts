@@ -4,7 +4,6 @@ import type { IsTuple } from "type-fest";
 /**
  * type helper that makes all properties of T recursively readonly, but leaves functions and methods as-is (not made readonly)
  * so they can still be called.
- * https://function.dj/blog/prevent-infinite-recursion-in-typescript-eslint/
  */
 export type RO<T> = T extends Function
   ? T

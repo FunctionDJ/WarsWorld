@@ -11,3 +11,15 @@
  * matter if the error came from processing match logic on the client in the first place.
  */
 export class DispatchableError extends Error {}
+
+/**
+ * for errors that *should* never occur if other code is correct.
+ * in other words: the program should have not gotten to this point, some other check is missing or incorrect.
+ */
+export class InvalidStateError extends DispatchableError {}
+
+/**
+ * for errors that are caused by the player doing an illegal action,
+ * such as trying to move a unit that doesn't belong to them, or trying to attack a unit that is out of range.
+ */
+export class IllegalActionError extends DispatchableError {}

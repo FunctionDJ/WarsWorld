@@ -1,6 +1,5 @@
 import { Path } from "shared/schemas/path";
-import type { RO } from "shared/types/ww-readonly";
-import type { Position } from "../../schemas/position";
+import type { RO } from "shared/ww-readonly";
 import type {
   EmittableEvent,
   EmittableSubEvent,
@@ -8,9 +7,10 @@ import type {
   MainEventWithSubEvents,
   MoveEventWithoutSubEvent,
   MoveEventWithSubEvent,
-} from "../../types/events";
-import type { MatchWrapper } from "../../wrappers/match/match";
-import { Team } from "../../wrappers/team/team";
+} from "../../events";
+import type { Position } from "../../schemas/position";
+import type { MatchWrapper } from "../../wrappers/match";
+import { Team } from "../../wrappers/team";
 import { createEmittableAttackEvent } from "./handlers/attack/attack-event-to-emittable";
 
 type EmittableSubEventWithExtraInfo = Readonly<{
@@ -158,23 +158,22 @@ export const mainEventToEmittables = (
 
       return teamsWithSpectator.map((team) => {
         // special visible function for hidden subs and stealth
-        const isPositionVisible =
-          "hidden" in unit.data && unit.data.hidden
-            ? (position?: Position): position is Position => {
-                if (position === undefined) {
-                  return false;
-                }
-
-                for (const pos of position.getNeighbours()) {
-                  if (match.getUnit(pos, "dont-throw")?.player.team.index === team.index) {
-                    return true;
-                  }
-                }
-
+        const isPositionVisible = unit.isHiddenByAbility()
+          ? (position?: Position): position is Position => {
+              if (position === undefined) {
                 return false;
               }
-            : (position?: Position): position is Position =>
-                position === undefined ? false : team.isPositionVisible(position);
+
+              for (const pos of position.getNeighbours()) {
+                if (match.getUnit(pos, "dont-throw")?.player.team.index === team.index) {
+                  return true;
+                }
+              }
+
+              return false;
+            }
+          : (position?: Position): position is Position =>
+              position === undefined ? false : team.isPositionVisible(position);
 
         let shownPath = new Path([]);
 

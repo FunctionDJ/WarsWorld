@@ -1,5 +1,5 @@
 import { type Sprite } from "pixi.js";
-import { UnitWrapper } from "shared/wrappers/unit/unit";
+import { Unit } from "shared/wrappers/unit";
 
 /**
  * we might have to expose the generics of UnitWrapper through FrontendUnit
@@ -8,6 +8,6 @@ import { UnitWrapper } from "shared/wrappers/unit/unit";
  * i.e. class FrontendUnit<Type extends UnitType = UnitType... = ExtractUnit<Type>
  * and then forward those generics to UnitWrapper.
  */
-export class FrontendUnit extends UnitWrapper {
+export class FrontendUnit extends Unit {
   public sprite: Sprite | undefined = undefined;
 }

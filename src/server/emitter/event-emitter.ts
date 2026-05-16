@@ -1,9 +1,9 @@
 import { TRPCError } from "@trpc/server";
 import type Emittery from "emittery";
 import type { Match } from "generated/browser";
-import type { Emittable } from "shared/types/events";
-import type { MatchWrapper } from "shared/wrappers/match/match";
-import type { MatchInSetup } from "shared/wrappers/match/match-in-setup";
+import type { Emittable } from "shared/events";
+import type { MatchWrapper } from "shared/wrappers/match";
+import type { MatchInSetup } from "shared/wrappers/match-in-setup";
 
 type WWEmittery = Emittery<{ emittable: Emittable & { teamId: number } }>;
 

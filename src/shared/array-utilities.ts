@@ -1,4 +1,4 @@
-import { throwIfUndefined } from "./types/throw-helper";
+import { throwIfUndefined } from "./throw-helper";
 
 /**
  * small utility to get an element from an array

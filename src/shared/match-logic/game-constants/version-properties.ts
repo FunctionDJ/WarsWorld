@@ -1,6 +1,6 @@
 import type { GameVersion } from "../../schemas/game-version";
 import type { Weather } from "../../schemas/weather";
-import type { UnitWrapper } from "../../wrappers/unit/unit";
+import type { Unit } from "../../wrappers/unit";
 import type { DamageChart } from "./base-damage";
 import { damageChartAW1, damageChartAW2, damageChartAWDS } from "./base-damage";
 
@@ -53,7 +53,7 @@ export interface VersionProperties {
   /**
    * Power generation algorithm
    */
-  powerMeterIncreasePerHP: (affectedUnit: UnitWrapper) => number;
+  powerMeterIncreasePerHP: (affectedUnit: Unit) => number;
   /**
    * Additional firepower gained when using CO Power/Super
    */

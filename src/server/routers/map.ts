@@ -1,11 +1,10 @@
 import { prisma } from "server/prisma/prisma-client";
 import { arrayAtOrThrow } from "shared/array-utilities";
-import { DispatchableError } from "shared/dispatchable-error";
+import { DispatchableError } from "shared/errors";
 import type { CreatableMap } from "shared/schemas/map";
 import { mapSchema } from "shared/schemas/map";
 import type { PlayerSlot } from "shared/schemas/player-slot";
 import type { TileType } from "shared/schemas/tile";
-import { isNotNeutralProperty, isUnitProducingProperty } from "shared/schemas/tile-utilities";
 import { publicBaseProcedure, router } from "../trpc/trpc-setup";
 
 export const getPlayerAmountOfMap = (map: CreatableMap): number => {
@@ -17,15 +16,25 @@ export const getPlayerAmountOfMap = (map: CreatableMap): number => {
     }
   };
 
-  for (const element of map.tiles
-    .flat()
-    .filter(isUnitProducingProperty)
-    .filter(isNotNeutralProperty)) {
-    addToPlayerSlotsIfNotAddedAlready(element);
+  for (const tile of map.tiles.flat()) {
+    if (
+      tile.type !== "base" &&
+      tile.type !== "airport" &&
+      tile.type !== "port" &&
+      tile.type !== "hq"
+    ) {
+      continue;
+    }
+
+    if (tile.playerSlot === -1) {
+      continue;
+    }
+
+    addToPlayerSlotsIfNotAddedAlready(tile);
   }
 
-  for (const element of map.predeployedUnits) {
-    addToPlayerSlotsIfNotAddedAlready(element);
+  for (const tile of map.predeployedUnits) {
+    addToPlayerSlotsIfNotAddedAlready(tile);
   }
 
   return seenPlayerSlots.length;

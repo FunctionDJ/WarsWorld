@@ -31,7 +31,32 @@
     "/^bunx tsc$/": {
       "approve": true,
       "matchCommandLine": true
+    },
+    "/^bunx tsc -p tsconfig\\.json --noEmit$/": {
+      "approve": true,
+      "matchCommandLine": true
+    },
+    "/^bunx eslint src/tests/calculate-damage-test\\.ts$/": {
+      "approve": true,
+      "matchCommandLine": true
+    },
+    "/^bunx tsc -p tsconfig\\.json --noEmit --pretty false \\| rg \"src/shared/schemas/\\(unit\\|loadable-unit-schema-by-type\\)\\\\\\.ts\" -n$/": {
+      "approve": true,
+      "matchCommandLine": true
+    },
+    "/^cd /home/function/git/WarsWorld && bun lint$/": {
+      "approve": true,
+      "matchCommandLine": true
     }
   },
-  "todo-tree.general.tags": ["TODO", "[RO trigger]", "[upstream]"]
+  "todo-tree.general.tags": ["TODO", "[RO trigger]", "[upstream]"],
+  "js/ts.preferences.preferTypeOnlyAutoImports": true,
+  "js/ts.preferences.autoImportFileExcludePatterns": ["**/generated/**"],
+  "js/ts.preferences.autoImportSpecifierExcludeRegexes": [
+    "^generated(?:/.*)?$",
+    "^sharp$",
+    "^type-fest$",
+    "^@?typescript",
+    "^pixi\\.js$"
+  ]
 }

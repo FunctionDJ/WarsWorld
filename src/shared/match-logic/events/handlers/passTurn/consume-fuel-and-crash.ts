@@ -1,29 +1,23 @@
-import type { UnitWrapper } from "shared/wrappers/unit/unit";
+import type { Unit } from "shared/wrappers/unit";
 
-export function getTurnFuelConsumption(unit: UnitWrapper): number {
-  let fuelConsumed = 0;
-
-  if (unit.properties.facility === "airport") {
-    fuelConsumed = 5;
-
-    if (unit.data.type === "transportCopter" || unit.data.type === "battleCopter") {
-      fuelConsumed = 2;
-    } else if ("hidden" in unit.data && unit.data.hidden) {
-      // hidden stealth
-      fuelConsumed = 8;
-    }
-
-    if (unit.player.data.coId.name === "eagle") {
-      fuelConsumed -= 2;
-    }
-  } else if (unit.properties.facility === "port") {
-    fuelConsumed = 1;
-
-    if ("hidden" in unit.data && unit.data.hidden) {
-      // hidden sub
-      fuelConsumed = 5;
-    }
+const baseAirport = (unit: Unit): number => {
+  if (unit.isHiddenByAbility()) {
+    return 8;
   }
 
-  return fuelConsumed;
+  return unit.data.type.includes("Copter") ? 2 : 5;
+};
+
+export function getTurnFuelConsumption(unit: Unit): number {
+  switch (unit.properties.facility) {
+    case "airport": {
+      return unit.player.data.coId.name === "eagle" ? baseAirport(unit) - 2 : baseAirport(unit);
+    }
+    case "port": {
+      return unit.isHiddenByAbility() ? 5 : 1;
+    }
+    default: {
+      return 0;
+    }
+  }
 }

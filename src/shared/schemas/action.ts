@@ -2,7 +2,7 @@ import { z } from "zod";
 import { directionSchema } from "./direction";
 import { pathSchema } from "./path";
 import { positionSchema } from "./position";
-import { unitTypeSchema } from "./unit";
+import { unitTypeSchema } from "./unit-schemas";
 
 const buildActionSchema = z
   .object({
@@ -48,8 +48,6 @@ const unloadSchema = z
     direction: directionSchema,
   })
   .readonly();
-
-export type Unload = z.infer<typeof unloadSchema>;
 
 //AW2 behaviour, sub-action (comes after a move action)
 const unloadWaitActionSchema = z

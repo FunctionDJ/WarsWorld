@@ -17,11 +17,9 @@ export const hawkeAW2: COProperties = {
       description: "All units heal 1 HP, and all enemy units lose 1 HP (to a minimum of 0.1HP).",
       instantEffect(player) {
         for (const unit of player.getUnits()) {
-          // need to add this hidden check, but units will never be hidden cause they are hawke's units, not sonja's
-          if (unit.data.stats !== "hidden") {
-            unit.data.stats.hp = Math.min(unit.data.stats.hp + 10, 100);
-          }
+          unit.heal(1);
         }
+
         for (const unit of player.team.getEnemyUnits()) {
           unit.damageUntil1HP(1);
         }
@@ -33,11 +31,9 @@ export const hawkeAW2: COProperties = {
       description: "All units heal 2 HP, and all enemy units lose 2 HP (to a minimum of 0.1HP).",
       instantEffect(player) {
         for (const unit of player.getUnits()) {
-          // need to add this hidden check, but units will never be hidden cause they are hawke's units, not sonja's
-          if (unit.data.stats !== "hidden") {
-            unit.data.stats.hp = Math.min(unit.data.stats.hp + 20, 100);
-          }
+          unit.heal(2);
         }
+
         for (const unit of player.team.getEnemyUnits()) {
           unit.damageUntil1HP(2);
         }

@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import type { SpritesheetData, SpritesheetFrameData } from "pixi.js";
-import { throwIfUndefined } from "shared/types/throw-helper";
+import { throwIfUndefined } from "shared/throw-helper";
 import sharp from "sharp";
 import yargs from "yargs";
 

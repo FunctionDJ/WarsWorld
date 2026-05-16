@@ -43,7 +43,7 @@ export const kindleAWDS: COProperties = {
         attack: ({ attacker }) => {
           let bonusFirepower = 0;
 
-          for (const tile of attacker.match.changeableTiles) {
+          for (const tile of attacker.player.match.changeableTiles) {
             if ("playerSlot" in tile && attacker.player.owns(tile)) {
               bonusFirepower += 3;
             }

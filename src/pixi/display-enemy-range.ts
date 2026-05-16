@@ -1,13 +1,13 @@
 import { Container } from "pixi.js";
 import type { RefObject } from "react";
-import type { MatchWrapper } from "../shared/wrappers/match/match";
-import type { UnitWrapper } from "../shared/wrappers/unit/unit";
+import type { MatchWrapper } from "../shared/wrappers/match";
+import type { Unit } from "../shared/wrappers/unit";
 import { createTilesContainer } from "./interactive-tile-functions";
 import { getAccessibleNodes, getAttackableTiles } from "./show-pathing";
 
 export function displayEnemyRange(
   match: MatchWrapper,
-  unitClicked: UnitWrapper,
+  unitClicked: Unit,
   unitRangeShowRef: RefObject<"attack" | "vision" | "movement">,
 ) {
   if (unitRangeShowRef.current === "movement") {

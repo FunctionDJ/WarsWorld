@@ -1,4 +1,4 @@
 import type { Sprite } from "pixi.js";
-import type { ChangeableTile } from "shared/types/server-match-state";
+import type { PositionedTile } from "shared/schemas/tile";
 
-export type ChangeableTileWithSprite = ChangeableTile & { sprite?: Sprite };
+export type ChangeableTileWithSprite = PositionedTile & { sprite?: Sprite };

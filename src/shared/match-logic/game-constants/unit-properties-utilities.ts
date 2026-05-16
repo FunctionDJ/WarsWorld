@@ -31,3 +31,8 @@ export type UnitPropertiesWithoutAmmo = UnitPropertiesWithoutWeapon & {
 export type UnitPropertiesWithAmmo = UnitPropertiesWithoutAmmo & {
   readonly initialAmmo: number;
 };
+
+export type UnitProperties =
+  | UnitPropertiesWithAmmo
+  | UnitPropertiesWithoutAmmo
+  | UnitPropertiesWithoutWeapon;

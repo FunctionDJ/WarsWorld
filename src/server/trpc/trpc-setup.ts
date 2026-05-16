@@ -1,4 +1,4 @@
-import { DispatchableError } from "shared/dispatchable-error";
+import { DispatchableError } from "shared/errors";
 import { matchInSetupMiddleware, matchMiddleware, withMatchIdSchema } from "./middleware/match";
 import { playerMiddleware, withPlayerIdSchema } from "./middleware/player";
 import { t } from "./trpc-init";

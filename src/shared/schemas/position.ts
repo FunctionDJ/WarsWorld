@@ -6,6 +6,8 @@ import type { Direction } from "./direction";
 // AWBW and probably AW too starts "x: 0, y: 0" in the top-left corner.
 // So going down means y increases.
 
+// TODO change positions to {x,y} instead of [x,y]
+
 export const positionSchema = z
   .tuple([z.number().int().nonnegative(), z.number().int().nonnegative()])
   .readonly()

@@ -1,9 +1,9 @@
+import type { EmittableAttackEvent } from "shared/events";
 import type { Position } from "shared/schemas/position";
-import type { EmittableAttackEvent } from "shared/types/events";
-import type { MutableMatch } from "shared/wrappers/match/mutable-match";
+import type { MatchWrapper } from "shared/wrappers/match";
 import { applyPlayerUpdate } from "../apply-player-update";
 
-const updateHPorDestroy = (match: MutableMatch, hp?: number, position?: Position): void => {
+const updateHPorDestroy = (match: MatchWrapper, hp?: number, position?: Position): void => {
   if (position !== undefined) {
     const defender = match.getUnit(position);
 
@@ -16,7 +16,7 @@ const updateHPorDestroy = (match: MutableMatch, hp?: number, position?: Position
 };
 
 export const applyEmittableAttackEvent = (
-  match: MutableMatch,
+  match: MatchWrapper,
   event: EmittableAttackEvent,
 ): void => {
   applyPlayerUpdate(match, event.playerUpdate);

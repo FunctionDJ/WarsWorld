@@ -1,9 +1,9 @@
-import type { UnitWrapper } from "shared/wrappers/unit/unit";
+import type { Unit } from "shared/wrappers/unit";
 
 export const getPowerChargeGain = (
-  attacker: UnitWrapper,
+  attacker: Unit,
   attackerHpDiff: number,
-  defender: UnitWrapper,
+  defender: Unit,
   defenderHpDiff: number,
 ): { attackerPowerCharge: number; defenderPowerCharge: number } => {
   //power meter charge

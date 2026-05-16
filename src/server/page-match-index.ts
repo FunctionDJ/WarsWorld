@@ -1,6 +1,6 @@
-import { safeRemoveFromArray } from "shared/types/throw-helper";
-import type { MatchWrapper } from "shared/wrappers/match/match";
-import type { MatchInSetup } from "shared/wrappers/match/match-in-setup";
+import { safeRemoveFromArray } from "shared/throw-helper";
+import type { MatchWrapper } from "shared/wrappers/match";
+import type { MatchInSetup } from "shared/wrappers/match-in-setup";
 
 class PageMatchIndex {
   /**

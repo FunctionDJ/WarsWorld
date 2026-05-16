@@ -1,36 +1,29 @@
 /* eslint-disable max-lines */
 import { Position } from "shared/schemas/position";
-import type { UnitTypeString, Visibility, WWUnit } from "shared/schemas/unit";
-import type { RO } from "shared/types/ww-readonly";
-import type { MatchWrapper } from "shared/wrappers/match/match";
-import { UnitWrapper } from "shared/wrappers/unit/unit";
+import type { UnitData, UnitType } from "shared/schemas/unit-schemas";
+import { Unit } from "shared/wrappers/unit";
+import type { RO } from "shared/ww-readonly";
 
 export const createPipeSeamUnitEquivalent = (
-  match: MatchWrapper,
-  attacker: UnitWrapper,
+  attacker: Unit,
   pipeSeamPosition?: Position,
   pipeSeamHp?: number,
-): UnitWrapper => {
-  const usedVersion = match.rules.gameVersion ?? attacker.player.data.coId.version;
+): Unit => {
+  const usedVersion = attacker.player.match.rules.gameVersion ?? attacker.player.data.coId.version;
   const unitEquivalent = {
     type: usedVersion === "AW1" ? "mediumTank" : "neoTank",
     playerSlot: -1,
     position: pipeSeamPosition ?? new Position([0, 0]),
     isReady: false,
-    stats: {
-      hp: pipeSeamHp ?? 99,
-      fuel: 0,
-      ammo: 0,
-    },
-  } satisfies WWUnit;
+    hp: pipeSeamHp ?? 99,
+    fuel: 0,
+    ammo: 0,
+  } satisfies UnitData;
 
-  return new UnitWrapper<Visibility, UnitTypeString>(unitEquivalent, match);
+  return new Unit(attacker.player.match.neutralPlayer, unitEquivalent);
 };
 
-export const getBaseDamage = (
-  attacker: RO<UnitWrapper>,
-  defender: RO<UnitWrapper>,
-): number | undefined => {
+export const getBaseDamage = (attacker: RO<Unit>, defender: RO<Unit>): number | undefined => {
   const damageValues = attacker.player.getVersionProperties().damageChart[attacker.data.type];
 
   if (damageValues === undefined) {
@@ -40,8 +33,7 @@ export const getBaseDamage = (
   // hardcoded: hidden subs / stealth can only be damaged by cruiser+sub / fighter+stealth
   if (
     defender.data.type === "sub" &&
-    "hidden" in defender.data &&
-    defender.data.hidden &&
+    defender.isHiddenByAbility() &&
     attacker.data.type !== "sub" &&
     attacker.data.type !== "cruiser"
   ) {
@@ -50,8 +42,7 @@ export const getBaseDamage = (
 
   if (
     defender.data.type === "stealth" &&
-    "hidden" in defender.data &&
-    defender.data.hidden &&
+    defender.isHiddenByAbility() &&
     attacker.data.type !== "stealth" &&
     attacker.data.type !== "fighter"
   ) {
@@ -65,7 +56,7 @@ export const getBaseDamage = (
   return cantUsePrimaryWeapon ? secondaryDamage : (primaryDamage ?? secondaryDamage);
 };
 
-type DamageValues = Partial<Record<UnitTypeString, number>>;
+type DamageValues = Partial<Record<UnitType, number>>;
 
 //secondary = machine gun, infinite ammo.
 //some units don't have primary weapon (like infantry, recon)
@@ -74,7 +65,7 @@ interface Weaponry {
   secondary?: DamageValues;
 }
 
-export type DamageChart = Partial<Record<UnitTypeString, Weaponry>>;
+export type DamageChart = Partial<Record<UnitType, Weaponry>>;
 
 //if no game version is specified, all of them share the same dmg values
 //otherwise, if a version doesn't appear, it uses the newer version (if AW1 is not present, it uses AW2 table)

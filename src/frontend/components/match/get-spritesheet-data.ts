@@ -1,14 +1,15 @@
 import type { SpritesheetData } from "pixi.js";
 import type { Army } from "shared/schemas/army";
-import type { PropertyTileType } from "shared/schemas/tile";
-import type { UnitTypeString } from "shared/schemas/unit";
+import { propertyTileSchema } from "shared/schemas/tile";
+import type { UnitType } from "shared/schemas/unit-schemas";
+import type { z } from "zod";
 
 export type SheetNames = Army | "neutral" | "arrow" | "icons";
 
 export type SpriteAnimationKeys =
   | PropertyTileType
   | TileAnimationVariants
-  | UnitTypeString
+  | UnitType
   | UnitAnimationVariants;
 
 export type ArmySpritesheetData = SpritesheetData & {
@@ -17,6 +18,7 @@ export type ArmySpritesheetData = SpritesheetData & {
 
 export type SpritesheetDataByArmy = Record<SheetNames, ArmySpritesheetData>;
 
+type PropertyTileType = z.infer<typeof propertyTileSchema>["type"];
 type TileAnimationVariants = `${PropertyTileType}_${"rain" | "snow"}`;
 type UnitMoveDirection = "down" | "side" | "up";
-type UnitAnimationVariants = `${UnitTypeString}-m${UnitMoveDirection}`;
+type UnitAnimationVariants = `${UnitType}-m${UnitMoveDirection}`;

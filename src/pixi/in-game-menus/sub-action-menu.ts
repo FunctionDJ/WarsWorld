@@ -6,13 +6,13 @@ import {
   AvailableSubActions,
   getAvailableSubActions,
 } from "shared/match-logic/events/available-sub-actions";
-import { allDirections } from "shared/schemas/direction";
+import { directionSchema } from "shared/schemas/direction";
 import { Position } from "shared/schemas/position";
-import { throwIfUndefined } from "shared/types/throw-helper";
-import type { UnitWrapper } from "shared/wrappers/unit/unit";
+import { throwIfUndefined } from "shared/throw-helper";
+import type { Unit } from "shared/wrappers/unit";
 import type { MainActionInput } from "../../shared/schemas/action";
-import type { MatchWrapper } from "../../shared/wrappers/match/match";
-import type { PlayerInMatchWrapper } from "../../shared/wrappers/player/player-in-match";
+import type { MatchWrapper } from "../../shared/wrappers/match";
+import type { PlayerInMatchWrapper } from "../../shared/wrappers/player-in-match";
 import type { LoadedSpriteSheet } from "../load-spritesheet";
 import { renderAttackTiles } from "../render-attack-tiles";
 import { tileConstructor } from "../sprite-constructor";
@@ -24,8 +24,8 @@ export default function subActionMenu(
   match: MatchWrapper,
   player: PlayerInMatchWrapper,
   newPosition: Position,
-  unit: UnitWrapper,
-  currentUnitClickedRef: RefObject<UnitWrapper | undefined>,
+  unit: Unit,
+  currentUnitClickedRef: RefObject<Unit | undefined>,
   pathRef: RefObject<Position[] | undefined>,
   mapContainer: Container,
   interactiveContainer: Container,
@@ -76,7 +76,7 @@ export default function subActionMenu(
 
           // TODO maybe we can use unit.getNeighbours() here
 
-          for (const dir of allDirections) {
+          for (const dir of directionSchema.options) {
             if (match.map.isOutOfBounds(unit.data.position.addDirection(dir))) {
               continue;
             }

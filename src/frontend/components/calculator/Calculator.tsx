@@ -1,4 +1,4 @@
-import type { PlayerInMatch } from "shared/types/server-match-state";
+import type { PlayerInMatch } from "shared/server-match-state";
 import COCalculator from "./COCalculator";
 
 interface Props {

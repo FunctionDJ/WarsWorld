@@ -1,7 +1,7 @@
 import next from "next";
 import http from "node:http";
 import { parse } from "node:url";
-import { throwIfUndefined } from "shared/types/throw-helper";
+import { throwIfUndefined } from "shared/throw-helper";
 import { createTRPCwebSocketServer } from "./common-server";
 import { matchStore } from "./match-store";
 

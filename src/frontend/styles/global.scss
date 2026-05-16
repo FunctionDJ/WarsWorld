@@ -1,12 +1,12 @@
-@use "template/layout";
-@use "pages/index";
-@use "match/matchCard";
-@use "mixins" as m;
+// @use "template/layout";
+// @use "pages/index";
+// @use "match/matchCard";
+// @use "mixins" as m;
 
-// This file is used as the base for tailwindCSS
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
+// // This file is used as the base for tailwindCSS
+// @import "tailwindcss/base";
+// @import "tailwindcss/components";
+// @import "tailwindcss/utilities";
 
 @layer components {
   .pixelated {

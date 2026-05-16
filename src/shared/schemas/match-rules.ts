@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { gameVersionSchema } from "./game-version";
-import { unitTypeSchema } from "./unit";
+import { unitTypeSchema } from "./unit-schemas";
 import { weatherSettingSchema } from "./weather";
 
 export const matchRulesSchema = z

@@ -1,7 +1,7 @@
 import type { Weather } from "shared/schemas/weather";
-import type { RO } from "shared/types/ww-readonly";
-import type { MatchWrapper } from "shared/wrappers/match/match";
-import type { PlayerInMatchWrapper } from "../wrappers/player/player-in-match";
+import type { MatchWrapper } from "shared/wrappers/match";
+import type { RO } from "shared/ww-readonly";
+import type { PlayerInMatchWrapper } from "../wrappers/player-in-match";
 
 type ROMatchWrapper = RO<MatchWrapper>;
 

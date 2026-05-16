@@ -1,9 +1,9 @@
 import type { Player } from "generated/client";
-import type { PlayerBeforeMatch } from "shared/types/server-match-state";
-import { safeRemoveFromArray, throwIfUndefined } from "shared/types/throw-helper";
-import type { MatchWrapper } from "shared/wrappers/match/match";
-import type { MatchInSetup } from "shared/wrappers/match/match-in-setup";
-import type { PlayerInMatchWrapper } from "shared/wrappers/player/player-in-match";
+import type { PlayerInSetup } from "shared/server-match-state";
+import { safeRemoveFromArray, throwIfUndefined } from "shared/throw-helper";
+import type { MatchWrapper } from "shared/wrappers/match";
+import type { MatchInSetup } from "shared/wrappers/match-in-setup";
+import type { PlayerInMatchWrapper } from "shared/wrappers/player-in-match";
 
 class PlayerMatchIndex {
   private readonly index = new Map<Player["id"], (MatchWrapper | MatchInSetup)[]>();
@@ -12,7 +12,7 @@ class PlayerMatchIndex {
     return this.index.get(playerId);
   }
 
-  onPlayerJoin(player: PlayerBeforeMatch, match: MatchWrapper | MatchInSetup): void {
+  onPlayerJoin(player: PlayerInSetup, match: MatchWrapper | MatchInSetup): void {
     const playerMatches = this.index.get(player.id);
 
     if (playerMatches === undefined) {
@@ -22,9 +22,7 @@ class PlayerMatchIndex {
     }
   }
 
-  onPlayerLeave(
-    player: PlayerInMatchWrapper | { matchId: string; player: PlayerBeforeMatch },
-  ): void {
+  onPlayerLeave(player: PlayerInMatchWrapper | { matchId: string; player: PlayerInSetup }): void {
     const playerId = "data" in player ? player.data.id : player.player.id;
     const matchId = "data" in player ? player.match.id : player.matchId;
 

@@ -1,7 +1,7 @@
 import { globalEmittable } from "server/emitter/event-emitter";
 import { prisma } from "server/prisma/prisma-client";
 import { createMatchStartEvent } from "shared/match-logic/events/handlers/match-start";
-import { MutableMatch } from "shared/wrappers/match/mutable-match";
+import { MatchWrapper } from "shared/wrappers/match";
 import { z } from "zod";
 import { matchInSetupBaseProcedure } from "../../trpc/trpc-setup";
 
@@ -41,17 +41,16 @@ export const setReady = matchInSetupBaseProcedure
      * - give first player funds, maybe we need to everything that passTurn does?
      * - set up timer
      */
-    const playingMatch = new MutableMatch(
+    const playingMatch = new MatchWrapper(
       match.id,
-      match.leagueType,
-      [], // TODO changeableTiles
       match.rules,
-      "playing",
       match.map,
       [], // TODO newPlayerState i think
       match.map.predeployedUnits,
-      0, // TODO unsure if turn 0 is correct, maybe turn 1?
     );
+
+    playingMatch.leagueType = match.leagueType;
+    // playingMatch.changeableTiles = getchangeableTilesForMatch(match.map.changeableTiles); // needed?
 
     const matchStartEvent = createMatchStartEvent(playingMatch);
 

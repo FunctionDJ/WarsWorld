@@ -1,10 +1,9 @@
 import type { CO, COID } from "shared/schemas/co";
 import type { GameVersion } from "shared/schemas/game-version";
 import type { Position } from "shared/schemas/position";
-import { throwIfUndefined } from "shared/types/throw-helper";
-import type { RO } from "shared/types/ww-readonly";
-import type { MutablePlayerInMatch } from "shared/wrappers/player/mutable-player-in-match";
-import type { PlayerInMatchWrapper } from "shared/wrappers/player/player-in-match";
+import { throwIfUndefined } from "shared/throw-helper";
+import type { PlayerInMatchWrapper } from "shared/wrappers/player-in-match";
+import type { RO } from "shared/ww-readonly";
 import type { Hooks } from "./co-hooks";
 import { adderAW2 } from "./game-constants/cos/adder/adder-aw2";
 import { adderAWDS } from "./game-constants/cos/adder/adder-awds";
@@ -69,8 +68,7 @@ interface COPower {
   name: string;
   description: string;
   stars: number; //Stars are 9k value for AW2 and AWDS, 10k value for AW1
-  // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
-  instantEffect?: (player: MutablePlayerInMatch, positions?: readonly Position[]) => void;
+  instantEffect?: (player: PlayerInMatchWrapper, positions?: readonly Position[]) => void;
   calculatePositions?: (player: RO<PlayerInMatchWrapper>) => readonly Position[];
   hooks?: Partial<Hooks>;
 }

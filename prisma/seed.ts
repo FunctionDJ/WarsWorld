@@ -206,6 +206,7 @@ await prisma.match.create({
       type: "players-in-match",
       players: [
         {
+          type: "player-in-match",
           slot: 0,
           hasCurrentTurn: true,
           id: developer1.id,
@@ -223,6 +224,7 @@ await prisma.match.create({
           COPowerState: "no-power",
         },
         {
+          type: "player-in-match",
           slot: 1,
           hasCurrentTurn: false,
           id: developer2.id,

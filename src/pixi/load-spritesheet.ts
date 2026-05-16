@@ -4,7 +4,7 @@ import type {
   SpritesheetDataByArmy,
 } from "frontend/components/match/get-spritesheet-data";
 import { ImageSource, Spritesheet, Texture } from "pixi.js";
-import { throwIfUndefined } from "shared/types/throw-helper";
+import { throwIfUndefined } from "shared/throw-helper";
 
 export type MutableLoadedSpriteSheet = Record<SheetNames, Spritesheet<ArmySpritesheetData>>;
 export type LoadedSpriteSheet = MutableLoadedSpriteSheet;

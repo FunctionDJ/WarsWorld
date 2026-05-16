@@ -5,10 +5,10 @@ import { AnimatedSprite, BitmapText, Container, Sprite, Texture } from "pixi.js"
 import { unitPropertiesMap } from "shared/match-logic/game-constants/unit-properties";
 import type { MainActionInput } from "shared/schemas/action";
 import type { Position } from "shared/schemas/position";
-import { unitTypes, type UnitTypeString } from "shared/schemas/unit";
-import { throwIfUndefined } from "shared/types/throw-helper";
-import type { MatchWrapper } from "../../shared/wrappers/match/match";
-import type { PlayerInMatchWrapper } from "../../shared/wrappers/player/player-in-match";
+import { unitTypes, type UnitType } from "shared/schemas/unit-schemas";
+import { throwIfUndefined } from "shared/throw-helper";
+import type { MatchWrapper } from "../../shared/wrappers/match";
+import type { PlayerInMatchWrapper } from "../../shared/wrappers/player-in-match";
 import { createInGameMenu } from "./menu-template";
 
 /**
@@ -17,7 +17,7 @@ import { createInGameMenu } from "./menu-template";
 export const createMenuElementsForUnits = (
   spriteSheet: Spritesheet<ArmySpritesheetData>,
   //num property can be any number. For example, cost for building, and hp for unloading
-  unitsInMenu: { unitType: UnitTypeString; selectable: boolean; num: number }[],
+  unitsInMenu: { unitType: UnitType; selectable: boolean; num: number }[],
 ): { menuElements: Container[]; yValue: number } => {
   //this is the value we have applied to units (half a tile)
   const unitSize = baseTileSize / 2;

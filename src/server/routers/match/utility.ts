@@ -1,10 +1,10 @@
 import type { WWMap } from "generated/browser";
-import { DispatchableError } from "shared/dispatchable-error";
-import type { PlayerBeforeMatch, PlayerInMatch } from "shared/types/server-match-state";
-import type { RO } from "shared/types/ww-readonly";
+import { DispatchableError } from "shared/errors";
+import type { PlayerInMatch, PlayerInSetup } from "shared/server-match-state";
 import type { MapWrapper } from "shared/wrappers/map";
-import type { MatchWrapper } from "shared/wrappers/match/match";
-import type { MatchInSetup } from "shared/wrappers/match/match-in-setup";
+import type { MatchWrapper } from "shared/wrappers/match";
+import type { MatchInSetup } from "shared/wrappers/match-in-setup";
+import type { RO } from "shared/ww-readonly";
 
 const mapToFrontend = (
   map: MapWrapper | RO<WWMap>,
@@ -29,7 +29,7 @@ export const matchToFrontend = (
 ): {
   id: string;
   map: ReturnType<typeof mapToFrontend>;
-  players: readonly (PlayerInMatch | PlayerBeforeMatch)[];
+  players: readonly (PlayerInMatch | PlayerInSetup)[];
   state: string;
   turn: number;
 } => {

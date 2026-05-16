@@ -1,10 +1,9 @@
-import { DispatchableError } from "shared/dispatchable-error";
-import { getVisualHPfromHP } from "shared/match-logic/calculate-damage";
+import { DispatchableError } from "shared/errors";
+import type { RepairEvent } from "shared/events";
 import type { RepairAction } from "shared/schemas/action";
 import type { Position } from "shared/schemas/position";
-import type { RepairEvent } from "shared/types/events";
-import type { MutableMatch } from "shared/wrappers/match/mutable-match";
-import type { SubActionToEvent } from "../handler-types";
+import type { MatchWrapper } from "shared/wrappers/match";
+import type { SubActionToEvent } from "../../handler-types";
 
 export const repairActionToEvent: SubActionToEvent<RepairAction> = (
   match,
@@ -29,7 +28,7 @@ export const repairActionToEvent: SubActionToEvent<RepairAction> = (
 };
 
 export const applyRepairEvent = (
-  match: MutableMatch,
+  match: MatchWrapper,
   event: RepairEvent,
   fromPosition: Position,
 ): void => {
@@ -38,7 +37,7 @@ export const applyRepairEvent = (
   repairedUnit.resupply();
 
   //heal for free if visual hp is 10
-  if (getVisualHPfromHP(repairedUnit.getHP()) === 10) {
+  if (repairedUnit.getVisualHP() === 10) {
     repairedUnit.heal(0);
   } else {
     //check if enough funds for heal, and heal if it's the case

@@ -230,21 +230,28 @@ export default defineConfig([
       ],
     },
   },
-  {
-    files: ["src/shared/**/*.ts"],
-    rules: {
-      "@typescript-eslint/prefer-readonly-parameter-types": [
-        "warn",
-        {
-          treatMethodsAsReadonly: true,
-        },
-      ],
-    },
-  },
+  // {
+  //   files: ["src/shared/**/*.ts"],
+  //   rules: {
+  //     "@typescript-eslint/prefer-readonly-parameter-types": [
+  //       "warn",
+  //       {
+  //         treatMethodsAsReadonly: true,
+  //       },
+  //     ],
+  //   },
+  // },
   {
     files: ["next-env.d.ts"],
     rules: {
       "unicorn/prevent-abbreviations": "off",
+    },
+  },
+  {
+    files: ["src/shared/schemas/**/*.ts"],
+    rules: {
+      "@typescript-eslint/explicit-function-return-type": "off",
+      "@typescript-eslint/explicit-module-boundary-types": "off",
     },
   },
 ]);

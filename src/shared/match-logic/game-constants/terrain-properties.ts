@@ -157,6 +157,7 @@ export const terrainProperties: Record<TileType, TileProperties> = {
     },
   },
   pipe: pipeTileProperties,
+  pipeSeam: pipeTileProperties,
   base: {
     defenseStars: buildingTileProperties.defenseStars,
     movementCosts: {

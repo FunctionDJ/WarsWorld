@@ -1,16 +1,16 @@
-import type { MutablePlayerInMatch } from "shared/wrappers/player/mutable-player-in-match";
-import type { MutableUnit } from "shared/wrappers/unit/mutable-unit";
+import type { PlayerInMatchWrapper } from "shared/wrappers/player-in-match";
+import type { Unit } from "shared/wrappers/unit";
 
 export const applySashaFundsDamage = (
-  sashaPlayer: MutablePlayerInMatch,
+  sashaPlayer: PlayerInMatchWrapper,
   damageInFundsDealt: number,
 ): void => {
   sashaPlayer.data.funds += damageInFundsDealt * 0.5;
 };
 
 export const handleSashaScopFunds = (
-  attacker: MutableUnit,
-  defender: MutableUnit,
+  attacker: Unit,
+  defender: Unit,
   attackerHpDiff: number,
   defenderHpDiff: number,
 ): void => {

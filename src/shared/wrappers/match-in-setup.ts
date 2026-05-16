@@ -1,12 +1,11 @@
 import type { LeagueType, Match, WWMap } from "generated/browser";
 import type { MatchRules } from "shared/schemas/match-rules";
-import type { PlayerBeforeMatch } from "shared/types/server-match-state";
-import { findOrThrow, safeRemoveFromArray } from "shared/types/throw-helper";
-import type { RO } from "shared/types/ww-readonly";
+import type { PlayerInSetup } from "shared/server-match-state";
+import { findOrThrow, safeRemoveFromArray } from "shared/throw-helper";
 
 interface TeamInSetup {
   readonly index: number;
-  readonly players: PlayerBeforeMatch[];
+  readonly players: PlayerInSetup[];
 }
 
 export class MatchInSetup {
@@ -17,10 +16,10 @@ export class MatchInSetup {
     public readonly id: Match["id"],
     public readonly leagueType: LeagueType,
     public readonly rules: MatchRules,
-    public map: RO<WWMap>,
+    public map: WWMap,
   ) {}
 
-  getAllPlayers(): readonly PlayerBeforeMatch[] {
+  getAllPlayers(): readonly PlayerInSetup[] {
     return this.teams.flatMap((team) => team.players);
   }
 
@@ -44,18 +43,13 @@ export class MatchInSetup {
     return newTeam;
   }
 
-  addPlayer(player: PlayerBeforeMatch, teamIndex: number): void {
+  addPlayer(player: PlayerInSetup, teamIndex: number): void {
     const team = this.getOrCreateTeam(teamIndex);
     team.players.push(player);
   }
 
-  removePlayer(player: PlayerBeforeMatch): void {
-    const team = this.teams.find((t) => t.players.some((p) => p.id === player.id));
-
-    if (team === undefined) {
-      throw new Error("Player not found in any team");
-    }
-
+  removePlayer(player: PlayerInSetup): void {
+    const team = findOrThrow(this.teams, (t) => t.players.some((p) => p.id === player.id));
     safeRemoveFromArray(team.players, (p) => p.id === player.id);
 
     if (team.players.length === 0) {
@@ -63,7 +57,7 @@ export class MatchInSetup {
     }
   }
 
-  findPlayerById(playerId: PlayerBeforeMatch["id"]): PlayerBeforeMatch {
+  findPlayerById(playerId: PlayerInSetup["id"]): PlayerInSetup {
     return findOrThrow(this.getAllPlayers(), (p) => p.id === playerId);
   }
 }

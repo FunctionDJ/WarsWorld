@@ -1,6 +1,6 @@
-import type { MutableMatch } from "shared/wrappers/match/mutable-match";
+import type { MatchWrapper } from "shared/wrappers/match";
+import type { DeleteEvent } from "../../../events";
 import type { DeleteAction } from "../../../schemas/action";
-import type { DeleteEvent } from "../../../types/events";
 import type { MainActionToEvent } from "../handler-types";
 
 export const deleteActionToEvent: MainActionToEvent<DeleteAction> = (match, action) => {
@@ -16,6 +16,6 @@ export const deleteActionToEvent: MainActionToEvent<DeleteAction> = (match, acti
     : action;
 };
 
-export const applyDeleteEvent = (match: MutableMatch, event: DeleteEvent): void => {
+export const applyDeleteEvent = (match: MatchWrapper, event: DeleteEvent): void => {
   match.getUnit(event.position).remove();
 };

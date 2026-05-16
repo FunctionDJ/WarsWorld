@@ -1,18 +1,17 @@
-import { DispatchableError } from "shared/dispatchable-error";
+import { DispatchableError } from "shared/errors";
+import type { MoveEventWithoutSubEvent, MoveEventWithSubEvent } from "shared/events";
 import type { MoveAction } from "shared/schemas/action";
 import { Path } from "shared/schemas/path";
 import {
   carrierLoadedUnitSchema,
   cruiserLoadedUnitSchema,
   landerLoadedUnitSchema,
-} from "shared/schemas/unit";
-import type { MoveEventWithoutSubEvent, MoveEventWithSubEvent } from "shared/types/events";
-import { throwIfUndefined } from "shared/types/throw-helper";
-import type { RO } from "shared/types/ww-readonly";
-import type { MatchWrapper } from "shared/wrappers/match/match";
-import type { MutableMatch } from "shared/wrappers/match/mutable-match";
-import type { UnitWrapper } from "../../../wrappers/unit/unit";
-import { loadUnitInto } from "./move/load-unit-into";
+} from "shared/schemas/unit-schemas";
+import { throwIfUndefined } from "shared/throw-helper";
+import type { MatchWrapper } from "shared/wrappers/match";
+import type { RO } from "shared/ww-readonly";
+import type { Unit } from "../../../../wrappers/unit";
+import { loadUnitInto } from "./load-unit-into";
 
 // we don't use MainActionToEvent here because MoveEvent is special
 // because at this point we don't have the subEvent yet
@@ -110,10 +109,7 @@ export const moveActionToEvent = (
   return result;
 };
 
-export const throwIfCantMoveIntoUnit = (
-  unit: RO<UnitWrapper>,
-  unitInPosition: RO<UnitWrapper>,
-): void => {
+export const throwIfCantMoveIntoUnit = (unit: RO<Unit>, unitInPosition: RO<Unit>): void => {
   if (unitInPosition.data.type === unit.data.type) {
     // trying to join (same unit type)
     // join logic: if neither unit has loaded units, and the unit at join destination is not 10 hp
@@ -184,7 +180,7 @@ export const throwIfCantMoveIntoUnit = (
   }
 };
 
-const getOneTileFuelCost = (match: RO<MatchWrapper>, unit: RO<UnitWrapper>): number => {
+const getOneTileFuelCost = (match: RO<MatchWrapper>, unit: RO<Unit>): number => {
   const gameVersion = match.rules.gameVersion ?? unit.player.data.coId.version;
 
   if (
@@ -198,7 +194,7 @@ const getOneTileFuelCost = (match: RO<MatchWrapper>, unit: RO<UnitWrapper>): num
   return 1;
 };
 
-export const applyMoveEvent = (match: MutableMatch, event: RO<MoveEventWithoutSubEvent>): void => {
+export const applyMoveEvent = (match: MatchWrapper, event: RO<MoveEventWithoutSubEvent>): void => {
   //check if unit is moving or just standing still
   if (event.path.len() <= 1) {
     return;
@@ -210,6 +206,7 @@ export const applyMoveEvent = (match: MutableMatch, event: RO<MoveEventWithoutSu
 
   //if unit was capturing, interrupt capture
   if ("currentCapturePoints" in unit.data) {
+    // TODO tile storage
     unit.data.currentCapturePoints = undefined;
   }
 
@@ -217,37 +214,31 @@ export const applyMoveEvent = (match: MutableMatch, event: RO<MoveEventWithoutSu
   const unitAtDestination = match.getUnit(event.path.at("last"), "dont-throw");
 
   if (unitAtDestination === undefined) {
+    // just walk lmao
     unit.data.position = event.path.at("last");
-  } else {
-    if (unit.data.type === unitAtDestination.data.type) {
-      //join (hp, fuel, ammo, (keep capture points))
-      unitAtDestination.setFuel(unit.getFuel() + unitAtDestination.getFuel());
-
-      // yes, this "generates" hp, but it's how it works in game
-      const newVisualHP = unit.getVisualHP() + unitAtDestination.getVisualHP();
-
-      //gain funds
-      if (event.fundsGained !== undefined) {
-        unit.player.data.funds += event.fundsGained;
-      }
-
-      unitAtDestination.setHp(Math.min(newVisualHP, 10) * 10);
-
-      const newAmmo = (unit.getAmmo() ?? 0) + (unitAtDestination.getAmmo() ?? 0);
-
-      unitAtDestination.setAmmo(newAmmo);
-    } else if (unit.data.stats !== "hidden" && unitAtDestination.data.stats !== "hidden") {
-      loadUnitInto(unit.data, unitAtDestination.data);
-    }
-
-    unit.remove();
+    return;
   }
+
+  if (unit.data.type !== unitAtDestination.data.type) {
+    // load
+    loadUnitInto(unit.data, unitAtDestination.data);
+    unit.remove();
+    return;
+  }
+
+  // join (hp, fuel, ammo, (keep capture points))
+
+  unitAtDestination.setFuel(unit.getFuel() + unitAtDestination.getFuel());
+  unit.player.data.funds += event.fundsGained ?? 0;
+  unitAtDestination.setHp(unit.getVisualHP() + unitAtDestination.getVisualHP() * 10); // yes, this "generates" hp, but it's how it works in game
+  unitAtDestination.setAmmo((unit.getAmmo() ?? 0) + (unitAtDestination.getAmmo() ?? 0));
+  unit.remove();
 };
 
 /**
  * Call this AFTER creating the sub event but BEFORE applying it
  */
-export const updateMoveVision = (match: MutableMatch, event: RO<MoveEventWithSubEvent>): void => {
+export const updateMoveVision = (match: MatchWrapper, event: RO<MoveEventWithSubEvent>): void => {
   if (event.path.len() < 2) {
     // if didn't move no vision change
     return;

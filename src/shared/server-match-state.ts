@@ -3,29 +3,10 @@ import type { COPowerState } from "shared/match-logic/co";
 import type { Army } from "shared/schemas/army";
 import type { COID } from "shared/schemas/co";
 import type { PlayerSlot } from "shared/schemas/player-slot";
-import type { Position } from "shared/schemas/position";
-import type { PipeSeamTile, PropertyTileType, UnusedSiloTileType } from "shared/schemas/tile";
 import type { RO } from "./ww-readonly";
 
-export interface CapturableTile {
-  type: PropertyTileType;
-  playerSlot: PlayerSlot;
-  position: Position;
-  // capture points are stored in unit
-}
-
-interface LaunchableSiloTile {
-  type: UnusedSiloTileType;
-  fired: boolean;
-  position: Position;
-}
-
-export type ChangeableTile =
-  | CapturableTile
-  | LaunchableSiloTile
-  | (PipeSeamTile & { position: Position });
-
 export interface PlayerInMatch {
+  type: "player-in-match";
   slot: PlayerSlot;
   hasCurrentTurn: boolean;
   id: Player["id"];
@@ -39,7 +20,8 @@ export interface PlayerInMatch {
   COPowerState: COPowerState;
 }
 
-export interface PlayerBeforeMatch {
+export interface PlayerInSetup {
+  type: "player-in-setup";
   slot: PlayerSlot;
   id: Player["id"];
   name: Player["name"];
@@ -49,6 +31,7 @@ export interface PlayerBeforeMatch {
 }
 
 export const createNeutralPlayerInMatch: () => PlayerInMatch = () => ({
+  type: "player-in-match",
   slot: -1,
   hasCurrentTurn: false,
   id: "Neutral",

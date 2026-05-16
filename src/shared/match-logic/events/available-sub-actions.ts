@@ -1,4 +1,4 @@
-import { DispatchableError } from "shared/dispatchable-error";
+import { DispatchableError, InvalidStateError } from "shared/errors";
 import {
   createPipeSeamUnitEquivalent,
   getBaseDamage,
@@ -8,10 +8,10 @@ import { getBaseMovementCost } from "shared/match-logic/movement-cost";
 import { getWeatherSpecialMovement } from "shared/match-logic/weather";
 import type { SubActionInput } from "shared/schemas/action";
 import { Position } from "shared/schemas/position";
-import type { LoadedUnit } from "shared/schemas/unit";
-import type { MatchWrapper } from "shared/wrappers/match/match";
-import type { PlayerInMatchWrapper } from "shared/wrappers/player/player-in-match";
-import type { UnitWrapper } from "shared/wrappers/unit/unit";
+import type { UnitData } from "shared/schemas/unit-schemas";
+import type { MatchWrapper } from "shared/wrappers/match";
+import type { PlayerInMatchWrapper } from "shared/wrappers/player-in-match";
+import type { Unit } from "shared/wrappers/unit";
 
 export enum AvailableSubActions {
   "Wait",
@@ -32,7 +32,7 @@ export enum AvailableSubActions {
 export const getAvailableSubActions = (
   match: MatchWrapper,
   player: PlayerInMatchWrapper,
-  unit: UnitWrapper,
+  unit: Unit,
   newPosition: Position,
   hasMoved: boolean,
 ): Map<AvailableSubActions, SubActionInput | undefined> => {
@@ -70,19 +70,22 @@ export const getAvailableSubActions = (
   if (!unit.isTransport()) {
     let addAttackSubaction = false;
 
-    const pipeSeamUnitEquivalent = createPipeSeamUnitEquivalent(match, unit);
+    const pipeSeamUnitEquivalent = createPipeSeamUnitEquivalent(unit);
     const canAttackPipeseams = getBaseDamage(unit, pipeSeamUnitEquivalent) !== undefined;
 
     if (unit.isIndirect() && !hasMoved) {
+      const { properties } = unit;
+
+      if (!("attackRange" in properties)) {
+        throw new InvalidStateError("Expected unit to have attack range");
+      }
+
       for (let x = 0; x < match.map.width && !addAttackSubaction; x++) {
         for (let y = 0; y < match.map.height && !addAttackSubaction; y++) {
           const pos = new Position([x, y]);
           const distance = unit.data.position.getDistance(pos);
 
-          if (
-            distance <= unit.properties.attackRange[1] &&
-            distance >= unit.properties.attackRange[0]
-          ) {
+          if (distance <= properties.attackRange[1] && distance >= properties.attackRange[0]) {
             if (
               canAttackPipeseams &&
               !match.map.isOutOfBounds(pos) &&
@@ -145,7 +148,7 @@ export const getAvailableSubActions = (
       menuOptions.set(AvailableSubActions.Capture, { type: "ability" });
     }
 
-    if (tile.type === "unusedSilo" && "fired" in tile && !tile.fired) {
+    if (tile.type === "unusedSilo") {
       //handled later
       menuOptions.set(AvailableSubActions.Launch, undefined);
     }
@@ -166,14 +169,9 @@ export const getAvailableSubActions = (
     menuOptions.set(AvailableSubActions.Explode, { type: "ability" });
   }
 
-  //check for hide / show
-  if ("hidden" in unit.data) {
-    if (unit.data.hidden) {
-      menuOptions.set(AvailableSubActions.Show, { type: "ability" });
-    } else {
-      menuOptions.set(AvailableSubActions.Hide, { type: "ability" });
-    }
-  }
+  menuOptions.set(unit.isHiddenByAbility() ? AvailableSubActions.Show : AvailableSubActions.Hide, {
+    type: "ability",
+  });
 
   //check for unload
   if (player.getVersionProperties().unloadOnlyAfterMove && unit.isTransport()) {
@@ -183,7 +181,7 @@ export const getAvailableSubActions = (
 
     let addUnloadSubaction = false;
 
-    const getAddUnloadSubaction = (passedUnit: UnitWrapper, loadedUnit: LoadedUnit): boolean => {
+    const getAddUnloadSubaction = (passedUnit: Unit, loadedUnit: UnitData): boolean => {
       const baseMovementCost = getBaseMovementCost(
         unitPropertiesMap[loadedUnit.type].movementType,
         getWeatherSpecialMovement(passedUnit.player),
@@ -221,12 +219,16 @@ export const getAvailableSubActions = (
       return false;
     };
 
-    if (unit.data.loadedUnit !== undefined) {
-      addUnloadSubaction = getAddUnloadSubaction(unit, unit.data.loadedUnit);
+    if ("loadedUnits" in unit.data && unit.data.loadedUnits[0] !== undefined) {
+      addUnloadSubaction = getAddUnloadSubaction(unit, unit.data.loadedUnits[0]);
     }
 
-    if (!addUnloadSubaction && "loadedUnit2" in unit.data && unit.data.loadedUnit2 !== undefined) {
-      addUnloadSubaction = getAddUnloadSubaction(unit, unit.data.loadedUnit2);
+    if (
+      !addUnloadSubaction &&
+      "loadedUnits" in unit.data &&
+      unit.data.loadedUnits[1] !== undefined
+    ) {
+      addUnloadSubaction = getAddUnloadSubaction(unit, unit.data.loadedUnits[1]);
     }
 
     if (addUnloadSubaction) {

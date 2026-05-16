@@ -1,14 +1,14 @@
-import type { AttackEvent, EmittableAttackEvent } from "shared/types/events";
-import type { RO } from "shared/types/ww-readonly";
-import type { MatchWrapper } from "shared/wrappers/match/match";
-import type { Team } from "shared/wrappers/team/team";
-import type { UnitWrapper } from "shared/wrappers/unit/unit";
+import type { AttackEvent, EmittableAttackEvent } from "shared/events";
+import type { MatchWrapper } from "shared/wrappers/match";
+import type { Team } from "shared/wrappers/team";
+import type { Unit } from "shared/wrappers/unit";
+import type { RO } from "shared/ww-readonly";
 import { canAttackWithPrimary } from "./can-attack-with-primary";
 import { getPowerChargeGain } from "./get-power-charge-gain";
 
 export const createEmittableAttackEvent = (
   match: MatchWrapper,
-  attacker: UnitWrapper, //assume updated after move
+  attacker: Unit, //assume updated after move
   attackEvent: AttackEvent,
   teamWitness: RO<Team>,
 ): EmittableAttackEvent => {

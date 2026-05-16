@@ -6,11 +6,11 @@ import {
   getBaseDamage,
 } from "shared/match-logic/game-constants/base-damage";
 import { Position } from "shared/schemas/position";
-import type { RO } from "shared/types/ww-readonly";
 import type { MapWrapper } from "shared/wrappers/map";
-import type { MatchWrapper } from "shared/wrappers/match/match";
-import { DispatchableError } from "../shared/dispatchable-error";
-import type { UnitWrapper } from "../shared/wrappers/unit/unit";
+import type { MatchWrapper } from "shared/wrappers/match";
+import type { RO } from "shared/ww-readonly";
+import { DispatchableError } from "../shared/errors";
+import type { Unit } from "../shared/wrappers/unit";
 import type { LoadedSpriteSheet } from "./load-spritesheet";
 export interface PathNode {
   //saves distance from origin and parent (to retrieve the shortest path)
@@ -27,7 +27,7 @@ const makeVisitedMatrix = (map: MapWrapper) =>
 export const getAccessibleNodes = (
   //TODO: save result of function? _ (Sturm d2d?)
   match: MatchWrapper,
-  unit: UnitWrapper,
+  unit: Unit,
 ): Map<Position, PathNode> => {
   const ownerUnitPlayer = match.getPlayerBySlot(unit.data.playerSlot);
 
@@ -103,7 +103,7 @@ export const getAccessibleNodes = (
 
 export const getAttackableTiles = (
   match: MatchWrapper,
-  unit: UnitWrapper,
+  unit: Unit,
   fromPosition?: Position,
   accessibleNodes?: Map<Position, PathNode>,
 ): Position[] => {
@@ -155,15 +155,14 @@ export const getAttackableTiles = (
 
 export const getAttackTargetTiles = (
   match: MatchWrapper,
-  unit: UnitWrapper,
+  unit: Unit,
   fromPosition?: Position,
   attackableTiles?: Position[],
 ) => {
   const attackTargetPositions: Position[] = [];
   attackableTiles ??= getAttackableTiles(match, unit, fromPosition);
 
-  const canAttackPipeseams =
-    getBaseDamage(unit, createPipeSeamUnitEquivalent(match, unit)) !== undefined;
+  const canAttackPipeseams = getBaseDamage(unit, createPipeSeamUnitEquivalent(unit)) !== undefined;
 
   for (const position of attackableTiles) {
     const enemy = match.getUnit(position, "dont-throw");
@@ -182,7 +181,7 @@ export const getAttackTargetTiles = (
   return attackTargetPositions;
 };
 
-export const calculatePathDistance = (unit: UnitWrapper, path: Position[]) => {
+export const calculatePathDistance = (unit: Unit, path: Position[]) => {
   let dist = 0;
 
   path.forEach((pos, index) => {
@@ -201,7 +200,7 @@ export const calculatePathDistance = (unit: UnitWrapper, path: Position[]) => {
 };
 
 export const updatePath = (
-  unit: UnitWrapper,
+  unit: Unit,
   accessibleNodes: Map<Position, PathNode>,
   path: Position[],
   newPos: Position,

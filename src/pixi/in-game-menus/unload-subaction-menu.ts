@@ -4,10 +4,10 @@ import type { RefObject } from "react";
 import { arrayAtOrThrow } from "shared/array-utilities";
 import { getUnloadablePositions } from "shared/match-logic/events/handlers/unload/check-unload-tiles";
 import { type Position } from "shared/schemas/position";
-import type { UnitWrapper } from "shared/wrappers/unit/unit";
+import type { Unit } from "shared/wrappers/unit";
 import type { MainActionInput } from "../../shared/schemas/action";
-import type { MatchWrapper } from "../../shared/wrappers/match/match";
-import type { PlayerInMatchWrapper } from "../../shared/wrappers/player/player-in-match";
+import type { MatchWrapper } from "../../shared/wrappers/match";
+import type { PlayerInMatchWrapper } from "../../shared/wrappers/player-in-match";
 import type { LoadedSpriteSheet } from "../load-spritesheet";
 import { tileConstructor } from "../sprite-constructor";
 import { createMenuElementsForUnits } from "./build-unit-menu";
@@ -18,8 +18,8 @@ export const createUnloadMenu = (
   match: MatchWrapper,
   player: PlayerInMatchWrapper,
   newPosition: Position,
-  unit: UnitWrapper,
-  currentUnitClickedRef: RefObject<UnitWrapper | undefined>,
+  unit: Unit,
+  currentUnitClickedRef: RefObject<Unit | undefined>,
   pathRef: RefObject<Position[] | undefined>,
   interactiveContainer: Container,
   spriteSheets: LoadedSpriteSheet,
@@ -29,7 +29,10 @@ export const createUnloadMenu = (
    */
   firstUnloadInfo?: { unloadedPosition: Position; isFirstUnit: boolean },
 ) => {
-  if (!unit.isTransport() || unit.data.loadedUnit === undefined) {
+  if (
+    !("loadedUnits" in unit.data) ||
+    unit.data.loadedUnits.every((loadedUnit) => loadedUnit === undefined)
+  ) {
     throw new Error("Asked to create unlaod menu for unit without loaded units");
   }
 
@@ -39,7 +42,7 @@ export const createUnloadMenu = (
   let menuInfo2 = undefined;
   const infosForMenu = [];
 
-  if (!firstUnloadInfo?.isFirstUnit) {
+  if (!firstUnloadInfo?.isFirstUnit && unit.data.loadedUnits[0] !== undefined) {
     const loadedUnit = unit.getLoadedUnit(1);
     unloadPositions1 = getUnloadablePositions(unit, loadedUnit, newPosition);
 
@@ -50,16 +53,19 @@ export const createUnloadMenu = (
     }
 
     menuInfo1 = {
-      unitType: unit.data.loadedUnit.type,
+      unitType: unit.data.loadedUnits[0].type,
       selectable: unloadPositions1.length > 0,
-      num: Math.ceil(unit.data.loadedUnit.stats.hp / 10),
+      num: Math.ceil(
+        (unit.data.loadedUnits[0].hp === "sonja-hidden" ? 100 : unit.data.loadedUnits[0].hp) / 10,
+      ),
     };
+
     infosForMenu.push(menuInfo1);
   }
 
   if (
     "loadedUnit2" in unit.data &&
-    unit.data.loadedUnit2 !== undefined &&
+    unit.data.loadedUnits[1] !== undefined &&
     (firstUnloadInfo === undefined || firstUnloadInfo.isFirstUnit)
   ) {
     unloadPositions2 = getUnloadablePositions(unit, unit.getLoadedUnit(2), newPosition);
@@ -71,10 +77,13 @@ export const createUnloadMenu = (
     }
 
     menuInfo2 = {
-      unitType: unit.data.loadedUnit2.type,
+      unitType: unit.data.loadedUnits[1].type,
       selectable: unloadPositions2.length > 0,
-      num: Math.ceil(unit.data.loadedUnit2.stats.hp / 10), //visual hp
+      num: Math.ceil(
+        (unit.data.loadedUnits[1].hp === "sonja-hidden" ? 100 : unit.data.loadedUnits[1].hp) / 10,
+      ), //visual hp
     };
+
     infosForMenu.push(menuInfo2);
   }
 

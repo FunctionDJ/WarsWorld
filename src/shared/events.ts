@@ -18,9 +18,10 @@ import type { Army } from "shared/schemas/army";
 import type { COID } from "shared/schemas/co";
 import type { PlayerSlot } from "shared/schemas/player-slot";
 import type { Position } from "shared/schemas/position";
-import type { WWUnit } from "shared/schemas/unit";
+import type { UnitData } from "shared/schemas/unit-schemas";
 import type { Weather } from "shared/schemas/weather";
-import type { CapturableTile, PlayerInMatch } from "./server-match-state";
+import type { PositionedTile } from "./schemas/tile";
+import type { PlayerInMatch } from "./server-match-state";
 
 /** player slot 0 implicity starts */
 export interface MatchStartEvent {
@@ -125,8 +126,8 @@ export type SubEvent =
   | AttackEvent;
 
 interface WithDiscoveries {
-  discoveredUnits?: WWUnit[];
-  discoveredProperties?: CapturableTile[];
+  discoveredUnits?: UnitData[];
+  discoveredProperties?: PositionedTile[];
 }
 
 interface EmittableAttackParticipantInfo {
@@ -161,7 +162,7 @@ export type EmittableMoveEvent = MoveEventWithoutSubEvent &
     /**
      * e.g. for when a unit moves from FoW into vision or when it's unloaded into vision
      */
-    appearingUnit?: WWUnit;
+    appearingUnit?: UnitData;
   };
 
 export type EmittableEvent = (

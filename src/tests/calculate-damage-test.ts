@@ -1,8 +1,6 @@
-import type { WWMap } from "generated/browser";
 import { attackActionToEvent } from "shared/match-logic/events/handlers/attack/attack-action-to-event";
 import { Position } from "shared/schemas/position";
-import type { PlayerInMatch } from "shared/types/server-match-state";
-import { MutableMatch } from "shared/wrappers/match/mutable-match";
+import { createMatch, createPlayerInMatch } from "./utilities";
 
 // TODO
 /**
@@ -34,127 +32,164 @@ import { MutableMatch } from "shared/wrappers/match/mutable-match";
  * - Function
  */
 
-const map: WWMap = {
-  id: "0",
-  createdAt: new Date(),
-  name: "",
-  numberOfPlayers: 0,
-  predeployedUnits: [],
-  tiles: [
+console.log("simple infanty vs infantry");
+
+{
+  const match = createMatch([createPlayerInMatch({ slot: 0 }), createPlayerInMatch({ slot: 1 })]);
+
+  const p1 = match.getPlayerBySlot(0);
+  const p2 = match.getPlayerBySlot(1);
+
+  const u1 = p1.addUnwrappedUnit({
+    type: "infantry",
+    position: new Position([0, 0]),
+  });
+
+  const u2 = p2.addUnwrappedUnit({
+    type: "infantry",
+    position: new Position([1, 0]),
+  });
+
+  const { attackerHP, defenderHP } = attackActionToEvent(
+    match,
+    {
+      type: "attack",
+      defenderPosition: u2.data.position,
+    },
+    u1.data.position,
+    true,
+    {
+      goodLuck: 0.5,
+      badLuck: 0.5,
+    },
+    {
+      goodLuck: 0.5,
+      badLuck: 0.5,
+    },
+  );
+
+  console.log("attacker HP:", u1.data.hp, "=>", attackerHP ?? "(no counter)");
+  console.log("defender HP:", u2.data.hp, "=>", defenderHP);
+}
+
+// from AW wiki:
+/**
+ * for example, a Hitpoints 1 Aw2jess Jess Infantry attacking a Missile that has exactly
+ * 60% defense will deal 0.936% damage with 0% luck, which will round up to 0.95%
+ * and then round down to 0%. However, for 1% luck or higher,
+ * this will first round up to at least 1% which rounds down to a flat 1% damage instead.
+ */
+
+// how to get 60% def: kanbei, no power, on city
+
+console.log("testing luck thresholds: 0% luck should round down to 0% damage");
+
+{
+  const match = createMatch(
     [
-      {
-        category: "variable",
-        type: "road",
-        variant: "right-left",
-      },
-      {
-        category: "variable",
-        type: "road",
-        variant: "right-left",
-      },
+      createPlayerInMatch({ slot: 0 }),
+      createPlayerInMatch({ slot: 1, coId: { name: "kanbei", version: "AW2" } }),
     ],
-  ],
-};
-
-const players: PlayerInMatch[] = [
-  {
-    name: "Grimm Guy",
-    status: "alive",
-    army: "orange-star",
-    coId: {
-      name: "andy",
-      version: "AW1",
+    {
+      map: {
+        tiles: [
+          [
+            { type: "plain", variant: "normal" },
+            { type: "city", playerSlot: 1, hp: 20 },
+          ],
+        ],
+      },
     },
-    COPowerState: "no-power",
-    funds: 0,
-    id: "0",
-    powerMeter: 0,
-    slot: 0,
-    timesPowerUsed: 0,
-    hasCurrentTurn: true,
-  },
-  {
-    name: "Incuggarch",
-    hasCurrentTurn: false,
-    status: "alive",
-    army: "blue-moon",
-    coId: {
-      name: "andy",
-      version: "AW1",
+  );
+
+  const p1 = match.getPlayerBySlot(0);
+  const p2 = match.getPlayerBySlot(1);
+
+  const u1 = p1.addUnwrappedUnit({
+    type: "infantry",
+    position: new Position([0, 0]),
+  });
+
+  const u2 = p2.addUnwrappedUnit({
+    type: "missile",
+    position: new Position([1, 0]),
+    ammo: 6,
+  });
+
+  const { attackerHP, defenderHP } = attackActionToEvent(
+    match,
+    {
+      type: "attack",
+      defenderPosition: u2.data.position,
     },
-    COPowerState: "no-power",
-    funds: 0,
-    id: "0",
-    powerMeter: 0,
-    slot: 1,
-    timesPowerUsed: 0,
-  },
-];
+    u1.data.position,
+    true,
+    {
+      goodLuck: 0,
+      badLuck: 0,
+    },
+    {
+      goodLuck: 0,
+      badLuck: 0,
+    },
+  );
 
-const match = new MutableMatch(
-  "",
-  "standard",
-  [],
-  {
-    unitCapPerPlayer: 0,
-    fogOfWar: false,
-    fundsPerProperty: 1000,
-    labUnitTypes: ["infantry"],
-    bannedUnitTypes: ["apc"],
-    captureLimit: 0,
-    dayLimit: 0,
-    weatherSetting: "clear",
-    teamMapping: [0, 1],
-    // playerslot 0 (1st index of teamMapping) is Grimm Guy and is a part of team 0
-    // playerslot 1 (2nd index of teamMapping) is Incuggarch and is a part of team 1
-  },
-  "playing",
-  map,
-  players,
-  [],
-  0,
-);
+  console.log("attacker HP:", u1.data.hp, "=>", attackerHP ?? "(no counter)");
+  console.log("defender HP:", u2.data.hp, "=>", defenderHP);
+}
 
-const p1 = match.getPlayerBySlot(0);
-const p2 = match.getPlayerBySlot(1);
+console.log("testing luck thresholds: 1% luck should round up to 1% damage");
 
-const u1 = p1.addUnwrappedUnit({
-  type: "infantry",
-  isReady: true,
-  position: new Position([0, 0]),
-  stats: {
-    fuel: 99,
-    hp: 100,
-  },
-});
+{
+  const match = createMatch(
+    [
+      createPlayerInMatch({ slot: 0 }),
+      createPlayerInMatch({ slot: 1, coId: { name: "kanbei", version: "AW2" } }),
+    ],
+    {
+      map: {
+        tiles: [
+          [
+            { type: "plain", variant: "normal" },
+            { type: "city", playerSlot: 1, hp: 20 },
+          ],
+        ],
+      },
+    },
+  );
 
-const u2 = p2.addUnwrappedUnit({
-  type: "infantry",
-  isReady: true,
-  position: new Position([1, 0]),
-  stats: {
-    fuel: 99,
-    hp: 100,
-  },
-});
+  const p1 = match.getPlayerBySlot(0);
+  const p2 = match.getPlayerBySlot(1);
 
-const { attackerHP, defenderHP } = attackActionToEvent(
-  match,
-  {
-    type: "attack",
-    defenderPosition: u2.data.position,
-  },
-  u1.data.position,
-  true,
-  {
-    goodLuck: 0.5,
-    badLuck: 0.5,
-  },
-  {
-    goodLuck: 0.5,
-    badLuck: 0.5,
-  },
-);
+  const u1 = p1.addUnwrappedUnit({
+    type: "infantry",
+    position: new Position([0, 0]),
+  });
 
-console.log("attacker HP:", u1.getHP(), "=>", attackerHP ?? "(no counter)");
-console.log("defender HP:", u2.getHP(), "=>", defenderHP);
+  const u2 = p2.addUnwrappedUnit({
+    type: "missile",
+    position: new Position([1, 0]),
+    ammo: 6,
+  });
+
+  const { attackerHP, defenderHP } = attackActionToEvent(
+    match,
+    {
+      type: "attack",
+      defenderPosition: u2.data.position,
+    },
+    u1.data.position,
+    true,
+    {
+      goodLuck: 0.01,
+      badLuck: 0,
+    },
+    {
+      goodLuck: 0.01,
+      badLuck: 0,
+    },
+  );
+
+  console.log("attacker HP:", u1.data.hp, "=>", attackerHP ?? "(no counter)");
+  console.log("defender HP:", u2.data.hp, "=>", defenderHP);
+}

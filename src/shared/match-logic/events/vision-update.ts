@@ -1,6 +1,6 @@
-import type { EmittableEvent } from "../../types/events";
-import type { CapturableTile } from "../../types/server-match-state";
-import type { MatchWrapper } from "../../wrappers/match/match";
+import type { PositionedTile } from "shared/schemas/tile";
+import type { EmittableEvent } from "../../events";
+import type { MatchWrapper } from "../../wrappers/match";
 
 export const fillDiscoveredUnitsAndProperties = (
   match: MatchWrapper,
@@ -25,7 +25,7 @@ export const fillDiscoveredUnitsAndProperties = (
           match.getCurrentTurnPlayer().data.coId.name === "drake"));
 
     if (recalculateVision) {
-      emittableEvent.discoveredUnits = [...team.getEnemyUnitsInVision()];
+      emittableEvent.discoveredUnits = team.getEnemyUnitsInVision().map((u) => u.data);
       return;
     }
 
@@ -35,7 +35,7 @@ export const fillDiscoveredUnitsAndProperties = (
     }
 
     const discoveredUnits = [];
-    const discoveredProperties: CapturableTile[] = [];
+    const discoveredProperties: PositionedTile[] = [];
 
     for (const position of team.vision.getDiscoveredPositionsAndClear()) {
       const unit = match.getUnit(position, "dont-throw");

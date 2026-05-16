@@ -1,16 +1,16 @@
-import { DispatchableError } from "shared/dispatchable-error";
+import { InvalidStateError } from "shared/errors";
+import type { MainEventsWithoutSubEvents, SubEvent } from "shared/events";
 import type { MainAction, MoveAction } from "shared/schemas/action";
-import type { MainEventsWithoutSubEvents, SubEvent } from "shared/types/events";
-import type { MatchWrapper } from "shared/wrappers/match/match";
-import { abilityActionToEvent } from "./handlers/ability";
+import type { MatchWrapper } from "shared/wrappers/match";
 import { attackActionToEvent } from "./handlers/attack/attack-action-to-event";
 import { buildActionToEvent } from "./handlers/build";
 import { coPowerActionToEvent } from "./handlers/co-power";
 import { deleteActionToEvent } from "./handlers/delete";
-import { launchMissileActionToEvent } from "./handlers/launch-missile";
-import { moveActionToEvent } from "./handlers/move";
+import { abilityActionToEvent } from "./handlers/move/ability";
+import { launchMissileActionToEvent } from "./handlers/move/launch-missile";
+import { moveActionToEvent } from "./handlers/move/move";
+import { repairActionToEvent } from "./handlers/move/repair";
 import { passTurnActionToEvent } from "./handlers/pass-turn";
-import { repairActionToEvent } from "./handlers/repair";
 import { unloadNoWaitActionToEvent } from "./handlers/unload/unload-no-wait";
 import { unloadWaitActionToEvent } from "./handlers/unload/unload-wait";
 
@@ -40,7 +40,7 @@ export const validateMainActionAndToEvent = (
     default: {
       /** this would only run for bad data from DB because of zod when validating user data */
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      throw new DispatchableError(`Can't handle action type ${(action as MainAction).type}`);
+      throw new InvalidStateError(`Can't handle action type ${(action as MainAction).type}`);
     }
   }
 };

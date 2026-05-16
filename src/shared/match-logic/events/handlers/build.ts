@@ -1,9 +1,9 @@
-import { DispatchableError } from "shared/dispatchable-error";
+import { DispatchableError } from "shared/errors";
+import type { BuildEvent } from "shared/events";
 import type { BuildAction } from "shared/schemas/action";
-import type { BuildEvent } from "shared/types/events";
-import type { MutableMatch } from "shared/wrappers/match/mutable-match";
+import type { UnitData } from "shared/schemas/unit-schemas";
+import type { MatchWrapper } from "shared/wrappers/match";
 import type { PlayerSlot } from "../../../schemas/player-slot";
-import type { UnitWithVisibleStats } from "../../../schemas/unit";
 import { unitPropertiesMap } from "../../game-constants/unit-properties";
 import type { MainActionToEvent } from "../handler-types";
 
@@ -57,10 +57,7 @@ export const buildActionToEvent: MainActionToEvent<BuildAction> = (match, action
   };
 };
 
-const createUnitFromBuildEvent = (
-  playerSlot: PlayerSlot,
-  event: BuildEvent,
-): UnitWithVisibleStats => {
+const createUnitFromBuildEvent = (playerSlot: PlayerSlot, event: BuildEvent): UnitData => {
   const { unitType } = event;
 
   const unitProperties = unitPropertiesMap[unitType];
@@ -68,21 +65,16 @@ const createUnitFromBuildEvent = (
   const partialUnit = {
     playerSlot,
     position: event.position,
-    stats: {
-      fuel: unitProperties.initialFuel,
-      hp: 100,
-    },
+    fuel: unitProperties.initialFuel,
+    hp: 100,
     isReady: false,
-  } satisfies Partial<UnitWithVisibleStats>;
+  } satisfies Partial<UnitData>;
 
   if ("initialAmmo" in unitProperties) {
     const partialUnitWithAmmo = {
       ...partialUnit,
-      stats: {
-        ...partialUnit.stats,
-        ammo: unitProperties.initialAmmo,
-      },
-    } satisfies Partial<UnitWithVisibleStats>;
+      ammo: unitProperties.initialAmmo,
+    } satisfies Partial<UnitData>;
 
     switch (unitType) {
       case "artillery":
@@ -109,7 +101,7 @@ const createUnitFromBuildEvent = (
         return {
           type: unitType,
           ...partialUnitWithAmmo,
-          hidden: false,
+          hiddenByAbility: false,
         };
       }
       case "carrier":
@@ -117,8 +109,7 @@ const createUnitFromBuildEvent = (
         return {
           type: unitType,
           ...partialUnitWithAmmo,
-          loadedUnit: undefined,
-          loadedUnit2: undefined,
+          loadedUnits: [undefined, undefined],
         };
       }
     }
@@ -138,7 +129,7 @@ const createUnitFromBuildEvent = (
       return {
         type: unitType,
         ...partialUnit,
-        loadedUnit: undefined,
+        loadedUnits: [undefined],
       };
     }
     case "blackBoat":
@@ -146,8 +137,7 @@ const createUnitFromBuildEvent = (
       return {
         type: unitType,
         ...partialUnit,
-        loadedUnit: undefined,
-        loadedUnit2: undefined,
+        loadedUnits: [undefined, undefined],
       };
     }
     default: {
@@ -157,7 +147,7 @@ const createUnitFromBuildEvent = (
   }
 };
 
-export const applyBuildEvent = (match: MutableMatch, event: BuildEvent): void => {
+export const applyBuildEvent = (match: MatchWrapper, event: BuildEvent): void => {
   const player = match.getCurrentTurnPlayer();
 
   player.data.funds -= unitPropertiesMap[event.unitType].cost;

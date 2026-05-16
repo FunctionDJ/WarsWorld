@@ -1,4 +1,4 @@
-import { throwIfUndefined } from "shared/types/throw-helper";
+import { throwIfUndefined } from "shared/throw-helper";
 import { z } from "zod";
 import { type Position, positionSchema } from "./position";
 

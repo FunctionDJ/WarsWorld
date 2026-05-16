@@ -8,7 +8,7 @@ export const olafAWDS: COProperties = {
     hooks: {
       //in AWDS, olaf d2d is that units ignore fuel extra consumption during snow
       attack: ({ attacker }) => {
-        if (attacker.match.getCurrentWeather() === "snow") {
+        if (attacker.player.match.getCurrentWeather() === "snow") {
           return 120;
         }
       },

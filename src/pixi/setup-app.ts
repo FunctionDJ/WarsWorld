@@ -1,6 +1,6 @@
 import type { Application } from "pixi.js";
 import type { Position } from "shared/schemas/position";
-import type { MatchWrapper } from "shared/wrappers/match/match";
+import type { MatchWrapper } from "shared/wrappers/match";
 import type { LoadedSpriteSheet } from "./load-spritesheet";
 import { renderInvisInteractiveTiles, renderMap } from "./render-map";
 import { renderUnits } from "./render-units";

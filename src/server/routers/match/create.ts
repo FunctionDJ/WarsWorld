@@ -23,6 +23,7 @@ export const createMatchProcedure = playerBaseProcedure
           type: "players-in-match",
           players: [
             {
+              type: "player-in-match",
               slot: 0,
               hasCurrentTurn: true,
               id: ctx.currentPlayer.id,

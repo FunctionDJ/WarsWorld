@@ -21,8 +21,8 @@ export const lashAW2: COProperties = {
       stars: 4,
       description: "All terrain movement cost is reduced to 1 (doesn't apply in snow).",
       hooks: {
-        movementCost: (_value, { match }) => {
-          if (match.getCurrentWeather() !== "snow") {
+        movementCost: (_value, unit) => {
+          if (unit.player.match.getCurrentWeather() !== "snow") {
             return 1;
           }
         },
@@ -34,9 +34,11 @@ export const lashAW2: COProperties = {
       description:
         "Terrain stars are doubled, and all terrain movement cost is reduced to 1 (doesn't apply in snow).",
       hooks: {
+        // TODO if lash is the only CO using terrainStars hooks, maybe just inline it?
+        // also check for the other hook types.
         terrainStars: (v) => v * 2,
-        movementCost: (_value, { match }) => {
-          if (match.getCurrentWeather() !== "snow") {
+        movementCost: (_value, unit) => {
+          if (unit.player.match.getCurrentWeather() !== "snow") {
             return 1;
           }
         },

@@ -1,20 +1,20 @@
-import { DispatchableError } from "shared/dispatchable-error";
-import type { MutableMatch } from "shared/wrappers/match/mutable-match";
-import type { MainEventsWithoutSubEvents, MoveEventWithSubEvent } from "../../types/events";
-import { applyAbilityEvent } from "./handlers/ability";
+import { DispatchableError } from "shared/errors";
+import type { MatchWrapper } from "shared/wrappers/match";
+import type { MainEventsWithoutSubEvents, MoveEventWithSubEvent } from "../../events";
 import { applyAttackEvent } from "./handlers/attack/apply-attack-event";
 import { applyBuildEvent } from "./handlers/build";
 import { applyCOPowerEvent } from "./handlers/co-power";
 import { applyDeleteEvent } from "./handlers/delete";
-import { applyLaunchMissileEvent } from "./handlers/launch-missile";
-import { applyMoveEvent } from "./handlers/move";
+import { applyAbilityEvent } from "./handlers/move/ability";
+import { applyLaunchMissileEvent } from "./handlers/move/launch-missile";
+import { applyMoveEvent } from "./handlers/move/move";
+import { applyRepairEvent } from "./handlers/move/repair";
 import { applyPassTurnEvent } from "./handlers/pass-turn";
-import { applyRepairEvent } from "./handlers/repair";
 import { applyUnloadNoWaitEvent } from "./handlers/unload/unload-no-wait";
 import { applyUnloadWaitEvent } from "./handlers/unload/unload-wait";
 
 export const applyMainEventToMatch = (
-  match: MutableMatch,
+  match: MatchWrapper,
   event: MainEventsWithoutSubEvents,
 ): void => {
   switch (event.type) {
@@ -54,7 +54,7 @@ export const applyMainEventToMatch = (
 };
 
 export const applySubEventToMatch = (
-  match: MutableMatch,
+  match: MatchWrapper,
   { subEvent, path }: MoveEventWithSubEvent,
 ): void => {
   const fromPosition = path.at("last");

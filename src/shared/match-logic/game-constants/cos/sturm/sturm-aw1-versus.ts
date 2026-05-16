@@ -9,8 +9,8 @@ export const sturmAW1Versus: COProperties = {
     description:
       "Units have -20% firepower and +20% defense. All terrain movement cost is reduced to 1 (doesn't apply in snow).",
     hooks: {
-      movementCost: (_value, { match }) => {
-        if (match.getCurrentWeather() !== "snow") {
+      movementCost: (_value, unit) => {
+        if (unit.player.match.getCurrentWeather() !== "snow") {
           return 1;
         }
       },

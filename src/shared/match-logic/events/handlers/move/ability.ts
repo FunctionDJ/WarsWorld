@@ -1,33 +1,33 @@
-import { DispatchableError } from "shared/dispatchable-error";
+import { DispatchableError, InvalidStateError } from "shared/errors";
+import type { AbilityEvent } from "shared/events";
 import type { AbilityAction } from "shared/schemas/action";
-import type { Visibility } from "shared/schemas/unit";
-import type { AbilityEvent } from "shared/types/events";
-import type { MatchWrapper } from "shared/wrappers/match/match";
-import type { MutableMatch } from "shared/wrappers/match/mutable-match";
-import type { UnitWrapper } from "shared/wrappers/unit/unit";
-import type { ApplySubEvent, SubActionToEvent } from "../handler-types";
+import type { MatchWrapper } from "shared/wrappers/match";
+import type { Unit } from "shared/wrappers/unit";
+import type { ApplySubEvent, SubActionToEvent } from "../../handler-types";
 
-function willCaptureTile(unit: UnitWrapper<Visibility, "infantry" | "mech">): boolean {
-  let capturePoints = unit.data.currentCapturePoints ?? 20;
+// TODO infantry ability is missing missile / unusedSilo launch (!)
+// the unusedSilo must be removed from the changeable/positionedTiles from the match after use
+// and i don't know yet how the game's supposed to handle that the below tile becomes a usedSilo afterwards.
+
+function willCaptureTile(unit: Unit): boolean {
+  const tile = unit.getTile();
+
+  if (!("hp" in tile)) {
+    throw new InvalidStateError("Tile doesn't have HP");
+  }
 
   if (unit.player.data.coId.name === "sami") {
     if (unit.player.data.COPowerState === "super-co-power") {
-      capturePoints = 0; // insta capture
-    } else {
-      // capture at 1.5x rate, rounded down
-      capturePoints -= Math.floor(unit.getVisualHP() * 1.5);
+      return true;
     }
-  } else {
-    capturePoints -= unit.getVisualHP();
+
+    return tile.hp - Math.floor(unit.getVisualHP() * 1.5) <= 0;
   }
 
-  return capturePoints <= 0;
+  return tile.hp - unit.getVisualHP() <= 0;
 }
 
-function infantryOrMechAbilityToEvent<TVisibility extends Visibility>(
-  match: MatchWrapper,
-  unit: UnitWrapper<TVisibility, "infantry" | "mech">,
-): AbilityEvent {
+function infantryOrMechAbilityToEvent(match: MatchWrapper, unit: Unit): AbilityEvent {
   const capturingTile = unit.getTile();
 
   // TODO: bugs out, tile is already captured when this triggers so it always believes property cannot be captured
@@ -118,19 +118,14 @@ export const abilityActionToEvent: SubActionToEvent<AbilityAction> = (
   return action;
 };
 
-const eliminatePlayerByCapture = (match: MutableMatch, capturingUnit: UnitWrapper): void => {
+const eliminatePlayerByCapture = (match: MatchWrapper, capturingUnit: Unit): void => {
   const capturedTile = capturingUnit.getTile();
 
-  if (capturedTile.category !== "property") {
-    throw new TypeError(
-      `Tried to eliminate player by capture, but tile at ${JSON.stringify(
-        capturingUnit.data.position.data,
-      )} is not capturable (should never happen i think)`,
-    );
+  if (!("playerSlot" in capturedTile)) {
+    throw new InvalidStateError("Tile is not capturable");
   }
 
   const playerToEliminate = match.getPlayerBySlot(capturedTile.playerSlot);
-
   const newOwnerSlot = capturingUnit.data.playerSlot;
 
   for (const changeableTile of match.changeableTiles) {
@@ -165,36 +160,40 @@ export const applyAbilityEvent: ApplySubEvent<AbilityEvent> = (match, event, fro
         break;
       }
 
-      if (unit.data.stats === "hidden") {
+      if (unit.data.hp === "sonja-hidden") {
         break;
+      }
+
+      const tile = unit.getTile();
+
+      if (!("hp" in tile)) {
+        throw new InvalidStateError("Tile doesn't have HP");
       }
 
       //TODO: For some reason, if the unit completes the capture, this function will run twice, therefore, this check is necessary to stop that
-      const capturingTile = unit.getTile();
-
-      if (!("playerSlot" in capturingTile) || unit.player.owns(capturingTile)) {
-        unit.data.currentCapturePoints = undefined;
+      if (!("playerSlot" in tile) || unit.player.owns(tile)) {
+        tile.hp = 20;
         break;
       }
 
-      unit.data.currentCapturePoints ??= 20;
+      let captureComplete: boolean;
 
       if (unit.player.data.coId.name === "sami") {
         if (unit.player.data.COPowerState === "super-co-power") {
-          unit.data.currentCapturePoints = 0; // insta capture
+          captureComplete = true; // insta capture
         } else {
           // capture at 1.5x rate, rounded down
-          unit.data.currentCapturePoints -= Math.floor(unit.getVisualHP() * 1.5);
+          tile.hp -= Math.floor(unit.getVisualHP() * 1.5);
+          captureComplete = tile.hp <= 0;
         }
       } else {
-        unit.data.currentCapturePoints -= unit.getVisualHP();
+        tile.hp -= unit.getVisualHP();
+        captureComplete = tile.hp <= 0;
       }
 
-      if (unit.data.currentCapturePoints <= 0) {
+      if (captureComplete) {
         // finished capturing
-        unit.data.currentCapturePoints = undefined;
-
-        const tile = unit.getTile();
+        tile.hp = 20;
 
         if (!("playerSlot" in tile)) {
           throw new Error(
@@ -230,10 +229,7 @@ export const applyAbilityEvent: ApplySubEvent<AbilityEvent> = (match, event, fro
     case "stealth":
     case "sub": {
       //toggle hide
-      if ("hidden" in unit.data) {
-        unit.data.hidden = !unit.data.hidden;
-      }
-
+      unit.data.hiddenByAbility = !unit.data.hiddenByAbility;
       break;
     }
   }

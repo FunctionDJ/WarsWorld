@@ -1,4 +1,5 @@
-import { DispatchableError } from "shared/dispatchable-error";
+import { DispatchableError } from "shared/errors";
+import type { AttackEvent } from "shared/events";
 import { calculateEngagementOutcome } from "shared/match-logic/calculate-damage";
 import {
   createPipeSeamUnitEquivalent,
@@ -6,8 +7,7 @@ import {
 } from "shared/match-logic/game-constants/base-damage";
 import type { AttackAction } from "shared/schemas/action";
 import type { LuckRoll } from "shared/schemas/co";
-import type { AttackEvent } from "shared/types/events";
-import { throwIfUndefined } from "shared/types/throw-helper";
+import { throwIfUndefined } from "shared/throw-helper";
 import type { SubActionToEvent } from "../../handler-types";
 import { getEliminationReason } from "./get-elimination-reason";
 
@@ -56,7 +56,6 @@ export const attackActionToEvent: (
     }
 
     const pipeSeamUnitEquivalent = createPipeSeamUnitEquivalent(
-      match,
       attacker,
       action.defenderPosition,
       attackedTile.hp,
@@ -108,7 +107,10 @@ export const attackActionToEvent: (
 
     // that means sonja scop unit killed attacker, so they couldn't "counterattack" the sonja unit
     // therefore, sonja unit (defender) remains untouched
-    result.attackerHP ??= defender.getHP();
+    result.attackerHP ??= defender.data.hp === "sonja-hidden" ? 100 : defender.data.hp;
+    // note: this `defender.data.hp === "sonja-hidden" ? 100 : defender.data.hp` might be confusing to readers.
+    // the architecture requires us to have this `100` fallback value, but it effectively doesn't get used by any client running this code.
+    // they'll keep using the "sonja-hidden" special hp value and handle it accordingly.
 
     return {
       ...action,

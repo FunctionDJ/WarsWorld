@@ -2,8 +2,8 @@ import { Container } from "pixi.js";
 import { calculateEngagementOutcome } from "shared/match-logic/calculate-damage";
 import { createPipeSeamUnitEquivalent } from "shared/match-logic/game-constants/base-damage";
 import type { Position } from "shared/schemas/position";
-import type { MatchWrapper } from "shared/wrappers/match/match";
-import type { UnitWrapper } from "shared/wrappers/unit/unit";
+import type { MatchWrapper } from "shared/wrappers/match";
+import type { Unit } from "shared/wrappers/unit";
 import { tileConstructor } from "./sprite-constructor";
 
 export interface BattleForecast {
@@ -13,7 +13,7 @@ export interface BattleForecast {
 
 export const getBattleForecast = (
   match: MatchWrapper,
-  attacker: UnitWrapper,
+  attacker: Unit,
   newUnitPosition: Position,
   attackingAtPosition: Position,
 ): BattleForecast => {
@@ -24,12 +24,7 @@ export const getBattleForecast = (
     const attackedTile = match.getTile(attackingAtPosition);
 
     if (attackedTile.type == "pipeSeam") {
-      defender = createPipeSeamUnitEquivalent(
-        match,
-        attacker,
-        attackingAtPosition,
-        attackedTile.hp,
-      );
+      defender = createPipeSeamUnitEquivalent(attacker, attackingAtPosition, attackedTile.hp);
     } else {
       throw Error(
         "Creating attackable tile functionality to a tile that does not have a unit / pipeseam",
@@ -70,16 +65,17 @@ export const getBattleForecast = (
       );
 
   attacker.data.position = oldUnitPosition;
+  const attackerHP = attacker.data.hp === "sonja-hidden" ? 100 : attacker.data.hp;
+  const defenderHP = defender.data.hp === "sonja-hidden" ? 100 : defender.data.hp;
 
   //create display of engagement result
-  const maxDamageDealt = defender.getHP() - bestAttackerOutcome.defenderHP;
-  const minDamageDealt = defender.getHP() - bestDefenderOutcome.defenderHP;
-
-  const maxDamageTaken = attacker.getHP() - (bestDefenderOutcome.attackerHP ?? attacker.getHP());
-  const minDamageTaken = attacker.getHP() - (bestAttackerOutcome.attackerHP ?? attacker.getHP());
+  const maxDamageDealt = defenderHP - bestAttackerOutcome.defenderHP;
+  const minDamageDealt = defenderHP - bestDefenderOutcome.defenderHP;
+  const maxDamageTaken = attackerHP - (bestDefenderOutcome.attackerHP ?? attackerHP);
+  const minDamageTaken = attackerHP - (bestAttackerOutcome.attackerHP ?? attackerHP);
 
   //Enemy unit is dead or can't attack
-  if (minDamageDealt >= defender.getHP() || maxDamageTaken === attacker.getHP()) {
+  if (minDamageDealt >= defenderHP || maxDamageTaken === attackerHP) {
     return {
       attackerDamage: { max: maxDamageDealt, min: minDamageDealt },
       defenderDamage: { min: 0, max: 0 },

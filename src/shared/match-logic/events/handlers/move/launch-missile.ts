@@ -1,9 +1,9 @@
-import { DispatchableError } from "shared/dispatchable-error";
+import { DispatchableError } from "shared/errors";
+import type { LaunchMissileEvent } from "shared/events";
 import type { LaunchMissileAction } from "shared/schemas/action";
 import type { Position } from "shared/schemas/position";
-import type { LaunchMissileEvent } from "shared/types/events";
-import type { MutableMatch } from "shared/wrappers/match/mutable-match";
-import type { SubActionToEvent } from "../handler-types";
+import type { MatchWrapper } from "shared/wrappers/match";
+import type { SubActionToEvent } from "../../handler-types";
 
 export const launchMissileActionToEvent: SubActionToEvent<LaunchMissileAction> = (
   match,
@@ -34,7 +34,7 @@ export const launchMissileActionToEvent: SubActionToEvent<LaunchMissileAction> =
 };
 
 export const applyLaunchMissileEvent = (
-  match: MutableMatch,
+  match: MatchWrapper,
   event: LaunchMissileEvent,
   fromPosition: Position,
 ): void => {

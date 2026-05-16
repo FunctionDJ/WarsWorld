@@ -1,13 +1,13 @@
-import { getVisualHPfromHP } from "shared/match-logic/calculate-damage";
+import type { AttackEvent, EmittableAttackEvent } from "shared/events";
+import { getVisualHP } from "shared/get-visual-hp";
 import type { Position } from "shared/schemas/position";
-import type { AttackEvent, EmittableAttackEvent } from "shared/types/events";
-import type { MutableMatch } from "shared/wrappers/match/mutable-match";
+import type { MatchWrapper } from "shared/wrappers/match";
 import { canAttackWithPrimary } from "./can-attack-with-primary";
 import { getPowerChargeGain } from "./get-power-charge-gain";
 import { applySashaFundsDamage, handleSashaScopFunds } from "./handle-sasha-scop-funds";
 
 export const applyAttackEvent = (
-  match: MutableMatch,
+  match: MatchWrapper,
   event: AttackEvent,
   position: Position,
 ): void => {
@@ -34,8 +34,9 @@ export const applyAttackEvent = (
 
   //Calculate visible hp difference:
   const attackerHpDiff =
-    attacker.getVisualHP() - getVisualHPfromHP(event.attackerHP ?? attacker.getVisualHP());
-  const defenderHpDiff = defender.getVisualHP() - getVisualHPfromHP(event.defenderHP);
+    attacker.getVisualHP() - getVisualHP(event.attackerHP ?? attacker.getVisualHP());
+
+  const defenderHpDiff = defender.getVisualHP() - getVisualHP(event.defenderHP);
 
   handleSashaScopFunds(attacker, defender, attackerHpDiff, defenderHpDiff);
 
@@ -76,7 +77,7 @@ export const applyAttackEvent = (
 };
 
 export const applyEmittableAttackEvent = (
-  match: MutableMatch,
+  match: MatchWrapper,
   event: EmittableAttackEvent,
 ): void => {
   if (event.attacker) {

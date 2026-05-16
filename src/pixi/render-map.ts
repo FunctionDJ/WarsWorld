@@ -3,17 +3,16 @@ import type { SpriteAnimationKeys } from "frontend/components/match/get-spritesh
 import { AnimatedSprite, Container, Sprite, Texture } from "pixi.js";
 import { arrayAtOrThrow } from "shared/array-utilities";
 import { Position } from "shared/schemas/position";
-import type { PassableTile } from "shared/schemas/tile";
-import type { ChangeableTile } from "shared/types/server-match-state";
-import type { RO } from "shared/types/ww-readonly";
-import type { MatchWrapper } from "shared/wrappers/match/match";
+import type { Tile } from "shared/schemas/tile";
+import type { MatchWrapper } from "shared/wrappers/match";
+import type { RO } from "shared/ww-readonly";
 import type { LoadedSpriteSheet } from "./load-spritesheet";
 
 type AnimationsProperty = Record<SpriteAnimationKeys, Texture[]>;
 
 function getTileSprite(
   match: MatchWrapper,
-  tile: ChangeableTile | PassableTile,
+  tile: Tile,
   spriteSheets: RO<LoadedSpriteSheet>,
 ): Sprite {
   if (!("playerSlot" in tile)) {
@@ -37,6 +36,7 @@ function getTileSprite(
   const player = match.getPlayerBySlot(tile.playerSlot);
   // for some reason pixi's spritesheet type doesn't index the generic properly, hence overwriting.
   const animations = spriteSheets[player.data.army].animations as AnimationsProperty;
+
   const tileSprite = new AnimatedSprite(animations[tile.type]);
   tileSprite.animationSpeed = 0.04;
   tileSprite.play();

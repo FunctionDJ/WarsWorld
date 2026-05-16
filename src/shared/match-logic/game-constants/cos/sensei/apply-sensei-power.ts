@@ -1,9 +1,9 @@
 import { unitPropertiesMap } from "shared/match-logic/game-constants/unit-properties";
 import { Position } from "shared/schemas/position";
-import type { MutablePlayerInMatch } from "shared/wrappers/player/mutable-player-in-match";
+import type { PlayerInMatchWrapper } from "shared/wrappers/player-in-match";
 
 export function applySenseiPowerSpawn(
-  player: MutablePlayerInMatch,
+  player: PlayerInMatchWrapper,
   unitType: "infantry" | "mech",
 ): void {
   const { match } = player;
@@ -39,21 +39,15 @@ export function applySenseiPowerSpawn(
           type: "infantry",
           position,
           isReady: true,
-          stats: {
-            hp: 9,
-            fuel: unitPropertiesMap.infantry.initialFuel,
-          },
+          hp: 90,
         });
       } else {
         player.addUnwrappedUnit({
           type: "mech",
           position,
           isReady: true,
-          stats: {
-            hp: 9,
-            fuel: unitPropertiesMap.mech.initialFuel,
-            ammo: unitPropertiesMap.mech.initialAmmo,
-          },
+          hp: 90,
+          ammo: unitPropertiesMap.mech.initialAmmo,
         });
       }
 

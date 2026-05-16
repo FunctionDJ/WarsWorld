@@ -2,14 +2,13 @@
 import type { Container } from "pixi.js";
 import { Assets } from "pixi.js";
 import type { RefObject } from "react";
-import { throwIfCantMoveIntoUnit } from "shared/match-logic/events/handlers/move";
+import { throwIfCantMoveIntoUnit } from "shared/match-logic/events/handlers/move/move";
 import type { MainActionInput } from "shared/schemas/action";
 import type { Position } from "shared/schemas/position";
-import type { RO } from "shared/types/ww-readonly";
-import type { MatchWrapper } from "shared/wrappers/match/match";
-import { isUnitProducingProperty } from "../shared/schemas/tile-utilities";
-import type { PlayerInMatchWrapper } from "../shared/wrappers/player/player-in-match";
-import type { UnitWrapper } from "../shared/wrappers/unit/unit";
+import type { MatchWrapper } from "shared/wrappers/match";
+import type { RO } from "shared/ww-readonly";
+import type { PlayerInMatchWrapper } from "../shared/wrappers/player-in-match";
+import type { Unit } from "../shared/wrappers/unit";
 import { displayEnemyRange } from "./display-enemy-range";
 import { buildUnitMenu } from "./in-game-menus/build-unit-menu";
 import subActionMenu from "./in-game-menus/sub-action-menu";
@@ -28,7 +27,7 @@ export const handleClick = async (
   mapContainer: Container,
   unitContainer: Container,
   interactiveContainer: Container,
-  currentUnitClickedRef: RefObject<UnitWrapper | undefined>,
+  currentUnitClickedRef: RefObject<Unit | undefined>,
   moveTilesRef: RefObject<Map<Position, PathNode> | undefined>,
   unitRangeShowRef: RefObject<"attack" | "movement" | "vision">,
   pathRef: RefObject<Position[] | undefined>,
@@ -47,7 +46,10 @@ export const handleClick = async (
   const isHachiSuperActive =
     player.data.COPowerState === "super-co-power" && player.data.coId.name === "hachi";
   const canTileBuildUnits =
-    (tileClicked.type === "city" && isHachiSuperActive) || isUnitProducingProperty(tileClicked);
+    (tileClicked.type === "city" && isHachiSuperActive) ||
+    tileClicked.type === "base" ||
+    tileClicked.type === "airport" ||
+    tileClicked.type === "port";
 
   //CHECK TO SEE IF WE CLICKED FACILITY
   if (
@@ -163,8 +165,8 @@ export const handleClick = async (
       }
       //if not ready but it's a transport with units and the rules allow to always unload...
       else if (
-        unitClicked.isTransport() &&
-        unitClicked.data.loadedUnit !== undefined &&
+        "loadedUnits" in unitClicked.data &&
+        unitClicked.data.loadedUnits[0] !== undefined &&
         !player.getVersionProperties().unloadOnlyAfterMove
       ) {
         //Show subaction menu of transport to drop off units
@@ -229,7 +231,7 @@ export const handleHover = async (
   mapContainer: Container,
   unitContainer: Container,
   interactiveContainer: Container,
-  currentUnitClickedRef: RefObject<UnitWrapper | undefined>,
+  currentUnitClickedRef: RefObject<Unit | undefined>,
   moveTilesRef: RefObject<Map<Position, PathNode> | undefined>,
   unitRangeShowRef: RefObject<"attack" | "movement" | "vision">,
   pathRef: RefObject<Position[] | undefined>,

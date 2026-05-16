@@ -1,8 +1,9 @@
 import type { WWMap } from "generated/browser";
 import { arrayAtOrThrow } from "shared/array-utilities";
+import { InvalidStateError } from "shared/errors";
 import type { Position } from "shared/schemas/position";
-import type { PassableTile } from "shared/schemas/tile";
-import type { RO } from "shared/types/ww-readonly";
+import type { Tile } from "shared/schemas/tile";
+import type { RO } from "shared/ww-readonly";
 
 export class MapWrapper {
   public readonly width: number;
@@ -13,7 +14,7 @@ export class MapWrapper {
     this.height = this.data.tiles.length;
   }
 
-  getTile(position: Position): PassableTile {
+  getTile(position: Position): Tile {
     this.throwIfOutOfBounds(position);
     const row = arrayAtOrThrow(this.data.tiles, position.data[1]);
     return arrayAtOrThrow(row, position.data[0]);
@@ -26,7 +27,7 @@ export class MapWrapper {
 
   throwIfOutOfBounds(position: Position): void {
     if (this.isOutOfBounds(position)) {
-      throw new Error(
+      throw new InvalidStateError(
         `Out of bounds position ${JSON.stringify(position)} for map ${this.data.name}`,
       );
     }

@@ -3,11 +3,11 @@ import type { FrontendUnit } from "frontend/components/match/frontend-unit";
 import { AnimatedSprite, Container, Sprite } from "pixi.js";
 import { getFromObjectOrThrow } from "shared/array-utilities";
 import { Position } from "shared/schemas/position";
-import type { RO } from "shared/types/ww-readonly";
-import type { UnitWrapper } from "../shared/wrappers/unit/unit";
+import type { RO } from "shared/ww-readonly";
+import type { Unit } from "../shared/wrappers/unit";
 import type { LoadedSpriteSheet } from "./load-spritesheet";
 
-type UnitType = FrontendUnit | UnitWrapper;
+type UnitType = FrontendUnit | Unit;
 interface SpritePosition {
   x: number;
   y: number;

@@ -5,16 +5,17 @@
     "src/shared/match-logic/events/handlers/attack/applyEmittableAttackEvent.ts",
     "src/shared/match-logic/game-constants/cos/sturm/sturm-aw1-campaign.ts",
     "src/tests/*.ts",
-    "utils/generate-spritesheets/main.ts"
+    "src/utils/generate-spritesheets/main.ts"
   ],
   "ignoreDependencies": [
     "@typescript/native-preview",
-    // loader for eslint with typescript support
+    // jiti is a loader for eslint with typescript support
     "jiti",
     // peer dependency, not directly imported in our code, type stuff will fail without it like createTRPCNext (iirc)
-    "@tanstack/react-query"
+    "@tanstack/react-query",
+    "eslint-import-resolver-typescript" // required by eslint importX.flatConfigs.typescript
   ],
   "duplicates": {
-    "ignore": ["src/shared/match-logic/game-constants/cos/**/*.*"]
+    "ignore": ["src/shared/match-logic/game-constants/cos/**/*.*", "src/tests/**/*.*"]
   }
 }

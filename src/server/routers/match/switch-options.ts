@@ -1,6 +1,6 @@
 import { globalEmittable } from "server/emitter/event-emitter";
 import { prisma } from "server/prisma/prisma-client";
-import { DispatchableError } from "shared/dispatchable-error";
+import { DispatchableError } from "shared/errors";
 import { armySchema } from "shared/schemas/army";
 import { coIdSchema } from "shared/schemas/co";
 import { playerSlotForUnitsSchema } from "shared/schemas/player-slot";

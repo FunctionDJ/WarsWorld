@@ -1,8 +1,8 @@
-import type { Turn } from "shared/types/events";
-import type { MutablePlayerInMatch } from "shared/wrappers/player/mutable-player-in-match";
+import type { Turn } from "shared/events";
+import type { PlayerInMatchWrapper } from "shared/wrappers/player-in-match";
 
 export function updateWeather(
-  nextTurnPlayer: MutablePlayerInMatch,
+  nextTurnPlayer: PlayerInMatchWrapper,
   newWeather: Turn["newWeather"],
 ): void {
   const { match } = nextTurnPlayer;

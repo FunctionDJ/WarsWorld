@@ -1,6 +1,6 @@
-import type { RO } from "shared/types/ww-readonly";
+import type { RO } from "shared/ww-readonly";
 import { Position } from "../../../../schemas/position";
-import type { PlayerInMatchWrapper } from "../../../../wrappers/player/player-in-match";
+import type { PlayerInMatchWrapper } from "../../../../wrappers/player-in-match";
 
 const getUnitValueMeteorPosition = (
   sturmPlayer: RO<PlayerInMatchWrapper>,

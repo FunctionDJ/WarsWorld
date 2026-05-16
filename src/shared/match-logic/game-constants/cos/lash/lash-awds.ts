@@ -1,6 +1,6 @@
 import type { COProperties } from "../../../co";
-import { lashAW2 } from "./lash-aw2";
 import { getTerrainDefenseStars } from "../../terrain-properties";
+import { lashAW2 } from "./lash-aw2";
 
 export const lashAWDS: COProperties = {
   ...lashAW2,
@@ -25,8 +25,8 @@ export const lashAWDS: COProperties = {
         "Terrain stars are doubled, and all terrain movement cost is reduced to 1 (doesn't apply in snow).",
       hooks: {
         terrainStars: (v) => v * 2,
-        movementCost: (_value, { match }) => {
-          if (match.getCurrentWeather() !== "snow") {
+        movementCost: (_value, unit) => {
+          if (unit.player.match.getCurrentWeather() !== "snow") {
             return 1;
           }
         },

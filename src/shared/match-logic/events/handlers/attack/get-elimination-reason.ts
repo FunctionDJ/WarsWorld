@@ -1,6 +1,6 @@
-import type { AttackEvent } from "shared/types/events";
-import type { RO } from "shared/types/ww-readonly";
-import type { PlayerInMatchWrapper } from "shared/wrappers/player/player-in-match";
+import type { AttackEvent } from "shared/events";
+import type { PlayerInMatchWrapper } from "shared/wrappers/player-in-match";
+import type { RO } from "shared/ww-readonly";
 
 export function getEliminationReason({
   attacker,

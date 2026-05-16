@@ -1,9 +1,9 @@
+import type { PassTurnEvent, Turn } from "shared/events";
 import { getRandomWeather } from "shared/match-logic/weather";
 import type { PassTurnAction } from "shared/schemas/action";
-import type { PassTurnEvent, Turn } from "shared/types/events";
-import type { RO } from "shared/types/ww-readonly";
-import type { PlayerInMatchWrapper } from "shared/wrappers/player/player-in-match";
-import type { MutableUnit } from "shared/wrappers/unit/mutable-unit";
+import type { PlayerInMatchWrapper } from "shared/wrappers/player-in-match";
+import type { Unit } from "shared/wrappers/unit";
+import type { RO } from "shared/ww-readonly";
 import type { ApplyEvent, MainActionToEvent } from "../handler-types";
 import { getTurnFuelConsumption } from "./passTurn/consume-fuel-and-crash";
 import { propertyRepairAndResupply } from "./passTurn/property-repair-and-resupply";
@@ -151,7 +151,7 @@ function unwaitUnits(player: PlayerInMatchWrapper): void {
   }
 }
 
-function APCresupply(unit: MutableUnit): void {
+function APCresupply(unit: Unit): void {
   if (unit.data.type === "apc") {
     for (const neighbourUnit of unit.getNeighbouringUnits()) {
       if (unit.player.owns(neighbourUnit)) {

@@ -1,27 +1,27 @@
-import { DispatchableError } from "shared/dispatchable-error";
+import { IllegalActionError, InvalidStateError } from "shared/errors";
 import type { COPowerState } from "shared/match-logic/co";
 import { getCOProperties } from "shared/match-logic/co";
 import type { Hooks } from "shared/match-logic/co-hooks";
 import type { CO } from "shared/schemas/co";
 import type { GameVersion } from "shared/schemas/game-version";
-import type { PassableTile } from "shared/schemas/tile";
-import type { Visibility } from "shared/schemas/unit";
-import type { ChangeableTile, PlayerInMatch } from "shared/types/server-match-state";
-import type { RO } from "shared/types/ww-readonly";
+import type { Tile } from "shared/schemas/tile";
+import type { UnitData } from "shared/schemas/unit-schemas";
+import type { PlayerInMatch } from "shared/server-match-state";
+import type { DistributedOmit } from "type-fest";
 import {
   versionPropertiesMap,
   type VersionProperties,
-} from "../../match-logic/game-constants/version-properties";
-import type { MatchWrapper } from "../match/match";
-import type { Team } from "../team/team";
-import type { UnitWrapper } from "../unit/unit";
+} from "../match-logic/game-constants/version-properties";
+import type { MatchWrapper } from "./match";
+import type { Team } from "./team";
+import { Unit } from "./unit";
 
-export class PlayerInMatchWrapper<TVisibility extends Visibility = Visibility> {
-  public readonly match: MatchWrapper; // [RO trigger]
+export class PlayerInMatchWrapper {
+  public readonly match: MatchWrapper;
 
   constructor(
-    public readonly data: RO<PlayerInMatch>,
-    public readonly team: Team, // [RO trigger]
+    public readonly team: Team,
+    public data: PlayerInMatch,
   ) {
     this.match = team.match;
   }
@@ -45,7 +45,7 @@ export class PlayerInMatchWrapper<TVisibility extends Visibility = Visibility> {
    * maybe units should be owned by at least the team, but player is probably more convenient
    * (then units of a specific player are contracted to the players TVisibility)
    */
-  getUnits(): readonly UnitWrapper<TVisibility>[] {
+  getUnits(): readonly Unit[] {
     return this.match.units.filter((unit) => this.owns(unit));
   }
 
@@ -73,7 +73,7 @@ export class PlayerInMatchWrapper<TVisibility extends Visibility = Visibility> {
    * gets the next player, looping back around to index 0
    * if needed until current player slot.
    */
-  getNextAlivePlayer(): RO<PlayerInMatchWrapper> {
+  getNextAlivePlayer(): PlayerInMatchWrapper {
     const nextSlot = (n: number): number => (n + 1) % this.match.map.data.numberOfPlayers;
 
     for (let index = nextSlot(this.data.slot); index !== this.data.slot; index = nextSlot(index)) {
@@ -84,7 +84,7 @@ export class PlayerInMatchWrapper<TVisibility extends Visibility = Visibility> {
       }
     }
 
-    throw new DispatchableError("No next alive player");
+    throw new InvalidStateError("No next alive player");
   }
 
   getPowerStarCost(): number {
@@ -109,7 +109,7 @@ export class PlayerInMatchWrapper<TVisibility extends Visibility = Visibility> {
     return 0;
   }
 
-  owns(tileOrUnit: PassableTile | RO<ChangeableTile> | UnitWrapper): boolean {
+  owns(tileOrUnit: Tile | Unit): boolean {
     if ("playerSlot" in tileOrUnit && tileOrUnit.playerSlot === this.data.slot) {
       return true;
     }
@@ -125,10 +125,10 @@ export class PlayerInMatchWrapper<TVisibility extends Visibility = Visibility> {
     return false;
   }
 
-  /** @throws {DispatchableError} */
-  ownsOrThrow(tileOrUnit: PassableTile | RO<ChangeableTile> | UnitWrapper): void {
+  /** @throws {IllegalActionError} */
+  ownsOrThrow(tileOrUnit: Tile | Unit): void {
     if (!this.owns(tileOrUnit)) {
-      throw new DispatchableError("Invalid action on tile or unit not owned by player");
+      throw new IllegalActionError("Invalid action on tile or unit not owned by player");
     }
   }
 
@@ -171,5 +171,32 @@ export class PlayerInMatchWrapper<TVisibility extends Visibility = Visibility> {
     }
 
     return true;
+  }
+
+  gainPowerCharge(value: number): void {
+    if (this.data.COPowerState !== "no-power") {
+      return;
+    }
+
+    this.data.powerMeter = Math.min(value, this.getMaxPowerMeter());
+  }
+
+  addUnwrappedUnit(
+    rawUnit: DistributedOmit<UnitData, "playerSlot" | "isReady" | "hp" | "fuel"> &
+      Partial<Pick<UnitData, "isReady" | "hp" | "fuel">>,
+  ): Unit {
+    const unitWithPlayerSlot: UnitData = {
+      ...rawUnit,
+      playerSlot: this.data.slot,
+      isReady: rawUnit.isReady ?? false,
+      hp: rawUnit.hp ?? 100,
+      fuel: rawUnit.fuel ?? 100,
+    };
+
+    const unit = new Unit(this, unitWithPlayerSlot);
+    this.match.units.push(unit);
+    this.team.vision?.addUnitVision(unit);
+
+    return unit;
   }
 }

@@ -2,68 +2,94 @@ import type { Match, WWMap } from "generated/client";
 import { prisma } from "server/prisma/prisma-client";
 import { arrayAtOrThrow } from "shared/array-utilities";
 import { Position } from "shared/schemas/position";
-import { throwIfUndefined } from "shared/types/throw-helper";
-import type { MatchInSetup } from "shared/wrappers/match/match-in-setup";
-import { MutableMatch } from "shared/wrappers/match/mutable-match";
+import type { PositionedTile } from "shared/schemas/tile";
+import { throwIfUndefined } from "shared/throw-helper";
+import { MatchWrapper } from "shared/wrappers/match";
+import { MatchInSetup } from "shared/wrappers/match-in-setup";
 import {
   applyMainEventToMatch,
   applySubEventToMatch,
 } from "../shared/match-logic/events/apply-event-to-match";
-import { willBeChangeableTile } from "../shared/schemas/tile-utilities";
-import type { ChangeableTile } from "../shared/types/server-match-state";
 import { pageMatchIndex } from "./page-match-index";
 import { playerMatchIndex } from "./player-match-index";
 
-const getChangeableTilesFromMap = (map: WWMap): readonly ChangeableTile[] => {
-  const changeableTiles: ChangeableTile[] = [];
+const getChangeableTilesFromMap = (map: WWMap): readonly PositionedTile[] => {
+  const positionedTiles: PositionedTile[] = [];
 
   for (let y = 0; y < map.tiles.length; y++) {
     for (let x = 0; x < arrayAtOrThrow(map.tiles, y).length; x++) {
       const tile = arrayAtOrThrow(arrayAtOrThrow(map.tiles, y), x);
       const position = new Position([x, y]);
 
-      if (willBeChangeableTile(tile)) {
+      if (
+        tile.type === "city" ||
+        tile.type === "base" ||
+        tile.type === "airport" ||
+        tile.type === "port" ||
+        tile.type === "lab" ||
+        tile.type === "commtower" ||
+        tile.type === "hq" ||
+        tile.type === "unusedSilo" ||
+        tile.type === "pipeSeam"
+      ) {
         if (tile.type === "unusedSilo") {
-          changeableTiles.push({
+          positionedTiles.push({
             type: tile.type,
             position,
-            fired: false,
           });
-          // } else if (tile.type === "pipeSeam") {
-          //   changeableTiles.push({
-          //     type: tile.type,
-          //     position,
-          //     hp: 99,
-          //   });
+        } else if (tile.type === "pipeSeam") {
+          positionedTiles.push({
+            type: tile.type,
+            position,
+            hp: 99,
+            variant: tile.variant,
+          });
         } else {
-          changeableTiles.push({
+          positionedTiles.push({
             type: tile.type,
             position,
             playerSlot: tile.playerSlot,
+            hp: 20,
           });
         }
       }
     }
   }
 
-  return changeableTiles;
+  return positionedTiles;
 };
 
 export class MatchStore {
-  private readonly index = new Map<Match["id"], MutableMatch | MatchInSetup>();
+  private readonly index = new Map<Match["id"], MatchWrapper | MatchInSetup>();
 
-  createMatchAndIndex(rawMatch: Match, rawMap: WWMap): MutableMatch {
-    const match = new MutableMatch(
+  createMatchInSetupAndIndex(rawMatch: Match, rawMap: WWMap): MatchInSetup {
+    const matchInSetup = new MatchInSetup(rawMatch.id, rawMatch.leagueType, rawMatch.rules, rawMap);
+
+    for (const player of rawMatch.playerState.players.filter((p) => p.type === "player-in-setup")) {
+      // TODO
+      /**
+       * this call counts for fallow
+       */
+      matchInSetup.addPlayer(player, 0); // TODO team index
+    }
+
+    this.index.set(rawMatch.id, matchInSetup);
+    // TODO playerMatchIndex
+    return matchInSetup;
+  }
+
+  createMatchAndIndex(rawMatch: Match, rawMap: WWMap): MatchWrapper {
+    const match = new MatchWrapper(
       rawMatch.id,
-      rawMatch.leagueType,
-      getChangeableTilesFromMap(rawMap),
       rawMatch.rules,
-      rawMatch.status,
       rawMap,
       rawMatch.playerState.type === "players-in-match" ? rawMatch.playerState.players : [],
       rawMap.predeployedUnits,
-      0,
     );
+
+    match.leagueType = rawMatch.leagueType;
+    match.state = rawMatch.status;
+    match.changeableTiles = getChangeableTilesFromMap(rawMap);
 
     if (rawMatch.playerState.type === "players-in-setup") {
       for (const player of rawMatch.playerState.players) {
@@ -73,6 +99,7 @@ export class MatchStore {
         const definedArmy = throwIfUndefined(player.army, "Player in setup missing army");
 
         match.addUnwrappedPlayer({
+          type: "player-in-match",
           id: player.id,
           name: player.name,
           coId: definedCoId,
@@ -93,6 +120,7 @@ export class MatchStore {
     for (const player of match.getAllPlayers()) {
       playerMatchIndex.onPlayerJoin(
         {
+          type: "player-in-setup",
           id: player.data.id,
           name: player.data.name,
           ready: false,
@@ -137,11 +165,11 @@ export class MatchStore {
     console.log("Rebuilding server state done.");
   }
 
-  get(matchId: Match["id"]): MutableMatch | MatchInSetup | undefined {
+  get(matchId: Match["id"]): MatchWrapper | MatchInSetup | undefined {
     return this.index.get(matchId);
   }
 
-  removeMatchFromIndex(match: MutableMatch | MatchInSetup): void {
+  removeMatchFromIndex(match: MatchWrapper | MatchInSetup): void {
     this.index.delete(match.id);
   }
 }

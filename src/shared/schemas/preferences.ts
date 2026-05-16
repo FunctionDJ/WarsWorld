@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { coSchema } from "./co";
-import { unitTypeSchema } from "./unit";
+import { unitTypeSchema } from "./unit-schemas";
 
 const favouriteGamesSchema = z.enum([
   "advance_wars_1",

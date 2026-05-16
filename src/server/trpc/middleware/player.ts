@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import type { Player } from "generated/browser";
 import { prisma } from "server/prisma/prisma-client";
-import { findOrThrow } from "shared/types/throw-helper";
+import { findOrThrow } from "shared/throw-helper";
 import { z } from "zod";
 import { t } from "../trpc-init";
 
