@@ -107,8 +107,8 @@ export const attackActionToEvent: (
 
     // that means sonja scop unit killed attacker, so they couldn't "counterattack" the sonja unit
     // therefore, sonja unit (defender) remains untouched
-    result.attackerHP ??= defender.data.hp === "sonja-hidden" ? 100 : defender.data.hp;
-    // note: this `defender.data.hp === "sonja-hidden" ? 100 : defender.data.hp` might be confusing to readers.
+    result.attackerHP ??= defender.getHPOr100();
+    // note: this `defender.getHPOr100()` might be confusing to readers.
     // the architecture requires us to have this `100` fallback value, but it effectively doesn't get used by any client running this code.
     // they'll keep using the "sonja-hidden" special hp value and handle it accordingly.
 

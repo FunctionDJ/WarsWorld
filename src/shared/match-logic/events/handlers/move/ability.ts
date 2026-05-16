@@ -160,6 +160,8 @@ export const applyAbilityEvent: ApplySubEvent<AbilityEvent> = (match, event, fro
         break;
       }
 
+      // [missing-implementation] capture is not processed for sonja opponents
+
       if (unit.data.hp === "sonja-hidden") {
         break;
       }

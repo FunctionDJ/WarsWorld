@@ -19,9 +19,7 @@
     "build": "concurrently \"npm:build:*\"",
     "start:next": "next start",
     "start:server": "cross-env NODE_ENV=production \"npm run prisma:push &&  node dist/server/main-production.mjs\"",
-    "lint": "eslint -c .config/eslint.config.ts",
-    "lintro": "eslint -c .config/eslint.config.ts --rule '@typescript-eslint/prefer-readonly-parameter-types: off'",
-    "cur": "bunx tsc && bun lintro"
+    "lint": "eslint -c .config/eslint.config.ts"
   },
   "prettier": {
     "singleQuote": false,

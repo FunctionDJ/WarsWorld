@@ -34,6 +34,11 @@ export class Unit {
     return this.data.fuel;
   }
 
+  /** returns HP or 100 if hidden because of Sonja (happens only client-side) */
+  getHPOr100(): number {
+    return this.data.hp === "sonja-hidden" ? 100 : this.data.hp;
+  }
+
   /**
    * returning `undefined` means this unit doesn't use ammo
    */

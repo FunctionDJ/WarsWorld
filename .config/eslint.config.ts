@@ -142,12 +142,7 @@ export default defineConfig([
       ],
       // we need to disable eslint built-in `no-restricted-imports` in order to use the typescript version of it
       "no-restricted-imports": "off",
-      "local/no-redundant-type-wrapper": [
-        "off", // TODO doesnt work like i want to yet
-        {
-          requireWrappedTypeEffectivelyReadonlyFor: ["WWReadOnly", "Readonly"],
-        },
-      ],
+      "local/no-redundant-type-wrapper": ["warn"],
       // TODO
       /**
        * we haven't decided yet if we want to use next.js' <Image> or just

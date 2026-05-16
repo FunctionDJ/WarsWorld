@@ -3,7 +3,6 @@ import type { COPowerState } from "shared/match-logic/co";
 import type { Army } from "shared/schemas/army";
 import type { COID } from "shared/schemas/co";
 import type { PlayerSlot } from "shared/schemas/player-slot";
-import type { RO } from "./ww-readonly";
 
 export interface PlayerInMatch {
   type: "player-in-match";
@@ -11,7 +10,7 @@ export interface PlayerInMatch {
   hasCurrentTurn: boolean;
   id: Player["id"];
   name: Player["name"];
-  readonly coId: RO<COID>;
+  readonly coId: COID;
   status: "alive" | "routed" | "captured";
   funds: number;
   powerMeter: number;

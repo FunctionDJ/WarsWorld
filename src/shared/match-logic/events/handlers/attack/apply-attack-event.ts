@@ -22,7 +22,6 @@ export const applyAttackEvent = (
       throw new Error("Received pipe seam attack event, but no pipe seam was found");
     }
 
-    //ammo consumption
     if (canAttackWithPrimary(attacker, "pipe-seam")) {
       attacker.useOneAmmo();
     }
@@ -34,13 +33,12 @@ export const applyAttackEvent = (
 
   //Calculate visible hp difference:
   const attackerHpDiff =
-    attacker.getVisualHP() - getVisualHP(event.attackerHP ?? attacker.getVisualHP());
+    attacker.getVisualHP() - getVisualHP(event.attackerHP ?? attacker.getHPOr100());
 
   const defenderHpDiff = defender.getVisualHP() - getVisualHP(event.defenderHP);
 
   handleSashaScopFunds(attacker, defender, attackerHpDiff, defenderHpDiff);
 
-  //power charge
   const { attackerPowerCharge, defenderPowerCharge } = getPowerChargeGain(
     attacker,
     attackerHpDiff,
@@ -51,7 +49,6 @@ export const applyAttackEvent = (
   attacker.player.gainPowerCharge(attackerPowerCharge);
   defender.player.gainPowerCharge(defenderPowerCharge);
 
-  //ammo consumption
   if (canAttackWithPrimary(attacker, defender.data.type)) {
     attacker.useOneAmmo();
   }

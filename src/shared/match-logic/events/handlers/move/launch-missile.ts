@@ -1,4 +1,4 @@
-import { DispatchableError } from "shared/errors";
+import { DispatchableError, InvalidStateError } from "shared/errors";
 import type { LaunchMissileEvent } from "shared/events";
 import type { LaunchMissileAction } from "shared/schemas/action";
 import type { Position } from "shared/schemas/position";
@@ -16,12 +16,8 @@ export const launchMissileActionToEvent: SubActionToEvent<LaunchMissileAction> =
 
   const tile = match.getTile(fromPosition);
 
-  if (tile.type !== "unusedSilo" || !("fired" in tile)) {
+  if (tile.type !== "unusedSilo") {
     throw new DispatchableError("This tile is not a missile silo");
-  }
-
-  if (tile.fired) {
-    throw new DispatchableError("Trying to fire a missile from a used silo tile");
   }
 
   if (unit.data.type !== "infantry" && unit.data.type !== "mech") {
@@ -38,17 +34,11 @@ export const applyLaunchMissileEvent = (
   event: LaunchMissileEvent,
   fromPosition: Position,
 ): void => {
-  const siloTile = match.getTile(fromPosition);
-
-  if (!("fired" in siloTile)) {
-    throw new Error(
-      `Could not update missile silo fired state at ${JSON.stringify(
-        fromPosition,
-      )}: no fired property! (Not changeable tile?)`,
-    );
+  if (match.getTile(fromPosition).type !== "unusedSilo") {
+    throw new InvalidStateError("This tile is not a missile silo");
   }
 
-  siloTile.fired = true;
+  // [missing-implementation] remove unusedSilo from match changeable/positionedTiles
 
   match.damageUntil1HPInRadius({
     radius: 2,

@@ -3,13 +3,11 @@ import type { MatchWrapper } from "shared/wrappers/match";
 import type { RO } from "shared/ww-readonly";
 import type { PlayerInMatchWrapper } from "../wrappers/player-in-match";
 
-type ROMatchWrapper = RO<MatchWrapper>;
-
 /**
  * chance of random weather when starting a turn depends on the amount of
  * players present in the match
  */
-function weatherBaseChance(match: RO<ROMatchWrapper>): number {
+function weatherBaseChance(match: RO<MatchWrapper>): number {
   switch (match.getAllPlayers().length) {
     case 2: {
       return 4;

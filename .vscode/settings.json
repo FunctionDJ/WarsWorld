@@ -49,7 +49,14 @@
       "matchCommandLine": true
     }
   },
-  "todo-tree.general.tags": ["TODO", "[RO trigger]", "[upstream]"],
+  "todo-tree.general.tags": [
+    "TODO",
+    "[cartridge-inaccurate]",
+    "[upstream]",
+    "[missing-implementation]",
+    "[cringe-code]",
+    "[tooling]"
+  ],
   "js/ts.preferences.preferTypeOnlyAutoImports": true,
   "js/ts.preferences.autoImportFileExcludePatterns": ["**/generated/**"],
   "js/ts.preferences.autoImportSpecifierExcludeRegexes": [

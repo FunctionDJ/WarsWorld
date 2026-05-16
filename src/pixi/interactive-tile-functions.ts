@@ -65,17 +65,17 @@ export const getBattleForecast = (
       );
 
   attacker.data.position = oldUnitPosition;
-  const attackerHP = attacker.data.hp === "sonja-hidden" ? 100 : attacker.data.hp;
-  const defenderHP = defender.data.hp === "sonja-hidden" ? 100 : defender.data.hp;
 
   //create display of engagement result
-  const maxDamageDealt = defenderHP - bestAttackerOutcome.defenderHP;
-  const minDamageDealt = defenderHP - bestDefenderOutcome.defenderHP;
-  const maxDamageTaken = attackerHP - (bestDefenderOutcome.attackerHP ?? attackerHP);
-  const minDamageTaken = attackerHP - (bestAttackerOutcome.attackerHP ?? attackerHP);
+  const maxDamageDealt = defender.getHPOr100() - bestAttackerOutcome.defenderHP;
+  const minDamageDealt = defender.getHPOr100() - bestDefenderOutcome.defenderHP;
+  const maxDamageTaken =
+    attacker.getHPOr100() - (bestDefenderOutcome.attackerHP ?? attacker.getHPOr100());
+  const minDamageTaken =
+    attacker.getHPOr100() - (bestAttackerOutcome.attackerHP ?? attacker.getHPOr100());
 
   //Enemy unit is dead or can't attack
-  if (minDamageDealt >= defenderHP || maxDamageTaken === attackerHP) {
+  if (minDamageDealt >= defender.getHPOr100() || maxDamageTaken === attacker.getHPOr100()) {
     return {
       attackerDamage: { max: maxDamageDealt, min: minDamageDealt },
       defenderDamage: { min: 0, max: 0 },

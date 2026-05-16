@@ -1,6 +1,5 @@
 import type { LuckRoll } from "shared/schemas/co";
 import type { Unit } from "shared/wrappers/unit";
-import type { RO } from "shared/ww-readonly";
 import type { CombatProperties } from "./co-hooks";
 import { getBaseDamage } from "./game-constants/base-damage";
 import { getTerrainDefenseStars } from "./game-constants/terrain-properties";
@@ -82,11 +81,10 @@ export const calculateDamage = (
     terrainStarsDefenderHook?.(baseTerrainStars, hookProperties) ?? baseTerrainStars;
 
   if (attacker.player.data.coId.name === "sonja" && attacker.player.data.coId.version === "AWDS") {
-    // hmm ackshually, if sonja pops powers before lash, outcome is different than popping after lash
-
-    // TODO ahhhh f*ck... the previous comment thing derails the entire system i think
-    // because to reproduce that, we'd need to store baked modifier values
-    // for each day or something, like the game probably does.
+    // [cartridge-inaccurate] in AWDS, order of sonja power vs lash power have different outcomes
+    // (for lash's effective terrain stars).
+    // this function currently always processes lash power modifiers/hooks before sonja, which is
+    // technically a nerv for AWDS sonja.
     switch (attacker.player.data.COPowerState) {
       case "no-power": {
         defenderTerrainStars = Math.max(0, defenderTerrainStars - 1);
@@ -124,7 +122,7 @@ export const calculateDamage = (
 export const calculateEngagementOutcome = (
   attacker: Unit,
   defender: Unit,
-  attackerLuck: RO<LuckRoll>, // TODO if defenderLuck has no lint error, attackerLuck should have a lint error because of redundant RO<T>
+  attackerLuck: LuckRoll,
   defenderLuck: LuckRoll,
 ): { defenderHP: number; attackerHP?: number } => {
   let damageByAttacker = calculateDamage(
@@ -139,9 +137,9 @@ export const calculateEngagementOutcome = (
   damageByAttacker ??= 0; // this is necessary cause sonja scop reverses attacker and defender
 
   //check if ded
-  if (damageByAttacker >= (defender.data.hp === "sonja-hidden" ? 100 : defender.data.hp)) {
+  if (damageByAttacker >= defender.getHPOr100()) {
     return {
-      defenderHP: (defender.data.hp === "sonja-hidden" ? 100 : defender.data.hp) - damageByAttacker,
+      defenderHP: defender.getHPOr100() - damageByAttacker,
       attackerHP: undefined,
     };
   }
@@ -165,7 +163,8 @@ export const calculateEngagementOutcome = (
      * because all other action-to-event code doesn't (or at least shouldn't) mutate server state.
      */
 
-    defender.setHp((originalHP === "sonja-hidden" ? 100 : originalHP) - damageByAttacker);
+    // [cringe-code]
+    defender.setHp(defender.getHPOr100() - damageByAttacker);
 
     const damageByDefender = calculateDamage(
       {
@@ -181,16 +180,14 @@ export const calculateEngagementOutcome = (
     if (damageByDefender !== undefined) {
       // return event with counter-attack
       return {
-        defenderHP:
-          (defender.data.hp === "sonja-hidden" ? 100 : defender.data.hp) - damageByAttacker,
-        attackerHP:
-          (attacker.data.hp === "sonja-hidden" ? 100 : attacker.data.hp) - damageByDefender,
+        defenderHP: defender.getHPOr100() - damageByAttacker,
+        attackerHP: attacker.getHPOr100() - damageByDefender,
       };
     }
   }
 
   return {
-    defenderHP: (defender.data.hp === "sonja-hidden" ? 100 : defender.data.hp) - damageByAttacker,
+    defenderHP: defender.getHPOr100() - damageByAttacker,
     attackerHP: undefined,
   };
 };
