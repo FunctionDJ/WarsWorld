@@ -42,7 +42,7 @@ export const applyMainEventToMatch = (
       applyPassTurnEvent(match, event);
       break;
     }
-    //TODO: Starting a match breaks the app because it can't apply "matchStart" event.
+    // [correctness]: Starting a match breaks the app because it can't apply "matchStart" event.
     // Does MatchStart really need an event here? Because this is what fixes it
     case "matchStart": {
       break;

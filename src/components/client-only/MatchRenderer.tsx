@@ -26,7 +26,7 @@ export function MatchRenderer({ match, player, spriteSheets, turn, setTurn }: Pr
       const isPlayerTurn = match.getCurrentTurnPlayer().data.id === player.data.id;
       setTurn(isPlayerTurn);
     },
-    // TODO Adding all dependencies here causes an infinite loop
+    // [bug] Adding all dependencies here causes an infinite loop
     [match, player.data.id, setTurn],
   );
 

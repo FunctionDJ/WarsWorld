@@ -40,7 +40,7 @@ export class Path {
   }
 }
 
-// TODO try out integrating the schema into the class as a static property
+// [improvement] try out integrating the schema into the class as a static property
 
 export const pathSchema = z
   .array(positionSchema)

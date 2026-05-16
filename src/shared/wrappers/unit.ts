@@ -250,7 +250,7 @@ export class Unit {
   remove(): void {
     this.player.team.vision?.removeUnitVision(this);
 
-    // TODO maybe `u => u === this` could work ..?
+    // [improvement] maybe `u => u === this` could work ..?
     safeRemoveFromArray(this.player.match.units, (u) => u.data.position.isSame(this.data.position));
   }
 

@@ -39,7 +39,7 @@ export function displayEnemyRange(
     return displayedPassableTiles;
   }
 
-  //TODO: Show vision
+  // [missing-implementation] Show vision
   /*else if (unitRangeShowRef.current === "vision" && match.leagueType === "fog") {
     
     unitRangeShowRef.current = "movement";

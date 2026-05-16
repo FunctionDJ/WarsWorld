@@ -2,7 +2,7 @@ import { attackActionToEvent } from "shared/match-logic/events/handlers/attack/a
 import { Position } from "shared/schemas/position";
 import { createMatch, createPlayerInMatch } from "./utilities";
 
-// TODO
+// [improvement]
 /**
  * add memory usage readouts by reading memory used by process
  * before creating the match, before generating the event, and after

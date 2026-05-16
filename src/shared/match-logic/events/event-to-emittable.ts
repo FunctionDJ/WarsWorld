@@ -44,7 +44,7 @@ const subEventToEmittables = (
     case "attack": {
       const attacker = match.getUnit(fromPosition);
 
-      //TODO why was this here?
+      // [archeology] why was this here?
       // switch (subEvent.eliminationReason) {
       //   case "all-attacker-units-destroyed": {
       //     attacker.player.data.status = "routed";

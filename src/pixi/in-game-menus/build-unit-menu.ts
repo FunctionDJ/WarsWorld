@@ -59,7 +59,7 @@ export const createMenuElementsForUnits = (
     menuElement.addChild(unitSprite);
 
     //name of the unit
-    //TODO display hp in unit sprite
+    // [missing-feature] display hp in unit sprite
 
     const unitNameText = new BitmapText({
       text: unitType.toUpperCase(),
@@ -173,7 +173,7 @@ export const buildUnitMenu = (
 const _createCaptureOption = (match: MatchWrapper, onCapture: () => void): Container => {
   const menuElement = new Container();
   menuElement.eventMode = "static";
-  //TODO: missing action icons
+  // [improvement]: missing action icons
 
   const actionText = new BitmapText({
     text: "Capture",

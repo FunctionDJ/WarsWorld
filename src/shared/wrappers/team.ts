@@ -28,7 +28,7 @@ export class Team {
     return playerWrapper;
   }
 
-  // TODO type predicate would be useful, but locks the false-branch into position being incorrectly typed as "undefined"
+  // [improvement] type predicate would be useful, but locks the false-branch into position being incorrectly typed as "undefined"
   isPositionVisible(position?: Position): boolean {
     if (this.match.isFogOfWar()) {
       if (position === undefined) {

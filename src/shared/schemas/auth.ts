@@ -7,7 +7,7 @@ const passwordSchema = z
 
 const loginSchema = z.object({
   name: z.string().min(1, "Name is empty."),
-  // TODO: change in prod min from 4 to 8 because I love making passwords called test
+  // [security]: change in prod min from 4 to 8 because I love making passwords called test
   password: passwordSchema,
 });
 

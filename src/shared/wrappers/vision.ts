@@ -9,7 +9,7 @@ import type { Unit } from "./unit";
 export class Vision {
   private readonly visionArray: Uint16Array; // i put 16 cause 2^8 = 256 and we *could* go over 256, in theory
 
-  // TODO does a set make sense here? maybe we need a more sophisticated data structure to deduplicate positions.
+  // [improvement] does a set make sense here? maybe we need a more sophisticated data structure to deduplicate positions.
   protected readonly ownedProperties: Set<Position>;
 
   // used for temporary information storage. does not guarantee that a position is not in both at the same time

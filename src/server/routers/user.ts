@@ -14,7 +14,7 @@ export const userRouter = router({
     .query(({ ctx }) => ({
       // user: ctx.user,
       ownedPlayers: ctx.ownedPlayers,
-    })), // TODO session exposed in FE dangerous? 😳
+    })), // [security] session exposed in FE dangerous? 😳
   updatePreferences: playerBaseProcedure.input(preferencesSchema).mutation(
     async ({ input, ctx }) =>
       await prisma.player.update({
@@ -44,7 +44,7 @@ export const userRouter = router({
         message: "There is already a user with that email in the database",
       });
     }
-    // TODO: Password validation
+    // [security] Password validation
 
     const hashedPassword = await hashPassword(input.password);
 

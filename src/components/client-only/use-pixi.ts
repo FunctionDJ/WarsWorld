@@ -34,7 +34,7 @@ export const usePixi = (
   // when user clicks an unit, we need a variable to determine if we show them unit's movement range, attack range or vision (for fog)
   const unitRangeShowRef = useRef<"attack" | "movement" | "vision">("movement");
 
-  //TODO: To some extent, these three all store the same type of information (positions), however, they store it at different times...
+  // [cringe-code] To some extent, these three all store the same type of information (positions), however, they store it at different times...
   const moveTilesRef = useRef<Map<Position, PathNode> | undefined>(undefined);
 
   const pathRef = useRef<Position[] | undefined>(undefined);

@@ -41,14 +41,14 @@ export class MatchWrapper {
   public readonly neutralPlayer: PlayerInMatchWrapper;
   public playerToRemoveWeatherEffect?: PlayerInMatchWrapper = undefined;
 
-  // TODO
+  // [improvement]
   /**
    * this property is a candidate for ArrayBuffer / IntArray optimization
    * just like Vision currently has.
    */
   public readonly units: Unit[];
   public readonly map: MapWrapper;
-  //TODO change to JS Map<> from position to changeableTile for better performance
+  // [improvement] change to JS Map<> from position to changeableTile for better performance
   public changeableTiles: readonly PositionedTile[] = [];
   public state: MatchStatus = "playing";
   public leagueType: LeagueType = "standard";
@@ -127,7 +127,7 @@ export class MatchWrapper {
       return foundChangeableTile;
     }
 
-    // TODO `match.getTile` will be called very often. map data is a candidate for
+    // [improvement] `match.getTile` will be called very often. map data is a candidate for
     // the same ArrayBuffer / IntArray optimization like exists for vision.
     return this.map.getTile(position);
   }

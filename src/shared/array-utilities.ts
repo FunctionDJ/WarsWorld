@@ -14,7 +14,7 @@ export const arrayAtOrThrow = <T>(array: readonly T[], key: number | "last"): T 
   );
 };
 
-// TODO can this be merged with arrayAtOrThrow() ?
+// [improvement] can this be merged with arrayAtOrThrow() ?
 export const getFromObjectOrThrow = <T extends object, K extends keyof T>(
   object: T,
   key: K,

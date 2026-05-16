@@ -73,7 +73,7 @@ interface COPower {
   hooks?: Partial<Hooks>;
 }
 
-// TODO general CO description, likes, dislikes, etc.
+// [missing-feature] general CO description, likes, dislikes, etc.
 export interface COProperties {
   displayName: string;
   gameVersion: GameVersion;

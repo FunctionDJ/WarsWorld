@@ -66,7 +66,7 @@ export class MatchStore {
     const matchInSetup = new MatchInSetup(rawMatch.id, rawMatch.leagueType, rawMatch.rules, rawMap);
 
     for (const player of rawMatch.playerState.players.filter((p) => p.type === "player-in-setup")) {
-      // TODO
+      // [tooling]
       /**
        * this call counts for fallow
        */
@@ -74,7 +74,7 @@ export class MatchStore {
     }
 
     this.index.set(rawMatch.id, matchInSetup);
-    // TODO playerMatchIndex
+    // [missing-implementation] playerMatchIndex
     return matchInSetup;
   }
 
@@ -93,7 +93,7 @@ export class MatchStore {
 
     if (rawMatch.playerState.type === "players-in-setup") {
       for (const player of rawMatch.playerState.players) {
-        // TODO this check needs to happen on set-read or something
+        // [correctness] this check needs to happen on set-read or something
         // and we may need a different type that expresses the state of "players in setup but everything selected like coId"
         const definedCoId = throwIfUndefined(player.coId, "Player in setup missing coId");
         const definedArmy = throwIfUndefined(player.army, "Player in setup missing army");

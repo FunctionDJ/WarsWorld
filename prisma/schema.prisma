@@ -177,7 +177,7 @@ model WWMap {
   matches          Match[]
   createdAt        DateTime @default(now())
 
-  // TODO maps should have different sets of captureLimits and bannedUnitTypes
+  // [missing-feature] maps should have different sets of captureLimits and bannedUnitTypes
   // per league type.
 
   @@map("Map")

@@ -103,7 +103,7 @@ async function getAllSprites(nation: string): Promise<Sprite[]> {
 
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions, @typescript-eslint/no-unsafe-type-assertion
   for (const spriteType of Object.keys(spriteSources) as SpriteType[]) {
-    // TODO a better way to do this
+    // [improvement] a better way to do this
     const sprites = await fs.readdir(getTexturePath(spriteType, nation));
     allSprites.push(...sprites.map((s): Sprite => ({ type: spriteType, name: s })));
   }

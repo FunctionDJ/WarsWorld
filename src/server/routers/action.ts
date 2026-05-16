@@ -160,7 +160,7 @@ export const actionRouter = router({
         },
       });
 
-      // TODO we still need something like the following to handle timeout eliminations.
+      // [missing-implementation] we still need something like the following to handle timeout eliminations.
 
       // if (playerEliminatedEvent !== undefined) {
       //   applyMainEventToMatch(match, playerEliminatedEvent);
@@ -182,7 +182,7 @@ export const actionRouter = router({
       // }
     }),
   onEvent: matchBaseProcedure.subscription(async function* ({ input, signal }) {
-    // TODO https://trpc.io/docs/server/subscriptions#tracked
+    // [improvement] https://trpc.io/docs/server/subscriptions#tracked
 
     // TODO how to subscribe with specific currentPlayer.id ?
     // or filter the events/emittables otherwise for the observing player/viewer?
@@ -195,6 +195,6 @@ export const actionRouter = router({
       yield data;
     }
   }),
-  // TODO create procedure for anonymous users to observe games
+  // [missing-feature] create procedure for anonymous users to observe games
   // (they get their own special "-1" team or something)
 });

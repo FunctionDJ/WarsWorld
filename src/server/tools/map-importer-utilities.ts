@@ -16,7 +16,7 @@ export const importAWBWMap = async (data: AWBWMapImportSchema): Promise<WWMap> =
         name: data.name,
         numberOfPlayers: data.numberOfPlayers,
         tiles: convertAWBWMapToWWMap(data.tileDataString),
-        predeployedUnits: [] /* TODO ! */,
+        predeployedUnits: [], // [missing-implementation]
       },
     });
   } catch (error) {
@@ -149,9 +149,8 @@ const awbwTileMapping: Record<string, Tile> = {
   "110": { type: "pipe", variant: "left" },
   "111": { type: "unusedSilo" },
   "112": { type: "usedSilo" },
-  // TODO figure out what the heck is wrong with pipeSeams, like their role in the system (variable? changingTile?)
-  // "113": {  type: "pipeSeam", variant: "right-left", hp: 20 },
-  // "114": {  type: "pipeSeam", variant: "top-bottom", hp: 20 },
+  "113": { type: "pipeSeam", variant: "right-left", hp: 100 },
+  "114": { type: "pipeSeam", variant: "top-bottom", hp: 100 },
   "115": { type: "plain", variant: "broken-pipe-right-left" },
   "116": { type: "plain", variant: "broken-pipe-top-bottom" },
   "117": { hp: 20, type: "base", playerSlot: 8 },

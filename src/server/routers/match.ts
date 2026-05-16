@@ -55,10 +55,10 @@ export const matchRouter = router({
   adminUnwaitUnit: matchBaseProcedure
     .input(z.object({ position: positionSchema }))
     .mutation(({ input, ctx }) => {
-      // TODO if ctx.user doesn't have the permissions to do this (e.g. isn't an admin)
+      // [security] if ctx.user doesn't have the permissions to do this (e.g. isn't an admin)
       // then throw a tRPC error for unauthorized
 
-      // TODO i guess we need a new action and event for this so that it can be broadcasted
+      // [missing-implementation] i guess we need a new action and event for this so that it can be broadcasted
 
       const unit = ctx.match.getUnit(input.position);
 

@@ -6,7 +6,7 @@ import type { Direction } from "./direction";
 // AWBW and probably AW too starts "x: 0, y: 0" in the top-left corner.
 // So going down means y increases.
 
-// TODO change positions to {x,y} instead of [x,y]
+// [improvement] change positions to {x,y} instead of [x,y]
 
 export const positionSchema = z
   .tuple([z.number().int().nonnegative(), z.number().int().nonnegative()])
@@ -28,7 +28,7 @@ export class Position {
   }
 
   getNeighbours(): readonly Position[] {
-    // TODO filter neighbour positions that are out of bounds ? (but then we would need map dimensions here)
+    // [improvement] filter neighbour positions that are out of bounds ? (but then we would need map dimensions here)
     return [
       new Position([this.data[0] + 1, this.data[1]]),
       new Position([this.data[0] - 1, this.data[1]]),

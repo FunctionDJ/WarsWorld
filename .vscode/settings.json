@@ -55,7 +55,13 @@
     "[upstream]",
     "[missing-implementation]",
     "[cringe-code]",
-    "[tooling]"
+    "[tooling]",
+    "[missing-feature]",
+    "[bug]",
+    "[improvement]",
+    "[security]",
+    "[correctness]",
+    "[archeology]"
   ],
   "js/ts.preferences.preferTypeOnlyAutoImports": true,
   "js/ts.preferences.autoImportFileExcludePatterns": ["**/generated/**"],

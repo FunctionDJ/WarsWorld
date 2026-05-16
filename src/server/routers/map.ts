@@ -55,7 +55,7 @@ const propertyTileTypes = [
 
 export const mapRouter = router({
   getAll: publicBaseProcedure.query(async () => {
-    // TODO pagination / filter / search
+    // [improvement] pagination / filter / search
     const allMaps = await prisma.wWMap.findMany();
 
     return allMaps.map((map) => ({

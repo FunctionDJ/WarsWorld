@@ -14,7 +14,7 @@ export const fillDiscoveredUnitsAndProperties = (
       continue;
     }
 
-    // TODO this condition can be thinned out more (for example, only update sonja's own team,
+    // [improvement] this condition can be thinned out more (for example, only update sonja's own team,
     //  or pass turn only when cop deactivates or weather changes
     //  AND more importantly, skip if no fog of war (in previous turn (?))
     const recalculateVision =
@@ -65,5 +65,5 @@ export const fillDiscoveredUnitsAndProperties = (
     }
   }
 
-  // TODO handle player-eliminated changing properties clientside
+  // [missing-implementation] handle player-eliminated changing properties clientside
 };

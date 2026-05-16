@@ -40,7 +40,7 @@ export class PlayerInMatchWrapper {
     return this.match.changeableTiles.some((tile) => tile.type === "lab" && this.owns(tile));
   }
 
-  // TODO
+  // [improvement]
   /**
    * maybe units should be owned by at least the team, but player is probably more convenient
    * (then units of a specific player are contracted to the players TVisibility)
