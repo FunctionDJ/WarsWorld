@@ -4,78 +4,78 @@ import type { MatchWrapper } from "shared/wrappers/match";
 import { applyPlayerUpdate } from "../apply-player-update";
 
 const updateHPorDestroy = (match: MatchWrapper, hp?: number, position?: Position): void => {
-  if (position !== undefined) {
-    const defender = match.getUnit(position);
+	if (position !== undefined) {
+		const defender = match.getUnit(position);
 
-    if (hp === 0) {
-      defender.remove();
-    } else if (hp !== undefined) {
-      defender.setHp(hp);
-    }
-  }
+		if (hp === 0) {
+			defender.remove();
+		} else if (hp !== undefined) {
+			defender.setHp(hp);
+		}
+	}
 };
 
 export const applyEmittableAttackEvent = (
-  match: MatchWrapper,
-  event: EmittableAttackEvent,
+	match: MatchWrapper,
+	event: EmittableAttackEvent,
 ): void => {
-  applyPlayerUpdate(match, event.playerUpdate);
+	applyPlayerUpdate(match, event.playerUpdate);
 
-  if (event.attacker) {
-    if (event.attacker.position !== undefined) {
-      const attacker = match.getUnit(event.attacker.position);
+	if (event.attacker) {
+		if (event.attacker.position !== undefined) {
+			const attacker = match.getUnit(event.attacker.position);
 
-      //update ammo
-      if (event.attacker.usedAmmo === true) {
-        attacker.useOneAmmo();
-      }
+			// update ammo
+			if (event.attacker.usedAmmo === true) {
+				attacker.useOneAmmo();
+			}
 
-      //update hp + destroy if dead
-      updateHPorDestroy(match, event.attacker.HP, event.attacker.position);
-    }
+			// update hp + destroy if dead
+			updateHPorDestroy(match, event.attacker.HP, event.attacker.position);
+		}
 
-    const attackerPlayer = match.getPlayerBySlot(event.attacker.playerSlot);
+		const attackerPlayer = match.getPlayerBySlot(event.attacker.playerSlot);
 
-    //update power charge
-    if (event.attacker.powerChargeGained !== undefined) {
-      attackerPlayer.gainPowerCharge(event.attacker.powerChargeGained);
-    }
+		// update power charge
+		if (event.attacker.powerChargeGained !== undefined) {
+			attackerPlayer.gainPowerCharge(event.attacker.powerChargeGained);
+		}
 
-    //update funds if using sasha scop
-    if (
-      attackerPlayer.isUsingPower("super-co-power", "sasha") &&
-      event.defender?.damageTakenInFunds !== undefined
-    ) {
-      attackerPlayer.data.funds += event.defender.damageTakenInFunds * 0.5;
-    }
-  }
+		// update funds if using sasha scop
+		if (
+			attackerPlayer.isUsingPower("super-co-power", "sasha") &&
+			event.defender?.damageTakenInFunds !== undefined
+		) {
+			attackerPlayer.data.funds += event.defender.damageTakenInFunds * 0.5;
+		}
+	}
 
-  if (event.defender) {
-    if (event.defender.position !== undefined) {
-      const defender = match.getUnit(event.defender.position, "dont-throw");
+	if (event.defender) {
+		if (event.defender.position !== undefined) {
+			const defender = match.getUnit(event.defender.position, "dont-throw");
 
-      //update ammo (check defender is a unit and not pipe seam as well)
-      if (defender !== undefined && event.defender.usedAmmo === true) {
-        defender.useOneAmmo();
-      }
+			// update ammo (check defender is a unit and not pipe seam as well)
+			if (defender !== undefined && event.defender.usedAmmo === true) {
+				defender.useOneAmmo();
+			}
 
-      //update hp + destroy if dead
-      updateHPorDestroy(match, event.defender.HP, event.defender.position);
-    }
+			// update hp + destroy if dead
+			updateHPorDestroy(match, event.defender.HP, event.defender.position);
+		}
 
-    const defenderPlayer = match.getPlayerBySlot(event.defender.playerSlot);
+		const defenderPlayer = match.getPlayerBySlot(event.defender.playerSlot);
 
-    //update power charge
-    if (event.defender.powerChargeGained !== undefined) {
-      defenderPlayer.gainPowerCharge(event.defender.powerChargeGained);
-    }
+		// update power charge
+		if (event.defender.powerChargeGained !== undefined) {
+			defenderPlayer.gainPowerCharge(event.defender.powerChargeGained);
+		}
 
-    //update funds if using sasha scop
-    if (
-      defenderPlayer.isUsingPower("super-co-power", "sasha") &&
-      event.attacker?.damageTakenInFunds !== undefined
-    ) {
-      defenderPlayer.data.funds += event.attacker.damageTakenInFunds * 0.5;
-    }
-  }
+		// update funds if using sasha scop
+		if (
+			defenderPlayer.isUsingPower("super-co-power", "sasha") &&
+			event.attacker?.damageTakenInFunds !== undefined
+		) {
+			defenderPlayer.data.funds += event.attacker.damageTakenInFunds * 0.5;
+		}
+	}
 };

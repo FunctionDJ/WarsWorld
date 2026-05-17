@@ -10,10 +10,12 @@
   "ignoreDependencies": [
     "@typescript/native-preview",
     // jiti is a loader for eslint with typescript support
+    // [upstream] (closed 😭) https://github.com/eslint/eslint/issues/19985
     "jiti",
     // peer dependency, not directly imported in our code, type stuff will fail without it like createTRPCNext (iirc)
     "@tanstack/react-query",
-    "eslint-import-resolver-typescript" // required by eslint importX.flatConfigs.typescript
+    // required by eslint importX.flatConfigs.typescript
+    "eslint-import-resolver-typescript"
   ],
   "duplicates": {
     "ignore": ["src/shared/match-logic/game-constants/cos/**/*.*", "src/tests/**/*.*"]

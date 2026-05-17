@@ -65,26 +65,26 @@ import { vonBoltAWDS } from "./game-constants/cos/von-bolt/von-bolt-awds";
 export type COPowerState = "no-power" | "co-power" | "super-co-power";
 
 interface COPower {
-  name: string;
-  description: string;
-  stars: number; //Stars are 9k value for AW2 and AWDS, 10k value for AW1
-  instantEffect?: (player: PlayerInMatchWrapper, positions?: readonly Position[]) => void;
-  calculatePositions?: (player: RO<PlayerInMatchWrapper>) => readonly Position[];
-  hooks?: Partial<Hooks>;
+	name: string;
+	description: string;
+	stars: number; // Stars are 9k value for AW2 and AWDS, 10k value for AW1
+	instantEffect?: (player: PlayerInMatchWrapper, positions?: readonly Position[]) => void;
+	calculatePositions?: (player: RO<PlayerInMatchWrapper>) => readonly Position[];
+	hooks?: Partial<Hooks>;
 }
 
 // [missing-feature] general CO description, likes, dislikes, etc.
 export interface COProperties {
-  displayName: string;
-  gameVersion: GameVersion;
-  dayToDay?: {
-    description: string;
-    hooks: Partial<Hooks>;
-  };
-  powers: {
-    COPower?: COPower;
-    superCOPower?: COPower;
-  };
+	displayName: string;
+	gameVersion: GameVersion;
+	dayToDay?: {
+		description: string;
+		hooks: Partial<Hooks>;
+	};
+	powers: {
+		COPower?: COPower;
+		superCOPower?: COPower;
+	};
 }
 
 // we're using these indexes / maps instead of just using a big array
@@ -92,72 +92,72 @@ export interface COProperties {
 // because getCOProperties gets called VERY often.
 
 const COIndex: Record<GameVersion, Map<CO, COProperties>> = {
-  AW1: new Map<CO, COProperties>([
-    ["andy", andyAW1],
-    ["max", maxAW1],
-    ["sami", samiAW1],
-    ["nell", nellAW1],
-    ["olaf", olafAW1],
-    ["grit", gritAW1],
-    ["eagle", eagleAW1],
-    ["drake", drakeAW1],
-    ["kanbei", kanbeiAW1],
-    ["sonja", sonjaAW1],
-    ["sturm", sturmAW1Versus],
-  ]),
-  AW2: new Map<CO, COProperties>([
-    ["andy", andyAW2],
-    ["max", maxAW2],
-    ["sami", samiAW2],
-    ["nell", nellAW2],
-    ["hachi", hachiAW2],
-    ["olaf", olafAW2],
-    ["grit", gritAW2],
-    ["colin", colinAW2],
-    ["eagle", eagleAW2],
-    ["drake", drakeAW2],
-    ["jess", jessAW2],
-    ["kanbei", kanbeiAW2],
-    ["sonja", sonjaAW2],
-    ["sensei", senseiAW2],
-    ["sturm", sturmAW2],
-    ["hawke", hachiAW2],
-    ["adder", adderAW2],
-    ["lash", lashAW2],
-    ["flak", flakAW2],
-  ]),
-  AWDS: new Map<CO, COProperties>([
-    ["andy", andyAWDS],
-    ["max", maxAWDS],
-    ["sami", samiAWDS],
-    ["nell", nellAWDS],
-    ["hachi", hachiAWDS],
-    ["jake", jakeAWDS],
-    ["rachel", rachelAWDS],
-    ["olaf", olafAWDS],
-    ["grit", gritAWDS],
-    ["colin", colinAWDS],
-    ["sasha", sashaAWDS],
-    ["eagle", eagleAWDS],
-    ["drake", drakeAWDS],
-    ["jess", jessAWDS],
-    ["javier", javierAWDS],
-    ["kanbei", kanbeiAWDS],
-    ["sonja", sonjaAWDS],
-    ["sensei", senseiAWDS],
-    ["grimm", grimmAWDS],
-    ["hawke", hawkeAWDS],
-    ["adder", adderAWDS],
-    ["lash", lashAWDS],
-    ["flak", flakAWDS],
-    ["jugger", juggerAWDS],
-    ["koal", koalAWDS],
-    ["kindle", kindleAWDS],
-    ["von-bolt", vonBoltAWDS],
-  ]),
+	AW1: new Map<CO, COProperties>([
+		["andy", andyAW1],
+		["max", maxAW1],
+		["sami", samiAW1],
+		["nell", nellAW1],
+		["olaf", olafAW1],
+		["grit", gritAW1],
+		["eagle", eagleAW1],
+		["drake", drakeAW1],
+		["kanbei", kanbeiAW1],
+		["sonja", sonjaAW1],
+		["sturm", sturmAW1Versus],
+	]),
+	AW2: new Map<CO, COProperties>([
+		["andy", andyAW2],
+		["max", maxAW2],
+		["sami", samiAW2],
+		["nell", nellAW2],
+		["hachi", hachiAW2],
+		["olaf", olafAW2],
+		["grit", gritAW2],
+		["colin", colinAW2],
+		["eagle", eagleAW2],
+		["drake", drakeAW2],
+		["jess", jessAW2],
+		["kanbei", kanbeiAW2],
+		["sonja", sonjaAW2],
+		["sensei", senseiAW2],
+		["sturm", sturmAW2],
+		["hawke", hachiAW2],
+		["adder", adderAW2],
+		["lash", lashAW2],
+		["flak", flakAW2],
+	]),
+	AWDS: new Map<CO, COProperties>([
+		["andy", andyAWDS],
+		["max", maxAWDS],
+		["sami", samiAWDS],
+		["nell", nellAWDS],
+		["hachi", hachiAWDS],
+		["jake", jakeAWDS],
+		["rachel", rachelAWDS],
+		["olaf", olafAWDS],
+		["grit", gritAWDS],
+		["colin", colinAWDS],
+		["sasha", sashaAWDS],
+		["eagle", eagleAWDS],
+		["drake", drakeAWDS],
+		["jess", jessAWDS],
+		["javier", javierAWDS],
+		["kanbei", kanbeiAWDS],
+		["sonja", sonjaAWDS],
+		["sensei", senseiAWDS],
+		["grimm", grimmAWDS],
+		["hawke", hawkeAWDS],
+		["adder", adderAWDS],
+		["lash", lashAWDS],
+		["flak", flakAWDS],
+		["jugger", juggerAWDS],
+		["koal", koalAWDS],
+		["kindle", kindleAWDS],
+		["von-bolt", vonBoltAWDS],
+	]),
 };
 
 export function getCOProperties(id: COID): COProperties {
-  const map = COIndex[id.version];
-  return throwIfUndefined(map.get(id.name));
+	const map = COIndex[id.version];
+	return throwIfUndefined(map.get(id.name));
 }

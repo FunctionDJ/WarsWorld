@@ -2,24 +2,24 @@ import type { Turn } from "shared/events";
 import type { PlayerInMatchWrapper } from "shared/wrappers/player-in-match";
 
 export function updateWeather(
-  nextTurnPlayer: PlayerInMatchWrapper,
-  newWeather: Turn["newWeather"],
+	nextTurnPlayer: PlayerInMatchWrapper,
+	newWeather: Turn["newWeather"],
 ): void {
-  const { match } = nextTurnPlayer;
+	const { match } = nextTurnPlayer;
 
-  if (newWeather !== undefined) {
-    // TODO maybe this gets the previous player instead of next turn player
-    //  but if it's the case, i think we should change current turn player before doing all these updates
-    match.setWeather(newWeather, 1);
-    return;
-  }
+	if (newWeather !== undefined) {
+		// TODO maybe this gets the previous player instead of next turn player
+		//  but if it's the case, i think we should change current turn player before doing all these updates
+		match.setWeather(newWeather, 1);
+		return;
+	}
 
-  if (match.playerToRemoveWeatherEffect?.data.slot === nextTurnPlayer.data.slot) {
-    // the weather days left is for olaf awds, since his powers cause snow for TWO days
-    match.weatherDaysLeft--;
+	if (match.playerToRemoveWeatherEffect?.data.slot === nextTurnPlayer.data.slot) {
+		// the weather days left is for olaf awds, since his powers cause snow for TWO days
+		match.weatherDaysLeft--;
 
-    if (match.weatherDaysLeft <= 0) {
-      match.playerToRemoveWeatherEffect = undefined;
-    }
-  }
+		if (match.weatherDaysLeft <= 0) {
+			match.playerToRemoveWeatherEffect = undefined;
+		}
+	}
 }

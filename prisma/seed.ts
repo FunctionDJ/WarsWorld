@@ -9,29 +9,29 @@ const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
 const prisma = new PrismaClient({ adapter });
 
 const developmentPlayerNames = ["Grimm Guy", "Incuggarch", "Master Chief Z", "Dev Player 4"].map(
-  (name) => `${Prefix} ${name}`,
+	(name) => `${Prefix} ${name}`,
 );
 
 const hashedPassword = await hashPassword("secret");
 
 const { id: userId } = await prisma.user.create({
-  data: {
-    name: "development_user",
-    password: hashedPassword,
-    email: "development@example.com",
-  },
+	data: {
+		name: "development_user",
+		password: hashedPassword,
+		email: "development@example.com",
+	},
 });
 
 const developerPlayers = await Promise.all(
-  developmentPlayerNames.map((name) =>
-    prisma.player.create({ data: { name, displayName: name, userId } }),
-  ),
+	developmentPlayerNames.map((name) =>
+		prisma.player.create({ data: { name, displayName: name, userId } }),
+	),
 );
 
 const causticFinaleDBMap = await importAWBWMap({
-  name: "Caustic Finale",
-  numberOfPlayers: 2,
-  tileDataString: `
+	name: "Caustic Finale",
+	numberOfPlayers: 2,
+	tileDataString: `
     34,3,1,5,1,1,34,3,2,2,3,7,9,2,34,26,28,111
     1,1,34,26,3,1,1,1,39,1,1,5,35,1,1,32,33,28
     3,7,27,9,34,1,3,1,3,1,42,26,3,1,3,1,30,27
@@ -54,9 +54,9 @@ const causticFinaleDBMap = await importAWBWMap({
 });
 
 void importAWBWMap({
-  name: "custom testing",
-  numberOfPlayers: 2,
-  tileDataString: `
+	name: "custom testing",
+	numberOfPlayers: 2,
+	tileDataString: `
     1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
     1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
     1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
@@ -79,9 +79,9 @@ void importAWBWMap({
 });
 
 void importAWBWMap({
-  name: "1v1 Issus",
-  numberOfPlayers: 2,
-  tileDataString: `
+	name: "1v1 Issus",
+	numberOfPlayers: 2,
+	tileDataString: `
   1,34,28,31,44,32,28,28,28,30,34,1,1,3,1,34,19,3,1,34,28
   28,29,28,30,16,2,30,30,1,18,24,15,15,19,1,1,25,15,15,20,32
   28,28,30,18,24,15,34,1,2,16,1,3,1,34,1,3,16,1,2,1,32
@@ -107,9 +107,9 @@ void importAWBWMap({
 });
 
 void importAWBWMap({
-  name: "Dubious Procession",
-  numberOfPlayers: 2,
-  tileDataString: `
+	name: "Dubious Procession",
+	numberOfPlayers: 2,
+	tileDataString: `
 2,2,1,34,2,1,34,1,28,110,105,40,3,3,1,1,1,29,31
 34,3,1,21,19,3,1,32,31,3,103,113,108,18,34,1,3,39,31
 21,19,1,1,34,1,28,28,1,1,1,1,18,20,1,2,1,1,3
@@ -130,9 +130,9 @@ void importAWBWMap({
 });
 
 void importAWBWMap({
-  name: "1v1 Chosin Reservoir",
-  numberOfPlayers: 2,
-  tileDataString: `
+	name: "1v1 Chosin Reservoir",
+	numberOfPlayers: 2,
+	tileDataString: `
 28,28,28,33,28,28,28,28,28,28,33,28,28,28,28,28,28,33,28,28,28,28,28,28,28,28,28,28,33
 28,31,34,28,28,30,30,30,41,30,28,30,28,30,30,30,28,28,30,30,30,28,28,33,28,28,30,28,28
 33,28,29,28,31,3,1,1,16,3,32,34,31,1,1,34,32,31,18,34,112,32,28,28,28,31,41,28,28
@@ -160,9 +160,9 @@ void importAWBWMap({
 });
 
 void importAWBWMap({
-  name: "Love and Literature",
-  numberOfPlayers: 2,
-  tileDataString: `
+	name: "Love and Literature",
+	numberOfPlayers: 2,
+	tileDataString: `
 34,31,3,39,1,5,2,30,29,29,34,29,3,2,2,1,34,1,112,2,32,31
   32,31,1,21,22,26,1,3,30,30,30,30,34,3,1,1,1,39,1,34,32,31
   31,3,1,3,34,10,8,112,15,19,3,1,1,1,1,1,1,16,3,116,40,31
@@ -187,61 +187,61 @@ const developer1 = arrayAtOrThrow(developerPlayers, 0);
 const developer2 = arrayAtOrThrow(developerPlayers, 1);
 
 await prisma.match.create({
-  data: {
-    leagueType: "standard",
-    rules: {
-      bannedUnitTypes: [],
-      captureLimit: 50,
-      dayLimit: 50,
-      fogOfWar: false,
-      fundsPerProperty: 1000,
-      unitCapPerPlayer: 50,
-      weatherSetting: "clear",
-      labUnitTypes: [],
-      teamMapping: [0, 1],
-    },
-    status: "playing",
-    mapId: causticFinaleDBMap.id,
-    playerState: {
-      type: "players-in-match",
-      players: [
-        {
-          type: "player-in-match",
-          slot: 0,
-          hasCurrentTurn: true,
-          id: developer1.id,
-          name: developer1.name,
-          ready: true,
-          coId: {
-            name: "andy",
-            version: "AW2",
-          },
-          status: "alive",
-          funds: 0,
-          powerMeter: 0,
-          timesPowerUsed: 0,
-          army: "blue-moon",
-          COPowerState: "no-power",
-        },
-        {
-          type: "player-in-match",
-          slot: 1,
-          hasCurrentTurn: false,
-          id: developer2.id,
-          name: developer2.name,
-          ready: true,
-          coId: {
-            name: "flak",
-            version: "AW2",
-          },
-          status: "alive",
-          funds: 0,
-          powerMeter: 0,
-          timesPowerUsed: 0,
-          army: "green-earth",
-          COPowerState: "no-power",
-        },
-      ],
-    },
-  },
+	data: {
+		leagueType: "standard",
+		rules: {
+			bannedUnitTypes: [],
+			captureLimit: 50,
+			dayLimit: 50,
+			fogOfWar: false,
+			fundsPerProperty: 1000,
+			unitCapPerPlayer: 50,
+			weatherSetting: "clear",
+			labUnitTypes: [],
+			teamMapping: [0, 1],
+		},
+		status: "playing",
+		mapId: causticFinaleDBMap.id,
+		playerState: {
+			type: "players-in-match",
+			players: [
+				{
+					type: "player-in-match",
+					slot: 0,
+					hasCurrentTurn: true,
+					id: developer1.id,
+					name: developer1.name,
+					ready: true,
+					coId: {
+						name: "andy",
+						version: "AW2",
+					},
+					status: "alive",
+					funds: 0,
+					powerMeter: 0,
+					timesPowerUsed: 0,
+					army: "blue-moon",
+					COPowerState: "no-power",
+				},
+				{
+					type: "player-in-match",
+					slot: 1,
+					hasCurrentTurn: false,
+					id: developer2.id,
+					name: developer2.name,
+					ready: true,
+					coId: {
+						name: "flak",
+						version: "AW2",
+					},
+					status: "alive",
+					funds: 0,
+					powerMeter: 0,
+					timesPowerUsed: 0,
+					army: "green-earth",
+					COPowerState: "no-power",
+				},
+			],
+		},
+	},
 });

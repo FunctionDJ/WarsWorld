@@ -9,66 +9,66 @@ import type { PlayerInSetup } from "../../../shared/server-match-state";
 import { matchInSetupBaseProcedure } from "../../trpc/trpc-setup";
 
 export const joinMatch = matchInSetupBaseProcedure
-  .input(
-    z.object({
-      selectedCO: coIdSchema,
-      playerSlot: z.number().int().nonnegative(),
-      teamIndex: z.number().int().nonnegative(),
-    }),
-  )
-  .mutation(async ({ input, ctx: { currentPlayer, match } }) => {
-    if (match.getAllPlayers().some((p) => p.id === currentPlayer.id)) {
-      throw new DispatchableError("You've already joined this match!");
-    }
+	.input(
+		z.object({
+			selectedCO: coIdSchema,
+			playerSlot: z.number().int().nonnegative(),
+			teamIndex: z.number().int().nonnegative(),
+		}),
+	)
+	.mutation(async ({ input, ctx: { currentPlayer, match } }) => {
+		if (match.getAllPlayers().some((p) => p.id === currentPlayer.id)) {
+			throw new DispatchableError("You've already joined this match!");
+		}
 
-    if (match.getAllPlayers().length <= input.playerSlot) {
-      throw new DispatchableError("Invalid player slot given");
-    }
+		if (match.getAllPlayers().length <= input.playerSlot) {
+			throw new DispatchableError("Invalid player slot given");
+		}
 
-    if (match.getAllPlayers().some((p) => p.slot === input.playerSlot)) {
-      throw new DispatchableError("Player slot is occupied");
-    }
+		if (match.getAllPlayers().some((p) => p.slot === input.playerSlot)) {
+			throw new DispatchableError("Player slot is occupied");
+		}
 
-    //TODO check if selectedCO is allowed for tier/league/match-blacklist
-    // (do players join a match with a CO pick already done or join then choose?)
-    // this might not be necessary to do here but on switchCO
+		// TODO check if selectedCO is allowed for tier/league/match-blacklist
+		// (do players join a match with a CO pick already done or join then choose?)
+		// this might not be necessary to do here but on switchCO
 
-    const armiesOccupied = new Set(match.getAllPlayers().map((player) => player.army));
-    const availableArmies = armySchema.options.filter((army) => !armiesOccupied.has(army));
+		const armiesOccupied = new Set(match.getAllPlayers().map((player) => player.army));
+		const availableArmies = armySchema.options.filter((army) => !armiesOccupied.has(army));
 
-    const player: PlayerInSetup = {
-      type: "player-in-setup",
-      id: currentPlayer.id,
-      slot: input.playerSlot,
-      ready: false,
-      coId: input.selectedCO,
-      name: currentPlayer.name,
-      army: availableArmies[Math.trunc(Math.random() * availableArmies.length)],
-    };
+		const player: PlayerInSetup = {
+			type: "player-in-setup",
+			id: currentPlayer.id,
+			slot: input.playerSlot,
+			ready: false,
+			coId: input.selectedCO,
+			name: currentPlayer.name,
+			army: availableArmies[Math.trunc(Math.random() * availableArmies.length)],
+		};
 
-    // TODO
-    /**
-     * this call doesn't count for fallow.
-     */
-    match.addPlayer(player, input.teamIndex);
+		// TODO
+		/**
+		 * this call doesn't count for fallow.
+		 */
+		match.addPlayer(player, input.teamIndex);
 
-    playerMatchIndex.onPlayerJoin(player, match);
+		playerMatchIndex.onPlayerJoin(player, match);
 
-    await prisma.$transaction(async (tx) => {
-      await tx.match.update({
-        where: { id: match.id },
-        data: { playerState: { type: "players-in-setup", players: match.getAllPlayers() } },
-      });
+		await prisma.$transaction(async (tx) => {
+			await tx.match.update({
+				where: { id: match.id },
+				data: { playerState: { type: "players-in-setup", players: match.getAllPlayers() } },
+			});
 
-      await tx.player.update({
-        where: { id: player.id },
-        data: { matches: { connect: { id: match.id } } },
-      });
-    });
+			await tx.player.update({
+				where: { id: player.id },
+				data: { matches: { connect: { id: match.id } } },
+			});
+		});
 
-    await globalEmittable(match, {
-      type: "player-joined",
-      matchId: match.id,
-      playerId: player.id,
-    });
-  });
+		await globalEmittable(match, {
+			type: "player-joined",
+			matchId: match.id,
+			playerId: player.id,
+		});
+	});

@@ -4,7 +4,7 @@ import type { RO } from "./ww-readonly";
 // check linting using the command `npx eslint src/shared/tooling.ts`
 
 interface Foo {
-  bar: string;
+	bar: string;
 }
 
 type Test1 = RO<Foo>; // should have no lint warning (RO<Foo> is not assignable to Foo, meaningful generic type)

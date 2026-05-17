@@ -8,18 +8,18 @@ import Head from "next/head";
 
 // eslint-disable-next-line react-refresh/only-export-components
 const MyApp: AppType = ({ Component, pageProps: { ...pageProps } }) => (
-  <>
-    <Head>
-      <title>Wars World</title>
-      <link rel="icon" href="/favicon.ico" />
-      <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-    </Head>
-    <ProvidePlayers>
-      <Layout footer>
-        <Component {...pageProps} />
-      </Layout>
-    </ProvidePlayers>
-  </>
+	<>
+		<Head>
+			<title>Wars World</title>
+			<link rel="icon" href="/favicon.ico" />
+			<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+		</Head>
+		<ProvidePlayers>
+			<Layout footer>
+				<Component {...pageProps} />
+			</Layout>
+		</ProvidePlayers>
+	</>
 );
 
 export default trpc.withTRPC(MyApp);

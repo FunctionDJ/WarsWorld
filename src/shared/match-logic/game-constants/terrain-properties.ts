@@ -8,22 +8,22 @@ import type { MovementType } from "./unit-properties-utilities";
 type TileMovementCosts = Record<MovementType, number | undefined>;
 
 interface TileProperties {
-  movementCosts: TileMovementCosts;
-  /**
-   * An integer from 0 to 4 which modifies the amount of damage
-   * a unit on this tile takes from attacks.
-   */
-  defenseStars: number;
+	movementCosts: TileMovementCosts;
+	/**
+	 * An integer from 0 to 4 which modifies the amount of damage
+	 * a unit on this tile takes from attacks.
+	 */
+	defenseStars: number;
 }
 
 /** All ocean tiles are impassible for land units. */
 const commonOceanMovementCosts = {
-  foot: undefined,
-  boots: undefined,
-  treads: undefined,
-  tires: undefined,
-  air: 1,
-  pipe: undefined,
+	foot: undefined,
+	boots: undefined,
+	treads: undefined,
+	tires: undefined,
+	air: 1,
+	pipe: undefined,
 } satisfies Partial<TileMovementCosts>;
 
 /**
@@ -33,11 +33,11 @@ const commonOceanMovementCosts = {
  * we consider it to be a "land" tile.
  */
 const commonLandMovementCosts = {
-  boots: 1,
-  air: 1,
-  pipe: undefined,
-  sea: undefined,
-  lander: undefined,
+	boots: 1,
+	air: 1,
+	pipe: undefined,
+	sea: undefined,
+	lander: undefined,
 } satisfies Partial<TileMovementCosts>;
 
 /**
@@ -50,31 +50,31 @@ const commonLandMovementCosts = {
  *     and piperunners can move through bases.
  */
 const manMadeMovementCosts: TileMovementCosts = {
-  ...commonLandMovementCosts,
-  foot: 1,
-  treads: 1,
-  tires: 1,
+	...commonLandMovementCosts,
+	foot: 1,
+	treads: 1,
+	tires: 1,
 };
 
 const buildingTileProperties: TileProperties = {
-  /** All buildings provide 3 defense, except for the HQ which provides 4. */
-  defenseStars: 3,
-  movementCosts: manMadeMovementCosts,
+	/** All buildings provide 3 defense, except for the HQ which provides 4. */
+	defenseStars: 3,
+	movementCosts: manMadeMovementCosts,
 };
 
 /** Pipes and (unbroken) pipe seams are exactly the same */
 const pipeTileProperties: TileProperties = {
-  defenseStars: 0,
-  movementCosts: {
-    foot: undefined,
-    boots: undefined,
-    treads: undefined,
-    tires: undefined,
-    air: undefined,
-    pipe: 1,
-    sea: undefined,
-    lander: undefined,
-  },
+	defenseStars: 0,
+	movementCosts: {
+		foot: undefined,
+		boots: undefined,
+		treads: undefined,
+		tires: undefined,
+		air: undefined,
+		pipe: 1,
+		sea: undefined,
+		lander: undefined,
+	},
 };
 
 /**
@@ -88,111 +88,111 @@ const pipeTileProperties: TileProperties = {
  * `undefined` means impassible terrain.
  */
 export const terrainProperties: Record<TileType, TileProperties> = {
-  plain: {
-    defenseStars: 1,
-    movementCosts: {
-      ...commonLandMovementCosts,
-      foot: 1,
-      treads: 1,
-      tires: 2,
-    },
-  },
-  forest: {
-    defenseStars: 2,
-    movementCosts: {
-      ...commonLandMovementCosts,
-      foot: 1,
-      treads: 2,
-      tires: 3,
-    },
-  },
-  mountain: {
-    defenseStars: 4,
-    movementCosts: {
-      ...commonLandMovementCosts,
-      foot: 2,
-      treads: undefined,
-      tires: undefined,
-    },
-  },
-  river: {
-    defenseStars: 0,
-    movementCosts: {
-      ...commonLandMovementCosts,
-      foot: 2,
-      treads: undefined,
-      tires: undefined,
-    },
-  },
-  road: {
-    defenseStars: 0,
-    movementCosts: manMadeMovementCosts,
-  },
-  sea: {
-    defenseStars: 0,
-    movementCosts: {
-      ...commonOceanMovementCosts,
-      sea: 1,
-      lander: 1,
-    },
-  },
-  shoal: {
-    defenseStars: 0,
-    movementCosts: {
-      ...commonLandMovementCosts,
-      foot: 1,
-      treads: 1,
-      tires: 1,
-      // This is a beach, so navy *transports* can go here
-      // but no other navy units!
-      lander: 1,
-    },
-  },
-  reef: {
-    defenseStars: 1,
-    movementCosts: {
-      ...commonOceanMovementCosts,
-      sea: 2,
-      lander: 2,
-    },
-  },
-  pipe: pipeTileProperties,
-  pipeSeam: pipeTileProperties,
-  base: {
-    defenseStars: buildingTileProperties.defenseStars,
-    movementCosts: {
-      ...manMadeMovementCosts,
-      // Any building which *could have* produced a unit has
-      // a movement cost of 1 for that unit.
-      // Bases build piperunners.
-      pipe: 1,
-    },
-  },
-  port: {
-    defenseStars: buildingTileProperties.defenseStars,
-    movementCosts: {
-      ...manMadeMovementCosts,
-      // Any building which *could have* produced a unit has
-      // a movement cost of 1 for that unit.
-      // Ports build ships.
-      sea: 1,
-      lander: 1,
-    },
-  },
-  airport: buildingTileProperties,
-  city: buildingTileProperties,
-  hq: {
-    defenseStars: 4,
-    movementCosts: manMadeMovementCosts,
-  },
-  bridge: {
-    defenseStars: 0,
-    movementCosts: manMadeMovementCosts,
-  },
-  lab: buildingTileProperties,
-  commtower: buildingTileProperties,
-  unusedSilo: buildingTileProperties,
-  usedSilo: buildingTileProperties,
+	plain: {
+		defenseStars: 1,
+		movementCosts: {
+			...commonLandMovementCosts,
+			foot: 1,
+			treads: 1,
+			tires: 2,
+		},
+	},
+	forest: {
+		defenseStars: 2,
+		movementCosts: {
+			...commonLandMovementCosts,
+			foot: 1,
+			treads: 2,
+			tires: 3,
+		},
+	},
+	mountain: {
+		defenseStars: 4,
+		movementCosts: {
+			...commonLandMovementCosts,
+			foot: 2,
+			treads: undefined,
+			tires: undefined,
+		},
+	},
+	river: {
+		defenseStars: 0,
+		movementCosts: {
+			...commonLandMovementCosts,
+			foot: 2,
+			treads: undefined,
+			tires: undefined,
+		},
+	},
+	road: {
+		defenseStars: 0,
+		movementCosts: manMadeMovementCosts,
+	},
+	sea: {
+		defenseStars: 0,
+		movementCosts: {
+			...commonOceanMovementCosts,
+			sea: 1,
+			lander: 1,
+		},
+	},
+	shoal: {
+		defenseStars: 0,
+		movementCosts: {
+			...commonLandMovementCosts,
+			foot: 1,
+			treads: 1,
+			tires: 1,
+			// This is a beach, so navy *transports* can go here
+			// but no other navy units!
+			lander: 1,
+		},
+	},
+	reef: {
+		defenseStars: 1,
+		movementCosts: {
+			...commonOceanMovementCosts,
+			sea: 2,
+			lander: 2,
+		},
+	},
+	pipe: pipeTileProperties,
+	pipeSeam: pipeTileProperties,
+	base: {
+		defenseStars: buildingTileProperties.defenseStars,
+		movementCosts: {
+			...manMadeMovementCosts,
+			// Any building which *could have* produced a unit has
+			// a movement cost of 1 for that unit.
+			// Bases build piperunners.
+			pipe: 1,
+		},
+	},
+	port: {
+		defenseStars: buildingTileProperties.defenseStars,
+		movementCosts: {
+			...manMadeMovementCosts,
+			// Any building which *could have* produced a unit has
+			// a movement cost of 1 for that unit.
+			// Ports build ships.
+			sea: 1,
+			lander: 1,
+		},
+	},
+	airport: buildingTileProperties,
+	city: buildingTileProperties,
+	hq: {
+		defenseStars: 4,
+		movementCosts: manMadeMovementCosts,
+	},
+	bridge: {
+		defenseStars: 0,
+		movementCosts: manMadeMovementCosts,
+	},
+	lab: buildingTileProperties,
+	commtower: buildingTileProperties,
+	unusedSilo: buildingTileProperties,
+	usedSilo: buildingTileProperties,
 };
 
 /**
@@ -201,4 +201,4 @@ export const terrainProperties: Record<TileType, TileProperties> = {
  * a unit on that tile takes from attacks.
  */
 export const getTerrainDefenseStars = (tileType: TileType): number =>
-  terrainProperties[tileType].defenseStars;
+	terrainProperties[tileType].defenseStars;

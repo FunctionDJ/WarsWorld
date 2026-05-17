@@ -7,153 +7,153 @@ import { getPowerChargeGain } from "./get-power-charge-gain";
 import { applySashaFundsDamage, handleSashaScopFunds } from "./handle-sasha-scop-funds";
 
 export const applyAttackEvent = (
-  match: MatchWrapper,
-  event: AttackEvent,
-  position: Position,
+	match: MatchWrapper,
+	event: AttackEvent,
+	position: Position,
 ): void => {
-  const attacker = match.getUnit(position);
-  const defender = match.getUnit(event.defenderPosition, "dont-throw");
+	const attacker = match.getUnit(position);
+	const defender = match.getUnit(event.defenderPosition, "dont-throw");
 
-  if (defender === undefined) {
-    // pipe seam
-    const pipeTile = match.getTile(event.defenderPosition);
+	if (defender === undefined) {
+		// pipe seam
+		const pipeTile = match.getTile(event.defenderPosition);
 
-    if (pipeTile.type !== "pipeSeam") {
-      throw new Error("Received pipe seam attack event, but no pipe seam was found");
-    }
+		if (pipeTile.type !== "pipeSeam") {
+			throw new Error("Received pipe seam attack event, but no pipe seam was found");
+		}
 
-    if (canAttackWithPrimary(attacker, "pipe-seam")) {
-      attacker.useOneAmmo();
-    }
+		if (canAttackWithPrimary(attacker, "pipe-seam")) {
+			attacker.useOneAmmo();
+		}
 
-    // hp updates (0 means removed)
-    pipeTile.hp = event.defenderHP;
-    return;
-  }
+		// hp updates (0 means removed)
+		pipeTile.hp = event.defenderHP;
+		return;
+	}
 
-  //Calculate visible hp difference:
-  const attackerHpDiff =
-    attacker.getVisualHP() - getVisualHP(event.attackerHP ?? attacker.getHPOr100());
+	// Calculate visible hp difference:
+	const attackerHpDiff =
+		attacker.getVisualHP() - getVisualHP(event.attackerHP ?? attacker.getHPOr100());
 
-  const defenderHpDiff = defender.getVisualHP() - getVisualHP(event.defenderHP);
+	const defenderHpDiff = defender.getVisualHP() - getVisualHP(event.defenderHP);
 
-  handleSashaScopFunds(attacker, defender, attackerHpDiff, defenderHpDiff);
+	handleSashaScopFunds(attacker, defender, attackerHpDiff, defenderHpDiff);
 
-  const { attackerPowerCharge, defenderPowerCharge } = getPowerChargeGain(
-    attacker,
-    attackerHpDiff,
-    defender,
-    defenderHpDiff,
-  );
+	const { attackerPowerCharge, defenderPowerCharge } = getPowerChargeGain(
+		attacker,
+		attackerHpDiff,
+		defender,
+		defenderHpDiff,
+	);
 
-  attacker.player.gainPowerCharge(attackerPowerCharge);
-  defender.player.gainPowerCharge(defenderPowerCharge);
+	attacker.player.gainPowerCharge(attackerPowerCharge);
+	defender.player.gainPowerCharge(defenderPowerCharge);
 
-  if (canAttackWithPrimary(attacker, defender.data.type)) {
-    attacker.useOneAmmo();
-  }
+	if (canAttackWithPrimary(attacker, defender.data.type)) {
+		attacker.useOneAmmo();
+	}
 
-  if (event.attackerHP !== undefined && canAttackWithPrimary(defender, attacker.data.type)) {
-    defender.useOneAmmo();
-  }
+	if (event.attackerHP !== undefined && canAttackWithPrimary(defender, attacker.data.type)) {
+		defender.useOneAmmo();
+	}
 
-  // hp updates (+ removal if unit dies)
-  if (event.defenderHP === 0) {
-    defender.remove();
-  } else {
-    defender.setHp(event.defenderHP);
-  }
+	// hp updates (+ removal if unit dies)
+	if (event.defenderHP === 0) {
+		defender.remove();
+	} else {
+		defender.setHp(event.defenderHP);
+	}
 
-  if (event.attackerHP !== undefined) {
-    if (event.attackerHP === 0) {
-      attacker.remove();
-    } else {
-      attacker.setHp(event.attackerHP);
-    }
-  }
+	if (event.attackerHP !== undefined) {
+		if (event.attackerHP === 0) {
+			attacker.remove();
+		} else {
+			attacker.setHp(event.attackerHP);
+		}
+	}
 };
 
 export const applyEmittableAttackEvent = (
-  match: MatchWrapper,
-  event: EmittableAttackEvent,
+	match: MatchWrapper,
+	event: EmittableAttackEvent,
 ): void => {
-  if (event.attacker) {
-    //power charge
-    if (event.attacker.powerChargeGained != undefined) {
-      const player = match.getPlayerBySlot(event.attacker.playerSlot);
-      player.gainPowerCharge(event.attacker.powerChargeGained);
-    }
+	if (event.attacker) {
+		// power charge
+		if (event.attacker.powerChargeGained != undefined) {
+			const player = match.getPlayerBySlot(event.attacker.playerSlot);
+			player.gainPowerCharge(event.attacker.powerChargeGained);
+		}
 
-    if (event.attacker.position) {
-      const attackerUnit = match.getUnit(event.attacker.position);
+		if (event.attacker.position) {
+			const attackerUnit = match.getUnit(event.attacker.position);
 
-      //HP change
-      if (event.attacker.HP != undefined) {
-        if (event.attacker.HP === 0) {
-          attackerUnit.remove();
-        } else {
-          attackerUnit.setHp(event.attacker.HP);
-        }
-      }
+			// HP change
+			if (event.attacker.HP != undefined) {
+				if (event.attacker.HP === 0) {
+					attackerUnit.remove();
+				} else {
+					attackerUnit.setHp(event.attacker.HP);
+				}
+			}
 
-      //ammo consumption (if usedAmmo is true)
-      if (event.attacker.usedAmmo ?? false) {
-        attackerUnit.useOneAmmo();
-      }
-    }
+			// ammo consumption (if usedAmmo is true)
+			if (event.attacker.usedAmmo ?? false) {
+				attackerUnit.useOneAmmo();
+			}
+		}
 
-    //special case for Sasha SCOP (damage taken in funds for money)
-    if (event.attacker.damageTakenInFunds != undefined && event.defender) {
-      const defendingPlayer = match.getPlayerBySlot(event.defender.playerSlot);
+		// special case for Sasha SCOP (damage taken in funds for money)
+		if (event.attacker.damageTakenInFunds != undefined && event.defender) {
+			const defendingPlayer = match.getPlayerBySlot(event.defender.playerSlot);
 
-      //^ should always be true
-      applySashaFundsDamage(defendingPlayer, event.attacker.damageTakenInFunds);
-    }
-  }
+			// ^ should always be true
+			applySashaFundsDamage(defendingPlayer, event.attacker.damageTakenInFunds);
+		}
+	}
 
-  if (event.defender) {
-    //power charge
-    if (event.defender.powerChargeGained != undefined) {
-      const player = match.getPlayerBySlot(event.defender.playerSlot);
-      player.gainPowerCharge(event.defender.powerChargeGained);
-    }
+	if (event.defender) {
+		// power charge
+		if (event.defender.powerChargeGained != undefined) {
+			const player = match.getPlayerBySlot(event.defender.playerSlot);
+			player.gainPowerCharge(event.defender.powerChargeGained);
+		}
 
-    if (event.defender.position) {
-      const defenderUnit = match.getUnit(event.defender.position, "dont-throw");
+		if (event.defender.position) {
+			const defenderUnit = match.getUnit(event.defender.position, "dont-throw");
 
-      if (defenderUnit === undefined) {
-        //pipe seam
-        const pipeTile = match.getTile(event.defender.position);
+			if (defenderUnit === undefined) {
+				// pipe seam
+				const pipeTile = match.getTile(event.defender.position);
 
-        if (pipeTile.type !== "pipeSeam") {
-          throw new Error("Received pipe seam attack event, but no pipe seam was found");
-        }
+				if (pipeTile.type !== "pipeSeam") {
+					throw new Error("Received pipe seam attack event, but no pipe seam was found");
+				}
 
-        if (event.defender.HP != undefined) {
-          //^ should always be true
-          pipeTile.hp = event.defender.HP;
-        }
-      } else {
-        //HP change
-        if (event.defender.HP != undefined) {
-          if (event.defender.HP === 0) {
-            defenderUnit.remove();
-          } else {
-            defenderUnit.setHp(event.defender.HP);
-          }
-        }
+				if (event.defender.HP != undefined) {
+					// ^ should always be true
+					pipeTile.hp = event.defender.HP;
+				}
+			} else {
+				// HP change
+				if (event.defender.HP != undefined) {
+					if (event.defender.HP === 0) {
+						defenderUnit.remove();
+					} else {
+						defenderUnit.setHp(event.defender.HP);
+					}
+				}
 
-        //ammo consumption (if usedAmmo is true)
-        if (event.defender.usedAmmo ?? false) {
-          defenderUnit.useOneAmmo();
-        }
-      }
-    }
+				// ammo consumption (if usedAmmo is true)
+				if (event.defender.usedAmmo ?? false) {
+					defenderUnit.useOneAmmo();
+				}
+			}
+		}
 
-    //special case for Sasha SCOP (damage taken in funds for money)
-    if (event.defender.damageTakenInFunds != undefined && event.attacker) {
-      const attackingPlayer = match.getPlayerBySlot(event.attacker.playerSlot);
-      applySashaFundsDamage(attackingPlayer, event.defender.damageTakenInFunds);
-    }
-  }
+		// special case for Sasha SCOP (damage taken in funds for money)
+		if (event.defender.damageTakenInFunds != undefined && event.attacker) {
+			const attackingPlayer = match.getPlayerBySlot(event.attacker.playerSlot);
+			applySashaFundsDamage(attackingPlayer, event.defender.damageTakenInFunds);
+		}
+	}
 };

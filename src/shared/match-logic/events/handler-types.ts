@@ -5,23 +5,23 @@ import type { MatchWrapper } from "shared/wrappers/match";
 import type { RO } from "shared/ww-readonly";
 
 export type MainActionToEvent<T extends MainAction> = (
-  match: RO<MatchWrapper>,
-  action: T,
+	match: RO<MatchWrapper>,
+	action: T,
 ) => Extract<MainEventWithSubEvents, { type: T["type"] }>;
 
 export type SubActionToEvent<T extends SubAction> = (
-  match: MatchWrapper,
-  action: T,
-  fromPosition: Position,
+	match: MatchWrapper,
+	action: T,
+	fromPosition: Position,
 ) => Extract<SubEvent, { type: T["type"] }>;
 
 export type ApplyEvent<Event extends MainEventWithSubEvents | SubEvent> = (
-  match: MatchWrapper,
-  event: Event,
+	match: MatchWrapper,
+	event: Event,
 ) => void;
 
 export type ApplySubEvent<Event extends SubEvent> = (
-  match: MatchWrapper,
-  subEvent: Event,
-  fromPosition: Position,
+	match: MatchWrapper,
+	subEvent: Event,
+	fromPosition: Position,
 ) => void;

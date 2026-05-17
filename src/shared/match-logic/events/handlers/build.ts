@@ -8,148 +8,148 @@ import { unitPropertiesMap } from "../../game-constants/unit-properties";
 import type { MainActionToEvent } from "../handler-types";
 
 export const buildActionToEvent: MainActionToEvent<BuildAction> = (match, action) => {
-  const player = match.getCurrentTurnPlayer();
+	const player = match.getCurrentTurnPlayer();
 
-  if (match.rules.bannedUnitTypes.includes(action.unitType)) {
-    throw new DispatchableError("Trying to build a banned unit type");
-  }
+	if (match.rules.bannedUnitTypes.includes(action.unitType)) {
+		throw new DispatchableError("Trying to build a banned unit type");
+	}
 
-  if (match.rules.labUnitTypes.includes(action.unitType) && !player.hasLab()) {
-    throw new DispatchableError(
-      "Trying to build a unit type that requires a lab, but no lab is owned",
-    );
-  }
+	if (match.rules.labUnitTypes.includes(action.unitType) && !player.hasLab()) {
+		throw new DispatchableError(
+			"Trying to build a unit type that requires a lab, but no lab is owned",
+		);
+	}
 
-  // TODO discuss how we handle "existing unit types" for each version
+	// TODO discuss how we handle "existing unit types" for each version
 
-  if (player.getUnits().length >= match.rules.unitCapPerPlayer) {
-    throw new DispatchableError("Unit cap alreaedy reached");
-  }
+	if (player.getUnits().length >= match.rules.unitCapPerPlayer) {
+		throw new DispatchableError("Unit cap alreaedy reached");
+	}
 
-  const { cost, facility } = unitPropertiesMap[action.unitType];
-  const modifiedCost = player.getHook("buildCost")?.(cost, match);
-  const effectiveCost = modifiedCost ?? cost;
+	const { cost, facility } = unitPropertiesMap[action.unitType];
+	const modifiedCost = player.getHook("buildCost")?.(cost, match);
+	const effectiveCost = modifiedCost ?? cost;
 
-  if (effectiveCost > player.data.funds) {
-    throw new DispatchableError("You don't have enough funds to build this unit");
-  }
+	if (effectiveCost > player.data.funds) {
+		throw new DispatchableError("You don't have enough funds to build this unit");
+	}
 
-  if (match.getUnit(action.position, "dont-throw") !== undefined) {
-    throw new DispatchableError("Can't build where there's a unit already");
-  }
+	if (match.getUnit(action.position, "dont-throw") !== undefined) {
+		throw new DispatchableError("Can't build where there's a unit already");
+	}
 
-  const tile = match.getTile(action.position);
-  player.ownsOrThrow(tile);
+	const tile = match.getTile(action.position);
+	player.ownsOrThrow(tile);
 
-  const hachiScopLandUnit =
-    facility === "base" &&
-    player.data.coId.name === "hachi" &&
-    player.data.COPowerState === "super-co-power";
+	const hachiScopLandUnit =
+		facility === "base" &&
+		player.data.coId.name === "hachi" &&
+		player.data.COPowerState === "super-co-power";
 
-  if (tile.type !== facility && (!hachiScopLandUnit || tile.type !== "city")) {
-    throw new DispatchableError("You can't build this unit in this facility");
-  }
+	if (tile.type !== facility && (!hachiScopLandUnit || tile.type !== "city")) {
+		throw new DispatchableError("You can't build this unit in this facility");
+	}
 
-  return {
-    type: "build",
-    unitType: action.unitType,
-    position: action.position,
-  };
+	return {
+		type: "build",
+		unitType: action.unitType,
+		position: action.position,
+	};
 };
 
 const createUnitFromBuildEvent = (playerSlot: PlayerSlot, event: BuildEvent): UnitData => {
-  const { unitType } = event;
+	const { unitType } = event;
 
-  const unitProperties = unitPropertiesMap[unitType];
+	const unitProperties = unitPropertiesMap[unitType];
 
-  const partialUnit = {
-    playerSlot,
-    position: event.position,
-    fuel: unitProperties.initialFuel,
-    hp: 100,
-    isReady: false,
-  } satisfies Partial<UnitData>;
+	const partialUnit = {
+		playerSlot,
+		position: event.position,
+		fuel: unitProperties.initialFuel,
+		hp: 100,
+		isReady: false,
+	} satisfies Partial<UnitData>;
 
-  if ("initialAmmo" in unitProperties) {
-    const partialUnitWithAmmo = {
-      ...partialUnit,
-      ammo: unitProperties.initialAmmo,
-    } satisfies Partial<UnitData>;
+	if ("initialAmmo" in unitProperties) {
+		const partialUnitWithAmmo = {
+			...partialUnit,
+			ammo: unitProperties.initialAmmo,
+		} satisfies Partial<UnitData>;
 
-    switch (unitType) {
-      case "artillery":
-      case "mech":
-      case "tank":
-      case "missile":
-      case "rocket":
-      case "mediumTank":
-      case "neoTank":
-      case "megaTank":
-      case "battleCopter":
-      case "bomber":
-      case "fighter":
-      case "battleship":
-      case "pipeRunner":
-      case "antiAir": {
-        return {
-          type: unitType,
-          ...partialUnitWithAmmo,
-        };
-      }
-      case "stealth":
-      case "sub": {
-        return {
-          type: unitType,
-          ...partialUnitWithAmmo,
-          hiddenByAbility: false,
-        };
-      }
-      case "carrier":
-      case "cruiser": {
-        return {
-          type: unitType,
-          ...partialUnitWithAmmo,
-          loadedUnits: [undefined, undefined],
-        };
-      }
-    }
-  }
+		switch (unitType) {
+			case "artillery":
+			case "mech":
+			case "tank":
+			case "missile":
+			case "rocket":
+			case "mediumTank":
+			case "neoTank":
+			case "megaTank":
+			case "battleCopter":
+			case "bomber":
+			case "fighter":
+			case "battleship":
+			case "pipeRunner":
+			case "antiAir": {
+				return {
+					type: unitType,
+					...partialUnitWithAmmo,
+				};
+			}
+			case "stealth":
+			case "sub": {
+				return {
+					type: unitType,
+					...partialUnitWithAmmo,
+					hiddenByAbility: false,
+				};
+			}
+			case "carrier":
+			case "cruiser": {
+				return {
+					type: unitType,
+					...partialUnitWithAmmo,
+					loadedUnits: [undefined, undefined],
+				};
+			}
+		}
+	}
 
-  switch (unitType) {
-    case "infantry":
-    case "recon":
-    case "blackBomb": {
-      return {
-        type: unitType,
-        ...partialUnit,
-      };
-    }
-    case "apc":
-    case "transportCopter": {
-      return {
-        type: unitType,
-        ...partialUnit,
-        loadedUnits: [undefined],
-      };
-    }
-    case "blackBoat":
-    case "lander": {
-      return {
-        type: unitType,
-        ...partialUnit,
-        loadedUnits: [undefined, undefined],
-      };
-    }
-    default: {
-      // TODO only so that typescript doesn't error / break CI, but still a TODO
-      throw new Error("TODO :)");
-    }
-  }
+	switch (unitType) {
+		case "infantry":
+		case "recon":
+		case "blackBomb": {
+			return {
+				type: unitType,
+				...partialUnit,
+			};
+		}
+		case "apc":
+		case "transportCopter": {
+			return {
+				type: unitType,
+				...partialUnit,
+				loadedUnits: [undefined],
+			};
+		}
+		case "blackBoat":
+		case "lander": {
+			return {
+				type: unitType,
+				...partialUnit,
+				loadedUnits: [undefined, undefined],
+			};
+		}
+		default: {
+			// TODO only so that typescript doesn't error / break CI, but still a TODO
+			throw new Error("TODO :)");
+		}
+	}
 };
 
 export const applyBuildEvent = (match: MatchWrapper, event: BuildEvent): void => {
-  const player = match.getCurrentTurnPlayer();
+	const player = match.getCurrentTurnPlayer();
 
-  player.data.funds -= unitPropertiesMap[event.unitType].cost;
-  player.addUnwrappedUnit(createUnitFromBuildEvent(player.data.slot, event));
+	player.data.funds -= unitPropertiesMap[event.unitType].cost;
+	player.addUnwrappedUnit(createUnitFromBuildEvent(player.data.slot, event));
 };

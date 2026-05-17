@@ -9,4 +9,4 @@ import * as ts from "typescript";
 export const { getCheckFlags } = ts as unknown as { getCheckFlags: (s: ts.Symbol) => number };
 
 export const readonlyFlag = (ts as unknown as { CheckFlags: { Readonly: number } }).CheckFlags
-  .Readonly;
+	.Readonly;

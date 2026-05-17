@@ -6,13 +6,13 @@ import type { IsTuple } from "type-fest";
  * so they can still be called.
  */
 export type RO<T> = T extends Function
-  ? T
-  : T extends readonly unknown[]
-    ? IsTuple<T> extends true
-      ? { readonly [Key in keyof T]: RO<T[Key]> }
-      : readonly RO<T[number]>[]
-    : T extends object
-      ? {
-          readonly [Key in keyof T]: T[Key] extends Function ? T[Key] : RO<T[Key]>;
-        }
-      : T;
+	? T
+	: T extends readonly unknown[]
+		? IsTuple<T> extends true
+			? { readonly [Key in keyof T]: RO<T[Key]> }
+			: readonly RO<T[number]>[]
+		: T extends object
+			? {
+					readonly [Key in keyof T]: T[Key] extends Function ? T[Key] : RO<T[Key]>;
+				}
+			: T;

@@ -7,51 +7,51 @@ import { z } from "zod";
 import { matchToFrontend } from "./utility";
 
 export const createMatchProcedure = playerBaseProcedure
-  .input(
-    z.object({
-      rules: matchRulesSchema,
-      mapId: z.string(),
-    }),
-  )
-  .use(mapMiddleware)
-  .mutation(async ({ input, ctx }) => {
-    const matchOnDB = await prisma.match.create({
-      data: {
-        status: "setup",
-        leagueType: "standard",
-        playerState: {
-          type: "players-in-match",
-          players: [
-            {
-              type: "player-in-match",
-              slot: 0,
-              hasCurrentTurn: true,
-              id: ctx.currentPlayer.id,
-              name: ctx.currentPlayer.name,
-              ready: false,
-              coId: {
-                name: "andy",
-                version: "AW2",
-              },
-              status: "alive",
-              //TODO: Handle funds correctly
-              funds: 0,
-              powerMeter: 0,
-              timesPowerUsed: 0,
-              army: "orange-star",
-              COPowerState: "no-power",
-            },
-          ],
-        },
-        map: {
-          connect: {
-            id: ctx.map.id,
-          },
-        },
-        rules: input.rules,
-      },
-    });
+	.input(
+		z.object({
+			rules: matchRulesSchema,
+			mapId: z.string(),
+		}),
+	)
+	.use(mapMiddleware)
+	.mutation(async ({ input, ctx }) => {
+		const matchOnDB = await prisma.match.create({
+			data: {
+				status: "setup",
+				leagueType: "standard",
+				playerState: {
+					type: "players-in-match",
+					players: [
+						{
+							type: "player-in-match",
+							slot: 0,
+							hasCurrentTurn: true,
+							id: ctx.currentPlayer.id,
+							name: ctx.currentPlayer.name,
+							ready: false,
+							coId: {
+								name: "andy",
+								version: "AW2",
+							},
+							status: "alive",
+							// TODO: Handle funds correctly
+							funds: 0,
+							powerMeter: 0,
+							timesPowerUsed: 0,
+							army: "orange-star",
+							COPowerState: "no-power",
+						},
+					],
+				},
+				map: {
+					connect: {
+						id: ctx.map.id,
+					},
+				},
+				rules: input.rules,
+			},
+		});
 
-    const match = matchStore.createMatchAndIndex(matchOnDB, ctx.map);
-    return matchToFrontend(match);
-  });
+		const match = matchStore.createMatchAndIndex(matchOnDB, ctx.map);
+		return matchToFrontend(match);
+	});

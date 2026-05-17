@@ -1,29 +1,40 @@
 {
-  "compilerOptions": {
-    "paths": {
-      "shared/*": ["./src/shared/*"],
-      "*": ["./src/*"]
-    },
-    "target": "esnext",
-    "lib": ["dom", "dom.iterable", "esnext", "ES2025.Iterator"],
-    "allowJs": true,
-    "checkJs": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "strictNullChecks": true,
-    "noUncheckedIndexedAccess": true,
-    "forceConsistentCasingInFileNames": true,
-    "allowImportingTsExtensions": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "module": "preserve",
-    // even though "bundler" should be default when "module" is "preserve",
-    // it seems like prisma generates code that can't be bundled by next.js without this option explicitly set
-    "moduleResolution": "bundler",
-    "isolatedModules": true,
-    "jsx": "react-jsx",
-    "incremental": true
-  },
-  "exclude": ["node_modules", "dist", ".next"],
-  "include": ["next-env.d.ts", "**/*.mts", "**/*.ts", "**/*.tsx"]
+	"compilerOptions": {
+		"paths": {
+			"shared/*": ["./src/shared/*"],
+			"*": ["./src/*"]
+		},
+		"target": "esnext",
+		"lib": ["dom", "dom.iterable", "esnext", "ES2025.Iterator"],
+		"allowJs": true,
+		"checkJs": true,
+		"skipLibCheck": true,
+		"strict": true,
+		"strictNullChecks": true,
+		"noUncheckedIndexedAccess": true,
+		"forceConsistentCasingInFileNames": true,
+		"allowImportingTsExtensions": true,
+		"noEmit": true,
+		"esModuleInterop": true,
+		"module": "preserve",
+		// even though "bundler" should be default when "module" is "preserve",
+		// it seems like prisma generates code that can't be bundled by next.js without this option explicitly set
+		"moduleResolution": "bundler",
+		"isolatedModules": true,
+		"jsx": "react-jsx",
+		"incremental": true
+	},
+	"exclude": [
+		"node_modules",
+		"dist",
+		".next",
+		"src/generated",
+		"src/generated/prisma",
+		"src/generated/**/*.ts",
+		"generated",
+		"generated/**/*",
+		"generated/**/*.ts",
+		"generated/prisma"
+	],
+	"include": ["next-env.d.ts", "**/*.mts", "**/*.ts", "**/*.tsx"]
 }

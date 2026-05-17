@@ -15,67 +15,67 @@ import { unloadNoWaitActionToEvent } from "./handlers/unload/unload-no-wait";
 import { unloadWaitActionToEvent } from "./handlers/unload/unload-wait";
 
 export const validateMainActionAndToEvent = (
-  match: MatchWrapper,
-  action: MainAction,
+	match: MatchWrapper,
+	action: MainAction,
 ): MainEventsWithoutSubEvents => {
-  switch (action.type) {
-    case "build": {
-      return buildActionToEvent(match, action);
-    }
-    case "delete": {
-      return deleteActionToEvent(match, action);
-    }
-    case "unloadNoWait": {
-      return unloadNoWaitActionToEvent(match, action);
-    }
-    case "move": {
-      return moveActionToEvent(match, action);
-    }
-    case "coPower": {
-      return coPowerActionToEvent(match, action);
-    }
-    case "passTurn": {
-      return passTurnActionToEvent(match, action);
-    }
-    default: {
-      /** this would only run for bad data from DB because of zod when validating user data */
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      throw new InvalidStateError(`Can't handle action type ${(action as MainAction).type}`);
-    }
-  }
+	switch (action.type) {
+		case "build": {
+			return buildActionToEvent(match, action);
+		}
+		case "delete": {
+			return deleteActionToEvent(match, action);
+		}
+		case "unloadNoWait": {
+			return unloadNoWaitActionToEvent(match, action);
+		}
+		case "move": {
+			return moveActionToEvent(match, action);
+		}
+		case "coPower": {
+			return coPowerActionToEvent(match, action);
+		}
+		case "passTurn": {
+			return passTurnActionToEvent(match, action);
+		}
+		default: {
+			/** this would only run for bad data from DB because of zod when validating user data */
+			// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+			throw new InvalidStateError(`Can't handle action type ${(action as MainAction).type}`);
+		}
+	}
 };
 
 export const validateSubActionAndToEvent = (
-  match: MatchWrapper,
-  { subAction, path }: MoveAction,
+	match: MatchWrapper,
+	{ subAction, path }: MoveAction,
 ): SubEvent => {
-  const unitPosition = path.at("last");
+	const unitPosition = path.at("last");
 
-  switch (subAction.type) {
-    case "attack": {
-      return attackActionToEvent(
-        match,
-        subAction,
-        unitPosition,
-        path.len() > 1,
-        { goodLuck: Math.random(), badLuck: Math.random() },
-        { goodLuck: Math.random(), badLuck: Math.random() },
-      );
-    }
-    case "ability": {
-      return abilityActionToEvent(match, subAction, unitPosition);
-    }
-    case "unloadWait": {
-      return unloadWaitActionToEvent(match, subAction, unitPosition);
-    }
-    case "repair": {
-      return repairActionToEvent(match, subAction, unitPosition);
-    }
-    case "launchMissile": {
-      return launchMissileActionToEvent(match, subAction, unitPosition);
-    }
-    case "wait": {
-      return { type: "wait" };
-    }
-  }
+	switch (subAction.type) {
+		case "attack": {
+			return attackActionToEvent(
+				match,
+				subAction,
+				unitPosition,
+				path.len() > 1,
+				{ goodLuck: Math.random(), badLuck: Math.random() },
+				{ goodLuck: Math.random(), badLuck: Math.random() },
+			);
+		}
+		case "ability": {
+			return abilityActionToEvent(match, subAction, unitPosition);
+		}
+		case "unloadWait": {
+			return unloadWaitActionToEvent(match, subAction, unitPosition);
+		}
+		case "repair": {
+			return repairActionToEvent(match, subAction, unitPosition);
+		}
+		case "launchMissile": {
+			return launchMissileActionToEvent(match, subAction, unitPosition);
+		}
+		case "wait": {
+			return { type: "wait" };
+		}
+	}
 };

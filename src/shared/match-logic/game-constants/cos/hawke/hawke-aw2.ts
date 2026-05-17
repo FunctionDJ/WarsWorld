@@ -1,43 +1,43 @@
 import type { COProperties } from "../../../co";
 
 export const hawkeAW2: COProperties = {
-  displayName: "Hawke",
-  gameVersion: "AW2",
-  dayToDay: {
-    description: "Units have +10% firepower.",
-    hooks: {
-      attack: () => 110,
-    },
-  },
-  powers: {
-    // IMPORTANT: only type of healing that does not round up!
-    COPower: {
-      name: "Black Wave",
-      stars: 5,
-      description: "All units heal 1 HP, and all enemy units lose 1 HP (to a minimum of 0.1HP).",
-      instantEffect(player) {
-        for (const unit of player.getUnits()) {
-          unit.heal(1);
-        }
+	displayName: "Hawke",
+	gameVersion: "AW2",
+	dayToDay: {
+		description: "Units have +10% firepower.",
+		hooks: {
+			attack: () => 110,
+		},
+	},
+	powers: {
+		// IMPORTANT: only type of healing that does not round up!
+		COPower: {
+			name: "Black Wave",
+			stars: 5,
+			description: "All units heal 1 HP, and all enemy units lose 1 HP (to a minimum of 0.1HP).",
+			instantEffect(player) {
+				for (const unit of player.getUnits()) {
+					unit.heal(1);
+				}
 
-        for (const unit of player.team.getEnemyUnits()) {
-          unit.damageUntil1HP(1);
-        }
-      },
-    },
-    superCOPower: {
-      name: "Black Storm",
-      stars: 9,
-      description: "All units heal 2 HP, and all enemy units lose 2 HP (to a minimum of 0.1HP).",
-      instantEffect(player) {
-        for (const unit of player.getUnits()) {
-          unit.heal(2);
-        }
+				for (const unit of player.team.getEnemyUnits()) {
+					unit.damageUntil1HP(1);
+				}
+			},
+		},
+		superCOPower: {
+			name: "Black Storm",
+			stars: 9,
+			description: "All units heal 2 HP, and all enemy units lose 2 HP (to a minimum of 0.1HP).",
+			instantEffect(player) {
+				for (const unit of player.getUnits()) {
+					unit.heal(2);
+				}
 
-        for (const unit of player.team.getEnemyUnits()) {
-          unit.damageUntil1HP(2);
-        }
-      },
-    },
-  },
+				for (const unit of player.team.getEnemyUnits()) {
+					unit.damageUntil1HP(2);
+				}
+			},
+		},
+	},
 };

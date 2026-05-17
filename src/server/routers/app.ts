@@ -5,10 +5,10 @@ import { matchRouter } from "./match";
 import { userRouter } from "./user";
 
 export const appRouter = router({
-  match: matchRouter,
-  map: mapRouter,
-  action: actionRouter,
-  user: userRouter,
+	match: matchRouter,
+	map: mapRouter,
+	action: actionRouter,
+	user: userRouter,
 });
 
 export type AppRouter = typeof appRouter;

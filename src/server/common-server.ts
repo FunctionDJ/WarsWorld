@@ -5,17 +5,17 @@ import { appRouter } from "./routers/app";
 import { createContext } from "./trpc/trpc-context";
 
 export const createTRPCwebSocketServer = (wssConfig: ServerOptions): WebSocketServer => {
-  const wss = new WebSocketServer(wssConfig);
+	const wss = new WebSocketServer(wssConfig);
 
-  const handler = applyWSSHandler({ wss, router: appRouter, createContext });
+	const handler = applyWSSHandler({ wss, router: appRouter, createContext });
 
-  // SIGTERM is a node.js process event
-  // like ctrl + c, it means signal/program termination.
-  process.on("SIGTERM", () => {
-    console.log("SIGTERM");
-    handler.broadcastReconnectNotification();
-    wss.close();
-  });
+	// SIGTERM is a node.js process event
+	// like ctrl + c, it means signal/program termination.
+	process.on("SIGTERM", () => {
+		console.log("SIGTERM");
+		handler.broadcastReconnectNotification();
+		wss.close();
+	});
 
-  return wss;
+	return wss;
 };

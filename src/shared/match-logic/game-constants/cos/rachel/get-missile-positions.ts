@@ -9,76 +9,76 @@ import type { PlayerInMatchWrapper } from "../../../../wrappers/player-in-match"
  * 3) HP
  */
 export const getMissilePositions = (
-  rachelPlayer: RO<PlayerInMatchWrapper>,
+	rachelPlayer: RO<PlayerInMatchWrapper>,
 ): readonly Position[] => {
-  // !!! mechs do count as infantry
-  // apparently, this missile is in fact 1x normal hp, 2x infantry hp, 8x capturing infantry hp
-  let bestPositionInf = new Position([0, 0]);
-  let mostInfantryHP = Number.NEGATIVE_INFINITY;
-  let mostValueInf = Number.NEGATIVE_INFINITY;
+	// !!! mechs do count as infantry
+	// apparently, this missile is in fact 1x normal hp, 2x infantry hp, 8x capturing infantry hp
+	let bestPositionInf = new Position([0, 0]);
+	let mostInfantryHP = Number.NEGATIVE_INFINITY;
+	let mostValueInf = Number.NEGATIVE_INFINITY;
 
-  let bestPositionHp = new Position([0, 0]);
-  let mostHP = Number.NEGATIVE_INFINITY;
-  let mostValueHP = Number.NEGATIVE_INFINITY; //for tiebreak
+	let bestPositionHp = new Position([0, 0]);
+	let mostHP = Number.NEGATIVE_INFINITY;
+	let mostValueHP = Number.NEGATIVE_INFINITY; // for tiebreak
 
-  let bestPositionValue = new Position([0, 0]);
-  let mostValue = Number.NEGATIVE_INFINITY;
+	let bestPositionValue = new Position([0, 0]);
+	let mostValue = Number.NEGATIVE_INFINITY;
 
-  for (let y = 0; y < rachelPlayer.match.map.height; y++) {
-    for (let x = 0; x < rachelPlayer.match.map.width; x++) {
-      let currentInfantryHP = 0,
-        currentValue = 0,
-        currentHP = 0;
+	for (let y = 0; y < rachelPlayer.match.map.height; y++) {
+		for (let x = 0; x < rachelPlayer.match.map.width; x++) {
+			let currentInfantryHP = 0,
+				currentValue = 0,
+				currentHP = 0;
 
-      for (const unit of rachelPlayer.match.units) {
-        if (new Position([x, y]).getDistance(unit.data.position) > 2) {
-          continue;
-        }
+			for (const unit of rachelPlayer.match.units) {
+				if (new Position([x, y]).getDistance(unit.data.position) > 2) {
+					continue;
+				}
 
-        const thisUnitValue = (unit.getBuildCost() / 10) * Math.min(3, unit.getVisualHP());
-        //"the highest HP total, with foot soldiers given a 2x Multiplier, capturing foot soldiers have an 8x multiplier"
-        const thisUnitInfantryHP =
-          unit.getVisualHP() *
-          (unit.isInfantryOrMech() ? 2 : 1) *
-          ("currentCapturePoints" in unit.properties &&
-          unit.properties.currentCapturePoints !== undefined
-            ? 4
-            : 1);
+				const thisUnitValue = (unit.getBuildCost() / 10) * Math.min(3, unit.getVisualHP());
+				// "the highest HP total, with foot soldiers given a 2x Multiplier, capturing foot soldiers have an 8x multiplier"
+				const thisUnitInfantryHP =
+					unit.getVisualHP() *
+					(unit.isInfantryOrMech() ? 2 : 1) *
+					("currentCapturePoints" in unit.properties &&
+					unit.properties.currentCapturePoints !== undefined
+						? 4
+						: 1);
 
-        if (unit.player.team.index === rachelPlayer.team.index) {
-          currentValue -= thisUnitValue;
-          currentHP -= unit.getVisualHP();
-          currentInfantryHP -= thisUnitInfantryHP;
-        } else {
-          currentValue += thisUnitValue;
-          currentHP += unit.getVisualHP();
-          currentInfantryHP += thisUnitInfantryHP;
-        }
-      }
+				if (unit.player.team.index === rachelPlayer.team.index) {
+					currentValue -= thisUnitValue;
+					currentHP -= unit.getVisualHP();
+					currentInfantryHP -= thisUnitInfantryHP;
+				} else {
+					currentValue += thisUnitValue;
+					currentHP += unit.getVisualHP();
+					currentInfantryHP += thisUnitInfantryHP;
+				}
+			}
 
-      // tiebreak order: most infantry -> most hp -> most value
-      // this if statement is left ugly on purpose :)
-      if (
-        currentInfantryHP > mostInfantryHP ||
-        (currentInfantryHP === mostInfantryHP && currentValue > mostValueInf)
-      ) {
-        mostInfantryHP = currentInfantryHP;
-        mostValueInf = currentValue;
-        bestPositionInf = new Position([x, y]);
-      }
+			// tiebreak order: most infantry -> most hp -> most value
+			// this if statement is left ugly on purpose :)
+			if (
+				currentInfantryHP > mostInfantryHP ||
+				(currentInfantryHP === mostInfantryHP && currentValue > mostValueInf)
+			) {
+				mostInfantryHP = currentInfantryHP;
+				mostValueInf = currentValue;
+				bestPositionInf = new Position([x, y]);
+			}
 
-      if (currentHP > mostHP || (currentHP === mostHP && currentValue > mostValueHP)) {
-        mostHP = currentHP;
-        mostValueHP = currentValue;
-        bestPositionHp = new Position([x, y]);
-      }
+			if (currentHP > mostHP || (currentHP === mostHP && currentValue > mostValueHP)) {
+				mostHP = currentHP;
+				mostValueHP = currentValue;
+				bestPositionHp = new Position([x, y]);
+			}
 
-      if (currentValue > mostValue) {
-        mostValue = currentValue;
-        bestPositionValue = new Position([x, y]);
-      }
-    }
-  }
+			if (currentValue > mostValue) {
+				mostValue = currentValue;
+				bestPositionValue = new Position([x, y]);
+			}
+		}
+	}
 
-  return [bestPositionInf, bestPositionValue, bestPositionHp];
+	return [bestPositionInf, bestPositionValue, bestPositionHp];
 };

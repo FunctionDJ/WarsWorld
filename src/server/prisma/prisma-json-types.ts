@@ -10,14 +10,14 @@ import type { UnitData } from "shared/schemas/unit-schemas";
 import type { PlayerInMatch, PlayerInSetup } from "shared/server-match-state";
 
 declare global {
-  namespace PrismaJson {
-    type PrismaPreferences = Preferences;
-    type PrismaTiles = Tile[][];
-    type PrismaUnits = UnitData[];
-    type PrismaPlayerState =
-      | { type: "players-in-match"; players: readonly PlayerInMatch[] }
-      | { type: "players-in-setup"; players: readonly PlayerInSetup[] };
-    type PrismaEvent = MainEventWithSubEvents;
-    type PrismaMatchRules = MatchRules;
-  }
+	namespace PrismaJson {
+		type PrismaPreferences = Preferences;
+		type PrismaTiles = Tile[][];
+		type PrismaUnits = UnitData[];
+		type PrismaPlayerState =
+			| { type: "players-in-match"; players: readonly PlayerInMatch[] }
+			| { type: "players-in-setup"; players: readonly PlayerInSetup[] };
+		type PrismaEvent = MainEventWithSubEvents;
+		type PrismaMatchRules = MatchRules;
+	}
 }

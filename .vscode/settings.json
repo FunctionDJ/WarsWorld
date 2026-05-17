@@ -1,75 +1,124 @@
 {
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.formatOnSave": true,
-  "[prisma]": {
-    "editor.defaultFormatter": "Prisma.prisma"
-  },
-  "js/ts.tsserver.experimental.enableProjectDiagnostics": true,
-  "js/ts.referencesCodeLens.enabled": true,
-  "editor.rulers": [100],
-  "editor.codeActionsOnSave": {
-    "source.organizeImports": "always"
-  },
-  "files.associations": {
-    "*fallow*.json": "jsonc"
-  },
-  "prettier.useTabs": true,
-  "editor.insertSpaces": false,
-  "eslint.options": {
-    "overrideConfigFile": ".config/eslint.config.ts"
-  },
-  "fallow.configPath": ".config/fallow.json",
-  "chat.tools.terminal.autoApprove": {
-    "/^bunx tsc --noEmit$/": {
-      "approve": true,
-      "matchCommandLine": true
-    },
-    "/^bun lint$/": {
-      "approve": true,
-      "matchCommandLine": true
-    },
-    "/^bunx tsc$/": {
-      "approve": true,
-      "matchCommandLine": true
-    },
-    "/^bunx tsc -p tsconfig\\.json --noEmit$/": {
-      "approve": true,
-      "matchCommandLine": true
-    },
-    "/^bunx eslint src/tests/calculate-damage-test\\.ts$/": {
-      "approve": true,
-      "matchCommandLine": true
-    },
-    "/^bunx tsc -p tsconfig\\.json --noEmit --pretty false \\| rg \"src/shared/schemas/\\(unit\\|loadable-unit-schema-by-type\\)\\\\\\.ts\" -n$/": {
-      "approve": true,
-      "matchCommandLine": true
-    },
-    "/^cd /home/function/git/WarsWorld && bun lint$/": {
-      "approve": true,
-      "matchCommandLine": true
-    }
-  },
-  "todo-tree.general.tags": [
-    "TODO",
-    "[cartridge-inaccurate]",
-    "[upstream]",
-    "[missing-implementation]",
-    "[cringe-code]",
-    "[tooling]",
-    "[missing-feature]",
-    "[bug]",
-    "[improvement]",
-    "[security]",
-    "[correctness]",
-    "[archeology]"
-  ],
-  "js/ts.preferences.preferTypeOnlyAutoImports": true,
-  "js/ts.preferences.autoImportFileExcludePatterns": ["**/generated/**"],
-  "js/ts.preferences.autoImportSpecifierExcludeRegexes": [
-    "^generated(?:/.*)?$",
-    "^sharp$",
-    "^type-fest$",
-    "^@?typescript",
-    "^pixi\\.js$"
-  ]
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
+	"editor.formatOnSave": true,
+	"[prisma]": {
+		"editor.defaultFormatter": "Prisma.prisma"
+	},
+	"js/ts.tsserver.experimental.enableProjectDiagnostics": true,
+	"js/ts.referencesCodeLens.enabled": true,
+	"editor.rulers": [100],
+	"editor.codeActionsOnSave": {
+		"source.organizeImports": "always"
+	},
+	"files.associations": {
+		"*fallow*.json": "jsonc"
+	},
+	"prettier.useTabs": true,
+	"editor.insertSpaces": false,
+	"editor.detectIndentation": false,
+	"eslint.options": {
+		"overrideConfigFile": ".config/eslint.config.ts"
+	},
+	// eslint-plugin-prettier in eslint.config.ts is important to make sure we use tabs and stuff
+	// but when using the VSCode ESLint extension, issues reported by this rule would be very annoying
+	// and they would get fixed on save anyway, so we turn it off for the extension only.
+	"eslint.rules.customizations": [{ "rule": "prettier/prettier", "severity": "off" }],
+	"fallow.configPath": ".config/fallow.json",
+	"chat.tools.terminal.autoApprove": {
+		"/^bunx tsc --noEmit$/": {
+			"approve": true,
+			"matchCommandLine": true
+		},
+		"/^bun lint$/": {
+			"approve": true,
+			"matchCommandLine": true
+		},
+		"/^bunx tsc$/": {
+			"approve": true,
+			"matchCommandLine": true
+		},
+		"/^bunx tsc -p tsconfig\\.json --noEmit$/": {
+			"approve": true,
+			"matchCommandLine": true
+		},
+		"/^bunx eslint src/tests/calculate-damage-test\\.ts$/": {
+			"approve": true,
+			"matchCommandLine": true
+		},
+		"/^bunx tsc -p tsconfig\\.json --noEmit --pretty false \\| rg \"src/shared/schemas/\\(unit\\|loadable-unit-schema-by-type\\)\\\\\\.ts\" -n$/": {
+			"approve": true,
+			"matchCommandLine": true
+		},
+		"/^cd /home/function/git/WarsWorld && bun lint$/": {
+			"approve": true,
+			"matchCommandLine": true
+		}
+	},
+	"todo-tree.general.tags": [
+		"TODO",
+		"[cartridge-inaccurate]",
+		"[upstream]",
+		"[missing-implementation]",
+		"[cringe-code]",
+		"[tooling]",
+		"[missing-feature]",
+		"[bug]",
+		"[improvement]",
+		"[security]",
+		"[correctness]",
+		"[archeology]"
+	],
+	"js/ts.preferences.preferTypeOnlyAutoImports": true,
+	"js/ts.preferences.autoImportFileExcludePatterns": ["**/generated/**"],
+	"js/ts.preferences.autoImportSpecifierExcludeRegexes": [
+		"^generated(?:/.*)?$",
+		"^sharp$",
+		"^type-fest$",
+		"^@?typescript",
+		"^pixi\\.js$",
+		"^next/?",
+		"^zod",
+		"^@trpc/.*$",
+		"^@?prisma/.*$",
+		"^node:",
+		"worker_threads",
+		"^module$",
+		"^@tanstack",
+		"^http$",
+		"^util$",
+		"^fs"
+	],
+	"js/ts.preferences.includePackageJsonAutoImports": "off",
+	"search.exclude": {
+		"**/node_modules": true,
+		"**/bower_components": true,
+		"**/*.code-search": true,
+		"src/generated/prisma": true,
+		"src/generated": true,
+		"generated/prisma": true,
+		"generated": true
+	},
+	"files.exclude": {
+		"**/.git": true,
+		"**/.svn": true,
+		"**/.hg": true,
+		"**/.DS_Store": true,
+		"**/Thumbs.db": true,
+		"src/generated/prisma": true,
+		"src/generated": true,
+		"generated/prisma": true,
+		"generated": true
+	},
+	"files.watcherExclude": {
+		".git/objects/**": true,
+		".git/subtree-cache/**": true,
+		".hg/store/**": true,
+		"*/.git/objects/**": true,
+		"*/.git/subtree-cache/**": true,
+		"*/.hg/store/**": true,
+		"src/generated/prisma": true,
+		"src/generated/**": true,
+		"generated/prisma": true,
+		"generated/**": true
+	}
 }

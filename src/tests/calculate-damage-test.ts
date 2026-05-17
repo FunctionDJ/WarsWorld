@@ -35,41 +35,41 @@ import { createMatch, createPlayerInMatch } from "./utilities";
 console.log("simple infanty vs infantry");
 
 {
-  const match = createMatch([createPlayerInMatch({ slot: 0 }), createPlayerInMatch({ slot: 1 })]);
+	const match = createMatch([createPlayerInMatch({ slot: 0 }), createPlayerInMatch({ slot: 1 })]);
 
-  const p1 = match.getPlayerBySlot(0);
-  const p2 = match.getPlayerBySlot(1);
+	const p1 = match.getPlayerBySlot(0);
+	const p2 = match.getPlayerBySlot(1);
 
-  const u1 = p1.addUnwrappedUnit({
-    type: "infantry",
-    position: new Position([0, 0]),
-  });
+	const u1 = p1.addUnwrappedUnit({
+		type: "infantry",
+		position: new Position([0, 0]),
+	});
 
-  const u2 = p2.addUnwrappedUnit({
-    type: "infantry",
-    position: new Position([1, 0]),
-  });
+	const u2 = p2.addUnwrappedUnit({
+		type: "infantry",
+		position: new Position([1, 0]),
+	});
 
-  const { attackerHP, defenderHP } = attackActionToEvent(
-    match,
-    {
-      type: "attack",
-      defenderPosition: u2.data.position,
-    },
-    u1.data.position,
-    true,
-    {
-      goodLuck: 0.5,
-      badLuck: 0.5,
-    },
-    {
-      goodLuck: 0.5,
-      badLuck: 0.5,
-    },
-  );
+	const { attackerHP, defenderHP } = attackActionToEvent(
+		match,
+		{
+			type: "attack",
+			defenderPosition: u2.data.position,
+		},
+		u1.data.position,
+		true,
+		{
+			goodLuck: 0.5,
+			badLuck: 0.5,
+		},
+		{
+			goodLuck: 0.5,
+			badLuck: 0.5,
+		},
+	);
 
-  console.log("attacker HP:", u1.data.hp, "=>", attackerHP ?? "(no counter)");
-  console.log("defender HP:", u2.data.hp, "=>", defenderHP);
+	console.log("attacker HP:", u1.data.hp, "=>", attackerHP ?? "(no counter)");
+	console.log("defender HP:", u2.data.hp, "=>", defenderHP);
 }
 
 // from AW wiki:
@@ -85,111 +85,111 @@ console.log("simple infanty vs infantry");
 console.log("testing luck thresholds: 0% luck should round down to 0% damage");
 
 {
-  const match = createMatch(
-    [
-      createPlayerInMatch({ slot: 0 }),
-      createPlayerInMatch({ slot: 1, coId: { name: "kanbei", version: "AW2" } }),
-    ],
-    {
-      map: {
-        tiles: [
-          [
-            { type: "plain", variant: "normal" },
-            { type: "city", playerSlot: 1, hp: 20 },
-          ],
-        ],
-      },
-    },
-  );
+	const match = createMatch(
+		[
+			createPlayerInMatch({ slot: 0 }),
+			createPlayerInMatch({ slot: 1, coId: { name: "kanbei", version: "AW2" } }),
+		],
+		{
+			map: {
+				tiles: [
+					[
+						{ type: "plain", variant: "normal" },
+						{ type: "city", playerSlot: 1, hp: 20 },
+					],
+				],
+			},
+		},
+	);
 
-  const p1 = match.getPlayerBySlot(0);
-  const p2 = match.getPlayerBySlot(1);
+	const p1 = match.getPlayerBySlot(0);
+	const p2 = match.getPlayerBySlot(1);
 
-  const u1 = p1.addUnwrappedUnit({
-    type: "infantry",
-    position: new Position([0, 0]),
-  });
+	const u1 = p1.addUnwrappedUnit({
+		type: "infantry",
+		position: new Position([0, 0]),
+	});
 
-  const u2 = p2.addUnwrappedUnit({
-    type: "missile",
-    position: new Position([1, 0]),
-    ammo: 6,
-  });
+	const u2 = p2.addUnwrappedUnit({
+		type: "missile",
+		position: new Position([1, 0]),
+		ammo: 6,
+	});
 
-  const { attackerHP, defenderHP } = attackActionToEvent(
-    match,
-    {
-      type: "attack",
-      defenderPosition: u2.data.position,
-    },
-    u1.data.position,
-    true,
-    {
-      goodLuck: 0,
-      badLuck: 0,
-    },
-    {
-      goodLuck: 0,
-      badLuck: 0,
-    },
-  );
+	const { attackerHP, defenderHP } = attackActionToEvent(
+		match,
+		{
+			type: "attack",
+			defenderPosition: u2.data.position,
+		},
+		u1.data.position,
+		true,
+		{
+			goodLuck: 0,
+			badLuck: 0,
+		},
+		{
+			goodLuck: 0,
+			badLuck: 0,
+		},
+	);
 
-  console.log("attacker HP:", u1.data.hp, "=>", attackerHP ?? "(no counter)");
-  console.log("defender HP:", u2.data.hp, "=>", defenderHP);
+	console.log("attacker HP:", u1.data.hp, "=>", attackerHP ?? "(no counter)");
+	console.log("defender HP:", u2.data.hp, "=>", defenderHP);
 }
 
 console.log("testing luck thresholds: 1% luck should round up to 1% damage");
 
 {
-  const match = createMatch(
-    [
-      createPlayerInMatch({ slot: 0 }),
-      createPlayerInMatch({ slot: 1, coId: { name: "kanbei", version: "AW2" } }),
-    ],
-    {
-      map: {
-        tiles: [
-          [
-            { type: "plain", variant: "normal" },
-            { type: "city", playerSlot: 1, hp: 20 },
-          ],
-        ],
-      },
-    },
-  );
+	const match = createMatch(
+		[
+			createPlayerInMatch({ slot: 0 }),
+			createPlayerInMatch({ slot: 1, coId: { name: "kanbei", version: "AW2" } }),
+		],
+		{
+			map: {
+				tiles: [
+					[
+						{ type: "plain", variant: "normal" },
+						{ type: "city", playerSlot: 1, hp: 20 },
+					],
+				],
+			},
+		},
+	);
 
-  const p1 = match.getPlayerBySlot(0);
-  const p2 = match.getPlayerBySlot(1);
+	const p1 = match.getPlayerBySlot(0);
+	const p2 = match.getPlayerBySlot(1);
 
-  const u1 = p1.addUnwrappedUnit({
-    type: "infantry",
-    position: new Position([0, 0]),
-  });
+	const u1 = p1.addUnwrappedUnit({
+		type: "infantry",
+		position: new Position([0, 0]),
+	});
 
-  const u2 = p2.addUnwrappedUnit({
-    type: "missile",
-    position: new Position([1, 0]),
-    ammo: 6,
-  });
+	const u2 = p2.addUnwrappedUnit({
+		type: "missile",
+		position: new Position([1, 0]),
+		ammo: 6,
+	});
 
-  const { attackerHP, defenderHP } = attackActionToEvent(
-    match,
-    {
-      type: "attack",
-      defenderPosition: u2.data.position,
-    },
-    u1.data.position,
-    true,
-    {
-      goodLuck: 0.01,
-      badLuck: 0,
-    },
-    {
-      goodLuck: 0.01,
-      badLuck: 0,
-    },
-  );
+	const { attackerHP, defenderHP } = attackActionToEvent(
+		match,
+		{
+			type: "attack",
+			defenderPosition: u2.data.position,
+		},
+		u1.data.position,
+		true,
+		{
+			goodLuck: 0.01,
+			badLuck: 0,
+		},
+		{
+			goodLuck: 0.01,
+			badLuck: 0,
+		},
+	);
 
-  console.log("attacker HP:", u1.data.hp, "=>", attackerHP ?? "(no counter)");
-  console.log("defender HP:", u2.data.hp, "=>", defenderHP);
+	console.log("attacker HP:", u1.data.hp, "=>", attackerHP ?? "(no counter)");
+	console.log("defender HP:", u2.data.hp, "=>", defenderHP);
 }

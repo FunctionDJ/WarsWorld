@@ -7,18 +7,18 @@ import { PrismaClient } from "../../generated/client";
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 const prismaGlobal = globalThis as typeof globalThis & {
-  prisma?: PrismaClient;
+	prisma?: PrismaClient;
 };
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
 
 export const prisma: PrismaClient =
-  prismaGlobal.prisma ??
-  new PrismaClient({
-    adapter,
-    /*  log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],*/
-  });
+	prismaGlobal.prisma ??
+	new PrismaClient({
+		adapter,
+		/*  log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"], */
+	});
 
 if (process.env.NODE_ENV !== "production") {
-  prismaGlobal.prisma = prisma;
+	prismaGlobal.prisma = prisma;
 }

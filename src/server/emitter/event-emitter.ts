@@ -10,16 +10,16 @@ type WWEmittery = Emittery<{ emittable: Emittable & { teamId: number } }>;
 export const emitterMap = new Map<Match["id"], WWEmittery>();
 
 export const getMatchEmitter = (matchId: Match["id"]): WWEmittery => {
-  const matchEmitter = emitterMap.get(matchId);
+	const matchEmitter = emitterMap.get(matchId);
 
-  if (matchEmitter === undefined) {
-    throw new TRPCError({
-      code: "INTERNAL_SERVER_ERROR",
-      message: `No emitter found for match with id ${matchId}`,
-    });
-  }
+	if (matchEmitter === undefined) {
+		throw new TRPCError({
+			code: "INTERNAL_SERVER_ERROR",
+			message: `No emitter found for match with id ${matchId}`,
+		});
+	}
 
-  return matchEmitter;
+	return matchEmitter;
 };
 
 /**
@@ -27,19 +27,19 @@ export const getMatchEmitter = (matchId: Match["id"]): WWEmittery => {
  * without team-specific modifications.
  */
 export const globalEmittable = async (
-  match: MatchWrapper | MatchInSetup,
-  emittable: Emittable,
+	match: MatchWrapper | MatchInSetup,
+	emittable: Emittable,
 ): Promise<void> => {
-  const matchEmitter = getMatchEmitter(match.id);
+	const matchEmitter = getMatchEmitter(match.id);
 
-  const teams = match.type === "match-in-setup" ? match.getTeams() : match.teams;
+	const teams = match.type === "match-in-setup" ? match.getTeams() : match.teams;
 
-  await Promise.all(
-    teams.map((team) =>
-      matchEmitter.emit("emittable", {
-        ...emittable,
-        teamId: team.index,
-      }),
-    ),
-  );
+	await Promise.all(
+		teams.map((team) =>
+			matchEmitter.emit("emittable", {
+				...emittable,
+				teamId: team.index,
+			}),
+		),
+	);
 };
